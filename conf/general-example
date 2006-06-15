@@ -1,0 +1,49 @@
+<?php
+/*
+ * general-example:
+ * Example values for the "general" config file.
+ *
+ * Configuration parameters, in PHP syntax. Configuration parameters are set
+ * using the PHP define('OPTION_...', '...') function. Both perl and PHP code
+ * parse this properly, so you can use comments and conditionals and whatnot,
+ * but unless essential it's better to keep it simple....
+ *
+ * Copy this file to one called "general" in the same directory.  Or
+ * have multiple config files and use a symlink to change between them.
+ * 
+ * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+ * Email: francis@mysociety.org; WWW: http://www.mysociety.org
+ *
+ * $Id: general-example,v 1.1 2006-06-15 14:31:01 francis Exp $
+ * 
+ */
+
+define('OPTION_PET_DB_NAME', 'pet');
+define('OPTION_PET_DB_USER', 'pet');
+define('OPTION_PET_DB_PASS', '');
+define('OPTION_PET_DB_HOST', null);
+define('OPTION_PET_DB_PORT', null);
+define('OPTION_PHP_MAINDB', 'PET');
+
+// Base domain of the website. This is used to distinguish internal from
+// external referrers, for instance.
+define('OPTION_WEB_DOMAIN', 'www.---.com');
+
+// Top-level URL of current website
+define('OPTION_BASE_URL', 'http://www.---.com');
+define('OPTION_ADMIN_URL', 'https://secure.---.com');
+
+// Domain name for emails to current website
+define('OPTION_EMAIL_DOMAIN', '---.com');
+define('OPTION_CONTACT_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
+// Prefix of return-path local part. All mail for EMAIL_PREFIX(.*)@EMAIL_DOMAIN
+// must be delivered to the bounce processing scripts.
+define('OPTION_EMAIL_PREFIX', 'pet-');
+
+// Is this a staging site?  Affects how errors are displayed.
+define('OPTION_PET_STAGING', 0);
+
+// Log file (used in test harness, and later in admin scripts)
+define('OPTION_HTTPD_ERROR_LOG', '/var/log/apache/error.log');
+
+

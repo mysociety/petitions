@@ -1,0 +1,146 @@
+#!/usr/bin/perl -w -I../../perllib
+#
+# test-run:
+# Test harness for petitions.  Makes sure we haven't broken the code.
+# 
+# Requires:
+# * ../general/conf file set up for petitions, and matching the below requirements
+# * apache configured to serve ../web on OPTION_BASE_URL
+# * a petitions database with name ending "_testharness"; this script will drop and remake 
+#   the database, so make sure it is never used for anything important
+# * email addresses (email_n below) configured to pipe to ./test-mailin with fast
+#   local delivery, and
+#
+# Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+# Email: francis@mysociety.org; WWW: http://www.mysociety.org/
+#
+
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.1 2006-06-15 14:31:01 francis Exp $';
+
+use strict;
+require 5.8.0;
+
+use Data::Dumper;
+use Carp qw(verbose);
+use Storable;
+use FindBin;
+use Getopt::Long;
+use IO::Handle;
+
+use mySociety::Config;
+mySociety::Config::set_file('../conf/general');
+use mySociety::DBHandle qw(dbh);
+use mySociety::WebTestHarness;
+use mySociety::Util;
+
+sub help {
+print <<END
+
+Usage: test-run [OPTION}
+
+Options are
+    --verbose=n   Choose 0 (no progress), 1 (basic actions), 2 (full debug)
+
+END
+}
+
+# Parse command line
+our $verbose = 0; # currently 3 levels: 0, 1 and 2
+our $help;
+if (!GetOptions(
+        'verbose=i' =>  \$verbose,
+        'help' =>               \$help
+    )) {
+    help();
+    exit(1);
+}
+if ($help) {
+    help();
+    exit(0);
+}
+
+# Set up options
+
+our $base_url = mySociety::Config::get('BASE_URL');
+our $admin_url = mySociety::Config::get('ADMIN_URL');
+our $httpd_error_log = mySociety::Config::get('HTTPD_ERROR_LOG');
+sub email_n { my $n = shift; return "ycmlharness+$n\@writetothem.owl"; }
+sub name_n { my $n = shift; return "Cara Constituent $n"; }
+
+#############################################################################
+# Main code
+
+# Configure test harness class
+print "Set up web test harness...\n" if $verbose > 0;
+our $wth = new mySociety::WebTestHarness();
+$wth->log_watcher_setup($httpd_error_log);
+$wth->database_connect('PET_');
+$wth->database_drop_reload('../db/schema.sql');
+$wth->database_cycle_sequences(200);
+$wth->email_setup({ eveld_bin => "$FindBin::Bin/../../services/EvEl/bin/eveld",
+                    log_mailbox => "log_mailbox" });
+
+# Syntax check all .php files
+print "Syntax check all PHP files...\n" if $verbose > 0;
+$wth->php_check_syntax("../../pet/");
+$wth->php_check_syntax("../../pet/templates/emails/", qr//);
+
+# Check that we can detect PHP errors
+print "Confirm we can detect errors...\n" if $verbose > 0;
+$wth->log_watcher_check();
+$wth->browser_get($base_url . "/test.php?error=1" );
+my $errors = $wth->log_watcher_get_errors();
+die "Unable to detect errors from PHP" if ($errors !~ m/deliberate_error_to_test_error_handling/);
+
+print "Basic test...\n" if $verbose > 0;
+do_basic_test();
+
+# Check for any unhandled mails or errors
+#call_fyrqd();
+#print "Checking no emails left at end...\n" if $verbose > 1;
+$wth->email_check_none_left();
+print "Checking no log file errors at end...\n" if $verbose > 1;
+$wth->log_watcher_check();
+print "Everything completed successfully\n";
+
+#############################################################################
+# General functions
+
+# Call fyrqd for one pass
+#sub call_fyrqd {
+#    system("./fyrqd", "--debug", "--once", "--email", # $verbose > 1 ? qw(--verbose) : ()
+#        ) and die "Failed to call fyrqd";
+#}
+
+#############################################################################
+
+sub do_basic_test() {
+    $wth->browser_get($base_url);
+    $wth->browser_check_contents("Petitions");
+
+=comment
+    $wth->browser_check_contents("This is a test site"); 
+
+    # Sign up as constituent
+    $wth->browser_submit_form(form_name => 'frontpage_subscribe',
+        fields => { name => name_n(1), email => email_n(1), postcode => "ZZ9 9zz"},  
+        );
+
+    # Confirm email
+    my $confirmation_email = $wth->email_get_containing(
+        '%To: '.email_n(1).'%%');
+    die "Pledge confirmation link not found\n" if ($confirmation_email !~ m#^\s+(http://.*$)#m);
+    my $confirmation_url = $1;
+    $wth->email_check_url($confirmation_url);
+    print "Confirmation URL: " . $confirmation_url . "\n" if $verbose > 1;
+    $wth->log_watcher_check();
+    $wth->browser_get($confirmation_url);
+    $wth->browser_check_contents("You're the 1st person to sign up to get emails"); 
+
+    #print $wth->browser_content();
+=cut
+}
+
+#############################################################################
+
+
