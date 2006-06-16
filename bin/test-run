@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.1 2006-06-15 14:31:01 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.2 2006-06-16 08:51:16 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -31,7 +31,6 @@ use mySociety::Config;
 mySociety::Config::set_file('../conf/general');
 use mySociety::DBHandle qw(dbh);
 use mySociety::WebTestHarness;
-use mySociety::Util;
 
 sub help {
 print <<END
@@ -114,7 +113,7 @@ print "Everything completed successfully\n";
 
 #############################################################################
 
-sub do_basic_test() {
+sub do_basic_test {
     $wth->browser_get($base_url);
     $wth->browser_check_contents("Petitions");
 
