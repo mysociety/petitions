@@ -1,20 +1,17 @@
 <?php
 /*
- * pb.php:
- * General purpose functions specific to PledgeBank.  This must
+ * pet.php:
+ * General purpose functions specific to ePetitions.  This must
  * be included first by all scripts to enable error logging.
  * This is only used by the web page PHP scripts, command line ones 
- * use pbcli.php.
+ * use petcli.php.
  * 
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.1 2006-06-15 14:31:28 francis Exp $
+ * $Id: pet.php,v 1.2 2006-06-19 16:40:31 francis Exp $
  * 
  */
-
-// Textual content
-$petition_prefix = 'We the undersigned petition the Prime Minister to';
 
 // Load configuration file
 require_once "../conf/general";

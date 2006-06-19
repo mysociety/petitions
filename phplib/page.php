@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.1 2006-06-15 14:31:28 francis Exp $
+// $Id: page.php,v 1.2 2006-06-19 16:40:31 francis Exp $
 
 require_once '../../phplib/person.php';
 require_once '../../phplib/db.php';
@@ -44,8 +44,7 @@ function page_header($title, $params = array()) {
     // Warn that we are on a testing site
     $devwarning = array();
     if (OPTION_PET_STAGING) {
-        $devwarning[] = _('This is a test site for developers only. You probably want
-<a href="http://www.pledgebank.com/">the real site</a>.');
+        $devwarning[] = _('This is a test site for developers only.');
     }
     global $pet_today;
     if ($pet_today != date('Y-m-d')) {

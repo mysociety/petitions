@@ -1,0 +1,14 @@
+Subject: Confirm your new petition to the Prime Minister - '<?=$values['title']?>'
+
+Please click on the link below to confirm that you wish the number-10.gov.uk
+website to display the petition at the bottom of this email in your name.
+
+<?=$values['url']?>
+
+Your petition reads:
+
+'<?=$values['sentence_first']?>'
+
+Thank you for submitting your petition.
+
+<?=$values['signature']?>
