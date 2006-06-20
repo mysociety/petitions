@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: test.php,v 1.1 2006-06-15 14:31:01 francis Exp $
+// $Id: test.php,v 1.2 2006-06-20 14:14:26 francis Exp $
 
 require_once "../phplib/pet.php";
 
@@ -19,4 +19,6 @@ if (get_http_var('error')) {
 if (get_http_var('phpinfo')) {
     phpinfo();
 }
+
+?> Test page <?
 

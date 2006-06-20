@@ -5,16 +5,9 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.2 2006-06-19 16:40:31 francis Exp $
+// $Id: new.php,v 1.3 2006-06-20 14:14:26 francis Exp $
 
-#A title (max 100 chars)
-#
-#Body text (unlimited at first) that always starts "We the undersigned
-#petition the Prime Minister to..."
-#
-#A unique ref for URL, like on PledgeBank
-#
-#End date (max 12 months from creation day)
+#Limit length of title to 100 chars
 #
 #Creator First name
 #Creator Surname
@@ -35,7 +28,6 @@
 require_once '../phplib/pet.php';
 require_once '../phplib/petition.php';
 require_once '../../phplib/datetime.php';
-require_once '../../phplib/htmlstring.php';
 
 $page_title = _('Create a new petition');
 ob_start();
@@ -53,7 +45,7 @@ print $contents;
 page_footer(array('nolocalsignup'=>true));
 
 function petition_form_submitted() {
-    global $lang, $pet_time;
+    global $pet_time;
     $errors = array();
     $data = array();
     foreach (array_keys($_POST) as $field) {
@@ -62,8 +54,6 @@ function petition_form_submitted() {
         else
             $data[$field] = get_http_var($field, true);
     }
-    if (array_key_exists('title', $data))
-        $data['lang'] = $lang;
     
     if (array_key_exists('data', $data)) {
         $alldata = unserialize(base64_decode($data['data']));
@@ -80,7 +70,8 @@ function petition_form_submitted() {
 
     # Step 1 fixes
     if (!array_key_exists('rawdeadline', $data)) $data['rawdeadline'] = '';
-    $data['deadline'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
+    $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
+    $data['deadline'] = $data['deadline_details']['iso'];
 
     # Step 1, main pledge details
     if (get_http_var('tostepmain')) {
@@ -213,8 +204,6 @@ petition via this website giving details of the Government’s response.')?>
 }
 
 function petition_form_main($data = array(), $errors = array()) {
-    global $lang, $langs;
-# <!-- <p><big><strong>Before people can create pledges we should have a stiff warning page, with few, select, bold words about what makes for good &amp; bad pledges (we want to try to get people to keep their target numbers down).</strong></big></p> -->
     if (sizeof($errors)) {
         print '<div id="errors"><ul><li>';
         print join ('</li><li>', array_values($errors));
@@ -241,7 +230,7 @@ function petition_form_main($data = array(), $errors = array()) {
 <br><textarea name="content" rows="5" cols="60" <? if (array_key_exists('content', $errors)) print ' class="error"' ?> ><? if (isset($data['content'])) print htmlspecialchars($data['content']) ?></textarea>
 
 <p><?=_('Title of your petition:') ?> 
-<br><input<? if (array_key_exists('title', $errors)) print ' class="error"' ?> onkeyup="checklength(this)" type="text" size="60" maxlength="60" id="title" name="title" value="<? if (isset($data['title'])) print htmlspecialchars($data['title']) ?>"> 
+<br><input<? if (array_key_exists('title', $errors)) print ' class="error"' ?> onkeyup="checklength(this)" type="text" size="80" maxlength="80" id="title" name="title" value="<? if (isset($data['title'])) print htmlspecialchars($data['title']) ?>"> 
 </p>
 
 <p><?=_('People must sign up before') ?> <input<? if (array_key_exists('rawdeadline', $errors)) print ' class="error"' ?> title="<?=_('Deadline date') ?>" type="text" id="rawdeadline" name="rawdeadline" onfocus="fadein(this)" onblur="fadeout(this)" value="<? if (isset($data['rawdeadline'])) print htmlspecialchars($data['rawdeadline']) ?>"> <small>(<?=_('e.g.') ?> "<?
@@ -264,8 +253,6 @@ function petition_form_main($data = array(), $errors = array()) {
 }
 
 function petition_form_you($data = array(), $errors = array()) {
-    global $lang, $langs;
-# <!-- <p><big><strong>Before people can create pledges we should have a stiff warning page, with few, select, bold words about what makes for good &amp; bad pledges (we want to try to get people to keep their target numbers down).</strong></big></p> -->
     if (sizeof($errors)) {
         print '<div id="errors"><ul><li>';
         print join ('</li><li>', array_values($errors));
@@ -309,21 +296,17 @@ function step_main_error_check($data) {
     $dupe = db_getOne('SELECT id FROM petition WHERE ref ILIKE ?', array($data['ref']));
     if ($dupe) $errors['ref'] = _('That short name is already taken!');
     if (!$data['title']) $errors['title'] = _('Please enter a title');
+    elseif (strlen($data['title']) > 80) $errors['title'] = _('Please make the title a bit shorter (at most 80 characters).');
     if (!$data['content']) $errors['content'] = _('Please enter the text of your petition');
 
     $pet_today_arr = explode('-', $pet_today);
-    $deadline_limit_years = 2; # in years
+    $deadline_limit_years = 1; # in years
     $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $pet_today_arr[1], $pet_today_arr[2], $pet_today_arr[0] + $deadline_limit_years));
     if (!$data['rawdeadline'] || !$data['deadline']) $errors['date'] = _('Please enter a deadline');
-    if ($data['deadline']['iso'] < $pet_today) $errors['date'] = _('The deadline must be in the future');
-    if ($data['deadline']['error']) $errors['date'] = _('Please enter a valid date for the deadline');
-    if ($deadline_limit < $data['deadline']['iso'])
-        $errors['rawdeadline'] = sprintf(_('Please change your deadline so it is less than %d years into the future.'), $deadline_limit_years);
-
-    /*global $langs;
-    if (!array_key_exists($data['lang'], $langs)) {
-        $errors['lang'] = _('Unknown language code:') . ' ' . htmlspecialchars($data['lang']);
-    }*/
+    if ($data['deadline'] < $pet_today) $errors['date'] = _('The deadline must be in the future');
+    if ($data['deadline_details']['error']) $errors['date'] = _('Please enter a valid date for the deadline');
+    if ($deadline_limit < $data['deadline'])
+        $errors['rawdeadline'] = sprintf(_('Please change your deadline so it is less than %d year in the future.'), $deadline_limit_years);
 
     return $errors;
 }
@@ -346,8 +329,6 @@ function preview_error_check($data) {
 }
 
 function preview_petition($data, $errors) {
-    $isodate = $data['deadline']['iso'];
-
     if (sizeof($errors)) {
         print '<div id="errors"><ul><li>';
         print join ('</li><li>', array_values($errors));
@@ -361,21 +342,19 @@ function preview_petition($data, $errors) {
 
 <form accept-charset="utf-8" id="pledgeaction" name="pledge" method="post" action="/new">
 <input type="hidden" name="data" value="<?=base64_encode(serialize($data)) ?>">
-<?  print_html(h2(_('New Petition &#8211; Step 4 of 4')));
-    print_html(p(sprintf(_('
+<h2><?=_('New petition &#8211; Step 4 of 4')?></h2>
+<p><?=sprintf(_('
 Now please read your petition (on the left) and check the details thoroughly.
 <strong>Read carefully</strong> - we can\'t ethically let you %schange the wording%s of your pledge once people have
 started to sign up to it.    
-'), '<a href="/faq#editpledge" id="changethewording" onclick="return toggleNewModifyFAQ()">', '</a>')
-));
-?>
+'), '<a href="/faq#editpledge" id="changethewording" onclick="return toggleNewModifyFAQ()">', '</a>')?></p>
 
 <div id="modifyfaq">
-<? print_html(h3(_("Why can't I modify my pledge after I've made it?"))) ?>
+<h3><?=_("Why can't I modify my pledge after I've made it?")?></h3>
 
-<? print_html(p(_("People who sign up to a pledge are signing up to the specific wording of
+<p><?=_("People who sign up to a pledge are signing up to the specific wording of
 the pledge. If you change the wording, then their signatures would no
-longer be valid."))) ?>
+longer be valid.")?></p>
 
 </div>
 
@@ -391,22 +370,19 @@ longer be valid."))) ?>
 <input type="submit" name="tocreate" value="<?=_('Create') ?> &gt;&gt;&gt;">
 </p>
 <?
-    print_html(h3(_('Terms and Conditions')));
+    print "<h3>"._('Terms and Conditions')."</h3>";
     print "<p>";
     print _("Blah"); ?>
 </p>
 
 </form>
     <?
-    $row = $data; $row['deadline'] = $isodate;
-    $partial_pledge = new Petition($row);
+    $partial_pledge = new Petition($data);
     $partial_pledge->h_display_box();
 }
 
 # Someone has submitted a new petition
 function create_new_petition($P, $data) {
-    $isodate = $data['parseddate']['iso'];
-
     /* Guard against double-insertion. */
     db_query('lock table petition in share mode');
         /* Can't just use SELECT ... FOR UPDATE since that wouldn't prevent an
@@ -416,24 +392,23 @@ function create_new_petition($P, $data) {
 
         /* Optionally add a pledge location. */
         $location_id = null;
-        db_query('
+        db_query("
                 insert into petition (
                     id, title, content,
                     deadline, rawdeadline,
                     person_id, name, ref, 
-                    creationtime,
-                    lang, 
+                    creationtime, 
+                    status, laststatuschange
                 ) values (
-                    ?, ?, content,
+                    ?, ?, ?,
                     ?, ?,
                     ?, ?, ?, 
-                    pet_current_timestamp(),
-                    ?, 
-                )', array(
+                    ms_current_timestamp(), 
+                    'draft', ms_current_timestamp()
+                )", array(
                     $data['id'], $data['title'], $data['content'],
-                    $isodate, $data['date'],
-                    $P->id(), $data['name'], $data['ref'], 
-                    "en-gb"
+                    $data['deadline'], $data['rawdeadline'],
+                    $P->id(), $data['name'], $data['ref']
                 ));
     }
 
@@ -444,7 +419,7 @@ function create_new_petition($P, $data) {
     $page_title = _('Petition Created');
     $page_params['noprint'] = true;
 
-    $url = htmlspecialchars(pet_domain_url() . urlencode($p->data['ref']));
+    $url = htmlspecialchars(OPTION_BASE_URL . "/" . urlencode($p->data['ref']));
 ?>
     <p class="noprint loudmessage"><?=_('Thank you for creating your petition.') ?></p>
     <p class="noprint loudmessage" align="center"><? printf(_('It is now live at %s<br>and people can sign it.'), '<a href="'.$url.'">'.$url.'</a>') ?></p>

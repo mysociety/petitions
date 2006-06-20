@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.1 2006-06-15 14:31:01 francis Exp $
+ * $Id: general-example,v 1.2 2006-06-20 14:14:25 francis Exp $
  * 
  */
 
@@ -40,8 +40,13 @@ define('OPTION_CONTACT_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
 // must be delivered to the bounce processing scripts.
 define('OPTION_EMAIL_PREFIX', 'pet-');
 
+// Debug log level for PHP website
+define('OPTION_PHP_DEBUG_LEVEL', 0);
 // Is this a staging site?  Affects how errors are displayed.
 define('OPTION_PET_STAGING', 0);
+
+// Where web services used are
+define('OPTION_EVEL_URL', 'http://services.mysociety.org/evel');
 
 // Log file (used in test harness, and later in admin scripts)
 define('OPTION_HTTPD_ERROR_LOG', '/var/log/apache/error.log');

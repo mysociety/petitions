@@ -7,7 +7,7 @@ website to display the petition at the bottom of this email in your name.
 
 Your petition reads:
 
-'<?=$values['sentence_first']?>'
+'<?=$values['content']?>'
 
 Thank you for submitting your petition.
 

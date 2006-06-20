@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.2 2006-06-19 16:40:31 francis Exp $
+ * $Id: pet.php,v 1.3 2006-06-20 14:14:25 francis Exp $
  * 
  */
 
@@ -54,9 +54,12 @@ function pet_handle_error($num, $message, $file, $line, $context) {
 }
 err_set_handler_display('pet_handle_error');
 
+/* POST redirects */
+stash_check_for_post_redirect();
+
 /* Date which petition application believes it is */
-$pet_today = db_getOne('select pet_current_date()');
-$pet_timestamp = substr(db_getOne('select pet_current_timestamp()'), 0, 19);
+$pet_today = db_getOne('select ms_current_date()');
+$pet_timestamp = substr(db_getOne('select ms_current_timestamp()'), 0, 19);
 $pet_time = strtotime($pet_timestamp);
 
 /* pet_show_error MESSAGE

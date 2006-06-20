@@ -4,7 +4,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.1 2006-06-15 14:31:01 francis Exp $
+-- $Id: schema.sql,v 1.2 2006-06-20 14:14:25 francis Exp $
 --
 
 -- secret
@@ -20,7 +20,7 @@ create table debugdate (
 );
 
 -- Returns the date of "today", which can be overriden for testing.
-create function pet_current_date()
+create function ms_current_date()
     returns date as '
     declare
         today date;
@@ -36,7 +36,7 @@ create function pet_current_date()
 ' language 'plpgsql';
 
 -- Returns the timestamp of current time, but with possibly overriden "today".
-create function pet_current_timestamp()
+create function ms_current_timestamp()
     returns timestamp as '
     declare
         today date;
@@ -134,7 +134,7 @@ create table token (
 
 create table requeststash (
     key varchar(16) not null primary key check (length(key) = 8 or length(key) = 16),
-    whensaved timestamp not null default pet_current_timestamp(),
+    whensaved timestamp not null default ms_current_timestamp(),
     method text not null default 'GET' check (
             method = 'GET' or method = 'POST'
         ),
