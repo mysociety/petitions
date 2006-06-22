@@ -1,0 +1,24 @@
+/*
+ * pet.css
+ * Top-level style sheet for petitions system.
+ *
+ * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+ * Email: francis@mysociety.org. WWW: http://www.mysociety.org
+ *
+ * $Id: pet.css,v 1.1 2006-06-22 17:19:45 francis Exp $
+ *
+ */
+
+.errors {
+    margin: 0 auto 1em;
+    color: #ff0000;
+    background-color: #ffcccc; 
+    border: solid 2px #990000;
+}
+
+input.error, input[type=text].error, select.error, input[type=radio].error {
+    border: solid 2px #990000;
+    background-color: #ffcccc;
+}
+
+

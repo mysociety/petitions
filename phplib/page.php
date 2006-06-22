@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.2 2006-06-19 16:40:31 francis Exp $
+// $Id: page.php,v 1.3 2006-06-22 17:19:45 francis Exp $
 
 require_once '../../phplib/person.php';
 require_once '../../phplib/db.php';
@@ -26,35 +26,20 @@ function page_header($title, $params = array()) {
 
     $P = person_if_signed_on(true); /* Don't renew any login cookie. */
 
-?><!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title><?
-    if ($title) {
-        print $title . " - ";
-        /* XXX @import url('...') uses single-quotes to hide the style-sheet
-         * from Mac IE. Ugly, but it works. */
-?> Petitions</title>
-</head>
-<body>
-<?
-    }
-
     // Warn that we are on a testing site
+    global $devwarning;
     $devwarning = array();
     if (OPTION_PET_STAGING) {
-        $devwarning[] = _('This is a test site for developers only.');
+        $devwarning[] = _('This is a test site for web developers only.');
+        $devwarning[] = _('You probably want <a href="http://www.number10.gov.uk">the Prime Minister\'s official site</a>.');
     }
     global $pet_today;
     if ($pet_today != date('Y-m-d')) {
         $devwarning[] = _("Note: On this test site, the date is faked to be") . " $pet_today";
     }
-    if (count($devwarning) > 0) {
-        ?><p class="noprint" align="center" style="color: #cc0000; background-color: #ffffff; margin-top: 0;"><?
-        print join('<br>', $devwarning);
-        ?></p><?
-    }
+    $devwarning = join('<br>', $devwarning);
+
+    include "../templates/website/head.php";
 }
 
 /* page_footer PARAMS
@@ -63,9 +48,7 @@ function page_header($title, $params = array()) {
  * If PARAMS['nolocalsignup'] is true then no local signup form is showed.
  */
 function page_footer($params = array()) {
-?>
-</body></html>
-<?  
+    include "../templates/website/foot.php";
     header('Content-Length: ' . ob_get_length());
 }
 

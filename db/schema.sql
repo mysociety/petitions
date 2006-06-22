@@ -4,7 +4,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.2 2006-06-20 14:14:25 francis Exp $
+-- $Id: schema.sql,v 1.3 2006-06-22 17:19:44 francis Exp $
 --
 
 -- secret
@@ -94,7 +94,7 @@ create table petition (
 );
 
 create unique index petition_ref_idx on petition(ref);
-create unique index petition_status_idx on petition(status);
+create index petition_status_idx on petition(status);
 
 -- History of things which have happened to a petition
 create table petition_log (

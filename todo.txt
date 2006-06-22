@@ -1,0 +1,14 @@
+- Add petition log function, and append initial creation log message
+- Make it always send an email for auth for creating petitions
+- Add extra organisation fields in 
+
+
+
+- Create basic petition display in main interface
+- Do signup form
+
+- Create basic monitor / approval interface (remember to log everything)
+- Send email to administrator with link to that interface
+
+- Make email confirmation screens not have header/footer
+

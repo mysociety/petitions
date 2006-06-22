@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.2 2006-06-19 16:40:31 francis Exp $
+// $Id: index.php,v 1.3 2006-06-22 17:19:45 francis Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -15,7 +15,7 @@ require_once '../../phplib/person.php';
 page_header(_('Introduction to e-petitions'));
 ?>
 
-<h1>Introduction to e-petitions</h1>
+<h1><span dir="ltr">Introduction to e-petitions</span></h1>
 
 <p>Petitions have long been sent to the Prime Minister by post or delivered to
 the Number 10 door in person. You can now both create and sign petitions on
@@ -23,9 +23,10 @@ this website, giving you the opportunity to reach a potentially wider audience
 and to deliver your petition directly to Downing Street.
 </p>
 
-<p>This service has been set up in partnership with mySociety, a non-partisan
-charitable project that runs various democracy focussed websites in the UK,
-such as HearFromYourMP.com .
+<p>This service has been set up in partnership with <a
+href="http://www.mysociety.org">mySociety</a>, a non-partisan charitable
+project that runs various democracy focussed websites in the UK, such as
+<a href="http://www.hearfromyourmp.com">HearFromYourMP.com</a>.
 </p>
 
 <p>All petitions that are submitted to this website will be accepted, as long as

@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.3 2006-06-20 14:14:26 francis Exp $
+// $Id: new.php,v 1.4 2006-06-22 17:19:45 francis Exp $
 
 #Limit length of title to 100 chars
 #
@@ -128,10 +128,10 @@ function petition_form_intro($data = array(), $errors = array()) {
 ?>
 <div id="tips">
 
-<h2><?=_('Step-by-step guide to making petitions') ?></h2>
+<h2><span dir="ltr"><?=_('Step-by-step guide to making petitions') ?></span></h2>
 <ol>
 
-<h3><?=_('Step 1: Create your petition')?></h3>
+<h3><span dir="ltr"><?=_('Step 1: Create your petition')?></span></h3>
 
 <p><?=_('You will be asked to give your name, organisation (if you represent one),
 address and email address, title and text of your petition. You will also be
@@ -142,13 +142,13 @@ your petition.')?></p>
 <p><?=_('You will be able to specify a start and finish date for your petition, and we
 will host your petition for up to 12 months.')?></p>
 
-<h3><?=_('Step 2: Submit your petition')?></h3>
+<h3><span dir="ltr"><?=_('Step 2: Submit your petition')?></span></h3>
 
 <p><?=_('Once you have submitted your petition, you will receive an email asking
 you to click a link to confirm your petition. Your proposed petition will then
 be delivered to the Downing Street inbox.')?></p>
 
-<h3><?=_('Step 3: Petition approval')?></h3>
+<h3><span dir="ltr"><?=_('Step 3: Petition approval')?></span></h3>
 
 <p><?=_('Officials at Downing Street will check your petition to make sure that it meets
 the basic requirements set out in our acceptable use policy (link) and the
@@ -168,7 +168,7 @@ website, along with the reason(s) why it was rejected. Any content that is
 offensive or illegal will be left out. Every petition that is received will be
 acknowledged on this website.')?></p>
 
-<h3><?=_('Step 4: Petition live')?></h3>
+<h3><span dir="ltr"><?=_('Step 4: Petition live')?></span></h3>
 
 <p><?=_('Once your petition is live, you will be able to publicise the URL (website
 address) you chose when you created your petition, and anyone will be able to
@@ -184,7 +184,7 @@ the petition.')?></p>
 <p><?=_('Your petition will show the total number of signatures received. It will also
 display the names of signatories, unless they have opted not to be shown.')?></p>
 
-<h3><?=_('Step 5: Petition close')?></h3>
+<h3><span dir="ltr"><?=_('Step 5: Petition close')?></span></h3>
 
 <p><?=_('When the petition closes, officials at Downing Street will ensure you get a
 response to the issues you raise. Depending on the nature of the petition, this
@@ -205,9 +205,9 @@ petition via this website giving details of the Government’s response.')?>
 
 function petition_form_main($data = array(), $errors = array()) {
     if (sizeof($errors)) {
-        print '<div id="errors"><ul><li>';
+        print '<ul class="errors"><li>';
         print join ('</li><li>', array_values($errors));
-        print '</li></ul></div>';
+        print '</li></ul>';
     }
 
     global $pb_time;
@@ -223,14 +223,13 @@ function petition_form_main($data = array(), $errors = array()) {
 ?>
 
 <form accept-charset="utf-8" class="pledge" name="pledge" method="post" action="/new">
-<h2><?=_('New petition &#8211; Step 1 of 4') ?></h2>
-<h3><?=_('Your petition')?></h3>
+<h2><span dir="ltr"><?=_('New petition &#8211; Step 1 of 4 &#8211; Your petition') ?></span></h2>
 
 <p><strong><?=$petition_prefix ?>...</strong> 
 <br><textarea name="content" rows="5" cols="60" <? if (array_key_exists('content', $errors)) print ' class="error"' ?> ><? if (isset($data['content'])) print htmlspecialchars($data['content']) ?></textarea>
 
 <p><?=_('Title of your petition:') ?> 
-<br><input<? if (array_key_exists('title', $errors)) print ' class="error"' ?> onkeyup="checklength(this)" type="text" size="80" maxlength="80" id="title" name="title" value="<? if (isset($data['title'])) print htmlspecialchars($data['title']) ?>"> 
+<br><input<? if (array_key_exists('title', $errors)) print ' class="error"' ?> onkeyup="checklength(this)" type="text" size="60" maxlength="100" id="title" name="title" value="<? if (isset($data['title'])) print htmlspecialchars($data['title']) ?>"> 
 </p>
 
 <p><?=_('People must sign up before') ?> <input<? if (array_key_exists('rawdeadline', $errors)) print ' class="error"' ?> title="<?=_('Deadline date') ?>" type="text" id="rawdeadline" name="rawdeadline" onfocus="fadein(this)" onblur="fadeout(this)" value="<? if (isset($data['rawdeadline'])) print htmlspecialchars($data['rawdeadline']) ?>"> <small>(<?=_('e.g.') ?> "<?
@@ -245,9 +244,10 @@ function petition_form_main($data = array(), $errors = array()) {
 <? if (sizeof($data)) {
     print '<input type="hidden" name="data" value="' . base64_encode(serialize($data)) . '">';
 } ?>
-<p style="text-align: center">
-<input type="submit" name="tostepyou" value="<?=_('Next') ?> &gt;&gt;&gt;"></p>
-<input type="submit" name="tostepintro" value="<?=_('Previous') ?> &lt;&lt;&lt;"></p>
+<p style="text-align: right">
+<input type="submit" name="tostepyou" value="<?=_('Next') ?> &gt;&gt;&gt;">
+<br><input type="submit" name="tostepintro" value="<?=_('Previous') ?> &lt;&lt;&lt;">
+</p>
 </form>
 <? 
 }
@@ -261,20 +261,18 @@ function petition_form_you($data = array(), $errors = array()) {
 
 ?>
 <form accept-charset="utf-8" class="pledge" name="pledge" method="post" action="/new">
-<h2><?=_('New petition &#8211; Step 2 of 4') ?></h2>
-<h3><?=_('About You') ?></h3>
+<h2><span dir="ltr"><?=_('New petition &#8211; Step 2 of 4 &#8211; About you') ?></span></h2>
 
 <p style="margin-bottom: 1em;"><strong><?=_('Your name:') ?></strong> <input<? if (array_key_exists('name', $errors)) print ' class="error"' ?> onblur="fadeout(this)" onfocus="fadein(this)" type="text" size="20" name="name" id="name" value="<? if (isset($data['name'])) print htmlspecialchars($data['name']) ?>">
-<strong><?=_('Email:') ?></strong> <input<? if (array_key_exists('email', $errors)) print ' class="error"' ?> type="text" size="30" name="email" value="<? if (isset($data['email'])) print htmlspecialchars($data['email']) ?>">
+<br><strong><?=_('Email:') ?></strong> <input<? if (array_key_exists('email', $errors)) print ' class="error"' ?> type="text" size="30" name="email" value="<? if (isset($data['email'])) print htmlspecialchars($data['email']) ?>">
 <br><small><?=_('(we need your email so we can get in touch with you when your petition completes, and so on)') ?></small>
 
 <? if (sizeof($data)) {
     print '<input type="hidden" name="data" value="' . base64_encode(serialize($data)) . '">';
 } ?>
-<p style="text-align: center">
-<?=_("Did you read the tips at the top of the page? They'll help you make a successful petition") ?> 
-<input type="submit" name="tosteppreview" value="<?=_('Next') ?> &gt;&gt;&gt;"></p>
-<input type="submit" name="tostepmain" value="<?=_('Previous') ?> &lt;&lt;&lt;"></p>
+<p style="text-align: right">
+<input type="submit" name="tosteppreview" value="<?=_('Next') ?> &gt;&gt;&gt;">
+<br><input type="submit" name="tostepmain" value="<?=_('Previous') ?> &lt;&lt;&lt;"></p>
 </form>
 <? 
 }
@@ -342,7 +340,7 @@ function preview_petition($data, $errors) {
 
 <form accept-charset="utf-8" id="pledgeaction" name="pledge" method="post" action="/new">
 <input type="hidden" name="data" value="<?=base64_encode(serialize($data)) ?>">
-<h2><?=_('New petition &#8211; Step 4 of 4')?></h2>
+<h2><span dir="ltr"><?=_('New petition &#8211; Step 4 of 4')?></span></h2>
 <p><?=sprintf(_('
 Now please read your petition (on the left) and check the details thoroughly.
 <strong>Read carefully</strong> - we can\'t ethically let you %schange the wording%s of your pledge once people have
