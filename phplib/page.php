@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.3 2006-06-22 17:19:45 francis Exp $
+// $Id: page.php,v 1.4 2006-06-23 10:13:48 francis Exp $
 
 require_once '../../phplib/person.php';
 require_once '../../phplib/db.php';
@@ -31,7 +31,7 @@ function page_header($title, $params = array()) {
     $devwarning = array();
     if (OPTION_PET_STAGING) {
         $devwarning[] = _('This is a test site for web developers only.');
-        $devwarning[] = _('You probably want <a href="http://www.number10.gov.uk">the Prime Minister\'s official site</a>.');
+        $devwarning[] = _('You probably want <a href="http://www.pm.gov.uk">the Prime Minister\'s official site</a>.');
     }
     global $pet_today;
     if ($pet_today != date('Y-m-d')) {

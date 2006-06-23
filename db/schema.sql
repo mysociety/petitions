@@ -4,7 +4,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.3 2006-06-22 17:19:44 francis Exp $
+-- $Id: schema.sql,v 1.4 2006-06-23 10:13:47 francis Exp $
 --
 
 -- secret
@@ -100,7 +100,7 @@ create index petition_status_idx on petition(status);
 create table petition_log (
     order_id serial not null primary key, -- for ordering
     petition_id integer not null references petition(id),
-    whenlogged integer not null, -- UNIX time
+    whenlogged timestamp not null,
     message text not null,
     editor text -- administrator who performed this action, or NULL
 );

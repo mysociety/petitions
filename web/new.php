@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.4 2006-06-22 17:19:45 francis Exp $
+// $Id: new.php,v 1.5 2006-06-23 10:13:48 francis Exp $
 
 #Limit length of title to 100 chars
 #
@@ -362,7 +362,7 @@ longer be valid.")?></p>
 </p>
 
 <?
-    print '<p>' . _('When you\'re happy with your petition, <strong>click "Create"</strong> to confirm that you wish number-10.gov.uk to display the petition at the top of this page in your name, and that you agree to the terms and conditions below.');
+    print '<p>' . _('When you\'re happy with your petition, <strong>click "Create"</strong> to confirm that you wish pm.gov.uk to display the petition at the top of this page in your name, and that you agree to the terms and conditions below.');
 ?>
 <p style="text-align: right;">
 <input type="submit" name="tocreate" value="<?=_('Create') ?> &gt;&gt;&gt;">
@@ -410,8 +410,10 @@ function create_new_petition($P, $data) {
                 ));
     }
 
-    db_commit();
     $p = new Petition($data['ref']); // Reselect full data set from DB
+    $p->log_event("User created draft petition", null);
+    
+    db_commit();
 
     global $page_title, $page_params;
     $page_title = _('Petition Created');

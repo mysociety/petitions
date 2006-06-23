@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.1 2006-06-20 14:14:52 francis Exp $
+ * $Id: petition.php,v 1.2 2006-06-23 10:13:48 francis Exp $
  * 
  */
 
@@ -110,7 +110,11 @@ class Petition {
     // URLs
     #function url_main() { return pet_domain_url() . $this->h_ref; }
 
-
+    // Write history to log file 
+    function log_event($message, $editor) {
+        $q = db_query("insert into petition_log (petition_id, whenlogged, message, editor)
+            values (?, ms_current_timestamp(), ?, ?)", array($this->id(), $message, $editor));
+    }
 }
 
 
