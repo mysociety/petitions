@@ -1,8 +1,8 @@
-- Add petition log function, and append initial creation log message
 - Make it always send an email for auth for creating petitions
 - Add extra organisation fields in 
 
-
+- Show if you are logged in in the top corner
+- Don't keep you logged in after petition creation etc.?
 
 - Create basic petition display in main interface
 - Do signup form
@@ -12,3 +12,4 @@
 
 - Make email confirmation screens not have header/footer
 
+- Grep for pb_ and PledgeBank in the source

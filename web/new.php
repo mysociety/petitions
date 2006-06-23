@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.5 2006-06-23 10:13:48 francis Exp $
+// $Id: new.php,v 1.6 2006-06-23 10:18:11 francis Exp $
 
 #Limit length of title to 100 chars
 #
@@ -113,6 +113,7 @@ function petition_form_submitted() {
     /* User must have an account to do this. */
     $data['reason_web'] = _('Before creating your new petition, we need to check that your email is working.');
     $data['template'] = 'petition-confirm';
+    $data['instantly_send_email'] = true;
     $P = person_signon($data, $data['email'], $data['name']);
 
     create_new_petition($P, $data);
