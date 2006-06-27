@@ -1,4 +1,3 @@
-- Make it always send an email for auth for creating petitions
 - Add extra organisation fields in 
 
 - Show if you are logged in in the top corner
