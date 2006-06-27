@@ -4,7 +4,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.4 2006-06-23 10:13:47 francis Exp $
+-- $Id: schema.sql,v 1.5 2006-06-27 22:40:28 matthew Exp $
 --
 
 -- secret
@@ -81,13 +81,19 @@ create table petition (
     -- petition creator
     person_id integer not null references person(id),
     name text not null,
+    organisation text not null,
+    address text not null,
+    postcode text not null,
+    telephone text not null,
+    org_url text not null,
+
     -- metadata
     creationtime timestamp not null,
     
     status text not null default 'draft' check (
-        status = 'draft' -- pledge is waiting for approval
-        or status = 'rejected' -- pledge has been rejected
-        or status = 'live' -- pledge is active
+        status = 'draft' -- petition is waiting for approval
+        or status = 'rejected' -- petition has been rejected
+        or status = 'live' -- petition is active
         or status = 'finished' -- deadline has been passed
     ),
     laststatuschange timestamp not null
@@ -147,3 +153,50 @@ create table requeststash (
     extra text
 );
 
+-- petition_is_valid_to_sign PLEDGE EMAIL
+-- Whether the given PLEDGE is valid for EMAIL to sign.
+-- Returns one of:
+--      ok          petition is OK to sign
+--      none        no such petition exists
+--      finished    petition has expired
+--      signed      signer has already signed this petition
+create function petition_is_valid_to_sign(integer, text)
+    returns text as '
+    declare
+        p record;
+        creator_email text;
+    begin
+        select into p *
+            from petition
+            where petition.id = $1 
+            for update;
+        select into creator_email email
+            from person
+            where person.id = p.person_id;
+
+        if not found then
+            return ''none'';
+        end if;
+
+        -- check for signed by email (before finished, so repeat sign-ups
+        -- by same person give the best message)
+        if $2 is not null then
+            if $2 = creator_email then
+                return ''signed'';
+            end if;
+            perform signer.id from signer, person
+                where petition_id = $1
+                    and signer.person_id = person.id
+                    and person.email = $2 for update;
+            if found then
+                return ''signed'';
+            end if;
+        end if;
+
+        if p.deadline < ms_current_date() then
+            return ''finished'';
+        end if;
+        
+        return ''ok'';
+    end;
+    ' language 'plpgsql';

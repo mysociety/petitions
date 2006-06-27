@@ -1,25 +1,25 @@
-<?php global $title, $devwarning; print '<?xml version="1.0" encoding="iso-8859-1"' ?>
+<?php global $title, $devwarning; print '<?xml version="1.0"?>' ?>
+
 <!-- quirks mode -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1;" />
-<meta name="keywords" content="Contact , fax , phone , e-mail , Tony Blair" />
-<meta name="description" content="Contact details for Prime Minister Tony Blair." />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8;" />
+<meta name="keywords" content="number 10, petition, petitions, downing street, prime minister, pm" />
+<meta name="description" content="Petitions to the Prime Minister, 10 Downing Street" />
 <meta name="DCTERMS.created" scheme="DCTERMS.W3CDTF" content="2005-08-17" />
 <meta name="eGMS.accessibility" scheme="WCAG" content="Double-A" />
 <meta name="dc.creator" content="10 Downing Street, Web Team, webmaster@pmo.gov.uk" />
 <meta name="dc.language" scheme="ISO 639-2/T" content="eng" />
 <meta name="dc.publisher" content="Prime Minister's Office, 10 Downing Street, London, SW1A 2AA" />
-<meta name="dc.identifier" content="http://www.number-10.gov.uk/output/page3.asp" />
-<meta name="dc.subject" content="Contact " />
-<meta name="dc.subject" content=" fax " />
-<meta name="dc.subject" content=" phone " />
-<meta name="dc.subject" content=" e-mail " />
-<meta name="dc.subject" content=" Tony Blair" />
+<meta name="dc.identifier" content="<?=$_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] ?>" />
+<meta name="dc.subject" content="10 Downing Street" />
+<meta name="dc.subject" content="Petitions" />
+<meta name="dc.subject" content="Prime Minister" />
+<meta name="dc.subject" content="Tony Blair" />
 <meta name="dc.title" content="<?=$title?>" />
 <title><?=$title?></title>
-<script type="text/javascript" language="JavaScript1.1" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>
+<!-- <script type="text/javascript" language="JavaScript1.1" src="http://www.number10.gov.uk/include/js/nedstat.js"></script> -->
 <link href="http://www.number10.gov.uk/styles/basic_styles.css" rel="stylesheet" type="text/css" />
 <link href="http://www.number10.gov.uk/styles/gallerycontent.css" rel="stylesheet" />
 <style type="text/css" media="all">
@@ -30,7 +30,7 @@
 <link rel="stylesheet" type="text/css" href="http://www.number10.gov.uk/styles/print.css" media="print" />
 <link rel="shorcut icon" href="favicon.ico" />
 </head>
-<body class="primeminister">
+<body>
 <h3 align="center" style="color: #cc0000; background-color: #ffffff; "><?=$devwarning?></h3>
 <p class="rm"><a class="skip" href="#content">Skip to: Content</a><span class="skip"> |</span></p>
 <div class="toolbarWhite">
@@ -45,7 +45,7 @@
 <img src="http://www.number10.gov.uk/files/images/crest.gif" width="125" height="78" alt="The crest for Number 10 Downing Street" title="" />
 </a>
 <div id="navigation">
-<h2>Main menu</h2><ul><li class="primeminister"><span>&nbsp;</span><a href="Page2.asp">prime minister</a><ul><li><strong>contact</strong></li><li><a href="Page8809.asp">the big issues</a></li><li><a href="Page4.asp">biography</a></li><li><a href="Page5.asp">speeches</a></li><li><a href="Page12.asp">PM's office</a></li></ul></li><li class="government"><span>&nbsp;</span><a href="Page18.asp">government</a><ul><li><a href="Page19.asp">cabinet</a></li><li><a href="Page29.asp">guide to legislation</a></li><li><a href="Page30.asp">guide to government</a></li><li><a href="Page31.asp">in your area</a></li><li><a href="Page32.asp">links</a></li></ul></li><li class="news"><span>&nbsp;</span><a href="Page20.asp">newsroom</a><ul><li><a href="Page21.asp">latest news</a></li><li><a href="Page34.asp">media centre</a></li><li><a href="Page36.asp">email updates</a></li></ul></li><li class="downingstreet"><span>&nbsp;</span><a href="Page22.asp">downing street</a><ul><li><a href="Page39.asp">welcome</a></li><li><a href="Page175.asp">history of the building</a></li><li><a href="Page123.asp">PMs in history</a></li><li><a href="Page41.asp">tour</a></li></ul></li><li class="broadcasts"><span>&nbsp;</span><a href="Page24.asp">broadcasts</a><ul><li><a href="Page306.asp">PM's Question Time</a></li><li><a href="Page308.asp">PM's statements</a></li><li><a href="Page3054.asp">films</a></li></ul></li></ul></div>
+<h2>Main menu</h2><ul><li class="primeminister"><span>&nbsp;</span><a href=http://www.number10.gov.uk/output/Page2.asp>prime minister</a><ul><li><a href=http://www.number10.gov.uk/output/Page3.asp>contact</a></li><li><a href=http://www.number10.gov.uk/output/Page8809.asp>the big issues</a></li><li><a href=http://www.number10.gov.uk/output/Page4.asp>biography</a></li><li><a href=http://www.number10.gov.uk/output/Page5.asp>speeches</a></li><li><a href=http://www.number10.gov.uk/output/Page12.asp>PM's office</a></li></ul></li><li class="government"><span>&nbsp;</span><a href=http://www.number10.gov.uk/output/Page18.asp>government</a><ul><li><a href=http://www.number10.gov.uk/output/Page19.asp>cabinet</a></li><li><a href=http://www.number10.gov.uk/output/Page29.asp>guide to legislation</a></li><li><a href=http://www.number10.gov.uk/output/Page30.asp>guide to government</a></li><li><a href=http://www.number10.gov.uk/output/Page31.asp>in your area</a></li><li><a href=http://www.number10.gov.uk/output/Page32.asp>links</a></li></ul></li><li class="news"><span>&nbsp;</span><a href=http://www.number10.gov.uk/output/Page20.asp>newsroom</a><ul><li><a href=http://www.number10.gov.uk/output/Page21.asp>latest news</a></li><li><a href=http://www.number10.gov.uk/output/Page34.asp>media centre</a></li><li><a href=http://www.number10.gov.uk/output/Page36.asp>email updates</a></li></ul></li><li class="downingstreet"><span>&nbsp;</span><a href=http://www.number10.gov.uk/output/Page22.asp>downing street</a><ul><li><a href=http://www.number10.gov.uk/output/Page39.asp>welcome</a></li><li><a href=http://www.number10.gov.uk/output/Page175.asp>history of the building</a></li><li><a href=http://www.number10.gov.uk/output/Page123.asp>PMs in history</a></li><li><a href=http://www.number10.gov.uk/output/Page41.asp>tour</a></li></ul></li><li class="broadcasts"><span>&nbsp;</span><a href=http://www.number10.gov.uk/output/Page24.asp>broadcasts</a><ul><li><a href=http://www.number10.gov.uk/output/Page306.asp>PM's Question Time</a></li><li><a href=http://www.number10.gov.uk/output/Page308.asp>PM's statements</a></li><li><a href=http://www.number10.gov.uk/output/Page3054.asp>films</a></li></ul></li></ul></div>
 <span class="clear">&nbsp;</span>
 </div>
 <div id="helpbar">
@@ -64,7 +64,7 @@
 <input type="hidden" name="to" value="0" />
 <input type="hidden" name="ha" value="368" />
 </form>
-<p>You are here: <a href="http://www.number10.gov.uk/output/Page1.asp">home</a>&nbsp;>&nbsp;<a href="http://www.number10.gov.uk/output/Page2.asp">prime minister</a>&nbsp;>&nbsp;contact</p>
+<p>You are here: <a href="http://www.number10.gov.uk/output/Page1.asp">home</a>&nbsp;>&nbsp;petitions</p>
 </div>
 </div>
 <div id="main">

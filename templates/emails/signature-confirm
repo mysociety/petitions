@@ -1,0 +1,14 @@
+Subject: Signing up to '<?=$values['title']?>'
+
+<?=$values['user_name']?>,
+
+Please click on the link below to confirm your signature on the
+petition at the bottom of this email.
+
+<?=$values['url']?>
+
+The petition was created by <?=$values['creator_name']?> and reads:
+
+'<?=$values['sentence']?>'
+
+<?=$values['signature']?>

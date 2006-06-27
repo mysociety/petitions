@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.3 2006-06-20 14:14:25 francis Exp $
+ * $Id: pet.php,v 1.4 2006-06-27 22:40:28 matthew Exp $
  * 
  */
 
@@ -18,6 +18,7 @@ require_once "../conf/general";
 // Some early config files - put most config files after language negotiation below
 require_once "../../phplib/error.php";
 require_once 'page.php';
+require_once 'fns.php';
 
 /* Output buffering: PHP's output buffering is broken, because it does not
  * affect headers. However, it's worth using it anyway, because in the common
@@ -63,7 +64,7 @@ $pet_timestamp = substr(db_getOne('select ms_current_timestamp()'), 0, 19);
 $pet_time = strtotime($pet_timestamp);
 
 /* pet_show_error MESSAGE
- * General purpose eror display. */
+ * General purpose error display. */
 function pet_show_error($message) {
     header('HTTP/1.0 500 Internal Server Error');
     page_header(_("Sorry! Something's gone wrong."), array('override'=>true));
@@ -72,4 +73,42 @@ function pet_show_error($message) {
     page_footer();
 }
 
+/* User must have an account to do something (create petition, sign petition).
+ * Yet again, copying some of phplib/person.php.
+ * Must do this properly at some point.
+ * This is so they can avoid all the confusing passwordy stuff.
+ */
+function pet_send_logging_in_email($template, $data, $q_email, $q_name) {
+    $P = person_if_signed_on();
+    if ($P && $P->email() == $q_email)
+        return $P;
+
+    $token = auth_token_store('login', array(
+        'email' => $q_email,
+        'name' => $q_name,
+        'stash' => stash_request(),
+        'direct' => 1
+    ));
+    db_commit();
+    $url = OPTION_BASE_URL . "/L/$token";
+    $data['url'] = $url;
+    $data['user_name'] = $q_name;
+    if (is_null($data['user_name']))
+        $data['user_name'] = 'Petition signer';
+    $data['user_email'] = $q_email;
+    pet_send_email_template($q_email, $template, $data);
+    page_header("Now check your email!");
+?>
+<p class="loudmessage">
+Now check your email!<br>
+We've sent you an email, and you'll need to click the link in it before you can
+continue</p>
+<p class="loudmessage">
+<small>If you use <acronym title="Web based email">Webmail</acronym> or have
+"junk mail" filters, you may wish to check your bulk/spam mail folders:
+sometimes, our messages are marked that way.</small></p>
+<?
+    page_footer(array('nonav' => 1));
+    exit();
+}
 

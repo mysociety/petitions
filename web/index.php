@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.3 2006-06-22 17:19:45 francis Exp $
+// $Id: index.php,v 1.4 2006-06-27 22:40:29 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -24,9 +24,9 @@ and to deliver your petition directly to Downing Street.
 </p>
 
 <p>This service has been set up in partnership with <a
-href="http://www.mysociety.org">mySociety</a>, a non-partisan charitable
+href="http://www.mysociety.org/">mySociety</a>, a non-partisan charitable
 project that runs various democracy focussed websites in the UK, such as
-<a href="http://www.hearfromyourmp.com">HearFromYourMP.com</a>.
+<a href="http://www.hearfromyourmp.com/">HearFromYourMP.com</a>.
 </p>
 
 <p>All petitions that are submitted to this website will be accepted, as long as
@@ -40,11 +40,13 @@ response from the Government by email once the petition is closed.
 </p>
 
 <p>To ensure transparency, any petition that cannot be opened for signatures on
-this site will be published, on the rejected petitions (link) page, along with
-an explanation of why it could not be hosted.  
+this site will be published, on the <a href="/list/rejected">rejected petitions</a>
+page, along with an explanation of why it could not be hosted.  
 </p>
 
-<p><a href="/new">Create new petition</a>
+<ul>
+<li><a href="/new">Create new petition</a></li>
+<li><a href="/list">View current petitions</a></li>
 
 <?  page_footer();
 
