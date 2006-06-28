@@ -1,11 +1,11 @@
 <?
 // all.php:
-// List all pledges.
+// List all petitions.
 //
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.1 2006-06-27 22:40:29 matthew Exp $
+// $Id: list.php,v 1.2 2006-06-28 23:35:57 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -134,7 +134,7 @@ if (!$rss) {
 	    $b = true;
         }
         $navlinks .= '</p> <p align="center">';
-        $navlinks .= $prev . ' | '._('Pledges'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
+        $navlinks .= $prev . ' | '._('Petitions'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
             ($q_offset + PAGE_SIZE > $ntotal ? $ntotal : $q_offset + PAGE_SIZE) . ' of ' .
             $ntotal . ' | ' . $next;
         $navlinks .= '</p>';
@@ -147,25 +147,13 @@ if ($ntotal > 0) {
     $c = 0;
     $lastcategory = 'none';
     while ($row = db_fetch_array($qrows)) {
-        $pledge = new Petition($row);
-        if ($q_sort == "category") {
-            $categories = $pledge->categories();
-            $thiscategory = array_pop($categories);
-            if ($thiscategory == null) 
-                $thiscategory = _("Miscellaneous");
-            if ($lastcategory <> $thiscategory) {
-                if (!$rss)
-                    print "<h2 style=\"clear:both\">"._($thiscategory)."</h2>";
-                $c = 0;
-                $lastcategory = $thiscategory;
-            }
-        }
-        $arr = array('class'=>"pledge-".$c%2); # , 'href' => $pledge->url_main() );
+        $petition = new Petition($row);
+        $arr = array('class'=>"petition-".$c%2, 'href' => $petition->url_main() );
         if ($q_type == 'succeeded_closed' || $q_type == 'failed') $arr['closed'] = true;
         if ($rss)
-            $rss_items[] = $pledge->rss_entry();
+            $rss_items[] = $petition->rss_entry();
         else
-            $pledge->h_display_box($arr);
+            $petition->h_display_box($arr);
         $c++;
     }
     if (!$rss && $ntotal > PAGE_SIZE)

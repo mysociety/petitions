@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: ref-index.php,v 1.1 2006-06-27 22:40:29 matthew Exp $
+// $Id: ref-index.php,v 1.2 2006-06-28 23:35:57 matthew Exp $
 
 require_once '../conf/general';
 require_once '../phplib/page.php';
@@ -16,7 +16,7 @@ require_once '../phplib/petition.php';
 define('MAX_PAGE_SIGNERS', '500');
 
 $ref = get_http_var('ref');
-# page_check_ref($ref);
+page_check_ref($ref);
 $p  = new Petition($ref);
 
 $title = $p->sentence(array('html'=>true));

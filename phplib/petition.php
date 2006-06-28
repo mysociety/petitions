@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.3 2006-06-27 22:40:28 matthew Exp $
+ * $Id: petition.php,v 1.4 2006-06-28 23:35:56 matthew Exp $
  * 
  */
 
@@ -98,11 +98,17 @@ class Petition {
     function h_name() { return htmlspecialchars($this->data['name']); }
     function h_pretty_deadline() { return prettify(htmlspecialchars($this->data['deadline'])); }
 
-    function h_display_box() {
+    function h_display_box($params = array()) {
 ?>
         <div class="petition_box">
             <p style="margin-top: 0">
-            <?= $this->sentence(array('html'=>true)) ?>
+<?
+        if (isset($params['href']))
+            print '<a href="' . $params['href'] . '">';
+        print $this->sentence(array('html'=>true));
+        if (isset($params['href']))
+            print '</a>';
+?>
             </p> 
             <p align="right">&mdash; <?=$this->h_name() ?></p>
             <p>
@@ -120,7 +126,7 @@ class Petition {
     }
 
     // URLs
-    #function url_main() { return pet_domain_url() . $this->h_ref; }
+    function url_main() { return '/' . $this->h_ref; }
 
     // Write history to log file 
     function log_event($message, $editor) {

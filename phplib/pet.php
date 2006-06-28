@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.4 2006-06-27 22:40:28 matthew Exp $
+ * $Id: pet.php,v 1.5 2006-06-28 23:35:56 matthew Exp $
  * 
  */
 
@@ -27,6 +27,8 @@ require_once 'fns.php';
  * displaying an error, a redirect, an image or anything else this will break
  * horribly.*/
 ob_start();
+
+$locale_current = 'en-gb';
 
 /* pet_handle_error NUMBER MESSAGE
  * Display a PHP error message to the user. */

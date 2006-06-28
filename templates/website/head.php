@@ -64,7 +64,7 @@
 <input type="hidden" name="to" value="0" />
 <input type="hidden" name="ha" value="368" />
 </form>
-<p>You are here: <a href="http://www.number10.gov.uk/output/Page1.asp">home</a>&nbsp;>&nbsp;petitions</p>
+<p>You are here: <a href="http://www.number10.gov.uk/output/Page1.asp">home</a>&nbsp;>&nbsp;<a href="/">petitions</a></p>
 </div>
 </div>
 <div id="main">

@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.7 2006-06-27 22:40:29 matthew Exp $
+// $Id: new.php,v 1.8 2006-06-28 23:35:57 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -242,7 +242,7 @@ function petition_form_you($data = array(), $errors = array()) {
 <br><br><strong>Telephone number:</strong>
 <input<? if (array_key_exists('telephone', $errors)) print ' class="error"' ?> type="text" name="telephone" value="<? if (isset($data['telephone'])) print htmlspecialchars($data['telephone']) ?>" size="15" />
 <br><br><strong>URL of campaign/organisation</strong>
-<input<? if (array_key_exists('org_url', $errors)) print ' class="error"' ?> type="text" name="org_url" value="<? if (isset($data['org_url'])) print htmlspecialchars($data['org_url']) ?>" size="20" />
+<input<? if (array_key_exists('org_url', $errors)) print ' class="error"' ?> type="text" name="org_url" value="<? if (isset($data['org_url'])) print htmlspecialchars($data['org_url']) ?>" size="20" /> (optional)
 <br><br>
 <strong><?=_('Your email:') ?></strong> <input<? if (array_key_exists('email', $errors)) print ' class="error"' ?> type="text" size="30" name="email" value="<? if (isset($data['email'])) print htmlspecialchars($data['email']) ?>">
 <br><strong><?=_('Confirm email:') ?></strong> <input<? if (array_key_exists('email2', $errors)) print ' class="error"' ?> type="text" size="30" name="email2" value="<? if (isset($data['email2'])) print htmlspecialchars($data['email2']) ?>">
@@ -298,13 +298,14 @@ function step_you_error_check($data) {
     if (isset($data['email']) && isset($data['email2']) && $data['email'] != $data['email2'])
         $errors['email2'] = 'Please make sure your email addresses match';
     if (!validate_postcode($data['postcode'])) $errors['postcode'] = _('Please enter a valid postcode');
+    if (!preg_match('#\d#', $data['telephone']))
+        $errors['telephone'] = 'Please enter a valid telephone number';
     $vars = array(
         'name' => 'name',
         'address' => 'postal address',
         'email' => 'email address',
         'postcode' => 'postcode',
         'telephone' => 'phone number',
-	'org_url' => 'campaign or organisation web page',
     );
     foreach ($vars as $var => $p_var) {
     	if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
@@ -408,8 +409,9 @@ function petition_create($P, $data) {
     $page_title = _('Petition Created');
     $url = htmlspecialchars(OPTION_BASE_URL . "/" . urlencode($p->data['ref']));
 ?>
-    <p class="noprint loudmessage"><?=_('Thank you for creating your petition.') ?></p>
-    <p class="noprint loudmessage" align="center"><? printf(_('It is NOT now live at %s<br>and people can sign it.'), '<a href="'.$url.'">'.$url.'</a>') ?></p>
+    <p class="noprint loudmessage">Thank you for creating your petition.</p>
+    <p class="noprint loudmessage" align="center">It has been entered our
+    system and will now go to the Number 10 team for approval.</p>
 <?  
 }
 

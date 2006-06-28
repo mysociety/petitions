@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: ref-sign.php,v 1.1 2006-06-27 22:40:29 matthew Exp $
+// $Id: ref-sign.php,v 1.2 2006-06-28 23:35:57 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/petition.php';
@@ -13,7 +13,7 @@ require_once '../../phplib/person.php';
 #require_once '../../phplib/utility.php';
 require_once '../../phplib/importparams.php';
 
-# page_check_ref(get_http_var('ref'));
+page_check_ref(get_http_var('ref'));
 $p = new Petition(get_http_var('ref'));
 
 $title = _('Signature addition');

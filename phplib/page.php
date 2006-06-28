@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.5 2006-06-27 22:40:28 matthew Exp $
+// $Id: page.php,v 1.6 2006-06-28 23:35:56 matthew Exp $
 
 require_once '../../phplib/person.php';
 
@@ -40,6 +40,18 @@ function page_header($title, $params = array()) {
     $devwarning = join('<br>', $devwarning);
 
     include "../templates/website/head.php";
+
+    if ($P) {
+        print '<p id="signedon" class="noprint">';
+        print _('Hello, ');
+        if ($P->has_name())
+            print htmlspecialchars($P->name);
+        else 
+            print htmlspecialchars($P->email);
+        print ' <small>(<a href="/logout">';
+        print _('this isn\'t you?  click here');
+        print '</a>)</small></p>';
+    }
 }
 
 /* page_footer PARAMS
@@ -52,5 +64,53 @@ function page_footer($params = array()) {
     header('Content-Length: ' . ob_get_length());
 }
 
+/* page_check_ref REFERENCE
+ * Given a pledge REFERENCE, check whether it uniquely identifies a pledge. If
+ * it does, return. Otherwise, fuzzily find possibly matching pledges and
+ * show the user a set of possible pages. */
+function page_check_ref($ref) {
+    if (!is_null(db_getOne('select ref from petition where status=? and ref = ?', array('live', $ref))))
+        return;
+    else if (!is_null(db_getOne('select ref from petition where status=? and ref ilike ?', array('live', $ref))))
+        /* XXX should redirect to the page with the correctly-capitalised
+         * ref so that we never do the slow query */
+        return;
+    page_header(_("We couldn't find that petition"));
+#    $s = db_query('select pledge_id from pledge_find_fuzzily(?) limit 5', $ref);
+#    if (db_num_rows($s) == 0) {
+    printf("<p>We couldn't find any pledge with a reference like \"%s\". Try the following: </p>", htmlspecialchars($ref) );
+#    } else {
+#        printf(p(_("We couldn't find the pledge with reference \"%s\". Did you mean one of these pledges?")), htmlspecialchars($ref) );
+#        print '<dl>';
+#        while ($r = db_fetch_array($s)) {
+#            $p = new Pledge((int)$r['pledge_id']);
+#            print '<dt><a href="/'
+#                        /* XXX for the moment, just link to pledge index page,
+#                         * but we should figure out which page the user
+#                         * actually wanted and link to that instead. */
+#                        . htmlspecialchars($p->ref()) . '">'
+#                        . htmlspecialchars($p->ref()) . '</a>'
+#                    . '</dt><dd>'
+#                    . $p->h_sentence()
+#                    . '</dd>';
+#        }
+#        print '</dl>';
+#        print p(_('If none of those look like what you want, try the following:'));
+#    }
+
+    print '<ul>
+        <li>' . _('If you typed in the location, check it carefully and try typing it again.') . '</li>
+        <li>' . _('Look for the pledge on <a href="/list">the list of all petitions</a>.') . '</li></ul>';
+#        <li>' . _('Search for the petition you want by entering words below.') . '</ul>';
+/*    ?>
+<form accept-charset="utf-8" action="/search" method="get" class="pledge">
+<label for="s"><?=_('Search for a pledge') ?>:</label>
+<input type="text" id="s" name="s" size="15" value=""> <input type="submit" value=<?=_('Go') ?>>
+</form>
+<? */
+    
+    page_footer();
+    exit();
+}
 
 ?>

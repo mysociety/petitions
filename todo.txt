@@ -1,14 +1,5 @@
-- Add extra organisation fields in 
-
-- Show if you are logged in in the top corner
 - Don't keep you logged in after petition creation etc.?
-
-- Create basic petition display in main interface
-- Do signup form
-
-- Create basic monitor / approval interface (remember to log everything)
-- Send email to administrator with link to that interface
-
+- Send email to administrator with link to admin interface upon petition creation
+- Whole initial rejection/resubmission structure
 - Make email confirmation screens not have header/footer
-
 - Grep for pb_ and PledgeBank in the source
