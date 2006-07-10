@@ -1,0 +1,170 @@
+#!/usr/bin/perl -w
+#
+# speedtest:
+#
+# Copyright (c) 2006 Chris Lightfoot. All rights reserved.
+# Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
+#
+
+my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.1 2006-07-10 13:47:28 chris Exp $';
+
+use strict;
+require 5.8.0;
+
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+
+use IO::Socket;
+use IO::Select;
+use POSIX qw();
+use Time::HiRes;
+
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+};
+use mySociety::DBHandle qw(dbh);
+
+use Petitions;
+
+sub debug (@) {
+    print STDERR "speedtest: ", @_, "\n";
+}
+
+sub next_id () {
+    return scalar(dbh()->selectrow_array("select nextval('global_seq')"));
+}
+
+sub create_petition () {
+    # Create the petition creator.
+    my $creator_id = next_id();
+    debug("creator_id = $creator_id");
+    dbh()->do('
+        insert into person (id, name, email)
+        values (?, ?, ?)', {},
+        $creator_id, 'Test Testy McTest', 'test@example.com');
+
+    my $petition_id = next_id();
+    debug("petition_id = $petition_id");
+
+    dbh()->do("
+        insert into petition (
+            id, ref,
+            title,
+            content,
+            deadline,
+            rawdeadline,
+            person_id, name, organisation,
+            address, postcode,
+            telephone, org_url,
+            creationtime, status, laststatuschange
+        ) values (
+            ?, ?,
+            ?,
+            ?,
+            extract(date from ms_current_timestamp()),
+            extract(date from ms_current_timestamp())::text,
+            ?, ?, ?,
+            ?, ?,
+            ?, ?,
+            ms_current_timestamp(), 'live', ms_current_timestamp()
+        )", {},
+        $petition_id, 'TestPetition',
+        'Test petition',
+        'benchmark the petition system to find out how many servers we need',
+        $creator_id, 'Test Testy McTest', 'Test Organisation',
+        '1 Test Street, Test Town, Testshire', 'ZZ9 9ZZ',
+        '0208 555 1234', 'http://example.com/'
+        );
+        
+    dbh()->commit();
+    debug("created new petition");
+
+    return $petition_id;
+}
+
+sub add_signer ($) {
+    my $petition_id = shift;
+    # Create the person.
+    my $person_id = new_id();
+    dbh()->do('
+        insert into person (id, name, email)
+        values (?, ?, ?)', {},
+        $person_id, "Test McTest $person_id", "test-$person_id\@example.com");
+
+    # Sign the petition.
+    my $signer_id = new_id();
+    dbh()->do('
+        insert into signer (
+            id, petition_id, person_id,
+            name, showname
+            signtime
+        ) values (
+            ?, ?, ?,
+            ?, true,
+            ms_current_timestamp()
+        )', {},
+        $signer_id, $petition_id, $person_id,
+        "Test McTest $signer_id"
+        );
+
+    # Commit changes.
+    dbh()->commit();
+}
+
+my $concurrency = shift(@ARGV);
+$concurrency ||= 1;
+debug("concurrency = $concurrency");
+
+my $petition_id = create_petition();
+
+my $foad = 0;
+$SIG{INT} = $SIG{TERM} = sub { $foad = 1; };
+
+# Spawn a number of child processes to add signers.
+my @children = ( );
+my ($s1, $s2) = IO::Socket::socketpair(AF_UNIX, SOCK_DGRAM, 0)
+    or die "socketpair: $!";
+for (my $i = 0; $i < $concurrency; ++$i) {
+    my $pid = fork();
+    if (!defined($pid)) {
+        die "fork: $pid";
+    } elsif (0 == $pid) {
+        dbh()->selectrow_array('select 1');
+        # wait until parent starts us off
+        my $x = 0;
+        local $SIG{USR1} = sub { $x = 1; };
+        pause();
+        # add signers in a loop, writing a byte to the socket for each one.
+        while (!$foad) {
+            add_signer($petition_id);
+            $s2->syswrite("\0", 1);
+        }
+    } else {
+        debug("spawned child process $pid");
+        push(@children, $pid);
+    }
+}
+
+# Spawned all necessary processes; start them off simultaneously, and then wait
+# for them to complete inserts.
+kill(USR1 => @children);
+
+while (!$foad) {
+    my $buf = '';
+    my $n = $s1->sysread($buf, 64, 0);
+    if (!defined($n)) {
+        warn "read: $!";
+        last;
+    } else {
+        for (my $i = 0; $i < $n; ++$n) {
+            printf "%f\n", time();
+        }
+    }
+}
+
+kill(TERM => @children);
+
+exit(0);
