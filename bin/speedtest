@@ -6,7 +6,7 @@
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.1 2006-07-10 13:47:28 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.2 2006-07-10 14:04:21 chris Exp $';
 
 use strict;
 require 5.8.0;
@@ -19,7 +19,7 @@ use lib "$FindBin::Bin/../../perllib";
 use IO::Socket;
 use IO::Select;
 use POSIX qw();
-use Time::HiRes;
+use Time::HiRes qw(time);
 
 use mySociety::Config;
 BEGIN {
@@ -30,7 +30,7 @@ use mySociety::DBHandle qw(dbh);
 use Petitions;
 
 sub debug (@) {
-    print STDERR "speedtest: ", @_, "\n";
+    print STDERR "speedtest[$$]: ", @_, "\n";
 }
 
 sub next_id () {
@@ -64,8 +64,8 @@ sub create_petition () {
             ?, ?,
             ?,
             ?,
-            extract(date from ms_current_timestamp()),
-            extract(date from ms_current_timestamp())::text,
+            ms_current_timestamp()::date,
+            ms_current_timestamp()::date,
             ?, ?, ?,
             ?, ?,
             ?, ?,
@@ -88,18 +88,18 @@ sub create_petition () {
 sub add_signer ($) {
     my $petition_id = shift;
     # Create the person.
-    my $person_id = new_id();
+    my $person_id = next_id();
     dbh()->do('
         insert into person (id, name, email)
         values (?, ?, ?)', {},
         $person_id, "Test McTest $person_id", "test-$person_id\@example.com");
 
     # Sign the petition.
-    my $signer_id = new_id();
+    my $signer_id = next_id();
     dbh()->do('
         insert into signer (
             id, petition_id, person_id,
-            name, showname
+            name, showname,
             signtime
         ) values (
             ?, ?, ?,
@@ -118,6 +118,9 @@ my $concurrency = shift(@ARGV);
 $concurrency ||= 1;
 debug("concurrency = $concurrency");
 
+dbh()->do('delete from signer');
+dbh()->do('delete from petition');
+dbh()->do('delete from person');
 my $petition_id = create_petition();
 
 my $foad = 0;
@@ -125,7 +128,7 @@ $SIG{INT} = $SIG{TERM} = sub { $foad = 1; };
 
 # Spawn a number of child processes to add signers.
 my @children = ( );
-my ($s1, $s2) = IO::Socket::socketpair(AF_UNIX, SOCK_DGRAM, 0)
+my ($s1, $s2) = IO::Socket->socketpair(AF_UNIX, SOCK_DGRAM, 0)
     or die "socketpair: $!";
 for (my $i = 0; $i < $concurrency; ++$i) {
     my $pid = fork();
@@ -134,14 +137,17 @@ for (my $i = 0; $i < $concurrency; ++$i) {
     } elsif (0 == $pid) {
         dbh()->selectrow_array('select 1');
         # wait until parent starts us off
-        my $x = 0;
-        local $SIG{USR1} = sub { $x = 1; };
-        pause();
+        my $buf = '';
+        $s2->sysread($buf, 1);
+        debug("started");
         # add signers in a loop, writing a byte to the socket for each one.
         while (!$foad) {
             add_signer($petition_id);
-            $s2->syswrite("\0", 1);
+            debug("added signer");
+            $s2->syswrite("\0", 1)
+                or die "write: $!";
         }
+        exit(0);
     } else {
         debug("spawned child process $pid");
         push(@children, $pid);
@@ -150,7 +156,10 @@ for (my $i = 0; $i < $concurrency; ++$i) {
 
 # Spawned all necessary processes; start them off simultaneously, and then wait
 # for them to complete inserts.
-kill(USR1 => @children);
+debug("starting children...");
+for (my $i = 0; $i < $concurrency; ++$i) {
+    $s1->syswrite("\0", 1);
+}
 
 while (!$foad) {
     my $buf = '';
