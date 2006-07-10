@@ -6,7 +6,7 @@
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.4 2006-07-10 17:25:48 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.5 2006-07-10 17:28:27 chris Exp $';
 
 use strict;
 require 5.8.0;
@@ -136,9 +136,10 @@ my $concurrency = shift(@ARGV);
 $concurrency ||= 1;
 debug("concurrency = $concurrency");
 
-dbh()->do('delete from signer');
-dbh()->do('delete from petition');
-dbh()->do('delete from person');
+foreach (qw(requeststash token signer petition person)) {
+    dbh()->do("delete from $_");
+    debug("cleared $_ table...");
+}
 my $petition_id = create_petition();
 
 my $foad = 0;
