@@ -6,7 +6,7 @@
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.3 2006-07-10 14:15:24 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.4 2006-07-10 17:25:48 chris Exp $';
 
 use strict;
 require 5.8.0;
@@ -87,6 +87,24 @@ sub create_petition () {
 
 sub add_signer ($) {
     my $petition_id = shift;
+
+    # Create an auth token and request stash.
+    my $stash = sprintf('%08x', int(rand(0xffffffff)));
+    
+    dbh()->do("
+        insert into requeststash (key, method, url, post_data)
+        values (?, 'POST', ?, ?)", {},
+        $stash, 'http://petitions/TestPetition', 'x' x 120);
+    
+    dbh()->do("
+        insert into token (scope, token, data, created)
+        values ('login', ?, ?, ms_current_timestamp())", {},
+        sprintf('%08x%04x', int(rand(0xffffffff)), int(rand(0xffff))),
+        'email=test-...@example.com;name=Test McTest ....;stash=0123456789abcdef;direct=1'
+        );
+
+    dbh()->commit();
+    
     # Create the person.
     my $person_id = next_id();
     dbh()->do('
@@ -164,7 +182,7 @@ for (my $i = 0; $i < $concurrency; ++$i) {
 
 my @stimes;
 my $starttime = time();
-while (!$foad && time() - $starttime < 20) {
+while (!$foad && time() - $starttime < 10) {
     my $buf = '';
     my $n = $s1->sysread($buf, 1);
     if (!defined($n)) {
