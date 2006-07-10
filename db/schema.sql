@@ -4,8 +4,12 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.5 2006-06-27 22:40:28 matthew Exp $
+-- $Id: schema.sql,v 1.6 2006-07-10 13:14:35 chris Exp $
 --
+
+-- global_seq
+-- Global sequence counter.
+create sequence global_seq;
 
 -- secret
 -- A random secret.
@@ -53,7 +57,7 @@ create function ms_current_timestamp()
 -- users, but call the table person rather than user so we don't have to quote
 -- its name in every statement....
 create table person (
-    id serial not null primary key,
+    id integer not null primary key default nextval('global_seq'),
     name text,
     email text not null,
     password text,
@@ -65,7 +69,7 @@ create unique index person_email_idx on person(email);
 
 -- information about each petition
 create table petition (
-    id serial not null primary key,
+    id integer not null primary key default nextval('global_seq'),
     -- short name of petition for URLs
     ref text not null,
 
@@ -104,7 +108,7 @@ create index petition_status_idx on petition(status);
 
 -- History of things which have happened to a petition
 create table petition_log (
-    order_id serial not null primary key, -- for ordering
+    order_id integer not null primary key default nextval('global_seq'), -- for ordering
     petition_id integer not null references petition(id),
     whenlogged timestamp not null,
     message text not null,
@@ -112,7 +116,7 @@ create table petition_log (
 );
 
 create table signer (
-    id serial not null primary key,
+    id integer not null primary key default nextval('global_seq'),
     petition_id integer not null references petition(id),
 
     -- Who has signed the petition.
