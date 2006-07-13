@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.3 2006-07-13 14:15:43 matthew Exp $
+ * $Id: admin-pet.php,v 1.4 2006-07-13 15:46:53 matthew Exp $
  * 
  */
 
@@ -361,10 +361,15 @@ class ADMIN_PAGE_PET_MAIN {
 <form method="post"><input type="hidden" name="reject_form_submit" value="1">
 <input type="hidden" name="petition" value="<?=$id ?>">
 <p>Category for rejection: <select name="category">
-<option>Illegal
-<option>Obscene
-<option>Involves chocolate
-<option>etc.
+<option value="">Please choose...
+<option>Party political material
+<option>False or defamatory statements
+<option>Information protected by an injunction or court order
+<option>Material which is commercially sensitive, confidential or which may cause personal distress or loss
+<option>Names of individual officials of public bodies, unless part of the senior management of those organisations
+<option>Names of family members of officials of public bodies, or elected representatives
+<option>Names of individuals, or information where they may be identified, in relation to criminal accusations
+<option>Offensive language</option>
 </select></p>
 <p>Reason for rejection:<br><textarea name="reason" rows="10" cols="70"></textarea></p>
 <input type="submit" value="Reject petition">
@@ -376,14 +381,14 @@ class ADMIN_PAGE_PET_MAIN {
 	$status = $p->status();
 	if ($status == 'draft') {
 	    db_getOne("UPDATE petition SET status='rejectedonce' WHERE id=?", $id);
-            $p->log_event("Admin rejected petition for the first time", null);
+            $p->log_event("Admin rejected petition for the first time. Category $category, reason $reason", null);
 	    $template = 'admin-rejected-once';
             $post_data = array('data' => base64_encode(serialize($p->data)), 'tostepintro' => 1);
 	    $stash = stash_new_request('POST', OPTION_BASE_URL . '/new', $post_data);
 	    $url = OPTION_BASE_URL . '/new?stashpost=' . $stash;
 	} elseif ($status == 'resubmitted') {
 	    db_getOne("UPDATE petition SET status='rejected' WHERE id=?", $id);
-            $p->log_event("Admin rejected petition for the second time", null);
+            $p->log_event("Admin rejected petition for the second time. Category $category, reason $reason", null);
 	    $template = 'admin-rejected-again';
 	    $url = '';
 	} else {

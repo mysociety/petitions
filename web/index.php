@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.5 2006-07-13 14:15:44 matthew Exp $
+// $Id: index.php,v 1.6 2006-07-13 15:46:53 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -28,7 +28,7 @@ project that runs various democracy focussed websites in the UK, such as
 </p>
 
 <p>All petitions that are submitted to this website will be accepted, as long as
-they meet the basic conditions set out in our acceptance policy. The aim is to
+they meet the basic conditions set out in our <a href="/acceptance">acceptance policy</a>. The aim is to
 enable as many people as possible to make their views known.
 </p>
 

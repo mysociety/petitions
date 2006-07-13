@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.1 2006-07-13 14:15:44 matthew Exp $
+// $Id: faq.php,v 1.2 2006-07-13 15:46:53 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -33,7 +33,7 @@ You can start a petition using our <a href="/new">e-petition form</a>. You will 
 <dt>4.	Do you accept all petitions?
 
 <dd>
-We aim to accept as many petitions as possible. However this site has to meet some basic conditions that are set out in our <a href="">acceptance policy</a>(?) and in the Civil Service Code.
+We aim to accept as many petitions as possible. However this site has to meet some basic conditions that are set out in our <a href="/acceptance">acceptance policy</a>(?) and in the Civil Service Code.
 
 Petitioners may freely disagree with the Government or call for changes of policy. There will be no attempt to exclude critical views and decisions will not be made on a party political basis.
 
