@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: ref-index.php,v 1.2 2006-06-28 23:35:57 matthew Exp $
+// $Id: ref-index.php,v 1.3 2006-07-13 14:15:44 matthew Exp $
 
 require_once '../conf/general';
 require_once '../phplib/page.php';
@@ -25,10 +25,17 @@ page_header($title, array(
         ));
 draw_status_plaque($p);
 $p->h_display_box();
-if (!$p->finished()) { petition_sign_box(); } 
-# draw_spreadword($p);
-draw_signatories($p);
+if ($p->status() == 'live')
+    petition_sign_box();
+if ($p->status() != 'rejected')
+    draw_signatories($p);
+else
+    reject_box();
 page_footer();
+
+function reject_box() { ?>
+<p>This pledge has been <strong>rejected</strong>.</p>
+<? }
 
 function draw_status_plaque($p) {
     if (!$p->open()) {

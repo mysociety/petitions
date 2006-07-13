@@ -5,12 +5,10 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.4 2006-06-27 22:40:29 matthew Exp $
+// $Id: index.php,v 1.5 2006-07-13 14:15:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
-require_once '../../phplib/utility.php';
-require_once '../../phplib/person.php';
 
 page_header(_('Introduction to e-petitions'));
 ?>

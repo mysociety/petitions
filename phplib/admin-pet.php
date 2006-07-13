@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.2 2006-07-13 11:44:03 matthew Exp $
+ * $Id: admin-pet.php,v 1.3 2006-07-13 14:15:43 matthew Exp $
  * 
  */
 
@@ -32,7 +32,7 @@ class ADMIN_PAGE_PET_SUMMARY {
         $signatures = db_getOne('SELECT COUNT(*) FROM signer');
         $signers = db_getOne('SELECT COUNT(DISTINCT person_id) FROM signer');
         
-        print "Total petitions in system: $petitions<br>$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $resubmitted resubmitted<br>$signatures signatures, $signers signers";
+        print "Total petitions in system: $petitions<br>$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $petitions_resubmitted resubmitted<br>$signatures signatures, $signers signers";
     }
 }
 

@@ -1,4 +1,4 @@
-<?php global $title, $devwarning; print '<?xml version="1.0"?>' ?>
+<?php global $devwarning; print '<?xml version="1.0"?>' ?>
 
 <!-- quirks mode -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

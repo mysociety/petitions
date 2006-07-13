@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.6 2006-06-28 23:35:56 matthew Exp $
+// $Id: page.php,v 1.7 2006-07-13 14:15:43 matthew Exp $
 
 require_once '../../phplib/person.php';
 
@@ -69,9 +69,9 @@ function page_footer($params = array()) {
  * it does, return. Otherwise, fuzzily find possibly matching pledges and
  * show the user a set of possible pages. */
 function page_check_ref($ref) {
-    if (!is_null(db_getOne('select ref from petition where status=? and ref = ?', array('live', $ref))))
+    if (!is_null(db_getOne("select ref from petition where status in ('live','rejected','finished') and ref = ?", $ref)))
         return;
-    else if (!is_null(db_getOne('select ref from petition where status=? and ref ilike ?', array('live', $ref))))
+    else if (!is_null(db_getOne("select ref from petition where status in ('live','rejected','finished') and ref ilike ?", $ref)))
         /* XXX should redirect to the page with the correctly-capitalised
          * ref so that we never do the slow query */
         return;
