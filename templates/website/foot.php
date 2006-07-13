@@ -1,4 +1,11 @@
 <img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
+<p align="center">
+<a href="/">Home</a> |
+<a href="/about">About</a> |
+<a href="/faq">Q&amp;A</a> |
+<a href="/new">Create</a> |
+<a href="/privacy">Privacy Policy</a>
+</p>
 </div>
 </div>
 <div id="rel_links">
