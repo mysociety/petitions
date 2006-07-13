@@ -4,7 +4,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.6 2006-07-10 13:14:35 chris Exp $
+-- $Id: schema.sql,v 1.7 2006-07-13 11:44:03 matthew Exp $
 --
 
 -- global_seq
@@ -96,7 +96,9 @@ create table petition (
     
     status text not null default 'draft' check (
         status = 'draft' -- petition is waiting for approval
-        or status = 'rejected' -- petition has been rejected
+        or status = 'rejectedonce' -- petition has been rejected once
+        or status = 'resubmitted' -- petition has been resubmitted
+        or status = 'rejected' -- petition has been rejected again, or timed out of rejectedonce
         or status = 'live' -- petition is active
         or status = 'finished' -- deadline has been passed
     ),

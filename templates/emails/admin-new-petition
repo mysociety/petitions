@@ -1,0 +1,17 @@
+Subject: New petition to the Prime Minister
+
+A new petition has been posted with the title:
+'<?=$values['title']?>'
+
+Please click on the link below to visit the admin page to approve
+or reject this petition:
+
+<?=$values['url']?>
+
+<?=$values['signature']?>
+
+The petition reads:
+
+We the undersigned petition the Prime Minister to:
+'<?=$values['content']?>'
+

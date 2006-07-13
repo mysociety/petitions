@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.8 2006-06-28 23:35:57 matthew Exp $
+// $Id: new.php,v 1.9 2006-07-13 11:44:04 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -20,7 +20,7 @@ if (get_http_var('tostepintro') || get_http_var('tostepmain')
    || get_http_var('tocreate') ) {
     petition_form_submitted();
 } else {
-    petition_form_intro();
+    petition_form_intro($_POST['data']);
 }
 $contents = ob_get_contents();
 ob_end_clean();
@@ -402,6 +402,10 @@ function petition_create($P, $data) {
                 ));
     }
 
+    // Send email to admin
+    $data['url'] = OPTION_ADMIN_URL . '?page=pet&o=draft';
+    pet_send_email_template(OPTION_CONTACT_EMAIL, 'admin-new-petition', $data);
+
     $p = new Petition($data['ref']); // Reselect full data set from DB
     $p->log_event("User created draft petition", null);
     db_commit();
@@ -410,7 +414,7 @@ function petition_create($P, $data) {
     $url = htmlspecialchars(OPTION_BASE_URL . "/" . urlencode($p->data['ref']));
 ?>
     <p class="noprint loudmessage">Thank you for creating your petition.</p>
-    <p class="noprint loudmessage" align="center">It has been entered our
+    <p class="noprint loudmessage" align="center">It has been entered on our
     system and will now go to the Number 10 team for approval.</p>
 <?  
 }

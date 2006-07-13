@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.1 2006-06-28 23:35:56 matthew Exp $
+ * $Id: admin-pet.php,v 1.2 2006-07-13 11:44:03 matthew Exp $
  * 
  */
 
@@ -27,11 +27,12 @@ class ADMIN_PAGE_PET_SUMMARY {
         $petitions_live = db_getOne("SELECT COUNT(*) FROM petition WHERE status='live'");
         $petitions_draft = db_getOne("SELECT COUNT(*) FROM petition WHERE status='draft'");
         $petitions_closed = db_getOne("SELECT COUNT(*) FROM petition WHERE status='finished'");
-        $petitions_rejected = db_getOne("SELECT COUNT(*) FROM petition WHERE status='rejected'");
+        $petitions_rejected = db_getOne("SELECT COUNT(*) FROM petition WHERE status='rejected' or status='rejectedonce'");
+	$petitions_resubmitted = db_getOne("select count(*) from petition where status='resubmitted'");
         $signatures = db_getOne('SELECT COUNT(*) FROM signer');
         $signers = db_getOne('SELECT COUNT(DISTINCT person_id) FROM signer');
         
-        print "Total petitions in system: $petitions<br>$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected<br>$signatures signatures, $signers signers";
+        print "Total petitions in system: $petitions<br>$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $resubmitted resubmitted<br>$signatures signatures, $signers signers";
     }
 }
 
@@ -81,6 +82,11 @@ class ADMIN_PAGE_PET_MAIN {
         $status = get_http_var('o');
         if (!$status || !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
 
+        $status_query = "status = '$status'";
+	if ($status == 'draft')
+	    $status_query = "(status = 'draft' or status = 'resubmitted')";
+	elseif ($status == 'rejected')
+	    $status_query = "(status = 'rejected' or status = 'rejectedonce')";
         $q = db_query("
             SELECT petition.*, person.email,
                 date_trunc('second',creationtime) AS creationtime, 
@@ -88,17 +94,19 @@ class ADMIN_PAGE_PET_MAIN {
                 (SELECT count(*) FROM signer WHERE petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge
             FROM petition 
             LEFT JOIN person ON person.id = petition.person_id
-            WHERE status='$status'
+            WHERE $status_query
             " .  ($order ? ' ORDER BY ' . $order : '') );
         $found = array();
         while ($r = db_fetch_array($q)) {
             $row = "";
 
             $row .= '<td>'.$r['surge'].'</td>';
-            $row .= '<td><a href="' . OPTION_BASE_URL . '/' . $r['ref'] . 
-#                pb_domain_url(array('path'=>"/".$r['ref'])) .
-                '">'.$r['ref'].'</a>'.
-                '<br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
+            $row .= '<td>';
+	    if ($r['status']=='live' || $r['status']=='finished' || $r['status']=='rejected')
+                $row .= '<a href="' . OPTION_BASE_URL . '/' . $r['ref'] . '">';
+            $row .= $r['ref'];
+	    if ($r['status']=='live' || $r['status']=='finished' || $r['status']=='rejected')
+	        $row .= '</a><br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
             $row .= '</td>';
             $row .= '<td>'.trim_characters(htmlspecialchars($r['title']),0,100).'</td>';
             $row .= '<td>'.htmlspecialchars($r['signers']) . '</td>';
@@ -131,25 +139,25 @@ class ADMIN_PAGE_PET_MAIN {
             print ' (' . count($found) . ') | ';
             print '<a href="?page=pet&amp;o=live">Live</a> | ';
             print '<a href="?page=pet&amp;o=finished">Finished</a> | ';
-            print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
+            print '<a href="?page=pet&amp;o=rejected">Rejected</a> | ';
         } elseif ($status == 'live') {
             print '<a href="?page=pet&amp;o=draft">Draft</a> | ';
             print 'Live';
              print ' (' . count($found) . ') | ';
             print '<a href="?page=pet&amp;o=finished">Finished</a> | ';
-            print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
+            print '<a href="?page=pet&amp;o=rejected">Rejected</a> | ';
         } elseif ($status == 'finished') {
             print '<a href="?page=pet&amp;o=draft">Draft</a> | ';
             print '<a href="?page=pet&amp;o=live">Live</a> | ';
             print 'Finished';
             print ' (' . count($found) . ') | ';
-            print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
+            print '<a href="?page=pet&amp;o=rejected">Rejected</a> | ';
         } else {
             print '<a href="?page=pet&amp;o=draft">Draft</a> | ';
             print '<a href="?page=pet&amp;o=live">Live</a> | ';
             print '<a href="?page=pet&amp;o=finished">Finished</a> | ';
             print 'Rejected';
-            print ' (' . count($found) . ')';
+            print ' (' . count($found) . ') | ';
         }
         print " <strong>petitions</strong></p>";
           
@@ -164,9 +172,8 @@ class ADMIN_PAGE_PET_MAIN {
         print '<p>';
     }
 
-    function show_one_petition($pledge) {
-        return;
-        print '<p><a href="'.$this->self_link.'">' . _('List of all pledges') . '</a></p>';
+    function show_one_petition($petition) {
+        print '<p><a href="'.$this->self_link.'">' . _('List of all petitions') . '</a></p>';
 
         $sort = get_http_var('s');
         if (!$sort || preg_match('/[^etcn]/', $sort)) $sort = 't';
@@ -179,25 +186,21 @@ class ADMIN_PAGE_PET_MAIN {
         else
             $list_limit = 100;
 
-        $q = db_query('SELECT pledges.*, person.email,
-                (SELECT count(*) FROM signer WHERE pledge_id=pledges.id) AS signers,
-                (SELECT count(*) FROM comment WHERE pledge_id=pledges.id AND NOT ishidden) AS comments
-            FROM pledges 
-            LEFT JOIN person ON person.id = pledges.person_id 
-            LEFT JOIN location ON location.id = pledges.location_id
-            WHERE ref ILIKE ?', $pledge);
+        $q = db_query('SELECT petition.*, person.email,
+                (SELECT count(*) FROM signer WHERE petition_id=petition.id) AS signers
+            FROM petition 
+            LEFT JOIN person ON person.id = petition.person_id 
+            WHERE ref ILIKE ?', $petition);
         $pdata = db_fetch_array($q);
         if (!$pdata) {
-            print sprintf("Pledge '%s' not found", htmlspecialchars($pledge));
+            print sprintf("Petition '%s' not found", htmlspecialchars($petition));
             return;
         }
-        $pledge_obj = new Petition($pdata);
+        $petition_obj = new Petition($pdata);
+#        $pledge_obj->render_box(array('showdetails' => true));
 
-        $pledge_obj->render_box(array('showdetails' => true));
-
-        print "<h2>Pledge '<a href=\"".
-#                pb_domain_url(array('path'=>"/".$pledge_obj->ref(), 'lang'=>$pledge_obj->lang(), 'country'=>$pledge_obj->country_code())) .
-                "\">" . $pdata['ref'] . "</a>'";
+        print "<h2>Petition '<a href=\"" . OPTION_BASE_URL . '/' .
+	    $petition_obj->ref() . "\">" . $pdata['ref'] . "</a>'";
         print "</h2>";
 
         print "<p>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>";
@@ -211,7 +214,7 @@ class ADMIN_PAGE_PET_MAIN {
                          showname, signer.id AS signid 
                    FROM signer 
                    LEFT JOIN person ON person.id = signer.person_id
-                   WHERE pledge_id=?';
+                   WHERE petition_id=?';
         if ($sort=='t') $query .= ' ORDER BY signtime DESC';
         elseif ($sort=='n') $query .= ' ORDER BY showname DESC';
         else $query .= ' ORDER BY signname DESC';
@@ -241,7 +244,7 @@ class ADMIN_PAGE_PET_MAIN {
             $out[$e] .= '</form></td>';
 
             $out[$e] .= '<td>';
-            $out[$e] .= '<form name="removesignerform'.$c.'" method="post" action="'.$this->self_link.'"><input type="hidden" name="remove_signer_id" value="' . $r['signid'] . '"><input type="submit" name="remove_signer" value="Remove signer permanently"></form>';
+#            $out[$e] .= '<form name="removesignerform'.$c.'" method="post" action="'.$this->self_link.'"><input type="hidden" name="remove_signer_id" value="' . $r['signid'] . '"><input type="submit" name="remove_signer" value="Remove signer permanently"></form>';
             $out[$e] .= '</td>';
         }
         if ($sort == 'e') {
@@ -258,7 +261,7 @@ class ADMIN_PAGE_PET_MAIN {
             $cols = array('e'=>'Signer', 't'=>'Time', 'n'=>'Show name?');
             foreach ($cols as $s => $col) {
                 print '<th>';
-                if ($sort != $s) print '<a href="'.$this->self_link.'&amp;pledge='.$pledge.'&amp;s='.$s.'">';
+                if ($sort != $s) print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;s='.$s.'">';
                 print $col;
                 if ($sort != $s) print '</a>';
                 print '</th>';
@@ -274,18 +277,18 @@ class ADMIN_PAGE_PET_MAIN {
             print '</table>';
             if ($list_limit && $c >= $list_limit) {
                 print "<p>... only $list_limit signers shown, "; 
-                print '<a href="'.$this->self_link.'&amp;pledge='.$pledge.'&amp;l=-1">show all</a>';
+                print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';
                 print ' (do not press if you are Tom, it will crash your computer :)</p>';
             }
         } else {
-            print '<p>Nobody has signed up to this pledge.</p>';
+            print '<p>Nobody has signed up to this petition.</p>';
         }
         print '<p>';
         
         // Messages
         print h2(_("Messages"));
         $q = db_query('select * from message 
-                where pledge_id = ? order by whencreated', $pdata['id']);
+                where petition_id = ? order by whencreated', $pdata['id']);
 
         $n = 0;
         while ($r = db_fetch_array($q)) {
@@ -325,9 +328,9 @@ class ADMIN_PAGE_PET_MAIN {
         }
 
         print '<h2>Actions</h2>';
-        print '<form name="sendannounceform" method="post" action="'.$this->self_link.'"><input type="hidden" name="send_announce_token_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="send_announce_token" value="Send announce URL to creator"></form>';
+#        print '<form name="sendannounceform" method="post" action="'.$this->self_link.'"><input type="hidden" name="send_announce_token_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="send_announce_token" value="Send announce URL to creator"></form>';
 
-print '<form name="removepledgepermanentlyform" method="post" action="'.$this->self_link.'" style="clear:both"><strong>Caution!</strong> This really is forever, you probably don\'t want to do it: <input type="hidden" name="remove_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="remove_pledge" value="Remove pledge permanently"></form>';
+#print '<form name="removepledgepermanentlyform" method="post" action="'.$this->self_link.'" style="clear:both"><strong>Caution!</strong> This really is forever, you probably don\'t want to do it: <input type="hidden" name="remove_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="remove_pledge" value="Remove pledge permanently"></form>';
 
     }
 
@@ -349,7 +352,58 @@ print '<form name="removepledgepermanentlyform" method="post" action="'.$this->s
             array(get_http_var('showname') ? true : false, $id));
         db_commit();
     # TRANS: http://www.mysociety.org/pipermail/mysociety-i18n/2005-November/000078.html
-        print p(_('<em>Show name for signer updated</em>'));
+        print '<p><em>Show name for signer updated</em></p>';
+    }
+
+    function reject_form($id) {
+        $p = new Petition($id); ?>
+<p>You have chosen to reject the petition '<?=$p->ref() ?>'.</p>
+<form method="post"><input type="hidden" name="reject_form_submit" value="1">
+<input type="hidden" name="petition" value="<?=$id ?>">
+<p>Category for rejection: <select name="category">
+<option>Illegal
+<option>Obscene
+<option>Involves chocolate
+<option>etc.
+</select></p>
+<p>Reason for rejection:<br><textarea name="reason" rows="10" cols="70"></textarea></p>
+<input type="submit" value="Reject petition">
+</form>
+<?  }
+
+    function reject_petition($id, $category, $reason) {
+        $p = new Petition($id);
+	$status = $p->status();
+	if ($status == 'draft') {
+	    db_getOne("UPDATE petition SET status='rejectedonce' WHERE id=?", $id);
+            $p->log_event("Admin rejected petition for the first time", null);
+	    $template = 'admin-rejected-once';
+            $post_data = array('data' => base64_encode(serialize($p->data)), 'tostepintro' => 1);
+	    $stash = stash_new_request('POST', OPTION_BASE_URL . '/new', $post_data);
+	    $url = OPTION_BASE_URL . '/new?stashpost=' . $stash;
+	} elseif ($status == 'resubmitted') {
+	    db_getOne("UPDATE petition SET status='rejected' WHERE id=?", $id);
+            $p->log_event("Admin rejected petition for the second time", null);
+	    $template = 'admin-rejected-again';
+	    $url = '';
+	} else {
+            $p->log_event("Bad rejection", null);
+            db_commit();
+	    err("Should only be able to reject petitions in draft or resubmitted state");
+	}
+        db_commit();
+	$to = $p->creator_email();
+	$values = array_merge($p->data, array(
+	    'url' => $url,
+	    'category' => $category,
+	    'reason' => $reason
+	));
+	print '<p><em>That petition has been rejected.';
+	if (pet_send_email_template($to, $template, $values))
+	    print ' Message sent to creator.';
+	else
+	    print ' Email to creator failed!';
+	print '</em></p>';
     }
 
     function display($self_link) {
@@ -370,12 +424,15 @@ print '<form name="removepledgepermanentlyform" method="post" action="'.$this->s
                 $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
                 $this->remove_signer($signer_id);
             }
-        } elseif (get_http_var('showname_signer_id')) {
+*/
+        if (get_http_var('showname_signer_id')) {
             $signer_id = get_http_var('showname_signer_id');
             if (ctype_digit($signer_id)) {
                 $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
                 $this->showname_signer($signer_id);
             }
+	}
+/*
         } elseif (get_http_var('send_announce_token')) {
             $petition_id = get_http_var('send_announce_token_pledge_id');
             if (ctype_digit($petition_id)) {
@@ -387,18 +444,23 @@ print '<form name="removepledgepermanentlyform" method="post" action="'.$this->s
         if (get_http_var('approve')) {
             $p = new Petition($petition);
             db_getOne("UPDATE petition SET status='live' WHERE id=?", $petition);
+            $p->log_event("Admin approved petition", null);
             db_commit();
-            $p->log_event("Admin approved petition $petition", null);
             print '<p><em>Petition approved!</em></p>';
             $petition = null;
         } elseif (get_http_var('reject')) {
-            $p = new Petition($petition);
-            db_getOne("UPDATE petition SET status='rejected' WHERE id=?", $petition);
-            db_commit();
-            $p->log_event("Admin rejected petition $petition", null);
-            print '<p><em>Petition rejected!</em> (will ask you to give reason here etc.)</p>';
+	    $this->reject_form($petition);
             $petition = null;
-        }
+        } elseif (get_http_var('reject_form_submit')) {
+	    $category = get_http_var('category');
+	    $reason = get_http_var('reason');
+	    if ($category && $reason) {
+	        $this->reject_petition($petition, $category, $reason);
+	    } else {
+	    	$this->reject_form($petition);
+	    }
+	    $petition = null;
+	}
         // Display page
         if ($petition_id) {
             $petition = db_getOne('SELECT ref FROM petition WHERE id = ?', $petition_id);
