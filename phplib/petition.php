@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.5 2006-07-13 11:44:03 matthew Exp $
+ * $Id: petition.php,v 1.6 2006-07-14 16:01:23 matthew Exp $
  * 
  */
 
@@ -137,6 +137,8 @@ class Petition {
 }
 
 function petition_sign_box() {
+    global $q_h_address, $q_h_postcode;
+
     if (get_http_var('add_signatory'))
         $showname = get_http_var('showname') ? ' checked' : '';
     else
@@ -147,10 +149,8 @@ function petition_sign_box() {
 
     $P = person_if_signed_on();
     if (!is_null($P)) {
-        if (is_null($email) || !$email)
-            $email = $P->email();
-        if (is_null($name) || !$name)
-            $name = $P->name_or_blank();
+        if (!$email) $email = $P->email();
+        if (!$name) $name = $P->name_or_blank();
     }
 ?>
 <form accept-charset="utf-8" action="/<?=htmlspecialchars(get_http_var('ref')) ?>/sign" method="post">
@@ -172,6 +172,12 @@ to find your signature, unless you uncheck this box.</small>
 
 <p><strong>Your email</strong>: <input type="text" size="30" name="email" value="<?=htmlspecialchars($email) ?>"><br><small>
 (we need this so we can tell you when the petition is completed and let the Government get in touch)</small> </p>
+
+<p><strong style="float: left">Your address:&nbsp;</strong>
+<textarea name="address" rows="4" cols="30"><?=$q_h_address ?></textarea>
+<br><br><strong>Your postcode:</strong>
+<input type="text" name="postcode" value="<?=$q_h_postcode ?>" size="10" />
+</p>
 
 <p><input type="submit" name="submit" value="Sign Petition"></p>
 </form>

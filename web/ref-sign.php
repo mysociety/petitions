@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: ref-sign.php,v 1.2 2006-06-28 23:35:57 matthew Exp $
+// $Id: ref-sign.php,v 1.3 2006-07-14 16:01:23 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/petition.php';
@@ -37,6 +37,8 @@ function do_sign() {
     $errors = importparams(
                 array(array('name',true),       '//',        '', null),
                 array('email',      'importparams_validate_email'),
+		array('address', '/./', 'Please specify an address'),
+		array('postcode', 'importparams_validate_postcode'),
                 array('ref',        '/^[a-z0-9-]+$/i',  ''),
                 array('showname',   '//',               '', 0)
             );
@@ -67,7 +69,7 @@ function do_sign() {
 
     if ($R == 'ok') {
         /* All OK, sign petition. */
-        db_query('insert into signer (petition_id, name, person_id, showname, signtime) values (?, ?, ?, ?, ms_current_timestamp())', array($petition->id(), ($P->has_name() ? $P->name() : null), $P->id(), $q_showname ? 't' : 'f'));
+        db_query('insert into signer (petition_id, name, address, postcode, person_id, showname, signtime) values (?, ?, ?, ?, ?, ?, ms_current_timestamp())', array($petition->id(), ($P->has_name() ? $P->name() : null), $q_address, $q_postcode, $P->id(), $q_showname ? 't' : 'f'));
         db_commit();
         print '<p class="noprint loudmessage" align="center">' . _('Thanks for signing up to this petition!') . '</p>';
     } else if ($R == 'signed') {
