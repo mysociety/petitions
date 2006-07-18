@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.3 2006-07-18 16:58:57 chris Exp $
+# $Id: Petitions.pm,v 1.4 2006-07-18 17:19:10 chris Exp $
 #
 
 package Petitions::DB;
@@ -54,6 +54,28 @@ Return today's date.
 =cut
 sub today () {
     return scalar(dbh()->selectrow_array('select ms_current_date()'));
+}
+
+=item check_ref REFERENCE
+
+Given a petition REFERENCE, return its canonical reference, or undef if there
+is none.
+
+=cut
+sub check_ref ($) {
+    my $ref = shift;
+    if (dbh()->selectrow_array("
+                select ref from petition
+                where status in ('live', 'rejected', 'finished')
+                and ref = ?", {}, $ref)
+        || defined($ref = dbh()->selectrow_array("
+                select ref from petition
+                where status in ('live', 'rejected', 'finished')
+                and ref ilike ?", {}, $ref)) {
+        return $ref;
+    } else {
+        return undef;
+    }
 }
 
 package Petitions;
