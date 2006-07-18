@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.2 2006-07-18 16:48:13 chris Exp $
+# $Id: Petitions.pm,v 1.3 2006-07-18 16:58:57 chris Exp $
 #
 
 package Petitions::DB;
@@ -45,6 +45,15 @@ Return the site shared secret.
 =cut
 sub secret () {
     return scalar(dbh()->selectrow_array('select secret from secret'));
+}
+
+=item today
+
+Return today's date.
+
+=cut
+sub today () {
+    return scalar(dbh()->selectrow_array('select ms_current_date()'));
 }
 
 package Petitions;
