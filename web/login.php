@@ -36,7 +36,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: chris@mysociety.org; WWW: http://www.mysociety.org/
  *
- * $Id: login.php,v 1.1 2006-06-20 14:14:26 francis Exp $
+ * $Id: login.php,v 1.2 2006-07-18 16:29:01 francis Exp $
  * 
  */
 
@@ -63,7 +63,7 @@ try again') . "</p>";
         page_footer();
         exit();
     } else {
-        setcookie('pet_test_cookie', '1', null, '/', '.' . OPTION_WEB_DOMAIN, false);
+        setcookie('pet_test_cookie', '1', null, '/', person_cookie_domain(), false);
         header("Location: /login.php?" . $_SERVER['QUERY_STRING'] . "&pet_test_cookie=1\n");
         exit();
     }
@@ -428,7 +428,7 @@ You don't have to set a password if you don't want to.")."</p>";
  * will be set for the cookie to expire; otherwise, a session cookie is set. */
 function set_login_cookie($P, $duration = null) {
     // error_log('set cookie');
-    setcookie('pb_person_id', person_cookie_token($P->id(), $duration), is_null($duration) ? null : time() + $duration, '/', '.' . OPTION_WEB_DOMAIN, false);
+    setcookie('pb_person_id', person_cookie_token($P->id(), $duration), is_null($duration) ? null : time() + $duration, '/', person_cookie_domain(), false);
 }
 
 ?>
