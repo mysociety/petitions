@@ -1,10 +1,11 @@
+-- 
 -- schema.sql:
 -- Schema for petitions database.
 --
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.9 2006-07-20 13:20:05 matthew Exp $
+-- $Id: schema.sql,v 1.10 2006-07-20 14:14:33 chris Exp $
 --
 
 -- global_seq
@@ -54,19 +55,6 @@ create function ms_current_timestamp()
     end;
 ' language 'plpgsql';
 
--- users, but call the table person rather than user so we don't have to quote
--- its name in every statement....
-create table person (
-    id integer not null primary key default nextval('global_seq'),
-    name text,
-    email text not null,
-    password text,
-    website text,
-    numlogins integer not null default 0
-);
-
-create unique index person_email_idx on person(email);
-
 -- information about each petition
 create table petition (
     id integer not null primary key default nextval('global_seq'),
@@ -83,7 +71,7 @@ create table petition (
     rawdeadline text not null,
 
     -- petition creator
-    person_id integer not null references person(id),
+    email text not null,
     name text not null,
     organisation text not null,
     address text not null,
@@ -94,15 +82,20 @@ create table petition (
     -- metadata
     creationtime timestamp not null,
     
-    status text not null default 'draft' check (
-        status = 'draft' -- petition is waiting for approval
-        or status = 'rejectedonce' -- petition has been rejected once
-        or status = 'resubmitted' -- petition has been resubmitted
-        or status = 'rejected' -- petition has been rejected again, or timed out of rejectedonce
-        or status = 'live' -- petition is active
-        or status = 'finished' -- deadline has been passed
+    status text not null default 'unconfirmed' check (
+        status in (
+        'unconfirmed',      -- email not yet confirmed
+        'draft',            -- waiting for approval
+        'rejectedonce',     -- rejected once
+        'resubmitted',      -- resubmitted
+        'rejected',         -- rejected finally, or timed out
+        'live',             -- active
+        'finished'          -- deadline passed
+        )
     ),
-    laststatuschange timestamp not null
+    laststatuschange timestamp not null,
+
+    -- add fields to run confirmation email stuff
 );
 
 create unique index petition_ref_idx on petition(ref);
@@ -122,47 +115,28 @@ create table signer (
     petition_id integer not null references petition(id),
 
     -- Who has signed the petition.
+    email text not null,
     name text not null,
     address text not null,
     postcode text not null,
-    person_id integer references person(id),
 
     -- whether this signer is included in the petition or not
     showname boolean not null default false,
       
     -- when they signed
-    signtime timestamp not null
+    signtime timestamp not null,
+
+    -- has the user confirmed their email address?
+    confirmed boolean not null default false,
+    
+    -- add fields for confirmation email stuff
 );
 
 create index signer_petition_id_idx on signer(petition_id);
+create unique index signer_petition_id_email_idx on signer(petition_id, email);
 
--- Stores randomly generated tokens and serialised hash arrays associated
--- with them.
-create table token (
-    scope text not null,        -- what bit of code is using this token
-    token text not null,
-    data bytea not null,
-    created timestamp not null,
-    primary key (scope, token)
-);
-
-create table requeststash (
-    key varchar(16) not null primary key check (length(key) = 8 or length(key) = 16),
-    whensaved timestamp not null default ms_current_timestamp(),
-    method text not null default 'GET' check (
-            method = 'GET' or method = 'POST'
-        ),
-    url text not null,
-    -- contents of POSTed form
-    post_data bytea check (
-            (post_data is null and method = 'GET') or
-            (post_data is not null and method = 'POST')
-        ),
-    extra text
-);
-
--- petition_is_valid_to_sign PLEDGE EMAIL
--- Whether the given PLEDGE is valid for EMAIL to sign.
+-- petition_is_valid_to_sign PETITION EMAIL
+-- Check whether the PETITION is valid for EMAIL to sign.
 -- Returns one of:
 --      ok          petition is OK to sign
 --      none        no such petition exists
