@@ -3,6 +3,9 @@ Subject: New petition to the Prime Minister
 A new petition has been posted with the title:
 '<?=$values['title']?>'
 
+The creator added the following comments for you:
+<?=$values['comments']?>
+
 Please click on the link below to visit the admin page to approve
 or reject this petition:
 

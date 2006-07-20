@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: ref-index.php,v 1.3 2006-07-13 14:15:44 matthew Exp $
+// $Id: ref-index.php,v 1.4 2006-07-20 13:20:06 matthew Exp $
 
 require_once '../conf/general';
 require_once '../phplib/page.php';
@@ -60,7 +60,7 @@ function draw_spreadword($p) { ?>
 }
 
 function draw_signatories($p) {
-    $nsigners = db_getOne('select count(id) from signer where petition_id = ?', $p->id());
+    $nsigners = db_getOne('select count(id) from signer where showname and petition_id = ?', $p->id());
     ?>
     <div id="signatories">
 <?
@@ -102,7 +102,7 @@ function draw_signatories($p) {
   
     $anon = 0;
 
-    $query = "SELECT * FROM signer WHERE petition_id = ? ORDER BY id";
+    $query = "SELECT * FROM signer WHERE petition_id = ? AND showname ORDER BY id";
     if ($limit) {
         $query .= " LIMIT " . MAX_PAGE_SIGNERS . " OFFSET " . ($nsigners - MAX_PAGE_SIGNERS);
     }

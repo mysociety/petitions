@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.2 2006-06-28 23:35:57 matthew Exp $
+// $Id: list.php,v 1.3 2006-07-20 13:20:06 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -17,7 +17,7 @@ define('PAGE_SIZE', 50);
 
 $err = importparams(
             array('offset', '/^(0|[1-9]\d*)$/', '', 0),
-            array('sort', '/^(title|date|name|ref|creationtime)\/?$/', '', 'default'),
+            array('sort', '/^(title|deadline|name|ref|creationtime)\/?$/', '', 'default'),
             array('type', '/^[a-z_]*$/', '', 'open')
         );
 if ($err) {
@@ -31,16 +31,14 @@ $original_sort = preg_replace("#/$#", "", $q_sort);
 if ($q_type == 'closed') {
     $open = '<';
     $status = 'live';
-    if ($q_sort == "default") $q_sort = "creationtime";
 } elseif ($q_type == 'rejected') {
     $open = null;
     $status = 'rejected';
-    if ($q_sort == "default") $q_sort = "creationtime";
 } else {
     $open = '>=';
     $status = 'live';
-    if ($q_sort == "default") $q_sort = $rss ? "creationtime" : "creationtime";
 }
+if ($q_sort == "default") $q_sort = "creationtime";
 
 $sql_params = array($status);
 $query = "SELECT count(petition.id) FROM petition
@@ -60,7 +58,7 @@ if ($q_sort == 'creationtime' || $q_sort == 'created' || $q_sort == 'whensucceed
 $sql_params[] = PAGE_SIZE;
 $qrows = db_query("
         SELECT petition.*, '$pet_today' <= petition.deadline AS open,
-            (SELECT count(*) FROM signer WHERE signer.petition_id = petition.id) AS signers,
+            (SELECT count(*) FROM signer WHERE showname and signer.petition_id = petition.id) AS signers,
             person.email AS email
             FROM petition
             LEFT JOIN person ON person.id = petition.person_id
@@ -123,7 +121,7 @@ if (!$rss) {
         $navlinks .= '<p align="center" style="font-size: 89%">' . _('Sort by'). ': ';
         $arr = array(
                      'creationtime'=>_('Start date'), 
-                     'date'=>_('Deadline'), 
+                     'deadline'=>_('Deadline'), 
                      );
         # Removed as not useful (search is better for these): 'ref'=>'Short name',
         # 'title'=>'Title', 'name'=>'Creator'

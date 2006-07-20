@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.7 2006-07-13 14:15:43 matthew Exp $
+// $Id: page.php,v 1.8 2006-07-20 13:20:05 matthew Exp $
 
 require_once '../../phplib/person.php';
 
@@ -41,6 +41,7 @@ function page_header($title, $params = array()) {
 
     include "../templates/website/head.php";
 
+/*
     if ($P) {
         print '<p id="signedon" class="noprint">';
         print _('Hello, ');
@@ -52,6 +53,7 @@ function page_header($title, $params = array()) {
         print _('this isn\'t you?  click here');
         print '</a>)</small></p>';
     }
+*/
 }
 
 /* page_footer PARAMS

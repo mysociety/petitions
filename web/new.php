@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.10 2006-07-13 14:34:52 matthew Exp $
+// $Id: new.php,v 1.11 2006-07-20 13:20:06 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -168,13 +168,16 @@ petition via this website giving details of the Government’s response.')?>
     print '<input type="hidden" name="data" value="' . base64_encode(serialize($data)) . '">';
 } ?>
 <p style="text-align: right">
-<input type="submit" name="tostepmain" value="<?=_('Next') ?> &gt;&gt;&gt;"></p>
+<input type="submit" name="tostepmain" value="Next"></p>
 </form>
 <? 
 }
 
 function petition_form_main($data = array(), $errors = array()) {
     global $pet_time, $petition_prefix;
+
+    print petition_breadcrumbs(1);
+
     if (sizeof($errors)) {
         print '<ul class="errors"><li>';
         print join ('</li><li>', array_values($errors));
@@ -192,9 +195,7 @@ function petition_form_main($data = array(), $errors = array()) {
 <br><input<? if (array_key_exists('title', $errors)) print ' class="error"' ?> type="text" size="60" maxlength="100" id="title" name="title" value="<? if (isset($data['title'])) print htmlspecialchars($data['title']) ?>"> 
 </p>
 
-<p><?=_('People must sign up before') ?> <input<? if (array_key_exists('date', $errors)) print ' class="error"' ?> title="<?=_('Deadline date') ?>" type="text" id="rawdeadline" name="rawdeadline" onfocus="fadein(this)" onblur="fadeout(this)" value="<? if (isset($data['rawdeadline'])) print htmlspecialchars($data['rawdeadline']) ?>"> <small>(<?=_('e.g.') ?> "<?
-    print date('jS F Y', $pet_time+60*60*24*28); // 28 days
-?>")</small></p>
+<p>Requested duration: <input<? if (array_key_exists('date', $errors)) print ' class="error"' ?> type="text" id="rawdeadline" name="rawdeadline" onfocus="fadein(this)" onblur="fadeout(this)" value="<? if (isset($data['rawdeadline'])) print htmlspecialchars($data['rawdeadline']) ?>"> <small>(e.g. "2 months")</small></p>
 
 <p><?=_('Choose a short name for your petition (6 to 16 letters):') ?> 
 <input<? if (array_key_exists('ref', $errors) || array_key_exists('ref2', $errors)) print ' class="error"' ?> onkeyup="checklength(this)" type="text" size="16" maxlength="16" id="ref" name="ref" value="<? if (isset($data['ref'])) print htmlspecialchars($data['ref']) ?>"> 
@@ -205,8 +206,8 @@ function petition_form_main($data = array(), $errors = array()) {
     print '<input type="hidden" name="data" value="' . base64_encode(serialize($data)) . '">';
 } ?>
 <p style="text-align: right">
-<input type="submit" name="tostepyou" value="<?=_('Next') ?> &gt;&gt;&gt;">
-<br><input type="submit" name="tostepintro" value="<?=_('Previous') ?> &lt;&lt;&lt;">
+<input type="submit" name="tostepyou" value="Next">
+<br><input type="submit" name="tostepintro" value="Previous">
 </p>
 </form>
 <? 
@@ -253,8 +254,8 @@ function petition_form_you($data = array(), $errors = array()) {
     print '<input type="hidden" name="data" value="' . base64_encode(serialize($data)) . '">';
 } ?>
 <p style="text-align: right">
-<input type="submit" name="tosteppreview" value="<?=_('Next') ?> &gt;&gt;&gt;">
-<br><input type="submit" name="tostepmain" value="<?=_('Previous') ?> &lt;&lt;&lt;"></p>
+<input type="submit" name="tosteppreview" value="Next">
+<br><input type="submit" name="tostepmain" value="Previous"></p>
 </form>
 <? 
 }
@@ -282,11 +283,11 @@ function step_main_error_check($data) {
     $pet_today_arr = explode('-', $pet_today);
     $deadline_limit_years = 1; # in years
     $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $pet_today_arr[1], $pet_today_arr[2], $pet_today_arr[0] + $deadline_limit_years));
-    if (!$data['rawdeadline'] || !$data['deadline']) $errors['date'] = _('Please enter a deadline');
-    if ($data['deadline'] < $pet_today) $errors['date'] = _('The deadline must be in the future');
-    if ($data['deadline_details']['error']) $errors['date'] = _('Please enter a valid date for the deadline');
+    if (!$data['rawdeadline'] || !$data['deadline']) $errors['date'] = _('Please enter a duration');
+    if ($data['deadline'] < $pet_today) $errors['date'] = _('The duration must be positive');
+    if ($data['deadline_details']['error']) $errors['date'] = _("Sorry, we did not recognise that duration. Please try again");
     if ($deadline_limit < $data['deadline'])
-        $errors['date'] = sprintf(_('Please change your deadline so it is less than %d year in the future.'), $deadline_limit_years);
+        $errors['date'] = sprintf(_('Please change your duration so it is less than %d year.'), $deadline_limit_years);
 
     return $errors;
 }
@@ -349,15 +350,20 @@ longer be valid.")?></p>
 </div>
 
 <p style="text-align: right;">
-<input type="submit" name="tostepmain" value="&lt;&lt; <?=_('Change petition text') ?>">
-<br><input type="submit" name="tostepyou" value="&lt;&lt; <?=_('Change my contact details') ?>">
+<input type="submit" name="tostepmain" value="Change petition text">
+<br><input type="submit" name="tostepyou" value="Change my contact details">
 </p>
 
-<?
-    print '<p>' . _('When you\'re happy with your petition, <strong>click "Create"</strong> to confirm that you wish www.number10.gov.uk to display the petition at the top of this page in your name, and that you agree to the terms and conditions below.');
-?>
+<p>When you're happy with your petition, <strong>click "Create"</strong> to
+confirm that you wish www.number10.gov.uk to display the petition at the top
+of this page in your name, and that you agree to the terms and conditions below.
+<br />If you have any special requests for the Number 10 web team, please include them
+here:<br />
+<textarea name="comments" rows="7" cols="40"><? if (isset($data['comments'])) print htmlspecialchars($data['comments']) ?></textarea>
+</p>
+
 <p style="text-align: right;">
-<input type="submit" name="tocreate" value="<?=_('Create') ?> &gt;&gt;&gt;">
+<input type="submit" name="tocreate" value="Create">
 </p>
 
 <h3>Terms and Conditions</h3>
@@ -369,6 +375,8 @@ longer be valid.")?></p>
 
 # Someone has submitted a new petition
 function petition_create($P, $data) {
+    global $pet_time;
+
     /* Guard against double-insertion. */
     db_query('lock table petition in share mode');
         /* Can't just use SELECT ... FOR UPDATE since that wouldn't prevent an
@@ -376,6 +384,9 @@ function petition_create($P, $data) {
     if (is_null(db_getOne('select id from petition where ref = ?', $data['ref']))) {
         $data['id'] = db_getOne("select nextval('petition_id_seq')");
 
+        # Recalculate deadline, as email confirmation might have been on a different day
+        $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
+        $data['deadline'] = $data['deadline_details']['iso'];
         db_query("
                 insert into petition (
                     id, title, content,
@@ -417,6 +428,33 @@ function petition_create($P, $data) {
     <p class="noprint loudmessage" align="center">It has been entered on our
     system and will now go to the Number 10 team for approval.</p>
 <?  
+}
+
+/* fyr_breadcrumbs NUMBER
+ * Numbered "breadcrumbs" trail for current user; NUMBER is the (1-based)
+ * number of the step to hilight. */
+function petition_breadcrumbs($num) {
+    $steps = array(
+                'Create your petition',
+                'Submit your petition',
+                'Petition approval',
+                'Petition live',
+                'Petition close'
+    );
+    /* Ideally we'd like the numbers to appear as a result of this being a
+     * list, but that's beyond CSS's tiny capabilities, so put them in
+     * explicitly. That means that two numbers will appear in non-CSS
+     * browsers. */
+    $str = '<ol id="breadcrumbs">';
+    for ($i = 0; $i < sizeof($steps); ++$i) {
+        if ($i == $num - 1)
+            $str .= "<li class=\"hilight\">";
+        else
+            $str .= "<li>";
+        $str .= ($i + 1) . ". " . htmlspecialchars($steps[$i]) . "</li>";
+    }
+    $str .= "</ol>";
+    return $str;
 }
 
 ?>

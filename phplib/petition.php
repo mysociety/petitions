@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.6 2006-07-14 16:01:23 matthew Exp $
+ * $Id: petition.php,v 1.7 2006-07-20 13:20:05 matthew Exp $
  * 
  */
 
@@ -25,7 +25,7 @@ class Petition {
         global $pet_today;
         $main_query_part = "SELECT petition.*,
                                '$pet_today' <= petition.deadline AS open,
-                               (SELECT count(*) FROM signer WHERE
+                               (SELECT count(*) FROM signer WHERE showname and 
                                     signer.petition_id = petition.id) AS signers,
                                person.email AS email,
                                content, title
@@ -139,12 +139,8 @@ class Petition {
 function petition_sign_box() {
     global $q_h_address, $q_h_postcode;
 
-    if (get_http_var('add_signatory'))
-        $showname = get_http_var('showname') ? ' checked' : '';
-    else
-        $showname = ' checked';
-
     $email = get_http_var('email');
+    $email2 = get_http_var('email2');
     $name = get_http_var('name', true);
 
     $P = person_if_signed_on();
@@ -163,15 +159,10 @@ function petition_sign_box() {
 ?>
 </strong><br>
 </p>
-<p>
-<small>
-<strong><input type="checkbox" name="showname" value="1"<?=$showname ?>>Show my name publically on this petition.</strong>
-<br>People searching for your name on the Internet will be able
-to find your signature, unless you uncheck this box.</small>
-</p> 
 
-<p><strong>Your email</strong>: <input type="text" size="30" name="email" value="<?=htmlspecialchars($email) ?>"><br><small>
-(we need this so we can tell you when the petition is completed and let the Government get in touch)</small> </p>
+<p><strong>Your email</strong>: <input type="text" size="30" name="email" value="<?=htmlspecialchars($email) ?>">
+<br><strong>Confirm email</strong>: <input type="text" size="30" name="email2" value="<?=htmlspecialchars($email2) ?>">
+<br><small>(we need this so we can tell you when the petition is completed and let the Government get in touch)</small> </p>
 
 <p><strong style="float: left">Your address:&nbsp;</strong>
 <textarea name="address" rows="4" cols="30"><?=$q_h_address ?></textarea>

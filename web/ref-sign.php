@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: ref-sign.php,v 1.3 2006-07-14 16:01:23 matthew Exp $
+// $Id: ref-sign.php,v 1.4 2006-07-20 13:20:06 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/petition.php';
@@ -33,22 +33,20 @@ if (is_array($errors)) {
 page_footer();
 
 function do_sign() {
-    global $q_email, $q_name, $q_showname, $q_ref;
+    global $q_email, $q_email2, $q_name, $q_ref;
     $errors = importparams(
-                array(array('name',true),       '//',        '', null),
+                array('name'       '/./',        'Please enter your name'),
                 array('email',      'importparams_validate_email'),
+                array('email2',      '/./', 'Please confirm your email address'),
 		array('address', '/./', 'Please specify an address'),
 		array('postcode', 'importparams_validate_postcode'),
                 array('ref',        '/^[a-z0-9-]+$/i',  ''),
-                array('showname',   '//',               '', 0)
             );
     if ($q_name==_('<Enter your name>')) {
         $q_name = null;
     }
-    if (!$q_name) {
-        $q_showname = false;
-        $q_name = null;
-    }
+    if (!is_null($q_email) && $q_email != $q_email2)
+        $errors['email3'] = 'The two email addresses do not match';
 
     if (!$q_ref)
         /* I don't think this error is likely to occur with real users, (see
@@ -69,7 +67,7 @@ function do_sign() {
 
     if ($R == 'ok') {
         /* All OK, sign petition. */
-        db_query('insert into signer (petition_id, name, address, postcode, person_id, showname, signtime) values (?, ?, ?, ?, ?, ?, ms_current_timestamp())', array($petition->id(), ($P->has_name() ? $P->name() : null), $q_address, $q_postcode, $P->id(), $q_showname ? 't' : 'f'));
+        db_query('insert into signer (petition_id, name, address, postcode, person_id, showname, signtime) values (?, ?, ?, ?, ?, true, ms_current_timestamp())', array($petition->id(), ($P->has_name() ? $P->name() : null), $q_address, $q_postcode, $P->id()));
         db_commit();
         print '<p class="noprint loudmessage" align="center">' . _('Thanks for signing up to this petition!') . '</p>';
     } else if ($R == 'signed') {

@@ -4,7 +4,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.8 2006-07-14 16:01:22 matthew Exp $
+-- $Id: schema.sql,v 1.9 2006-07-20 13:20:05 matthew Exp $
 --
 
 -- global_seq
@@ -127,7 +127,7 @@ create table signer (
     postcode text not null,
     person_id integer references person(id),
 
-    -- whether they want their name public
+    -- whether this signer is included in the petition or not
     showname boolean not null default false,
       
     -- when they signed
