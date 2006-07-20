@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.12 2006-07-20 15:28:18 chris Exp $
+// $Id: new.php,v 1.13 2006-07-20 16:54:23 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -89,8 +89,8 @@ function petition_form_submitted() {
         preview_petition($data, $errors);
         return;
     }
-    $P = pet_send_logging_in_email('petition-confirm', $data, $data['email'], $data['name']);
-    petition_create($P, $data);
+
+    petition_create($data);
 }
 
 /* various HTML utilities for these forms */
@@ -430,7 +430,7 @@ here:<br />
 }
 
 # Someone has submitted a new petition
-function petition_create($P, $data) {
+function petition_create($data) {
     global $pet_time;
 
     /* Guard against double-insertion. */
@@ -438,7 +438,7 @@ function petition_create($P, $data) {
         /* Can't just use SELECT ... FOR UPDATE since that wouldn't prevent an
          * insert on the table. */
     if (is_null(db_getOne('select id from petition where ref = ?', $data['ref']))) {
-        $data['id'] = db_getOne("select nextval('petition_id_seq')");
+        $data['id'] = db_getOne("select nextval('global_id_seq')");
 
         # Recalculate deadline, as email confirmation might have been on a different day
         $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
@@ -447,7 +447,7 @@ function petition_create($P, $data) {
                 insert into petition (
                     id, title, content,
                     deadline, rawdeadline,
-                    person_id, name, ref, 
+                    email, name, ref, 
 		    organisation, address,
 		    postcode, telephone, org_url,
                     creationtime, 
@@ -459,11 +459,11 @@ function petition_create($P, $data) {
 		    ?, ?,
 		    ?, ?, ?,
                     ms_current_timestamp(), 
-                    'draft', ms_current_timestamp()
+                    'unconfirmed', ms_current_timestamp()
                 )", array(
                     $data['id'], $data['title'], $data['content'],
                     $data['deadline'], $data['rawdeadline'],
-                    $P->id(), $data['name'], $data['ref'],
+                    $data['email'], $data['name'], $data['ref'],
 		    $data['organisation'], $data['address'],
 		    $data['postcode'], $data['telephone'], $data['org_url']
                 ));
