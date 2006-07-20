@@ -5,13 +5,12 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.11 2006-07-20 13:20:06 matthew Exp $
+// $Id: new.php,v 1.12 2006-07-20 15:28:18 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
 require_once '../../phplib/datetime.php';
-require_once '../../phplib/person.php';
 
 $page_title = _('Create a new petition');
 ob_start();
@@ -94,6 +93,58 @@ function petition_form_submitted() {
     petition_create($P, $data);
 }
 
+/* various HTML utilities for these forms */
+function startform() {
+    print '<form accept-charset="utf-8" method="post" action="/new">';
+}
+
+function nextprevbuttons($prev, $prevdesc, $next, $nextdesc) {
+    print '<p style="text-align: right">';
+    if (!is_null($next)) {
+        if (is_null($nextdesc)) $nextdesc = _('Next');
+        printf('<input type="submit" name="%s" value="%s &gt;&gt;&gt;" />',
+                htmlspecialchars($next), htmlspecialchars($nextdesc));
+        if (!is_null($prev)) print "<br /">;
+    }
+    if (!is_null($prev)) {
+        if (is_null($prevdesc)) $prevdesc = _('Prev');
+        printf('<input type="submit" name="%s" value="%s &lt;&lt;&lt;" />',
+                htmlspecialchars($prev), htmlspecialchars($prevdesc));
+    }
+    print '</p>';
+}
+
+function endform($data = null) {
+    if (!is_null($data))
+        printf('<input type="hidden" name="data" value="%s" />',
+            htmlspecialchars(base64_encode(serialize($data))));
+    print '</form>';
+}
+
+function errorlist($errors) {
+    if (sizeof($errors))
+        print '<ul class="errors"><li>'
+                . join('</li><li>',
+                    array_map('htmlspecialchars', array_values($errors)))
+                . '</li></ul>';
+}
+
+function textarea($name, $val, $cols, $rows, $errors) {
+    printf('<textarea name="%s" cols="%d" rows="%d"%s>%s</textarea>',
+            htmlspecialchars($name),
+            $cols, $rows,
+            array_key_exists($name, $errors) ? ' class="error"' : '',
+            htmlspecialchars(is_null($val) ? '' : $val));
+}
+
+function textfield($name, $val, $size, $errors) {
+    printf('<input onfocus="fadein(this)" onblur="fadeout(this)" '
+            . 'type="text" name="%s" id="%s" size="%d" value="%s"%s />',
+            htmlspecialchars($name), htmlspecialchars($name),
+            $size,
+            array_key_exists($name, $errors) ? ' class="error"' : '',
+            htmlspecialchars(is_null($val) ? '' : $val));
+}
 
 function petition_form_intro($data = array()) {
 ?>
@@ -162,15 +213,10 @@ to respond.')?>
 
 <p><?=_('We will email the petition organiser and everyone who has signed the
 petition via this website giving details of the Government’s response.')?>
-
-<form accept-charset="utf-8" method="post" action="/new">
-<? if (sizeof($data)) {
-    print '<input type="hidden" name="data" value="' . base64_encode(serialize($data)) . '">';
-} ?>
-<p style="text-align: right">
-<input type="submit" name="tostepmain" value="Next"></p>
-</form>
-<? 
+<?
+    startform();
+    nextprevbuttons(null, 'tostepmain');
+    endform($data);
 }
 
 function petition_form_main($data = array(), $errors = array()) {
@@ -178,86 +224,83 @@ function petition_form_main($data = array(), $errors = array()) {
 
     print petition_breadcrumbs(1);
 
-    if (sizeof($errors)) {
-        print '<ul class="errors"><li>';
-        print join ('</li><li>', array_values($errors));
-        print '</li></ul>';
-    }
-?>
-
-<form accept-charset="utf-8" method="post" action="/new">
+    errorlist($errors);
+    startform();
+    ?>
 <h2><span dir="ltr"><?=_('New petition &#8211; Part 1 of 3 &#8211; Your petition') ?></span></h2>
 
-<p><strong><?=$petition_prefix ?>...</strong> 
-<br><textarea name="content" rows="7" cols="40"<? if (array_key_exists('content', $errors)) print ' class="error"' ?>><? if (isset($data['content'])) print htmlspecialchars($data['content']) ?></textarea>
-
-<p><?=_('Title of your petition:') ?> 
-<br><input<? if (array_key_exists('title', $errors)) print ' class="error"' ?> type="text" size="60" maxlength="100" id="title" name="title" value="<? if (isset($data['title'])) print htmlspecialchars($data['title']) ?>"> 
+<p><strong><?=$petition_prefix ?>...</strong> <br />
+    <?
+    textarea('content', $data['content'], 40, 7, $errors);
+    ?>
+<p><?=_('Title of your petition:') ?> <br />
+    <?
+    textfield('title', $data['title'], 60, $errors);
+    ?>
+</p>
+<p><?=_('People must sign up before') ?>
+    <?
+    textfield('rawdeadline', $data['rawdeadline'], 15, $errors);
+    printf('<small>' . _('e.g. %s') . '</small>',
+            htmlspecialchars(date('jS F Y', $pet_time + 28 * 86400)));
+    ?>
 </p>
 
-<p>Requested duration: <input<? if (array_key_exists('date', $errors)) print ' class="error"' ?> type="text" id="rawdeadline" name="rawdeadline" onfocus="fadein(this)" onblur="fadeout(this)" value="<? if (isset($data['rawdeadline'])) print htmlspecialchars($data['rawdeadline']) ?>"> <small>(e.g. "2 months")</small></p>
-
-<p><?=_('Choose a short name for your petition (6 to 16 letters):') ?> 
-<input<? if (array_key_exists('ref', $errors) || array_key_exists('ref2', $errors)) print ' class="error"' ?> onkeyup="checklength(this)" type="text" size="16" maxlength="16" id="ref" name="ref" value="<? if (isset($data['ref'])) print htmlspecialchars($data['ref']) ?>"> 
-<br><small><?=_('This gives your petition an easy web address. e.g. http://petitions.number10.gov.uk/badgers') ?></small>
+<p><?=_('Choose a short name for your petition (6 to 16 letters):') ?>
+    <?
+    textfield('ref', $data['ref'], 16, $errors);
+    ?>
+<br><small><?=htmlspecialchars(_('This gives your petition an easy web address. e.g. http://petitions.number10.gov.uk/badgers')) ?></small>
 </p>
 
-<? if (sizeof($data)) {
-    print '<input type="hidden" name="data" value="' . base64_encode(serialize($data)) . '">';
-} ?>
-<p style="text-align: right">
-<input type="submit" name="tostepyou" value="Next">
-<br><input type="submit" name="tostepintro" value="Previous">
-</p>
-</form>
-<? 
+<?
+    nextprevbuttons('tostepintro', 'tostepyou');
+    endform($data);
 }
 
 function petition_form_you($data = array(), $errors = array()) {
-    if (sizeof($errors)) {
-        print '<ul class="errors"><li>';
-        print join ('</li><li>', array_values($errors));
-        print '</li></ul>';
-    }
-
-    $P = person_if_signed_on();
-    if (!is_null($P)) {
-        if (!array_key_exists('email', $data))
-            $data['email'] = $P->email();
-        if (!array_key_exists('name', $data))
-            $data['name'] = $P->name_or_blank();
-    }
-
-?>
-<form accept-charset="utf-8" method="post" action="/new">
+    errorlist($errors);
+    startform();
+    ?>
 <h2><span dir="ltr"><?=_('New petition &#8211; Part 2 of 3 &#8211; About you') ?></span></h2>
+<div><?
 
-<div><strong><?=_('Your name:') ?></strong> <input<? if (array_key_exists('name', $errors)) print ' class="error"' ?> onblur="fadeout(this)" onfocus="fadein(this)" type="text" size="20" name="name" id="name" value="<? if (isset($data['name'])) print htmlspecialchars($data['name']) ?>" />
-<br><br><strong>Organisation:</strong>
-<input type="text" name="organisation" value="<? if (isset($data['organisation'])) print htmlspecialchars($data['organisation']) ?>" size="20" /> (optional)
-<br><br><strong style="float: left">Address:&nbsp;</strong>
-<textarea<? if (array_key_exists('address', $errors)) print ' class="error"' ?> name="address" rows="4" cols="30"><? if (isset($data['address'])) print htmlspecialchars($data['address']) ?>
-</textarea>
-<br><br><strong>Postcode:</strong>
-<input<? if (array_key_exists('postcode', $errors)) print ' class="error"' ?> type="text" name="postcode" value="<? if (isset($data['postcode'])) print htmlspecialchars($data['postcode']) ?>" size="10" />
-<br><br><strong>Telephone number:</strong>
-<input<? if (array_key_exists('telephone', $errors)) print ' class="error"' ?> type="text" name="telephone" value="<? if (isset($data['telephone'])) print htmlspecialchars($data['telephone']) ?>" size="15" />
-<br><br><strong>URL of campaign/organisation</strong>
-<input<? if (array_key_exists('org_url', $errors)) print ' class="error"' ?> type="text" name="org_url" value="<? if (isset($data['org_url'])) print htmlspecialchars($data['org_url']) ?>" size="20" /> (optional)
-<br><br>
-<strong><?=_('Your email:') ?></strong> <input<? if (array_key_exists('email', $errors)) print ' class="error"' ?> type="text" size="30" name="email" value="<? if (isset($data['email'])) print htmlspecialchars($data['email']) ?>">
-<br><strong><?=_('Confirm email:') ?></strong> <input<? if (array_key_exists('email2', $errors)) print ' class="error"' ?> type="text" size="30" name="email2" value="<? if (isset($data['email2'])) print htmlspecialchars($data['email2']) ?>">
-<br><small><?=_('(we need your email so we can get in touch with you when your petition completes, and so on)') ?></small>
-</div>
+    $fields = array(
+            'name'  =>          _('Your name'),
+            'organisation' =>   _('Organisation'),
+            'address' =>        _('Address'),
+            'postcode' =>       _('Postcode'),
+            'org_url' =>        _('URL or campaign/organisation'),
+            'email' =>          _('Your email'),
+            'email2' =>         _('Confirm email')
+        );
 
-<? if (sizeof($data)) {
-    print '<input type="hidden" name="data" value="' . base64_encode(serialize($data)) . '">';
-} ?>
-<p style="text-align: right">
-<input type="submit" name="tosteppreview" value="Next">
-<br><input type="submit" name="tostepmain" value="Previous"></p>
-</form>
-<? 
+    foreach ($fields as $name => $desc) {
+        printf('<strong>%s:</strong>', htmlspecialchars($desc));
+        if ($name == 'address')
+            textarea($name, $data[$name], 30, 4, $errors);
+        else {
+            $size = 20;
+            if ($name == 'postcode')
+                $size = 10;
+            else if ($name == 'telephone')
+                $size = 15;
+            textfield($name, $data[$name], $size, $errors);
+        }
+
+        if ($name == 'org_url')
+            print "(optional)";
+
+        if ($name == 'email2')
+            print "<small>"
+                    . htmlspecialchars(_('(we need your email so we can get in touch with you when your petition completes, and so on)'))
+                    . "</small>";
+        
+        print "<br /><br />";
+    }
+
+    nextprevbuttons('tostepmain', 'tosteppreview');
+    endform();
 }
 
 
@@ -267,27 +310,43 @@ function step_main_error_check($data) {
     $errors = array();
 
     $disallowed_refs = array('contact', 'translate', 'posters', 'graphs');
-    if (!$data['ref']) $errors['ref'] = _('Please enter a short name for your petition');
-    elseif (strlen($data['ref'])<6) $errors['ref'] = _('The short name must be at least six characters long');
-    elseif (strlen($data['ref'])>16) $errors['ref'] = _('The short name can be at most 16 characters long');
-    elseif (in_array(strtolower($data['ref']), $disallowed_refs)) $errors['ref'] = _('That short name is not allowed.');
-    elseif (preg_match('/[^a-z0-9-]/i',$data['ref'])) $errors['ref2'] = _('The short name must only contain letters, numbers, or a hyphen.  Spaces are not allowed.');
-    elseif (!preg_match('/[a-z]/i',$data['ref'])) $errors['ref2'] = _('The short name must contain at least one letter.');
+    if (!$data['ref'])
+        $errors['ref'] = _('Please enter a short name for your petition');
+    elseif (strlen($data['ref']) < 6)
+        $errors['ref'] = _('The short name must be at least six characters long');
+    elseif (strlen($data['ref']) > 16)
+        $errors['ref'] = _('The short name can be at most 16 characters long');
+    elseif (in_array(strtolower($data['ref']), $disallowed_refs))
+        $errors['ref'] = _('That short name is not allowed.');
+    elseif (preg_match('/[^a-z0-9-]/i', $data['ref']))
+        $errors['ref'] = _('The short name must only contain letters, numbers, or a hyphen.  Spaces are not allowed.');
+    elseif (!preg_match('/[a-z]/i', $data['ref']))
+        $errors['ref'] = _('The short name must contain at least one letter.');
 
     $dupe = db_getOne('SELECT id FROM petition WHERE ref ILIKE ?', array($data['ref']));
-    if ($dupe) $errors['ref'] = _('That short name is already taken!');
-    if (!$data['title']) $errors['title'] = _('Please enter a title');
-    elseif (strlen($data['title']) > 100) $errors['title'] = _('Please make the title a bit shorter (at most 100 characters).');
-    if (!$data['content']) $errors['content'] = _('Please enter the text of your petition');
+    if ($dupe)
+        $errors['ref'] = _('That short name is already taken!');
+    if (!$data['title'])
+        $errors['title'] = _('Please enter a title');
+    elseif (strlen($data['title']) > 100)
+        $errors['title'] = _('Please make the title a bit shorter (at most 100 characters).');
+    if (!$data['content'])
+        $errors['content'] = _('Please enter the text of your petition');
 
     $pet_today_arr = explode('-', $pet_today);
     $deadline_limit_years = 1; # in years
     $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $pet_today_arr[1], $pet_today_arr[2], $pet_today_arr[0] + $deadline_limit_years));
-    if (!$data['rawdeadline'] || !$data['deadline']) $errors['date'] = _('Please enter a duration');
-    if ($data['deadline'] < $pet_today) $errors['date'] = _('The duration must be positive');
-    if ($data['deadline_details']['error']) $errors['date'] = _("Sorry, we did not recognise that duration. Please try again");
+    if (!$data['rawdeadline'] || !$data['deadline'])
+        $errors['rawdeadline'] = _('Please enter a deadline');
+    if ($data['deadline'] < $pet_today)
+        $errors['rawdeadline'] = _('The deadline must be in the future');
+    if ($data['deadline_details']['error'])
+        $errors['rawdeadline'] = _('Please enter a valid date for the deadline');
+    if (!$data['rawdeadline'] || !$data['deadline']) $errors['rawdeadline'] = _('Please enter a duration');
+    if ($data['deadline'] < $pet_today) $errors['rawdeadline'] = _('The duration must be positive');
+    if ($data['deadline_details']['error']) $errors['rawdeadline'] = _("Sorry, we did not recognise that duration. Please try again");
     if ($deadline_limit < $data['deadline'])
-        $errors['date'] = sprintf(_('Please change your duration so it is less than %d year.'), $deadline_limit_years);
+        $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year.'), $deadline_limit_years);
 
     return $errors;
 }
@@ -320,21 +379,16 @@ function preview_error_check($data) {
 }
 
 function preview_petition($data, $errors) {
-    if (sizeof($errors)) {
-        print '<ul class="errors"><li>';
-        print join ('</li><li>', array_values($errors));
-        print '</li></ul>';
-    }
+    errorlist($errors);
 ?>
 <h1><span dir="ltr"><?=_('New petition &#8211; Part 3 of 3')?></span></h1>
 <p>Your petition, with short name <em><?=$data['ref'] ?></em>, will look like this:</p>
 <?
     $partial_pledge = new Petition($data);
     $partial_pledge->h_display_box();
-?>
 
-<form accept-charset="utf-8" method="post" action="/new">
-<input type="hidden" name="data" value="<?=base64_encode(serialize($data)) ?>">
+    startform();
+?>
 <p>Now please read through your petition, above, and check the details thoroughly.
 <strong>Read carefully</strong> - we can't let you
 <a href="/faq#editpledge" id="changethewording" onclick="return toggleNewModifyFAQ()">change the wording</a>
@@ -348,7 +402,9 @@ the petition. If you change the wording, then their signatures would no
 longer be valid.")?></p>
 
 </div>
-
+<?
+    nextprevbuttons('tostepmain', 'tostepyou');
+    endform();
 <p style="text-align: right;">
 <input type="submit" name="tostepmain" value="Change petition text">
 <br><input type="submit" name="tostepyou" value="Change my contact details">
@@ -458,4 +514,3 @@ function petition_breadcrumbs($num) {
 }
 
 ?>
-
