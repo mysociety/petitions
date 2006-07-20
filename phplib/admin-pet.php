@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.5 2006-07-20 13:20:05 matthew Exp $
+ * $Id: admin-pet.php,v 1.6 2006-07-20 14:27:54 matthew Exp $
  * 
  */
 
@@ -203,7 +203,8 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '<a href="' . OPTION_BASE_URL . '/' . $r['ref'] . '">';
             $row .= $r['ref'];
             if ($r['status']=='live' || $r['status']=='finished' || $r['status']=='rejected')
-                $row .= '</a><br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
+                $row .= '</a>';
+            $row .= '<br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
             $row .= '</td>';
             $row .= '<td>'.trim_characters(htmlspecialchars($r['title']),0,100).'</td>';
             $row .= '<td>'.htmlspecialchars($r['signers']) . '</td>';
@@ -276,9 +277,16 @@ class ADMIN_PAGE_PET_MAIN {
             $petition_obj->ref() . "\">" . $pdata['ref'] . "</a>'";
         print "</h2>";
 
-        print "<p>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>";
-        print "<br>Created: <b>" . prettify($pdata['creationtime']) . "</b>";
-        print "<br>Deadline: <b>" . prettify($pdata['deadline']) . "</b>";
+        print "<p>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
+        print '<br>Organisation: ';
+        if ($pdata['org_url']) print '<a href="' . htmlspecialchars($pdata['org_url']) . '">';
+        print $pdata['organisation'] ? htmlspecialchars($pdata['organisation']) : 'None given';
+        if ($pdata['org_url']) print '</a>';
+        print "<br>Created: " . prettify($pdata['creationtime']);
+        print "<br>Deadline: <b>" . prettify($pdata['deadline']) . "</b> (" . htmlspecialchars($pdata['rawdeadline']) . ')';
+        print '<br>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
+        print '<br>Title: <b>' . htmlspecialchars($pdata['title']) . '</b>';
+        print '<p>Content of petition: ' . htmlspecialchars($pdata['content']);
 
         // Signers
         print "<h2>Signers (".$pdata['signers'].")</h2>";
@@ -350,7 +358,7 @@ class ADMIN_PAGE_PET_MAIN {
         print '<p>';
         
         // Messages
-        print h2(_("Messages"));
+        print '<h2>Messages</h2>';
         $q = db_query('select * from message 
                 where petition_id = ? order by whencreated', $pdata['id']);
 
