@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.13 2006-07-20 16:54:23 chris Exp $
+// $Id: new.php,v 1.14 2006-07-21 09:04:38 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -104,7 +104,7 @@ function nextprevbuttons($prev, $prevdesc, $next, $nextdesc) {
         if (is_null($nextdesc)) $nextdesc = _('Next');
         printf('<input type="submit" name="%s" value="%s &gt;&gt;&gt;" />',
                 htmlspecialchars($next), htmlspecialchars($nextdesc));
-        if (!is_null($prev)) print "<br /">;
+        if (!is_null($prev)) print "<br />";
     }
     if (!is_null($prev)) {
         if (is_null($prevdesc)) $prevdesc = _('Prev');
@@ -215,7 +215,7 @@ to respond.')?>
 petition via this website giving details of the Government’s response.')?>
 <?
     startform();
-    nextprevbuttons(null, 'tostepmain');
+    nextprevbuttons(null, null, 'tostepmain', null);
     endform($data);
 }
 
@@ -254,7 +254,7 @@ function petition_form_main($data = array(), $errors = array()) {
 </p>
 
 <?
-    nextprevbuttons('tostepintro', 'tostepyou');
+    nextprevbuttons('tostepintro', null, 'tostepyou', null);
     endform($data);
 }
 
@@ -299,7 +299,7 @@ function petition_form_you($data = array(), $errors = array()) {
         print "<br /><br />";
     }
 
-    nextprevbuttons('tostepmain', 'tosteppreview');
+    nextprevbuttons('tostepmain', null, 'tosteppreview', null);
     endform();
 }
 
@@ -388,7 +388,7 @@ function preview_petition($data, $errors) {
     $partial_pledge->h_display_box();
 
     startform();
-?>
+    ?>
 <p>Now please read through your petition, above, and check the details thoroughly.
 <strong>Read carefully</strong> - we can't let you
 <a href="/faq#editpledge" id="changethewording" onclick="return toggleNewModifyFAQ()">change the wording</a>
@@ -402,9 +402,10 @@ the petition. If you change the wording, then their signatures would no
 longer be valid.")?></p>
 
 </div>
-<?
+    <?
     nextprevbuttons('tostepmain', 'tostepyou');
     endform();
+    ?>
 <p style="text-align: right;">
 <input type="submit" name="tostepmain" value="Change petition text">
 <br><input type="submit" name="tostepyou" value="Change my contact details">
