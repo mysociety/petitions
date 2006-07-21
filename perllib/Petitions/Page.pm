@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.2 2006-07-19 16:57:55 chris Exp $
+# $Id: Page.pm,v 1.3 2006-07-21 10:37:03 chris Exp $
 #
 
 package Petitions::Page;
@@ -14,16 +14,7 @@ package Petitions::Page;
 use strict;
 
 use Petitions;
-use HTML::Entities;
-
-=item ent STRING
-
-Return the entity-encoded form of STRING.
-
-=cut
-sub ent ($) {
-    return encode_entities($_[0], '<>&');
-}
+use mySociety::Web qw(ent);
 
 =item header Q TITLE [PARAM VALUE ...]
 
@@ -76,8 +67,8 @@ sub header ($$%) {
 <link href="http://www.number10.gov.uk/styles/basic_styles.css" rel="stylesheet" type="text/css" />
 <link href="http://www.number10.gov.uk/styles/gallerycontent.css" rel="stylesheet" />
 <style type="text/css" media="all">
-                                        @import url(http://www.number10.gov.uk/styles/nomensa.css);
-                                        @import url(/pet.css);
+                                        \@import url(http://www.number10.gov.uk/styles/nomensa.css);
+                                        \@import url(/pet.css);
                                         #rel_links {margin-right: -146px;}
                                 </style>
 <link rel="stylesheet" type="text/css" href="http://www.number10.gov.uk/styles/print.css" media="print" />
@@ -124,20 +115,6 @@ sub header ($$%) {
 <div id="wrap">
 <div id="content">
 EOF
-
-    # perhaps test for person being logged on and print something out?
-###     if ($P) {
-###         print '<p id="signedon" class="noprint">';
-###         print _('Hello, ');
-###         if ($P->has_name())
-###             print htmlspecialchars($P->name);
-###         else 
-###             print htmlspecialchars($P->email);
-###         print ' <small>(<a href="/logout">';
-###         print _('this isn\'t you?  click here');
-###         print '</a>)</small></p>';
-###     }
-
 }
 
 =item footer Q [PARAMS]
@@ -189,6 +166,35 @@ sub error_page ($$) {
     my $html = header("Error")
             . $q->p($message)
             . footer();
+    print $q->header(-content_length => length($html)), $html;
+}
+
+=item bad_ref_page Q REF
+
+Emit a helpful error page for a bad or undefined petition reference REF.
+
+=cut
+sub bad_ref_page ($$) {
+    my ($q, $ref) = @_;
+    my $html =
+        page_header("We couldn't find that petition");
+
+    if (defined($ref)) {
+        $html .= $q->p(qq(We couldn't find any petition with a reference like "@{[ ent($ref) ]}". Please try the following:));
+    } else {
+        $html .= $q->p(qq(We're not sure which petition you're looking for. Please try the following:));
+    }
+
+    $html .=
+        $q->ul(
+            $q->li([
+            q(If you typed in the location, check it carefully and try typing it again.),
+            q(Look for the pledge on <a href="/list">the list of all petitions</a>.)
+            ])
+        );    
+    
+    $html .= page_footer();
+ 
     print $q->header(-content_length => length($html)), $html;
 }
 
