@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.4 2006-07-18 17:19:10 chris Exp $
+# $Id: Petitions.pm,v 1.5 2006-07-21 10:50:44 chris Exp $
 #
 
 package Petitions::DB;
@@ -64,6 +64,7 @@ is none.
 =cut
 sub check_ref ($) {
     my $ref = shift;
+    return undef if (!defined($ref) || $ref !~ /^[A-Za-z0-9-]{6,16}$/);
     if (dbh()->selectrow_array("
                 select ref from petition
                 where status in ('live', 'rejected', 'finished')
