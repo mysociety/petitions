@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.12 2006-07-21 09:33:45 chris Exp $
+-- $Id: schema.sql,v 1.13 2006-07-21 15:47:18 chris Exp $
 --
 
 -- global_seq
@@ -152,13 +152,12 @@ create function petition_is_valid_to_sign(integer, text)
             from petition
             where petition.id = $1 
             for update;
-        select into creator_email email
-            from person
-            where person.id = p.person_id;
 
         if not found then
             return ''none'';
         end if;
+
+        creator_email = p.email
 
         -- check for signed by email (before finished, so repeat sign-ups
         -- by same person give the best message)
@@ -166,10 +165,9 @@ create function petition_is_valid_to_sign(integer, text)
             if $2 = creator_email then
                 return ''signed'';
             end if;
-            perform signer.id from signer, person
+            perform signer.id from signer
                 where petition_id = $1
-                    and signer.person_id = person.id
-                    and person.email = $2 for update;
+                    and signer.email = $2;
             if found then
                 return ''signed'';
             end if;
