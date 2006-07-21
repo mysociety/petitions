@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.14 2006-07-21 09:04:38 chris Exp $
+// $Id: new.php,v 1.15 2006-07-21 09:14:11 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -434,12 +434,13 @@ here:<br />
 function petition_create($data) {
     global $pet_time;
 
-    /* Guard against double-insertion. */
-    db_query('lock table petition in share mode');
-        /* Can't just use SELECT ... FOR UPDATE since that wouldn't prevent an
-         * insert on the table. */
     if (is_null(db_getOne('select id from petition where ref = ?', $data['ref']))) {
         $data['id'] = db_getOne("select nextval('global_id_seq')");
+
+        /* Guard against double-insertion. */
+        db_query('lock table petition in share mode');
+            /* Can't just use SELECT ... FOR UPDATE since that wouldn't prevent an
+             * insert on the table. */
 
         # Recalculate deadline, as email confirmation might have been on a different day
         $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
@@ -468,22 +469,14 @@ function petition_create($data) {
 		    $data['organisation'], $data['address'],
 		    $data['postcode'], $data['telephone'], $data['org_url']
                 ));
+        db_commit();
     }
 
-    // Send email to admin
-    $data['url'] = OPTION_ADMIN_URL . '?page=pet&o=draft';
-    pet_send_email_template(OPTION_CONTACT_EMAIL, 'admin-new-petition', $data);
-
-    $p = new Petition($data['ref']); // Reselect full data set from DB
-    $p->log_event("User created draft petition", null);
-    db_commit();
     global $page_title;
-    $page_title = _('Petition Created');
-    $url = htmlspecialchars(OPTION_BASE_URL . "/" . urlencode($p->data['ref']));
+    $page_title = _('Now check your email');
 ?>
-    <p class="noprint loudmessage">Thank you for creating your petition.</p>
-    <p class="noprint loudmessage" align="center">It has been entered on our
-    system and will now go to the Number 10 team for approval.</p>
+    <p class="noprint loudmessage">Now please check your email, and click the
+    link that we've sent you.</p>
 <?  
 }
 
