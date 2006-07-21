@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.2 2006-07-21 17:16:56 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.3 2006-07-21 17:25:08 chris Exp $';
 
 use strict;
 
@@ -91,7 +91,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
                 my $didaddsignature;
                 dbh()->do('
                         insert into signer
-                            (id, petition_id, email, name, address, postcode,
+                            (petition_id, email, name, address, postcode,
                             showname, signtime)
                         values (?, ?, ?, ?, ?, true,
                             ms_current_timestamp())', {},
@@ -102,7 +102,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
                 $id = dbh()->selectrow_array('
                         select id from signer
                         where petition_id = ? and email = ?', {},
-                        $p->{id});
+                        $p->{id}, $qp_email);
                 # XXX if the user has already signed but not confirmed, reset
                 # their email status so that another mail gets sent. The first
                 # might have been lost.
