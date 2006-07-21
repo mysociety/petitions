@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.7 2006-07-20 13:20:05 matthew Exp $
+ * $Id: petition.php,v 1.8 2006-07-21 13:16:08 chris Exp $
  * 
  */
 
@@ -27,10 +27,9 @@ class Petition {
                                '$pet_today' <= petition.deadline AS open,
                                (SELECT count(*) FROM signer WHERE showname and 
                                     signer.petition_id = petition.id) AS signers,
-                               person.email AS email,
+                               email,
                                content, title
-                           FROM petition
-                           LEFT JOIN person ON person.id = petition.person_id";
+                           FROM petition";
         if (gettype($ref) == "integer" or (gettype($ref) == "string" and preg_match('/^[1-9]\d*$/', $ref))) {
             $q = db_query("$main_query_part WHERE petition.id = ?", array($ref));
             if (!db_num_rows($q))
