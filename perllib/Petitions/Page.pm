@@ -6,14 +6,17 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.3 2006-07-21 10:37:03 chris Exp $
+# $Id: Page.pm,v 1.4 2006-07-21 11:00:57 chris Exp $
 #
 
 package Petitions::Page;
 
 use strict;
 
+use Carp;
+
 use Petitions;
+use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
 
 =item header Q TITLE [PARAM VALUE ...]
@@ -196,6 +199,58 @@ sub bad_ref_page ($$) {
     $html .= page_footer();
  
     print $q->header(-content_length => length($html)), $html;
+}
+
+=item signup_form Q PETITION
+
+Return a signup form for the given PETITION (ref or hash of fields to values).
+
+=cut
+sub signup_form ($$) {
+    my ($q, $p) = @_;
+    if (!ref($p)) {
+        my $ref = $p;
+        $p = dbh()->selectrow_hashref('select * from petition where ref = ?',
+                        {}, $ref);
+        $p ||= dbh()->selectrow_hashref('select * from petition where ref ilike ?',
+                        {}, $ref);
+        croak "bad ref '$ref' in signup_form" unless ($p);
+    }
+
+    return
+        $q->start_form(-method => 'POST', -action => "$p->{ref}/sign")
+        . qq(<input type="hidden" name="add_signatory" value="1" />)
+        . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref} ]}" />)
+        . $q->h2('Sign up now')
+        . $q->p($q->strong(
+                "I, ",
+                $q->textfield(
+                    -name => 'name', -id => 'name', -size => 20,
+                    -onblur => 'fadeout(this)', -onfocus => 'fadein(this)'
+                ),
+                " sign up to the petition"
+            ))
+        . $q->br()
+        . $q->p(
+            $q->strong('Your email:'),
+                $q->textfield(-name => 'email', -size => 30),
+                $q->br(),
+            $q->strong('Confirm email:'),
+                $q->textfield(-name => 'email2', -size => 30),
+                $q->br(),
+            $q->small('(we need this so we can tell you when the petition is completed and let the Government get in touch)')
+        )
+        . $q->p(
+            $q->strong({ -style => 'float: left' }, 'Your address:&nbsp;'),
+                $q->textarea(-name => 'address', -cols => 30, -rows => 4),
+                $q->br(), $q->br(),
+            $q->strong('Your postcode:'),
+                $q->textfield(-name => 'postcode', -size => 10)
+        )
+        . $q->p(
+            $q->submit(-name => 'submit', -value => 'Sign petition')
+        )
+        . $q->end_form();
 }
 
 1;
