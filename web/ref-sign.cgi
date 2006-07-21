@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.1 2006-07-21 13:41:49 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.2 2006-07-21 17:16:56 chris Exp $';
 
 use strict;
 
@@ -41,7 +41,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     }
 
     # Perhaps redirect to canonical ref if non-canonical was given.
-    if ($qp_ref ne $ref && $q->request_method() eq 'GET') {
+    if ($qp_ref ne $ref && $q->request_method() =~ /^(GET|HEAD)$/) {
         print $q->redirect("/$ref/sign?" . $q->query_string());
         next;
     }
@@ -73,19 +73,48 @@ while (!$foad && (my $q = new mySociety::Web())) {
     
     my $p = Petitions::DB::get($ref);
     if (!keys(%errors)) {
-        # Success. Add the signature.
-        dbh()->do('
-                insert into signer
-                    (petition_id, email, name, address, postcode,
-                    showname, signtime)
-                values (?, ?, ?, ?, ?, true, ms_current_timestamp())', {},
-                $p->{id}, $qp_email, $qp_name, $qp_address, $qp_postcode);
-        dbh()->commit();
+        # Success. Add the signature, assuming that we can.
+        my $s = Petitions::DB::is_valid_to_sign($p->{id}, $qp_email);
+        if ($s eq 'finished') {
+            $html .= $q->p('Sorry, but that petition has finished, so you cannot sign it.');
+        } elsif ($s eq 'none') {
+            $html .= $q->p("We couldn't find that petition.");
+        } else {
+            # Either OK or already signed. We must not give away the fact that
+            # any particular person has already signed a petition, so act the
+            # same in each case.
+            my $id = undef;
+            if ($s eq 'ok') {
+                # It's still possible for this to fail, if two signatures are
+                # attempted in very close succession, so ignore errors.
+                local dbh()->{RaiseError};
+                my $didaddsignature;
+                dbh()->do('
+                        insert into signer
+                            (id, petition_id, email, name, address, postcode,
+                            showname, signtime)
+                        values (?, ?, ?, ?, ?, true,
+                            ms_current_timestamp())', {},
+                        $p->{id}, $qp_email, $qp_name, $qp_address,
+                        $qp_postcode)
+                    and $didaddsignature = 1
+                    or dbh()->rollback();   # just in case
+                $id = dbh()->selectrow_array('
+                        select id from signer
+                        where petition_id = ? and email = ?', {},
+                        $p->{id});
+                # XXX if the user has already signed but not confirmed, reset
+                # their email status so that another mail gets sent. The first
+                # might have been lost.
+                # if ($didaddsignature) { ... }
+                dbh()->commit();
+            }
 
-        $html .=
-            $q->p({-class => 'noprint loudmessage', -align => 'center'},
-                'Now check your email!'
-            );
+            $html .=
+                $q->p({-class => 'noprint loudmessage', -align => 'center'},
+                    'Now check your email!'
+                );
+        }
     } else {
         $html .=
             $q->div({ -id => 'errors' },
