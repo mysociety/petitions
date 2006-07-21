@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.15 2006-07-21 09:14:11 chris Exp $
+// $Id: new.php,v 1.16 2006-07-21 09:59:03 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -224,6 +224,9 @@ function petition_form_main($data = array(), $errors = array()) {
 
     print petition_breadcrumbs(1);
 
+    foreach (array('content', 'title', 'rawdeadline', 'ref') as $x)
+        if (!array_key_exists($x, $data)) $data[$x] = '';
+
     errorlist($errors);
     startform();
     ?>
@@ -270,6 +273,7 @@ function petition_form_you($data = array(), $errors = array()) {
             'organisation' =>   _('Organisation'),
             'address' =>        _('Address'),
             'postcode' =>       _('Postcode'),
+            'telephone' =>      _('Telephone number'),
             'org_url' =>        _('URL or campaign/organisation'),
             'email' =>          _('Your email'),
             'email2' =>         _('Confirm email')
@@ -277,6 +281,10 @@ function petition_form_you($data = array(), $errors = array()) {
 
     foreach ($fields as $name => $desc) {
         printf('<strong>%s:</strong>', htmlspecialchars($desc));
+
+        if (!array_key_exists($name, $data))
+            $data[$name] = '';
+        
         if ($name == 'address')
             textarea($name, $data[$name], 30, 4, $errors);
         else {
@@ -300,7 +308,7 @@ function petition_form_you($data = array(), $errors = array()) {
     }
 
     nextprevbuttons('tostepmain', null, 'tosteppreview', null);
-    endform();
+    endform($data);
 }
 
 
@@ -402,10 +410,7 @@ the petition. If you change the wording, then their signatures would no
 longer be valid.")?></p>
 
 </div>
-    <?
-    nextprevbuttons('tostepmain', 'tostepyou');
-    endform();
-    ?>
+
 <p style="text-align: right;">
 <input type="submit" name="tostepmain" value="Change petition text">
 <br><input type="submit" name="tostepyou" value="Change my contact details">
@@ -426,8 +431,8 @@ here:<br />
 <h3>Terms and Conditions</h3>
 <p>Terms and Conditions will go here...</p>
 
-</form>
 <?
+    endform($data);
 }
 
 # Someone has submitted a new petition
@@ -435,7 +440,7 @@ function petition_create($data) {
     global $pet_time;
 
     if (is_null(db_getOne('select id from petition where ref = ?', $data['ref']))) {
-        $data['id'] = db_getOne("select nextval('global_id_seq')");
+        $data['id'] = db_getOne("select nextval('global_seq')");
 
         /* Guard against double-insertion. */
         db_query('lock table petition in share mode');
