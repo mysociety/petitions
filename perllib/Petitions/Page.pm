@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.6 2006-07-21 11:25:38 chris Exp $
+# $Id: Page.pm,v 1.7 2006-07-21 13:02:57 chris Exp $
 #
 
 package Petitions::Page;
@@ -15,9 +15,10 @@ use strict;
 
 use Carp;
 
-use Petitions;
-use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
+use mySociety::DBHandle qw(dbh);
+
+use Petitions;
 
 =item header Q TITLE [PARAM VALUE ...]
 
@@ -35,11 +36,11 @@ sub header ($$%) {
     my $devwarning = '';;
     if (mySociety::Config::get('PET_STAGING')) {
         my @d = (
-                'This is a test site for web developers only.'
+                'This is a test site for web developers only.',
                 q(You probably want <a href="http://www.pm.gov.uk">the Prime Minister's official site</a>.)
             );
         my $today = Petitions::DB::today();
-        push(@d, "Note: on this test site, the date is faked to be $today");
+        push(@d, "Note: on this test site, the date is faked to be $today")
             if ($today ne POSIX::strftime('%Y-%m-%d', localtime()));
         $devwarning = join($q->br(), @d);
     }
@@ -56,7 +57,7 @@ sub header ($$%) {
 <meta name="description" content="Petitions to the Prime Minister, 10 Downing Street" />
 <meta name="DCTERMS.created" scheme="DCTERMS.W3CDTF" content="2005-08-17" />
 <meta name="eGMS.accessibility" scheme="WCAG" content="Double-A" />
-<meta name="dc.creator" content="10 Downing Street, Web Team, webmaster@pmo.gov.uk" />
+<meta name="dc.creator" content="10 Downing Street, Web Team, webmaster\@pmo.gov.uk" />
 <meta name="dc.language" scheme="ISO 639-2/T" content="eng" />
 <meta name="dc.publisher" content="Prime Minister's Office, 10 Downing Street, London, SW1A 2AA" />
 <meta name="dc.identifier" content="@{[ ent($q->url()) ]}" />
@@ -166,9 +167,9 @@ EOF
 =cut
 sub error_page ($$) {
     my ($q, $message);
-    my $html = header("Error")
+    my $html = header($q, "Error")
             . $q->p($message)
-            . footer();
+            . footer($q);
     print $q->header(-content_length => length($html)), $html;
 }
 
