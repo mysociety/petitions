@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.8 2006-07-21 13:42:38 chris Exp $
+# $Id: Petitions.pm,v 1.9 2006-07-21 16:27:35 chris Exp $
 #
 
 package Petitions::DB;
@@ -97,6 +97,118 @@ sub get ($) {
     return $p;
 }
 
+=item is_valid_to_sign PETITION EMAIL
+
+Test whether the user with the given EMAIL may sign PETITION. Returns one of
+'ok', meaning they may; 'none', if the petition does not exist, 'finished' if
+it has expired, or 'signed' if they have already signed it.
+
+=cut
+sub is_valid_to_sign ($$) {
+    my ($id, $email) = @_;
+    $id = $id->{id} if (ref($id));
+    return scalar(dbh()->selectrow_array('select petition_is_valid_to_sign(?, ?)', {}, $id, $email));
+}
+
+package Petitions::Token;
+
+use strict;
+
+use Crypt::IDEA;
+use Digest::HMAC_SHA1 qw(hmac_sha1);
+use Digest::SHA1 qw(sha1);
+use MIME::Base64;
+
+use mySociety::DBHandle ();
+use mySociety::Util qw(random_bytes);
+
+sub encode_base64ish ($) {
+    my $b64 = encode_base64($_[0]);
+    $b64 =~ s#\+#_#g;
+    $b64 =~ s#/#-#g;
+    $b64 =~ s#=+$##;
+    return $b64;
+}
+
+sub decode_base64ish ($) {
+    my $b64 = shift;
+    while (length($b64) % 4) {
+        $b64 .= '=';
+    }
+    $b64 =~ s#_#+#g;
+    $b64 =~ s#-#/#g;
+    return decode_base64($b64);
+}
+
+use constant TOKEN_LENGTH => 15;
+use constant TOKEN_LENGTH_B64 => 20;
+
+=item make WHAT ID
+
+=cut
+sub make ($$) {
+    my ($what, $id) = @_;
+    croak("WHAT must be 'p' or 's'")
+        unless ($what =~ /^[ps]/);
+    $what = substr($what, 0, 1);
+    croak("ID must be undef or a positive integer")
+        unless (!defined($id) || $id =~ /^[1-9]\d*$/);
+    $id ||= 0;
+
+    warn "ID '$id' is quite large; the token format may have to be expanded soon"
+        if ($id > 0x10000000);
+
+    my @salt = unpack('C4', random_bytes(4));
+    # Top three bits of first byte of salt encode WHAT and whether ID is valid.
+    # 000       p
+    # 001       s
+    # 01x       bad
+    # 1xy       reserved
+    $salt[0] &= 0x1f;
+    $salt[0] |= 0x20 if ($what eq 's');
+    $salt[0] |= 0x40 if (!$id);
+    
+    my $plaintext = pack('C4N', @salt, $id);
+    my $hmac = hmac_sha1($plaintext, Petitions::DB::secret());
+    
+        # XXX is this safe or ought we to have two different secrets?
+    our $crypt ||= new IDEA(substr(sha1(Petitions::DB::secret()), 0, IDEA::keysize()));
+    my $ciphertext = $crypt->encrypt($plaintext);
+
+    # 8 bytes of ciphertext plus 7 bytes of HMAC gives 15 bytes, 20 chars
+    # base64.
+    my $token = encode_base64ish($ciphertext . substr($hmac, 0, 7));
+}
+
+=item check TOKEN
+
+=cut
+sub check ($) {
+    my $token = shift;
+    croak("TOKEN must be defined") unless (defined($token));
+    return () if (length($token) != TOKEN_LENGTH_B64);
+
+    my $data = decode_base64ish($token);
+    return () unless ($data);
+    
+    my $ciphertext = substr($data, 0, 8);
+    my $hmac7 = substr($data, 8, 7);
+    
+    our $crypt ||= new IDEA(substr(sha1(Petitions::DB::secret()), 0, IDEA::keysize()));
+    my $plaintext = $crypt->decrypt($ciphertext);
+    my $hmac = hmac_sha1($plaintext, Petitions::DB::secret());
+
+    return () unless ($hmac7 eq substr($hmac, 0, 7));
+
+    my (@salt, $id) = unpack('C4N', $plaintext);
+
+    return () if ($salt[0] & 0x80);     # reserved for future
+    my $what = ($salt[0] & 0x20) ? 's' : 'p';
+    $id = 0 if ($salt[0] & 0x40);
+
+    return ($what, $id);
+}
+
 package Petitions;
 
 use strict;
@@ -136,5 +248,7 @@ sub pretty_deadline ($;$) {
     
     return "$day $monthyear";
 }
+
+
 
 1;
