@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.6 2006-07-21 11:26:12 chris Exp $
+# $Id: Petitions.pm,v 1.7 2006-07-21 13:02:27 chris Exp $
 #
 
 package Petitions::DB;
@@ -35,6 +35,7 @@ BEGIN {
                                 {}, unpack('h*', random_bytes(32)));
                     dbh()->commit();
                 }
+            }
         );
 }
 
@@ -72,7 +73,7 @@ sub check_ref ($) {
         || defined($ref = dbh()->selectrow_array("
                 select ref from petition
                 where status in ('live', 'rejected', 'finished')
-                and ref ilike ?", {}, $ref)) {
+                and ref ilike ?", {}, $ref))) {
         return $ref;
     } else {
         return undef;
