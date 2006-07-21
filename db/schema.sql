@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.11 2006-07-21 09:32:36 chris Exp $
+-- $Id: schema.sql,v 1.12 2006-07-21 09:33:45 chris Exp $
 --
 
 -- global_seq
@@ -127,7 +127,7 @@ create table signer (
     signtime timestamp not null,
 
     -- has the user confirmed their email address?
-    confirmed boolean not null default false,
+    confirmed boolean not null default false
     
     -- add fields for confirmation email stuff
 );
