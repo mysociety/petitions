@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.7 2006-07-21 13:02:27 chris Exp $
+# $Id: Petitions.pm,v 1.8 2006-07-21 13:42:38 chris Exp $
 #
 
 package Petitions::DB;
@@ -93,7 +93,7 @@ sub get ($) {
     my $p = dbh()->selectrow_hashref('select * from petition where ref = ?', {}, $ref);
     $p ||= dbh()->selectrow_hashref('select * from petition where ref ilike ?', {}, $ref);
     return undef unless ($p);
-    $p->{signers} = dbh()->selectrow_array('select count(id) from signers where petition_id = ?', {}, $p->{id});
+    $p->{signers} = dbh()->selectrow_array('select count(id) from signer where petition_id = ?', {}, $p->{id});
     return $p;
 }
 
@@ -112,8 +112,8 @@ my $petition_prefix = "We the undersigned petition the Prime Minister to";
 
 =cut
 sub sentence ($;$) {
-    my $p = shift;
-    croak "PETITION must be a hash of db fields" unless (ref($p) eq 'HASH');
+    my ($p, $html) = @_;
+    croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     my $sentence = sprintf('%s %s', $petition_prefix, $p->{content});
     $sentence = ent($sentence) if ($html);
     return $sentence;
@@ -124,10 +124,10 @@ sub sentence ($;$) {
 =cut
 sub pretty_deadline ($;$) {
     my ($p, $html) = @_;
-    croak "PETITION must be a hash of db fields" unless (ref($p) eq 'HASH');
+    croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     my ($Y, $m, $d) = split(/-/, $p->{deadline});
     my $day = mySociety::Util::ordinal($d);
-    $day =~ s#^(\d+)(.+)#sprintf('%s<sup>%s</sup>', $1, ent($2))#e;
+    $day =~ s#^(\d+)(.+)#sprintf('%s<sup>%s</sup>', $1, ent($2))#e
         if ($html);
 
     my @months = qw(x January February March April May June July August September October November December);   # XXX lazy

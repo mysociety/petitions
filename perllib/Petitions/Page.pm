@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.7 2006-07-21 13:02:57 chris Exp $
+# $Id: Page.pm,v 1.8 2006-07-21 13:42:39 chris Exp $
 #
 
 package Petitions::Page;
@@ -46,7 +46,7 @@ sub header ($$%) {
     }
 
     # ugh
-    return <<EOF
+    my $html = <<EOF;
 <?xml version="1.0"?>
 <!-- quirks mode -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
@@ -119,6 +119,8 @@ sub header ($$%) {
 <div id="wrap">
 <div id="content">
 EOF
+
+    return $html;
 }
 
 =item footer Q [PARAMS]
@@ -132,7 +134,7 @@ sub footer ($%) {
         croak "bad parameter '$_'" if (!exists($permitted_params{$_}));
     }
 
-    return <<EOF
+    return <<EOF;
 <img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
 <p align="center">
 <a href="/">Home</a> |
@@ -181,7 +183,7 @@ Emit a helpful error page for a bad or undefined petition reference REF.
 sub bad_ref_page ($$) {
     my ($q, $ref) = @_;
     my $html =
-        page_header("We couldn't find that petition");
+        header($q, "We couldn't find that petition");
 
     if (defined($ref)) {
         $html .= $q->p(qq(We couldn't find any petition with a reference like "@{[ ent($ref) ]}". Please try the following:));
@@ -197,7 +199,7 @@ sub bad_ref_page ($$) {
             ])
         );    
     
-    $html .= page_footer();
+    $html .= footer($q);
  
     print $q->header(-content_length => length($html)), $html;
 }
@@ -210,7 +212,8 @@ Return a div displaying the given PETITION (ref or hash of fields to values). PA
 sub display_box ($$%) {
     my ($q, $p, %params) = @_;
     if (!ref($p)) {
-        $p = Petitions::DB::get($p)
+        my $ref = $p;
+        $p = Petitions::DB::get($ref)
             or croak "bad ref '$ref' in display_box";
     }
     return
@@ -242,14 +245,15 @@ Return a signup form for the given PETITION (ref or hash of fields to values).
 sub sign_box ($$) {
     my ($q, $p) = @_;
     if (!ref($p)) {
+        my $ref = $p;
         $p = Petitions::DB::get($p)
             or croak "bad ref '$ref' in display_box";
     }
 
     return
-        $q->start_form(-method => 'POST', -action => "$p->{ref}/sign")
+        $q->start_form(-method => 'POST', -action => "/$p->{ref}/sign")
         . qq(<input type="hidden" name="add_signatory" value="1" />)
-        . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref} ]}" />)
+        . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
         . $q->h2('Sign up now')
         . $q->p($q->strong(
                 "I, ",
