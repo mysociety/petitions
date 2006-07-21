@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.5 2006-07-21 10:50:44 chris Exp $
+# $Id: Petitions.pm,v 1.6 2006-07-21 11:26:12 chris Exp $
 #
 
 package Petitions::DB;
@@ -79,8 +79,61 @@ sub check_ref ($) {
     }
 }
 
+=item get REF
+
+Return a hash of database fields to values for the petition with the given REF,
+or undef if there is no such petition. Also make up a signers field giving the
+number of people who've signed the petition so far.
+
+=cut
+sub get ($) {
+    my $ref = shift;
+    return undef unless ($ref);
+    my $p = dbh()->selectrow_hashref('select * from petition where ref = ?', {}, $ref);
+    $p ||= dbh()->selectrow_hashref('select * from petition where ref ilike ?', {}, $ref);
+    return undef unless ($p);
+    $p->{signers} = dbh()->selectrow_array('select count(id) from signers where petition_id = ?', {}, $p->{id});
+    return $p;
+}
+
 package Petitions;
 
 use strict;
+
+use POSIX qw();
+
+use mySociety::Util;
+use mySociety::Web qw(ent);
+
+my $petition_prefix = "We the undersigned petition the Prime Minister to";
+
+=item sentence PETITION [HTML]
+
+=cut
+sub sentence ($;$) {
+    my $p = shift;
+    croak "PETITION must be a hash of db fields" unless (ref($p) eq 'HASH');
+    my $sentence = sprintf('%s %s', $petition_prefix, $p->{content});
+    $sentence = ent($sentence) if ($html);
+    return $sentence;
+}
+
+=item pretty_deadline PETITION [HTML]
+
+=cut
+sub pretty_deadline ($;$) {
+    my ($p, $html) = @_;
+    croak "PETITION must be a hash of db fields" unless (ref($p) eq 'HASH');
+    my ($Y, $m, $d) = split(/-/, $p->{deadline});
+    my $day = mySociety::Util::ordinal($d);
+    $day =~ s#^(\d+)(.+)#sprintf('%s<sup>%s</sup>', $1, ent($2))#e;
+        if ($html);
+
+    my @months = qw(x January February March April May June July August September October November December);   # XXX lazy
+    my $monthyear = "$months[$m] $Y";
+    $monthyear = ent($monthyear) if ($html);
+    
+    return "$day $monthyear";
+}
 
 1;
