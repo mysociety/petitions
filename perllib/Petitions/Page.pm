@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.5 2006-07-21 11:02:50 chris Exp $
+# $Id: Page.pm,v 1.6 2006-07-21 11:25:38 chris Exp $
 #
 
 package Petitions::Page;
@@ -201,6 +201,38 @@ sub bad_ref_page ($$) {
     print $q->header(-content_length => length($html)), $html;
 }
 
+=item display_box Q PETITION PARAMS
+
+Return a div displaying the given PETITION (ref or hash of fields to values). PARAMS
+
+=cut
+sub display_box ($$%) {
+    my ($q, $p, %params) = @_;
+    if (!ref($p)) {
+        $p = Petitions::DB::get($p)
+            or croak "bad ref '$ref' in display_box";
+    }
+    return
+        $q->div({ -class => 'petition_box' },
+            $q->p({ -style => 'margin-top: 0' },
+                (exists($params{href}) ? qq(<a href="@{[ ent($params{href}) ]}">) : ''),
+                Petitions::sentence($p, 1),
+                (exists($params{href}) ? '</a>' : '')
+            ),
+            $q->p({ -align => 'right' },
+                '&mdash;', ent($p->{name})
+            ),
+            $q->p(
+                'Deadline to sign up by:', $q->strong(Petitions::pretty_deadline($p, 1))
+            ),
+            $q->p(
+                $p->{signers},
+                ($p->{signers} > 1 ? 'have signed the petition' : 'has signed the petition')
+            )
+        );
+
+}
+
 =item sign_box Q PETITION
 
 Return a signup form for the given PETITION (ref or hash of fields to values).
@@ -209,12 +241,8 @@ Return a signup form for the given PETITION (ref or hash of fields to values).
 sub sign_box ($$) {
     my ($q, $p) = @_;
     if (!ref($p)) {
-        my $ref = $p;
-        $p = dbh()->selectrow_hashref('select * from petition where ref = ?',
-                        {}, $ref);
-        $p ||= dbh()->selectrow_hashref('select * from petition where ref ilike ?',
-                        {}, $ref);
-        croak "bad ref '$ref' in signup_form" unless ($p);
+        $p = Petitions::DB::get($p)
+            or croak "bad ref '$ref' in display_box";
     }
 
     return
