@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.4 2006-07-21 11:00:57 chris Exp $
+# $Id: Page.pm,v 1.5 2006-07-21 11:02:50 chris Exp $
 #
 
 package Petitions::Page;
@@ -201,12 +201,12 @@ sub bad_ref_page ($$) {
     print $q->header(-content_length => length($html)), $html;
 }
 
-=item signup_form Q PETITION
+=item sign_box Q PETITION
 
 Return a signup form for the given PETITION (ref or hash of fields to values).
 
 =cut
-sub signup_form ($$) {
+sub sign_box ($$) {
     my ($q, $p) = @_;
     if (!ref($p)) {
         my $ref = $p;
