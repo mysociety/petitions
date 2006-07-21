@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.8 2006-07-21 13:42:39 chris Exp $
+# $Id: Page.pm,v 1.9 2006-07-21 17:16:06 chris Exp $
 #
 
 package Petitions::Page;
@@ -231,7 +231,7 @@ sub display_box ($$%) {
             ),
             $q->p(
                 $p->{signers},
-                ($p->{signers} > 1 ? 'have signed the petition' : 'has signed the petition')
+                ($p->{signers} > 1 ? 'people have signed the petition' : 'person has signed the petition')
             )
         );
 
@@ -247,7 +247,7 @@ sub sign_box ($$) {
     if (!ref($p)) {
         my $ref = $p;
         $p = Petitions::DB::get($p)
-            or croak "bad ref '$ref' in display_box";
+            or croak "bad ref '$ref' in sign_box";
     }
 
     return
@@ -284,6 +284,122 @@ sub sign_box ($$) {
             $q->submit(-name => 'submit', -value => 'Sign petition')
         )
         . $q->end_form();
+}
+
+=item reject_box Q PETITION
+
+=cut
+sub reject_box ($$) {
+    my ($q, $p) = @_;
+    if (!ref($p)) {
+        my $ref = $p;
+        $p = Petitions::DB::get($p)
+            or croak "bad ref '$ref' in reject_box";
+    }
+
+    return $q->p('This petition has been <strong>rejected</strong>.');
+}
+
+=item signatories_box Q PETITION
+
+=cut
+use constant MAX_PAGE_SIGNERS => 500;
+sub signatories_box ($$) {
+    my ($q, $p) = @_;
+    if (!ref($p)) {
+        my $ref = $p;
+        $p = Petitions::DB::get($p)
+            or croak "bad ref '$ref' in signatories_box";
+    }
+
+    my $html =
+        $q->start_div(-id => 'signatories')
+            . $q->h2($q->a({ -name => 'signers' }, 'Current signatories'));
+
+    if ($p->{signers} == 0) {
+        $html .=
+            $q->p("So far, only @{[ ent($p->{name}) ]}, the Petition Creator, has signed this petition.")
+            . $q->end_div();
+        return $html;
+    }
+    
+    my $st;
+    my $showall = $q->param('showall') ? 1 : 0;      # ugh
+    if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
+        $html .=
+            $q->p("Because there are so many signers, only the most recent",
+                MAX_PAGE_SIGNERS, "are shown on this page.");
+        $st = dbh()->prepare('
+                select name from signer where petition_id = ? and showname
+                order by signtime
+                limit ' . MAX_PAGE_SIGNERS . '
+                offset ' . ($p->{signers} - MAX_PAGE_SIGNERS));
+    } else {
+        $html .=
+            $q->p("@{[ ent($p->{name}) ]}, the Petition Creator, joined by:");
+        $st = dbh()->prepare('
+                select name from signer where petition_id = ? and showname
+                order by signtime');
+    }
+
+    $html .= '<ul>';
+    $st->execute($p->{id});
+    while (my ($name) = $st->fetchrow_array()) {
+        $html .= $q->li(ent($name));
+    }
+    $html .= '</ul>';
+
+    if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
+        $html .=
+            $q->p("Because there are so many signers, only the most recent",
+                MAX_PAGE_SIGNERS, "are shown on this page.")
+            . $q->p($q->a({ -href => "?showall=1" },
+                    "Show all signers &gt;&gt;&gt;"));
+    }
+
+    $html .= "</div>";
+    return $html;
+}
+
+=item spreadword_box Q PETITION
+
+=cut
+sub spreadword_box ($$) {
+    my ($q, $p) = @_;
+    if (!ref($p)) {
+        my $ref = $p;
+        $p = Petitions::DB::get($p)
+            or croak "bad ref '$ref' in spreadword_box";
+    }
+
+    if ($p->{open}) {
+        return
+            $q->div({ -id => 'spreadword' },
+                $q->h2('Spread the word on and offline'),
+                $q->ul($q->li([
+                    'Email petition to your friends',
+                    $q->a({
+                            -href => '',
+                            -title => 'Only if you made this petition'
+                        },
+                        'Send message to signers')
+                    ])
+                )
+            );
+    } else {
+        return
+            $q->div({ -id => 'spreadword' },
+                $q->h2('Spread the word on and offline'),
+                $q->ul($q->li([
+                    $q->a({
+                            -href => '',
+                            -title => 'Only if you made this petition'
+                        },
+                        'Send message to signers')
+                    ])
+                )
+            );
+    }
 }
 
 1;
