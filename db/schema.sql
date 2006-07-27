@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.14 2006-07-21 16:08:56 chris Exp $
+-- $Id: schema.sql,v 1.15 2006-07-27 12:57:15 matthew Exp $
 --
 
 -- global_seq
@@ -93,6 +93,12 @@ create table petition (
         'finished'          -- deadline passed
         )
     ),
+
+    rejection_first_categories int,
+    rejection_first_reason text,
+    rejection_second_categories int,
+    rejection_second_reason text,
+
     laststatuschange timestamp not null
 
     -- add fields to run confirmation email stuff

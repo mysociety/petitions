@@ -4,8 +4,8 @@ Hi,
 
 I'm sorry to inform you that your petition has been rejected.
 
-Your petition was classed as being in the category:
-    <?=$values['category']?>
+Your petition was classed as being in the following categories:
+<?=$values['categories']?>
 
 Further information:
 

@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.6 2006-07-20 14:27:54 matthew Exp $
+ * $Id: admin-pet.php,v 1.7 2006-07-27 12:57:15 matthew Exp $
  * 
  */
 
@@ -413,40 +413,67 @@ class ADMIN_PAGE_PET_MAIN {
     }
 */
 
+    var $categories = array(
+        1 => 'Party political material',
+        2 => 'False or defamatory statements',
+        4 => 'Information protected by an injunction or court order',
+        8 => 'Material which is commercially sensitive, confidential or which may cause personal distress or loss',
+        16 => 'Names of individual officials of public bodies, unless part of the senior management of those organisations',
+        32 => 'Names of family members of officials of public bodies, or elected representatives',
+        64 => 'Names of individuals, or information where they may be identified, in relation to criminal accusations',
+        128 => 'Offensive language'
+    );
+
+    function prettify_categories($categories, $newlines) {
+        $cat = 1;
+	$out = array();
+        while ($categories>0) {
+	    if ($categories % 2) $out[] = $this->categories[$cat];
+	    $categories = floor($categories / 2);
+	    $cat *= 2;
+	}
+	if ($newlines)
+            return '    ' . join("\n    ", $out) . "\n";
+        return join(', ', $out);
+    }
+
+    function display_categories() {
+        foreach ($this->categories as $n => $category) {
+            print '<br><input type="checkbox" name="categories[]" value="' . $n;
+            print '"> id="cat' . $n . '"> <label for="cat' . $n . '">';
+	    print $category . '</label>';
+        }
+    }
+
     function reject_form($id) {
         $p = new Petition($id); ?>
 <p>You have chosen to reject the petition '<?=$p->ref() ?>'.</p>
 <form method="post"><input type="hidden" name="reject_form_submit" value="1">
 <input type="hidden" name="petition" value="<?=$id ?>">
-<p>Category for rejection: <select name="category">
-<option value="">Please choose...
-<option>Party political material
-<option>False or defamatory statements
-<option>Information protected by an injunction or court order
-<option>Material which is commercially sensitive, confidential or which may cause personal distress or loss
-<option>Names of individual officials of public bodies, unless part of the senior management of those organisations
-<option>Names of family members of officials of public bodies, or elected representatives
-<option>Names of individuals, or information where they may be identified, in relation to criminal accusations
-<option>Offensive language</option>
-</select></p>
-<p>Reason for rejection:<br><textarea name="reason" rows="10" cols="70"></textarea></p>
+<p>Category or categories for rejection:
+<?      $this->display_categories(); ?>
+</p>
+<p>Reason for rejection (this will be emailed to the creator and available on the website):
+<br><textarea name="reason" rows="10" cols="70"></textarea></p>
 <input type="submit" value="Reject petition">
 </form>
 <?  }
 
-    function reject_petition($id, $category, $reason) {
+    function reject_petition($id, $categories, $reason) {
         $p = new Petition($id);
         $status = $p->status();
+	$cats_pretty = $this->prettify_categories($categories, false);
+	$cats_pretty_nl = $this->prettify_categories($categories, true);
         if ($status == 'draft') {
-            db_getOne("UPDATE petition SET status='rejectedonce' WHERE id=?", $id);
-            $p->log_event("Admin rejected petition for the first time. Category $category, reason $reason", null);
+            db_getOne("UPDATE petition SET status='rejectedonce', rejection_first_categories=?, rejection_first_reason=? WHERE id=?", array($categories, $reason, $id));
+            $p->log_event("Admin rejected petition for the first time. Category $cats_pretty, reason $reason", null);
             $template = 'admin-rejected-once';
             $post_data = array('data' => base64_encode(serialize($p->data)), 'tostepintro' => 1);
             $stash = stash_new_request('POST', OPTION_BASE_URL . '/new', $post_data);
             $url = OPTION_BASE_URL . '/new?stashpost=' . $stash;
         } elseif ($status == 'resubmitted') {
-            db_getOne("UPDATE petition SET status='rejected' WHERE id=?", $id);
-            $p->log_event("Admin rejected petition for the second time. Category $category, reason $reason", null);
+            db_getOne("UPDATE petition SET status='rejected', rejection_second_categories=?, rejection_second_reason=? WHERE id=?", array($categories, $reason, $id));
+            $p->log_event("Admin rejected petition for the second time. Category $cats_pretty, reason $reason", null);
             $template = 'admin-rejected-again';
             $url = '';
         } else {
@@ -454,11 +481,12 @@ class ADMIN_PAGE_PET_MAIN {
             db_commit();
             err("Should only be able to reject petitions in draft or resubmitted state");
         }
+	return;
         db_commit();
         $to = $p->creator_email();
         $values = array_merge($p->data, array(
             'url' => $url,
-            'category' => $category,
+            'categories' => $cats_pretty_nl,
             'reason' => $reason
         ));
         print '<p><em>That petition has been rejected.';
@@ -503,10 +531,12 @@ class ADMIN_PAGE_PET_MAIN {
             $this->reject_form($petition);
             $petition = null;
         } elseif (get_http_var('reject_form_submit')) {
-            $category = get_http_var('category');
+            $categories = get_http_var('categories');
+	    if (is_array($categories)) $categories = array_sum($categories);
+	    else $categories = 0;
             $reason = get_http_var('reason');
-            if ($category && $reason) {
-                $this->reject_petition($petition, $category, $reason);
+            if ($categories && $reason) {
+                $this->reject_petition($petition, $categories, $reason);
             } else {
                 $this->reject_form($petition);
             }

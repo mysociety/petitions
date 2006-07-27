@@ -5,21 +5,21 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.16 2006-07-21 09:59:03 chris Exp $
+// $Id: new.php,v 1.17 2006-07-27 12:57:16 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
 require_once '../../phplib/datetime.php';
 
-$page_title = _('Create a new petition');
+$page_title = 'Create a new petition';
 ob_start();
-if (get_http_var('tostepintro') || get_http_var('tostepmain')
+if (get_http_var('tostepmain')
    || get_http_var('tostepyou') || get_http_var('tosteppreview')
    || get_http_var('tocreate') ) {
     petition_form_submitted();
 } else {
-    petition_form_intro(get_http_var('data'));
+    petition_form_main();
 }
 $contents = ob_get_contents();
 ob_end_clean();
@@ -40,12 +40,6 @@ function petition_form_submitted() {
         if (!$alldata) $errors[] = _('Transferring the data from previous page failed :(');
         unset($data['data']);
         $data = array_merge($alldata, $data);
-    }
-
-    # Step 0, instructions
-    if (get_http_var('tostepintro')) {
-        petition_form_intro($data);
-        return;
     }
 
     # Step 1 fixes
@@ -142,87 +136,16 @@ function textfield($name, $val, $size, $errors) {
             . 'type="text" name="%s" id="%s" size="%d" value="%s"%s />',
             htmlspecialchars($name), htmlspecialchars($name),
             $size,
-            array_key_exists($name, $errors) ? ' class="error"' : '',
-            htmlspecialchars(is_null($val) ? '' : $val));
-}
-
-function petition_form_intro($data = array()) {
-?>
-<h1><span dir="ltr"><?=_('Step-by-step guide to making petitions') ?></span></h1>
-<ol>
-
-<h3><span dir="ltr"><?=_('Step 1: Create your petition')?></span></h3>
-
-<p><?=_('You will be asked to give your name, organisation (if you represent one),
-address and email address, title and text of your petition. You will also be
-asked to give a short, one-word name for your petition. This will be used to
-give your petition a unique URL (website address) that you can use to publicise
-your petition.')?></p>
-
-<p><?=_('You will be able to specify a start and finish date for your petition, and we
-will host your petition for up to 12 months.')?></p>
-
-<h3><span dir="ltr"><?=_('Step 2: Submit your petition')?></span></h3>
-
-<p><?=_('Once you have submitted your petition, you will receive an email asking
-you to click a link to confirm your petition. Your proposed petition will then
-be delivered to the Downing Street inbox.')?></p>
-
-<h3><span dir="ltr"><?=_('Step 3: Petition approval')?></span></h3>
-
-<p><?=_('Officials at Downing Street will check your petition to make sure that it meets
-the basic requirements set out in our acceptable use policy (link) and the
-Civil Service code.')?></p>
-
-<p><?=_('If for any reason we cannot accept petition, we will write to you to explain
-why. You will be able to edit and resubmit your petition if you wish.')?></p>
-
-<p><?=_('Once your petition is approved, we will email you to confirm a date for it to
-appear on the website.')?></p>
-
-<p><?=_('If we cannot approve your amended petition, we will write to you again to
-explain our reason(s). ')?></p>
-
-<p><?=_('Any petitions that are rejected or not resubmitted will be published on this
-website, along with the reason(s) why it was rejected. Any content that is
-offensive or illegal will be left out. Every petition that is received will be
-acknowledged on this website.')?></p>
-
-<h3><span dir="ltr"><?=_('Step 4: Petition live')?></span></h3>
-
-<p><?=_('Once your petition is live, you will be able to publicise the URL (website
-address) you chose when you created your petition, and anyone will be able to
-come to the website and sign it.')?></p>
-
-<p><?=_('They will be asked to give their name and address and an email address that we
-can verify. The system is designed to identify duplicate names and addresses,
-will not allow someone to sign a petition more than once. Anyone signing a
-petition will be sent an email asking them to click a link to confirm that they
-have signed the petition. Once they have done this, their name will be added to
-the petition.')?></p>
-
-<p><?=_('Your petition will show the total number of signatures received. It will also
-display the names of signatories, unless they have opted not to be shown.')?></p>
-
-<h3><span dir="ltr"><?=_('Step 5: Petition close')?></span></h3>
-
-<p><?=_('When the petition closes, officials at Downing Street will ensure you get a
-response to the issues you raise. Depending on the nature of the petition, this
-may be from the Prime Minister, or he may ask one of his Ministers or officials
-to respond.')?>
-
-<p><?=_('We will email the petition organiser and everyone who has signed the
-petition via this website giving details of the Government’s response.')?>
-<?
-    startform();
-    nextprevbuttons(null, null, 'tostepmain', null);
-    endform($data);
+            htmlspecialchars(is_null($val) ? '' : $val),
+            array_key_exists($name, $errors) ? ' class="error"' : '');
 }
 
 function petition_form_main($data = array(), $errors = array()) {
     global $pet_time, $petition_prefix;
 
-    print petition_breadcrumbs(1);
+    print 'There are stages to creating a petition:';
+    print petition_breadcrumbs(0);
+    print '<a href="/steps">More detailed description of these steps</a>';
 
     foreach (array('content', 'title', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
@@ -241,12 +164,10 @@ function petition_form_main($data = array(), $errors = array()) {
     textfield('title', $data['title'], 60, $errors);
     ?>
 </p>
-<p><?=_('People must sign up before') ?>
+<p>Requested duration:
     <?
     textfield('rawdeadline', $data['rawdeadline'], 15, $errors);
-    printf('<small>' . _('e.g. %s') . '</small>',
-            htmlspecialchars(date('jS F Y', $pet_time + 28 * 86400)));
-    ?>
+    ?> <small>(e.g. "2 months")</small>
 </p>
 
 <p><?=_('Choose a short name for your petition (6 to 16 letters):') ?>
@@ -257,7 +178,7 @@ function petition_form_main($data = array(), $errors = array()) {
 </p>
 
 <?
-    nextprevbuttons('tostepintro', null, 'tostepyou', null);
+    nextprevbuttons(null, null, 'tostepyou', null);
     endform($data);
 }
 
