@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.18 2006-07-27 18:17:50 matthew Exp $
+// $Id: new.php,v 1.19 2006-07-27 22:09:58 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -313,14 +313,14 @@ function preview_petition($data, $errors) {
 <h1><span dir="ltr"><?=_('New petition &#8211; Part 3 of 3')?></span></h1>
 <p>Your petition, with short name <em><?=$data['ref'] ?></em>, will look like this:</p>
 <?
-    $partial_pledge = new Petition($data);
-    $partial_pledge->h_display_box();
+    $partial_petition = new Petition($data);
+    $partial_petition->h_display_box();
 
     startform();
     ?>
 <p>Now please read through your petition, above, and check the details thoroughly.
 <strong>Read carefully</strong> - we can't let you
-<a href="/faq#editpledge" id="changethewording" onclick="return toggleNewModifyFAQ()">change the wording</a>
+<a href="/faq#editpetition" id="changethewording" onclick="return toggleNewModifyFAQ()">change the wording</a>
 of your petition once people have started to sign up to it.</p>
 
 <div id="modifyfaq">
@@ -401,8 +401,10 @@ function petition_create($data) {
     global $page_title;
     $page_title = _('Now check your email');
 ?>
-    <p class="noprint loudmessage">Now please check your email, and click the
-    link that we've sent you.</p>
+    <p class="noprint loudmessage">We have sent you an email to confirm
+    that we've received your petition details. In order for us to approve
+    your petition, we need you to open this email and click on an activation
+    link, which will send your petition details to our team for approval.</p>
 <?  
 }
 
