@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.7 2006-07-27 12:57:15 matthew Exp $
+ * $Id: admin-pet.php,v 1.8 2006-07-27 13:32:19 matthew Exp $
  * 
  */
 
@@ -30,7 +30,7 @@ class ADMIN_PAGE_PET_SUMMARY {
         $petitions_rejected = db_getOne("SELECT COUNT(*) FROM petition WHERE status='rejected' or status='rejectedonce'");
         $petitions_resubmitted = db_getOne("select count(*) from petition where status='resubmitted'");
         $signatures = db_getOne('SELECT COUNT(*) FROM signer WHERE showname');
-        $signers = db_getOne('SELECT COUNT(DISTINCT person_id) FROM signer WHERE showname');
+        $signers = db_getOne('SELECT COUNT(DISTINCT email) FROM signer WHERE showname');
         
         print "Total petitions in system: $petitions<br>$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $petitions_resubmitted resubmitted<br>$signatures signatures, $signers signers";
         petition_admin_search_form();
@@ -55,12 +55,12 @@ class ADMIN_PAGE_PET_SEARCH {
         $search = get_http_var('search');
         petition_admin_navigation(array('search'=>$search));
         if ($search) {
-            $q = db_query("select signer.id, ref, signer.name, email
-                from signer, person, petition
-                where signer.person_id = person.id and signer.petition_id = petition.id
+            $q = db_query("select signer.id, ref, signer.name, signer.email
+                from signer, petition
+                where signer.petition_id = petition.id
                 and showname
-                and (person.name like '%'||?||'%' or person.email like '%'||?||'%')
-                order by email
+                and (signer.name like '%'||?||'%' or signer.email like '%'||?||'%')
+                order by signer.email
             ", array($search, $search));
             $out = '';
             while ($r = db_fetch_array($q)) {
@@ -185,12 +185,11 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($status == 'rejected')
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
         $q = db_query("
-            SELECT petition.*, person.email,
+            SELECT petition.*,
                 date_trunc('second',creationtime) AS creationtime, 
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id) AS signers,
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge
-            FROM petition 
-            LEFT JOIN person ON person.id = petition.person_id
+            FROM petition
             WHERE $status_query
             " .  ($order ? ' ORDER BY ' . $order : '') );
         $found = array();
@@ -212,15 +211,20 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
             $row .= '<td>'.$r['creationtime'].'</td>';
-        if ($status == 'draft') {
-            $row .= '<td><form method="post"><input type="hidden" name="petition" value="' . $r['id'] .
-            '"><input type="submit" name="approve" value="Approve"> <input type="submit" name="reject" value="Reject"></form>';
-            if ($r['status'] == 'resubmitted') {
-                $row .= ' resubmitted';
+            if ($status == 'rejected') {
+                if ($r['status'] == 'rejectedonce') {
+                    $row .= '<td>Rejected once</td>';
+                } elseif ($r['status'] == 'rejected') {
+                    $row .= '<td>Rejected twice</td>';
+                }
+            } elseif ($status == 'draft') {
+                $row .= '<td><form method="post"><input type="hidden" name="petition" value="' . $r['id'] .
+                    '"><input type="submit" name="approve" value="Approve"> <input type="submit" name="reject" value="Reject"></form>';
+                if ($r['status'] == 'resubmitted') {
+                    $row .= ' resubmitted';
+                }
+                $row .= '</td>';
             }
-            $row .= '</td>';
-        }
-
             $found[] = $row;
         }
         if ($sort=='o') {
@@ -260,10 +264,9 @@ class ADMIN_PAGE_PET_MAIN {
         else
             $list_limit = 100;
 
-        $q = db_query('SELECT petition.*, person.email,
+        $q = db_query('SELECT petition.*,
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id) AS signers
-            FROM petition 
-            LEFT JOIN person ON person.id = petition.person_id 
+            FROM petition
             WHERE ref ILIKE ?', $petition);
         $pdata = db_fetch_array($q);
         if (!$pdata) {
@@ -290,11 +293,10 @@ class ADMIN_PAGE_PET_MAIN {
 
         // Signers
         print "<h2>Signers (".$pdata['signers'].")</h2>";
-        $query = 'SELECT signer.name as signname,person.email as signemail,
+        $query = 'SELECT signer.name as signname, signer.email as signemail,
                          date_trunc(\'second\',signtime) AS signtime,
                          signer.id AS signid 
-                   FROM signer 
-                   LEFT JOIN person ON person.id = signer.person_id
+                   FROM signer
                    WHERE showname AND petition_id=?';
         if ($sort=='t') $query .= ' ORDER BY signtime DESC';
         else $query .= ' ORDER BY signname DESC';
@@ -426,13 +428,13 @@ class ADMIN_PAGE_PET_MAIN {
 
     function prettify_categories($categories, $newlines) {
         $cat = 1;
-	$out = array();
+        $out = array();
         while ($categories>0) {
-	    if ($categories % 2) $out[] = $this->categories[$cat];
-	    $categories = floor($categories / 2);
-	    $cat *= 2;
-	}
-	if ($newlines)
+            if ($categories % 2) $out[] = $this->categories[$cat];
+            $categories = floor($categories / 2);
+            $cat *= 2;
+        }
+        if ($newlines)
             return '    ' . join("\n    ", $out) . "\n";
         return join(', ', $out);
     }
@@ -440,8 +442,8 @@ class ADMIN_PAGE_PET_MAIN {
     function display_categories() {
         foreach ($this->categories as $n => $category) {
             print '<br><input type="checkbox" name="categories[]" value="' . $n;
-            print '"> id="cat' . $n . '"> <label for="cat' . $n . '">';
-	    print $category . '</label>';
+            print '" id="cat' . $n . '"> <label for="cat' . $n . '">';
+            print $category . '</label>';
         }
     }
 
@@ -462,8 +464,8 @@ class ADMIN_PAGE_PET_MAIN {
     function reject_petition($id, $categories, $reason) {
         $p = new Petition($id);
         $status = $p->status();
-	$cats_pretty = $this->prettify_categories($categories, false);
-	$cats_pretty_nl = $this->prettify_categories($categories, true);
+        $cats_pretty = $this->prettify_categories($categories, false);
+        $cats_pretty_nl = $this->prettify_categories($categories, true);
         if ($status == 'draft') {
             db_getOne("UPDATE petition SET status='rejectedonce', rejection_first_categories=?, rejection_first_reason=? WHERE id=?", array($categories, $reason, $id));
             $p->log_event("Admin rejected petition for the first time. Category $cats_pretty, reason $reason", null);
@@ -481,7 +483,7 @@ class ADMIN_PAGE_PET_MAIN {
             db_commit();
             err("Should only be able to reject petitions in draft or resubmitted state");
         }
-	return;
+        return;
         db_commit();
         $to = $p->creator_email();
         $values = array_merge($p->data, array(
@@ -532,8 +534,8 @@ class ADMIN_PAGE_PET_MAIN {
             $petition = null;
         } elseif (get_http_var('reject_form_submit')) {
             $categories = get_http_var('categories');
-	    if (is_array($categories)) $categories = array_sum($categories);
-	    else $categories = 0;
+            if (is_array($categories)) $categories = array_sum($categories);
+            else $categories = 0;
             $reason = get_http_var('reason');
             if ($categories && $reason) {
                 $this->reject_petition($petition, $categories, $reason);
