@@ -1,15 +1,22 @@
 <img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
-<p align="center">
-<a href="/">Home</a> |
-<a href="/about">About</a> |
-<a href="/faq">Q&amp;A</a> |
-<a href="/new">Create</a> |
-<a href="/privacy">Privacy Policy</a>
-</p>
 </div>
 </div>
 <div id="rel_links">
-<img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
+
+<div class="primeminister submenu">
+<h2><span class="ltr">E-Petitions</span></h2>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="/list">View petitions</a></li>
+<li><a href="/new">Create a petition</a></li>
+<li><a href="/about">About e-petitions</a>
+<li><a href="/steps">Step by Step Guide</a></li>
+<li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
+<li>Terms and Conditions
+<li><a href="/privacy">Privacy Policy</a></li>
+</ul>
+</div>
+
 </div>
 </div>
 <div id="ilinks">

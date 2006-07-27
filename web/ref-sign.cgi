@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.3 2006-07-21 17:25:08 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.4 2006-07-27 18:17:50 matthew Exp $';
 
 use strict;
 
@@ -17,9 +17,12 @@ BEGIN {
 }
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
+use mySociety::WatchUpdate;
 
 use Petitions;
 use Petitions::Page;
+
+my $W = new mySociety::WatchUpdate();
 
 sub i_check_email ($$) {
     return mySociety::Util::is_valid_email($_[1]);
@@ -130,4 +133,5 @@ while (!$foad && (my $q = new mySociety::Web())) {
     $html .= Petitions::Page::footer($q);
 
     print $q->header(-content_length => length($html)), $html;
+    $W->exit_if_changed();
 }

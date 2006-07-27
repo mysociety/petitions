@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.3 2006-07-20 13:20:06 matthew Exp $
+// $Id: list.php,v 1.4 2006-07-27 18:17:50 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -58,23 +58,21 @@ if ($q_sort == 'creationtime' || $q_sort == 'created' || $q_sort == 'whensucceed
 $sql_params[] = PAGE_SIZE;
 $qrows = db_query("
         SELECT petition.*, '$pet_today' <= petition.deadline AS open,
-            (SELECT count(*) FROM signer WHERE showname and signer.petition_id = petition.id) AS signers,
-            person.email AS email
+            (SELECT count(*) FROM signer WHERE showname and signer.petition_id = petition.id) AS signers
             FROM petition
-            LEFT JOIN person ON person.id = petition.person_id
             WHERE status = ?".
             ($open ? " AND deadline $open '$pet_today' " : ""). 
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
 /* PG bug: mustn't quote parameter of offset */
 
 if ($q_type == 'open') {
-    $heading = _("Open petitions");
+    $heading = "Open petitions";
     if ($rss)
-        $heading = _('New Petitions');
+        $heading = 'New Petitions';
 } elseif ($q_type == 'closed') {
-    $heading = _("Closed petitions");
+    $heading = "Closed petitions";
 } elseif ($q_type == 'rejected') {
-    $heading = _("Rejected petitions");
+    $heading = "Rejected petitions";
 } else {
     err('Unknown type ' . $q_type);
 }
@@ -89,12 +87,12 @@ else {
 }
 
 if (!$rss) {
-?><a href="<? #pb_domain_url(array('explicit'=>true, 'path'=>"/rss".$_SERVER['REQUEST_URI']))?>"><img align="right" border="0" src="/rss.gif" alt="<?=_('RSS feed of ') . $heading ?>"></a><?
-    print "<h2>$heading</h2>";
+?>
+<h1><span dir="ltr">E-Petitions</span></h1>
+<?
+#    print "<h2>$heading</h2>";
 
-    #pb_print_filter_link_main_general('align="center"');
-
-    $viewsarray = array('open'=>_('Open petitions'), 'closed' => _('Closed petitions'),
+    $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
         'rejected' => 'Rejected petitions');
     $views = "";
     $b = false;
@@ -106,17 +104,17 @@ if (!$rss) {
 
     $sort = ($q_sort) ? '&amp;sort=' . $q_sort : '';
     $off = ($q_offset) ? '&amp;offset=' . $q_offset : '';
-    $prev = '<span class="greyed">&laquo; '._('Previous page').'</span>'; $next = '<span class="greyed">'._('Next page').' &raquo;</span>';
+    $prev = '<span class="greyed">Previous page</span>'; $next = '<span class="greyed">Next page</span>';
     if ($q_offset > 0) {
         $n = $q_offset - PAGE_SIZE;
         if ($n < 0) $n = 0;
-        $prev = "<a href=\"?offset=$n$sort\">&laquo; "._('Previous page')."</a>";
+        $prev = "<a href=\"?offset=$n$sort\">Previous page</a>";
     }
     if ($q_offset + PAGE_SIZE < $ntotal) {
         $n = $q_offset + PAGE_SIZE;
-        $next = "<a href=\"?offset=$n$sort\">"._('Next page')." &raquo;</a>";
+        $next = "<a href=\"?offset=$n$sort\">Next page</a>";
     }
-    $navlinks = '<p align="center">' . $views . "</p>\n";
+    $navlinks = '<p>' . $views . "</p>\n";
     if ($ntotal > 0) {
         $navlinks .= '<p align="center" style="font-size: 89%">' . _('Sort by'). ': ';
         $arr = array(
@@ -143,17 +141,33 @@ if (!$rss) {
 $rss_items = array();
 if ($ntotal > 0) {
     $c = 0;
-    $lastcategory = 'none';
+    if (!$rss) { ?>
+<table>
+<tr><th>We the undersigned petition the Prime Minister to&hellip;</th>
+<th>Submitted by</th>
+<th>Deadline to sign by</th>
+<th>Signatures</th>
+</tr>
+<?  }
     while ($row = db_fetch_array($qrows)) {
         $petition = new Petition($row);
-        $arr = array('class'=>"petition-".$c%2, 'href' => $petition->url_main() );
-        if ($q_type == 'succeeded_closed' || $q_type == 'failed') $arr['closed'] = true;
+        #$arr = array('class'=>"petition-".$c%2, 'href' => $petition->url_main() );
+        #if ($q_type == 'succeeded_closed' || $q_type == 'failed') $arr['closed'] = true;
         if ($rss)
             $rss_items[] = $petition->rss_entry();
-        else
-            $petition->h_display_box($arr);
+        else {
+	    print '<tr><td><a href="/' . $petition->ref() . '">';
+	    print $petition->h_title() . '</a></td>';
+	    print '<td>' . $petition->h_name() . '</td>';
+	    print '<td>' . $petition->h_pretty_deadline() . '</td>';
+	    print '<td>' . $petition->signers() . '</td>';
+	    print '</tr>';
+            # $petition->h_display_box($arr);
+	}
         $c++;
     }
+    if (!$rss)
+        print '</table>';
     if (!$rss && $ntotal > PAGE_SIZE)
         print "<br style=\"clear: both;\">$navlinks";
 } else {
@@ -163,7 +177,11 @@ if ($ntotal > 0) {
 
 if ($rss)
     rss_footer($rss_items);
-else
+else {
+?>
+<p align="right"><a href="/rss<?=$_SERVER['REQUEST_URI'] ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $heading ?>"> RSS</a>
+| <a href="http://news.bbc.co.uk/1/hi/help/3223484.stm">What is RSS?</a>
+<?
     page_footer();
-
+}
 ?>

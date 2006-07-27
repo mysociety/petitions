@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.17 2006-07-27 12:57:16 matthew Exp $
+// $Id: new.php,v 1.18 2006-07-27 18:17:50 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -96,13 +96,13 @@ function nextprevbuttons($prev, $prevdesc, $next, $nextdesc) {
     print '<p style="text-align: right">';
     if (!is_null($next)) {
         if (is_null($nextdesc)) $nextdesc = _('Next');
-        printf('<input type="submit" name="%s" value="%s &gt;&gt;&gt;" />',
+        printf('<input type="submit" name="%s" value="%s" />',
                 htmlspecialchars($next), htmlspecialchars($nextdesc));
         if (!is_null($prev)) print "<br />";
     }
     if (!is_null($prev)) {
         if (is_null($prevdesc)) $prevdesc = _('Prev');
-        printf('<input type="submit" name="%s" value="%s &lt;&lt;&lt;" />',
+        printf('<input type="submit" name="%s" value="%s" />',
                 htmlspecialchars($prev), htmlspecialchars($prevdesc));
     }
     print '</p>';
@@ -143,7 +143,7 @@ function textfield($name, $val, $size, $errors) {
 function petition_form_main($data = array(), $errors = array()) {
     global $pet_time, $petition_prefix;
 
-    print 'There are stages to creating a petition:';
+    print 'There are 5 stages to the petition process:';
     print petition_breadcrumbs(0);
     print '<a href="/steps">More detailed description of these steps</a>';
 
@@ -195,7 +195,7 @@ function petition_form_you($data = array(), $errors = array()) {
             'address' =>        _('Address'),
             'postcode' =>       _('Postcode'),
             'telephone' =>      _('Telephone number'),
-            'org_url' =>        _('URL or campaign/organisation'),
+            'org_url' =>        _('URL of campaign/organisation'),
             'email' =>          _('Your email'),
             'email2' =>         _('Confirm email')
         );

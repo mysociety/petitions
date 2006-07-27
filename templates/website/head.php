@@ -30,7 +30,7 @@
 <link rel="stylesheet" type="text/css" href="http://www.number10.gov.uk/styles/print.css" media="print" />
 <link rel="shorcut icon" href="favicon.ico" />
 </head>
-<body>
+<body class="primeminister">
 <h3 align="center" style="color: #cc0000; background-color: #ffffff; "><?=$devwarning?></h3>
 <p class="rm"><a class="skip" href="#content">Skip to: Content</a><span class="skip"> |</span></p>
 <div class="toolbarWhite">

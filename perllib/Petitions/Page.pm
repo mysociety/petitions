@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.9 2006-07-21 17:16:06 chris Exp $
+# $Id: Page.pm,v 1.10 2006-07-27 18:17:50 matthew Exp $
 #
 
 package Petitions::Page;
@@ -78,7 +78,7 @@ sub header ($$%) {
 <link rel="stylesheet" type="text/css" href="http://www.number10.gov.uk/styles/print.css" media="print" />
 <link rel="shorcut icon" href="favicon.ico" />
 </head>
-<body>
+<body class="primeminister">
 <h3 align="center" style="color: #cc0000; background-color: #ffffff; ">@{[ $devwarning ]}</h3>
 <p class="rm"><a class="skip" href="#content">Skip to: Content</a><span class="skip"> |</span></p>
 <div class="toolbarWhite">
@@ -136,17 +136,24 @@ sub footer ($%) {
 
     return <<EOF;
 <img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
-<p align="center">
-<a href="/">Home</a> |
-<a href="/about">About</a> |
-<a href="/faq">Q&amp;A</a> |
-<a href="/new">Create</a> |
-<a href="/privacy">Privacy Policy</a>
-</p>
 </div>
 </div>
 <div id="rel_links">
-<img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
+
+<div class="primeminister submenu">
+<h2><span class="ltr">E-Petitions</span></h2>
+<ul>
+<li><a href="/">Home</a></li>
+<li><a href="/list">View petitions</a></li>
+<li><a href="/new">Create a petition</a></li>
+<li><a href="/about">About e-petitions</a>
+<li><a href="/steps">Step by Step Guide</a></li>
+<li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
+<li>Terms and Conditions
+<li><a href="/privacy">Privacy Policy</a></li>
+</ul>
+</div>
+
 </div>
 </div>
 <div id="ilinks">
@@ -223,15 +230,10 @@ sub display_box ($$%) {
                 Petitions::sentence($p, 1),
                 (exists($params{href}) ? '</a>' : '')
             ),
-            $q->p({ -align => 'right' },
-                '&mdash;', ent($p->{name})
-            ),
-            $q->p(
-                'Deadline to sign up by:', $q->strong(Petitions::pretty_deadline($p, 1))
-            ),
-            $q->p(
-                $p->{signers},
-                ($p->{signers} > 1 ? 'people have signed the petition' : 'person has signed the petition')
+            $q->p({ -align => 'center' },
+                'Submitted by ', ent($p->{name}), ' &ndash; ',
+		$q->strong('Deadline to sign up by:'), Petitions::pretty_deadline($p, 1),
+		' &ndash; ', $q->strong('Signatures:'), $p->{signers}
             )
         );
 
@@ -254,34 +256,34 @@ sub sign_box ($$) {
         $q->start_form(-method => 'POST', -action => "/$p->{ref}/sign")
         . qq(<input type="hidden" name="add_signatory" value="1" />)
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
-        . $q->h2('Sign up now')
-        . $q->p($q->strong(
-                "I, ",
+#        . $q->h2($q->span({-class => 'ltr'}, 'Sign up now'))
+        . $q->div({ -style => 'float: left; width: 50%; border: none; border-right: dotted 1px black;' }, 
+          $q->p("I, ",
                 $q->textfield(
                     -name => 'name', -id => 'name', -size => 20,
                     -onblur => 'fadeout(this)', -onfocus => 'fadein(this)'
                 ),
-                " sign up to the petition"
-            ))
-        . $q->br()
+                " sign up to the petition."
+            )
         . $q->p(
-            $q->strong('Your email:'),
+            'Your email:',
                 $q->textfield(-name => 'email', -size => 30),
                 $q->br(),
-            $q->strong('Confirm email:'),
+            'Confirm email:',
                 $q->textfield(-name => 'email2', -size => 30),
                 $q->br(),
-            $q->small('(we need this so we can tell you when the petition is completed and let the Government get in touch)')
-        )
-        . $q->p(
-            $q->strong({ -style => 'float: left' }, 'Your address:&nbsp;'),
+            $q->small($q->strong('Will not be published.'), 'Just used to tell you when the petition is completed and let the Government get in touch.')
+        ) )
+	. $q->div({-style => 'float: right; width: 45%; border: none;' },
+          $q->p(
+            'Your address:&nbsp;',
                 $q->textarea(-name => 'address', -cols => 30, -rows => 4),
                 $q->br(), $q->br(),
-            $q->strong('Your postcode:'),
+            'Your postcode:',
                 $q->textfield(-name => 'postcode', -size => 10)
-        )
-        . $q->p(
-            $q->submit(-name => 'submit', -value => 'Sign petition')
+        ) )
+        . $q->p( {-style => 'clear: both', -align => 'right'},
+            $q->submit(-name => 'submit', -value => 'Sign')
         )
         . $q->end_form();
 }
@@ -314,7 +316,7 @@ sub signatories_box ($$) {
 
     my $html =
         $q->start_div(-id => 'signatories')
-            . $q->h2($q->a({ -name => 'signers' }, 'Current signatories'));
+            . $q->h2($q->span({-class => 'ltr'}, '<a name="signers"></a>Current signatories'));
 
     if ($p->{signers} == 0) {
         $html .=

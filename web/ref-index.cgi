@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.1 2006-07-21 17:16:24 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.2 2006-07-27 18:17:50 matthew Exp $';
 
 use strict;
 
@@ -17,9 +17,12 @@ BEGIN {
 }
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
+use mySociety::WatchUpdate;
 
 use Petitions;
 use Petitions::Page;
+
+my $W = new mySociety::WatchUpdate();
 
 my $foad = 0;
 $SIG{TERM} = sub { $foad = 1; };
@@ -45,6 +48,9 @@ while (!$foad && (my $q = new mySociety::Web())) {
     my $html =
         Petitions::Page::header($q, $title);
 
+    $html .= $q->h1($q->span({-class => 'ltr'}, 'E-Petitions'));
+    $html .= $q->h2($q->span({-class => 'ltr'}, 'Sign a petition'));
+
     $html .= $q->p({ -id => 'finished' }, "This petition is now closed, as its deadline has passed.")
         if (!$p->{open});
 
@@ -62,4 +68,5 @@ while (!$foad && (my $q = new mySociety::Web())) {
     $html .= Petitions::Page::footer($q);
 
     print $q->header(-content_length => length($html)), $html;
+    $W->exit_if_changed();
 }
