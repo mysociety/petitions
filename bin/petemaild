@@ -1,0 +1,1257 @@
+#!/usr/bin/perl -w
+#
+# petemaild:
+# High-performance email sending tool, for sending confirmation and other mails
+# from the petitions site.
+#
+# Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+# Email: chris@mysociety.org; WWW: http://www.mysociety.org/
+#
+
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.1 2006-07-28 17:36:28 chris Exp $';
+
+use strict;
+
+package Counter;
+
+my $starttime = time();
+my $id = 0;
+
+# value
+#
+sub value () {
+    return sprintf('%08x.%08x', $starttime, $id++);
+}
+
+package Log;
+
+sub print ($@) {
+    my $prio = shift;
+    print STDERR @_, "\n";
+}
+
+# Object encapsulating a single message on the queue.
+package Queue::Message;
+
+use Carp;
+use Time::HiRes qw(time);
+
+use fields qw(id state sender recipient domain text events owner starttime
+                nattempts lastattempt);
+
+use constant STATE_PENDING =>       0;
+use constant STATE_DONE =>          1;
+use constant STATE_BAD =>           2;
+
+use constant EVENT_CREATED =>       0;
+use constant EVENT_TEMP_FAILURE =>  1;
+use constant EVENT_PERM_FAILURE =>  2;
+use constant EVENT_DELIVERED =>     3;
+
+# new ID SENDER RECIPIENT TEXT
+sub new ($$$$$) {
+    my Queue::Message $self = shift;
+    my ($id, $sender, $recipient) = @_;
+
+    $self = fields::new($self)
+        unless (ref($self));
+
+    Log::print('debug', "msg $id: from <$sender> to <$recipient> length ", length($_[3]));
+
+    $self->{id} = $id;
+    $self->{state} = STATE_PENDING;
+    $self->{sender} = $sender;
+    $self->{recipient} = $recipient;
+    $self->{text} = $_[3];  # XXX ref?
+    $self->{events} = [ ];
+    $self->{owner} = undef;
+
+    $self->{starttime} = time();
+
+    my $domain = $recipient;
+    $domain =~ s/.*@//;
+    $self->{domain} = lc($domain);
+
+    $self->{nattempts} = 0;
+    
+    $self->addevent(EVENT_CREATED);
+
+    return $self;
+}
+
+# addevent EVENT [ADDRESS]
+#
+sub addevent ($$;$) {
+    my Queue::Message $self = shift;
+    my ($event, $ipaddr) = @_;
+    my $t = time();
+    push(@{$self->{events}}, [$event, $t, $ipaddr]);
+
+    if ($event == EVENT_TEMP_FAILURE || $event == EVENT_PERM_FAILURE) {
+        ++$self->{nattempts};
+        $self->{lastattempt} = $t;
+    }
+
+    if ($event == EVENT_PERM_FAILURE) {
+        $self->state(STATE_BAD);
+    } elsif ($event == EVENT_DELIVERED) {
+        $self->state(STATE_DONE);
+    }
+}
+
+# state [STATE]
+#
+sub state ($;$) {
+    my Queue::Message $self = shift;
+    if (@_) {
+        $self->{state} = $_[0];
+    }
+    return $self->{state};
+}
+
+# owner [OWNER]
+# Get or set the current owner of this message.
+sub owner ($;$) {
+    my Queue::Message $self = shift;
+    if (@_) {
+        my $owner = shift;
+        croak "OWNER must be undef or a reference" unless (!defined($owner) || ref($owner));
+        $self->{owner} = $owner;
+    }
+    return $self->{owner};
+}
+
+# Accessors.
+foreach (qw(id sender recipient domain text events starttime nattempts lastattempt)) {
+    eval <<EOF;
+sub $_ (\$) {
+    my Queue::Message \$self = shift;
+    return \$self->{$_};
+}
+EOF
+}
+
+# Senders connect to servers and send email.
+package Sender;
+
+use Carp;
+use IO::Socket;
+use Regexp::Common;
+use Time::HiRes qw(time);
+
+use fields qw(target messages message state s tried sendbuf recvbuf
+                lastactivity error delivered tempfailed permfailed);
+
+            # socket created, not connected yet
+use constant STATE_CONNECT =>       0;
+            # waiting for banner
+use constant STATE_BANNER =>        1;
+            # sent HELO, awaiting response
+use constant STATE_HELO =>          2;
+            # sent MAIL FROM, awaiting response
+use constant STATE_MAIL_FROM =>     3;
+            # sent RCPT TO, awaiting response
+use constant STATE_RCPT_TO =>       4;
+            # sent DATA command, awaiting response
+use constant STATE_DATA =>          5;
+            # sending message
+use constant STATE_MESSAGE =>       6;
+            # sent QUIT, awaiting response
+use constant STATE_QUIT =>          7;
+            # received final response from server, awaiting disconnect
+use constant STATE_EOF =>           8;
+            # sent RSET, awaiting response
+use constant STATE_RSET =>          9;
+            # all done without error
+use constant STATE_DONE =>         10;
+            # transport-level error
+use constant STATE_BAD =>          11;
+
+# We maintain an activity timer which is updated whenever we receive an SMTP
+# response. Timeouts are detected in pre_select and result in an abort.
+use constant TIMEOUT => 30;
+
+our @statename = qw(STATE_CONNECT STATE_BANNER STATE_HELO STATE_MAIL_FROM
+                    STATE_RCPT_TO STATE_DATA STATE_MESSAGE STATE_QUIT
+                    STATE_EOF STATE_RSET STATE_DONE STATE_BAD);
+
+# new TARGET MESSAGES
+# TARGET is the host to which we connect; MESSAGES is a reference to a list of
+# message we attempt to send.
+sub new ($$$) {
+    my Sender $self = shift;
+    my $target = shift;
+    my $msgs = shift;
+    croak "TARGET must be an IP address" unless ($target =~ /^$RE{net}{IPv4}$/);
+    croak "MESSAGES must be a reference to a list" unless (ref($msgs) eq 'ARRAY');
+    $self = fields::new($self)
+        unless (ref($self));
+
+
+    foreach (@$msgs) {
+        $_->owner($self);
+    }
+    $self->{messages} = $msgs;
+    $self->{target} = $target;
+    $self->{error} = undef;
+    $self->{s} = new IO::Socket::INET(
+                            PeerAddr => $target,
+                            PeerPort => 25,
+                            Type => SOCK_STREAM,
+                            Proto => 'tcp',
+                            Blocking => 0
+                        );
+    if (!$self->{s}) {
+        $self->{error} = "socket: $!";
+        $self->{state} = STATE_BAD;
+        return $self;
+    }
+
+#    binmode($self->{s}, ':bytes');  # why take chances?
+    $self->{state} = STATE_CONNECT;
+    my $s = "";
+    $self->{sendbuf} = \$s;
+    my $r = "";
+    $self->{recvbuf} = \$r;
+
+    $self->{lastactivity} = time();
+
+    $self->log('debug', 'beginning session to deliver ', scalar(@$msgs), ' messages');
+
+    return $self;
+}
+
+sub log ($$@) {
+    my Sender $self = shift;
+    my $prio = shift;
+    if (defined($self->{message})) {
+        unshift(@_, "msg ", $self->{message}->id(), ': ');
+    }
+    unshift(@_, $self->target(), ": $statename[$self->state()]: ");
+    Log::print($prio, @_);
+}
+
+sub state ($;$) {
+    my Sender $self = shift;
+    if (@_) {
+        $self->{state} = $_[0];
+        # Once we're finished, relinquish ownership of the messages.
+        if ($_[0] == STATE_DONE || $_[0] == STATE_BAD) {
+            foreach (@{$self->{messages}}) {
+                $_->owner(undef);
+            }
+        }
+    }
+    return $self->{state};
+}
+
+#
+# Record events that happen to messages, and update internal counters
+#
+
+# tempfail
+# Record a temporary failure to deliver the current message.
+sub tempfail ($) {
+    my Sender $self = shift;
+    if ($self->{message}) {
+        $self->{message}->addevent(Queue::Message::EVENT_TEMP_FAILURE, $self->{target});
+        $self->{message}->owner(undef);
+        ++$self->{tempfailed};
+    }
+}
+
+# permfail
+# Record a permanent failure to deliver the current message.
+sub permfail ($) {
+    my Sender $self = shift;
+    if ($self->{message}) {
+        $self->{message}->owner(undef);
+        $self->{message}->addevent(Queue::Message::EVENT_PERM_FAILURE, $self->{target});
+        ++$self->{permfailed};
+    }
+}
+
+# delivered
+# Record successful delivery of the current message.
+sub deliver ($) {
+    my Sender $self = shift;
+    if ($self->{message}) {
+        $self->{message}->owner(undef);
+        $self->{message}->addevent(Queue::Message::EVENT_DELIVERED, $self->{target});
+        ++$self->{delivered};
+    }
+}
+
+
+# activity
+# Update the last-activity timer.
+sub activity ($) {
+    my Sender $self = shift;
+    $self->{lastactivity} = time();
+}
+
+# oops MESSAGE
+# Record the error MESSAGE and put the object into STATE_BAD. This should be
+# used in the case of an error below the SMTP protocol layer, for instance a
+# timeout or an error sending/receiving data.
+sub oops ($$) {
+    my Sender $self = shift;
+    my $text = shift;
+    $self->{error} = $text . " (while in $statename[$self->state()])";
+    $self->state(STATE_BAD);
+}
+
+# get_smtp_response
+# Parse an SMTP response from the peer, if any is available. On error or if no
+# complete response is available, return (); otherwise return the code and
+# message text (with \r\n replaced by \n).
+sub get_smtp_response ($) {
+    my Sender $self = shift;
+    my $response;
+    my $recvbuf = $self->{recvbuf};
+    if ($$recvbuf =~ /^(([2-5][0-5]\d) .+?\r\n)/
+        || $$recvbuf =~ /^(([2-5][0-5]\d)-.+?\r\n(\2-.+?\r\n)*(\2 .+?\r\n))/) {
+        # valid single or multiline response
+        my $code = $2;
+        my $message = $1;
+        if ($message =~ /^...-/) {
+            my $rawmsg = "$message";
+            $rawmsg =~ s/\r\n$//s;
+            foreach (split(/\r\n/, $rawmsg)) {
+                $self->log('debug', "<< $_");
+            }
+        } else {
+            my $rawmsg = "$message";
+            $rawmsg =~ s/\r\n$//s;
+            $self->log('debug', "<< $rawmsg");
+        }
+        # Shift the contents of the receive buffer.
+        $$recvbuf = substr($$recvbuf, length($message));
+        # Remove the code from the message.
+        $message =~ s/^($code)[ -]//gm;
+        # Replace the SMTP line endings in the message with UNIX line endings.
+        $message =~ s/\r\n/\n/g;
+        # Record that we have seen a full response.
+        $self->activity();
+        return ($code, $message);
+    } elsif ($recvbuf =~ /^(.+?)\r\n/) {
+        $self->oops("bad SMTP response '$1'");
+        return ();
+    } else {
+        # assume nothing
+        return ();
+    }
+}
+
+# send COMMAND
+# Send COMMAND to the server.
+sub send ($$) {
+    my Sender $self = shift;
+    my $line = shift;
+    ${$self->{sendbuf}} .= "$line\r\n";
+    $self->log('debug', ">> $line");
+}
+
+#
+# SMTP commands
+#
+
+sub ehlo ($$) {
+    my Sender $self = shift;
+    my $name = shift;
+    $self->send("EHLO $name");
+    $self->state(STATE_HELO);
+}
+
+sub mail_from ($$) {
+    my Sender $self = shift;
+    my $sender = shift;
+    $self->send("MAIL FROM:<$sender>");
+    $self->state(STATE_MAIL_FROM);
+}
+
+sub rcpt_to ($$) {
+    my Sender $self = shift;
+    my $recipient = shift;
+    $self->send("RCPT TO:<$recipient>");
+    $self->state(STATE_RCPT_TO);
+}
+
+sub data ($) {
+    my Sender $self = shift;
+    $self->send("DATA");
+    $self->state(STATE_DATA);
+}
+
+sub rset ($) {
+    my Sender $self = shift;
+    $self->send("RSET");
+    $self->state(STATE_RSET);
+}
+
+sub quit ($) {
+    my Sender $self = shift;
+    $self->send("QUIT");
+    $self->state(STATE_QUIT);
+}
+
+#
+# Accessors
+#
+
+sub delivered ($) {
+    my Sender $self = shift;
+    return $self->{delivered};
+}
+
+sub tempfailures ($) {
+    my Sender $self = shift;
+    return $self->{tempfailed};
+}
+
+sub permfailures ($) {
+    my Sender $self = shift;
+    return $self->{permfailed};
+}
+
+sub notattempted ($) {
+    my Sender $self = shift;
+    return scalar(@{$self->{messages}});
+}
+
+sub s ($) {
+    my Sender $self = shift;
+    return $self->{s};
+}
+
+sub target ($) {
+    my Sender $self = shift;
+    return $self->{target};
+}
+
+# get_message_to_send
+# Obtain the next message to send from the queue, if any. Returns true if a
+# message has been found, or false otherwise (for instance, if we've sent as
+# many messages as we should in this session).
+sub get_message_to_send ($) {
+    my Sender $self = shift;
+    $self->{message} = shift(@{$self->{messages}});
+    if (defined($self->{message})) {
+        $self->log('debug', "processing next message");
+    } else {
+        $self->log('debug', "no more messages to send");
+        return 0;
+    }
+}
+
+# parse_smtp_response CODE TEXT
+# Given an SMTP response with the given CODE and TEXT, push our state machine
+# around.
+sub parse_smtp_response ($$$) {
+    my Sender $self = shift;
+    my ($code, $text) = @_;
+
+    # Make a loggable copy of the response text.
+    my $ltext = "[$code] $text";
+    $ltext =~ s/\n$//s;
+    $ltext =~ s/\n/\\n/gs;
+    
+    my $state = $self->state();
+    if ($state == STATE_BANNER) {
+        if ($code =~ /^2/) {
+            # Fine.
+            # QUEUE: note success.
+            $self->ehlo("fish.invalid"); # XXX
+        } else {
+            # Refused. Need to send quit, if we can.
+            # QUEUE: note failure to begin transaction with server.
+            $self->quit();
+        }
+    } elsif ($state == STATE_HELO) {
+        if ($code eq '250') {
+            # Fine.
+            $self->get_message_to_send();
+            $self->mail_from($self->{message}->sender());
+        } else {
+            # Something went wrong.
+            # QUEUE: note failure to begin transaction with server.
+            $self->log('warning', "bad EHLO response \"$ltext\"");
+            $self->quit();
+        }
+    } elsif ($state == STATE_MAIL_FROM) {
+        if ($code =~ /^2/) {
+            # Success.
+            $self->rcpt_to($self->{message}->recipient());
+        } elsif ($code =~ /^4/) {
+            # Transient failure. 
+            $self->tempfail();
+            $self->log('warning', "transient failure response after MAIL FROM: \"$ltext\"");
+            $self->rset();
+        } elsif ($code =~ /^5/) {
+            # Permanent failure. That's pretty bad since it means that we'd
+            # never be able to deliver a mail to this host from this sender.
+            # So pretend that it's a transient failure instead.
+            $self->tempfail();
+            $self->log('err', "permanent failure response after MAIL FROM: \"$ltext\"");
+            $self->rset();
+        } else {
+            # Bad response code.
+            $self->tempfail(); # XXX ?
+            $self->log('err', "bad response after MAIL FROM: \"$ltext\"; abandoning connection");
+            $self->quit();
+        }
+    } elsif ($state == STATE_RCPT_TO) {
+        if ($code =~ /^2/) {
+            # Success.
+            $self->data();
+        } elsif ($code =~ /^4/) {
+            # Transient failure.
+            $self->tempfail();
+            $self->log('warning', "transient failure response after RCPT TO: \"$ltext\"");
+            $self->rset();
+        } elsif ($code =~ /^5/) {
+            # Permanent failure. Presumably a bad address.
+            $self->permfail();
+            $self->log('err', "permanent failure response after RCPT TO: \"$ltext\"");
+            $self->rset();
+        } else {
+            # Bad response code.
+            $self->tempfail();
+            $self->log('err', "bad response after RCPT TO: \"$ltext\"; abandoning connection");
+            $self->quit();
+        }
+    } elsif ($state == STATE_DATA) {
+        if ($code =~ /^3/) {
+            # Ready to continue. Send the message text.
+            my $msg = $self->{message}->text();
+            my $len = length($msg);
+            $msg =~ s/^\./../gs;
+            $msg =~ s/\n/\r\n/gs;
+            if ($msg =~ /\r\n$/s) {
+                $msg .= ".\r\n";
+            } else {
+                $msg .= "\r\n.\r\n";
+            }
+            $self->log('debug', ">> [ $len bytes of message data ]");
+            $self->{sendbuf} = \$msg;
+            $self->state(STATE_MESSAGE);
+        } else {
+            # Don't know. Give up on this connection.
+            $self->tempfail();
+            $self->log('err', "bad response after DATA: \"$ltext\"; abandoning connection");
+            $self->quit();
+        }
+    } elsif ($state == STATE_MESSAGE) {
+        if ($code =~ /^2/) {
+            # Message has been successfully submitted.
+            $self->deliver();
+            if ($self->get_message_to_send()) {
+                $self->mail_from($self->{message}->sender());
+            } else {
+                $self->quit();
+            }
+        } elsif ($code =~ /^4/) {
+            # Temporary failure.
+            $self->tempfail();
+            $self->log('warning', "transient failure response after message data: \"$ltext\"");
+            $self->rset();
+        } elsif ($code =~ /^5/) {
+            # Permanent failure (presumably spam filter or similar).
+            $self->permfail();
+            $self->log('warning', "permanent failure response after message data: \"$ltext\"");
+            $self->rset();
+        }
+    } elsif ($state == STATE_QUIT) {
+        $self->state(STATE_EOF);
+    } elsif ($state == STATE_RSET) {
+        if ($self->get_message_to_send()) {
+            $self->mail_from($self->{message}->sender());
+        } else {
+            $self->quit();
+        }
+    }
+}
+
+# pre_select RDS WRS
+#
+sub pre_select ($$$) {
+    my Sender $self = shift;
+    my IO::Select $rds = shift;
+    my IO::Select $wrs = shift;
+
+    if ($self->{lastactivity} < time() - TIMEOUT) {
+        $self->oops("timeout");
+        return;
+    }
+    
+    $rds->add($self->s());
+    # Test for writability if we have data to write, or if we haven't yet
+    # connected (so that we can detect when the connection becomes ready).
+    $wrs->add($self->s()) if (length(${$self->{sendbuf}}) > 0 || $self->state() == STATE_CONNECT);
+}
+
+# post_select RDS WRS
+#
+sub post_select ($$$) {
+    my Sender $self = shift;
+    my ($rds, $wrs) = @_;
+    my $recvbuf = $self->{recvbuf};
+    my $sendbuf = $self->{sendbuf};
+    if (exists($rds->{$self->s()})) {
+        if ($self->state() == STATE_CONNECT) {
+            # We are now connected.
+            Log::print('debug', "$self->{target}: now connected (readable)");
+            $self->state(STATE_BANNER);
+        }
+    
+        my $n = $self->s()->sysread($$recvbuf, 1024, length($$recvbuf));
+        if (!defined($n) && !$!{EAGAIN}) {
+            # An error occured.
+            $self->oops("error receiving data from peer: $!");
+            return;
+        } elsif ($n == 0) {
+            # EOF
+            if ($self->state() != STATE_EOF) {
+                $self->oops("unexpected EOF in connection to peer");
+            } else {
+                $self->state(STATE_DONE);
+            }
+            return;
+        } else {
+            # Read $n bytes of data. See whether we have an SMTP response.
+            if (my ($code, $text) = $self->get_smtp_response()) {
+                $self->parse_smtp_response($code, $text);
+            }
+        }
+    }
+    if (exists($wrs->{$self->s()})) {
+        if ($self->state() == STATE_CONNECT) {
+            # We are now connected.
+            Log::print('debug', "$self->{target}: now connected (writable)");
+            $self->state(STATE_BANNER);
+        } elsif (length($$sendbuf)) {
+            # Data to send.
+            my $o = 0;
+            my $n;
+            while ($o < length($$sendbuf)
+                    && defined($n = $self->s()->syswrite($$sendbuf, length($$sendbuf) - $o, $o))) {
+                $o += $n;
+            }
+            # Typically we will finish writing because we run out of data to
+            # write or because the socket buffer fills, at which point we see
+            # EAGAIN.  However, we may encounter a real transport-layer error.
+            if (!defined($n) && !$!{EAGAIN}) {
+                $self->oops("error sending data to peer: $!");
+                return;
+            } else {
+                # If we didn't transmit the whole buffer, shrink it. Efficiency?
+                # We've heard of it.
+                if ($o == length($$sendbuf)) {
+                    my $s = "";
+                    $$sendbuf = $s;
+                } else {
+                    $$sendbuf = substr($$sendbuf, $o);
+                }
+            }
+        }
+    }
+}
+
+# The queue stores information about the emails to send, the servers to which
+# they should be sent, and historical information about previous attempts to
+# send them.
+package Queue;
+
+use Carp;
+use IO::Select;
+
+use fields qw(messages badhosts r ss);
+
+# How long a message may stay on the queue before we consider it undeliverable.
+use constant MAX_MESSAGE_AGE => 86400;
+# How many simultaneous SMTP connections we make to any given host.
+use constant MAX_HOST_SESSIONS => 20;
+# How many messages we attempt to deliver in a single session.
+use constant MAX_PER_SESSION => 20;
+# Maximum interval between checking whether a host is bad.
+use constant MAX_HOST_BAD_INTERVAL => 1800;
+
+sub new ($) {
+    my Queue $self = shift;
+    $self = fields::new($self)
+        unless (ref($self));
+
+    # hash of opaque ID to message object
+    $self->{messages} = { };
+    
+    # records of times when we've seen problems with hosts
+    $self->{badhosts} = { };
+    
+    # DNS client.
+    $self->{r} = new DomainResolver(100);
+
+    # SMTP clients.
+    $self->{ss} = [ ];
+
+    return $self;
+}
+
+# add MESSAGE
+# Add the MESSAGE to the queue.
+sub add ($$) {
+    my Queue $self = shift;
+    my Queue::Message $msg = shift;
+    croak "MESSAGE must be defined" unless (defined($msg));
+    croak "MESSAGE must be a Queue::Message object, not " . ref($msg)
+        unless (UNIVERSAL::isa($msg, 'Queue::Message'));
+    $self->{messages}->{$msg->id()} = $msg;
+}
+
+# attempt_interval MESSAGE
+# How often should delivery attempts be made for MESSAGE?
+sub attempt_interval ($) {
+    my Queue::Message $msg = shift;
+    my $age = time() - $msg->starttime();
+    if ($age < 15 * 60) {
+        # Once per minute for 15 minutes.
+        return 60;
+    } elsif ($age < 60 * 60) {
+        # Then once every 5 minutes for another 45 minutes.
+        return 300;
+    } else {
+        # Then every hour.
+        return 3600;
+    }
+}
+
+# host_bad ADDRESS
+# Should we assume that the host at ADDRESS is bad, or should it be tried
+# again?
+sub host_bad ($$) {
+    my Queue $self = shift;
+    my $addr = shift;
+    if (!exists($self->{badhosts}->{$addr})) {
+        return 0;
+    } else {
+        my $l = $self->{badhosts}->{$addr};
+        # Only one bad observation, so try again.
+        return 0 if (1 == @$l);
+        # Otherwise check after half as long as the host has been bad already,
+        # or after MAX_HOST_BAD_INTERVAL, whichever is sooner.
+        my $lastcheck = time() - $l->[@$l - 1];
+        my $firstcheck = time() - $l->[0];
+        my $interval = $lastcheck - $firstcheck;
+        if ($lastcheck + $interval / 2 > time()
+            && $lastcheck + MAX_HOST_BAD_INTERVAL > time()) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+}
+
+sub pre_select ($$$) {
+    my Queue $self = shift;
+    my IO::Select $rds = shift;
+    my IO::Select $wrs = shift;
+
+    # Do pre-select handling for domain resolver and individual SMTP clients.
+    $self->r()->pre_select($rds, $wrs);
+    foreach my $smtp (@{$self->{ss}}) {
+        $smtp->pre_select($rds, $wrs);
+    }
+
+    # Hash of IP addresses to which to send messages to messages to send to
+    # them.
+    my %newsessions;
+
+    # Number of sessions already open on each IP address.
+    my %numsessions;
+    foreach my $s (@{$self->ss()}) {
+        ++$numsessions{$s->target()};
+    }
+
+    # Now see whether we should start any more connections.
+    foreach my $msg (values(%{$self->{messages}})) {
+        # Skip if this message has already been delivered.
+        # XXX notify source
+        next if ($msg->state() != Queue::Message::STATE_PENDING);
+        # Skip if a sender is already handling this message.
+        next if (defined($msg->owner()));
+        # See if we have resolved the domain.
+        my $domain = $msg->domain();
+        my $r = $self->r()->get($domain);
+        if (!$r) {
+            $self->r()->add($domain);
+            next;
+        }
+        # If the domain is unroutable, then the message should be failed.
+        if (!defined($r->mx())) {
+            $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
+            next;
+        }
+        # Don't attempt messages before their retry interval.
+        next if ($msg->nattempts() > 0
+                    && $msg->lastattempt() + attempt_interval($msg) > time());
+        # Time out messages that have been on the queue for too long.
+        if ($msg->nattempts() > 100
+            || $msg->nattempts() > 0 && $msg->lastattempt() < time() - 86400) {
+            $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
+            next;
+        }
+        # OK, potentially we want to send this message. See if there's an
+        # appropriate host to which to send it. We must send messages to the
+        # lowest-numbered MX where possible.
+        my $host = undef;
+        # XXX this is suboptimal. Where there are several possivle hosts with
+        # equal preference, we should select one for which a new connection is
+        # already being made. Not clear how important this is in practice.
+
+        # Iterate over MXs in order.
+        foreach my $mx (@{$r->mx()}) {
+            my $name = $mx->exchange();
+            foreach my $a (@{$r->a($name)}) {
+                my $h = $a->address();
+                $numsessions{$h} ||= 0;
+                        # conditions:
+                        # host is not bad
+                if (!$self->host_bad($a->address())
+                        # and we don't have too many outstanding sessions to
+                        # that host
+                    && $numsessions{$h} < MAX_HOST_SESSIONS
+                        # and we haven't already queued up too many messages
+                        # for that host
+                    && (!exists($newsessions{$h})
+                        || @{$newsessions{$h}} < MAX_PER_SESSION)) {
+                    ++$numsessions{$h} if (!exists($newsessions{$h}));
+                    $host = $h;
+                    last;
+                }
+            }
+            last if ($host);
+        }
+
+        # We've found a possible host.
+        if (defined($host)) {
+            $newsessions{$host} ||= [ ];
+            push(@{$newsessions{$host}}, $msg);
+        }
+    }
+
+    # Create new sessions for each host.
+    foreach my $host (keys %newsessions) {
+        my $s = new Sender($host, $newsessions{$host});
+        push(@{$self->{ss}}, $s);
+    }
+}
+
+sub post_select ($$$) {
+    my Queue $self = shift;
+    my ($rds, $wrs) = @_;
+
+    $self->r()->post_select($rds, $wrs);
+    # Free sender objects which have finished.
+    my @ss;
+    foreach my $smtp (@{$self->{ss}}) {
+        $smtp->post_select($rds, $wrs);
+        my $bad = 0;
+        if ($smtp->state() == Sender::STATE_DONE) {
+            # We don't regard temporary failures as a sign that a host is
+            # "bad", because of the prevalence of (e.g.) greylisting. But
+            # anything which causes us to abandon messages before attempting
+            # delivery does result in the host being marked bad. Maybe review
+            # this decision later.
+            $bad = 1 if ($smtp->notattempted() > 0);
+        } elsif ($smtp->state() == Sender::STATE_BAD) {
+            # Any transport error is regarded as making the host "bad".
+            $bad = 1;
+        } else {
+            push(@ss, $smtp);
+        }
+    }
+    $self->{ss} = \@ss;
+}
+
+# accessors
+foreach (qw(r ss)) {
+    eval <<EOF;
+sub $_ (\$) {
+    my Queue \$self = shift;
+    return \$self->{$_};
+}
+EOF
+}
+
+# The source obtains emails to send from some outside source, in this case the
+# petitions database, and adds them to the queue.
+package Source;
+
+# The domain resolver looks up the right-hand sides of email addresses to
+# idenfify the servers to which the emails should be sent.
+
+# A single domain-resolution task.
+package DomainResolver::Task;
+
+use Carp;
+use Net::DNS ();
+use Regexp::Common;
+use Sys::Syslog;
+
+use fields qw(starttime r domain state sockets mx a);
+
+            # resolving MX records
+use constant STATE_MX   => 0;
+            # resolving A records
+use constant STATE_A    => 1;
+            # finished all resolution
+use constant STATE_DONE => 2;
+            # something broke before the query was complete
+use constant STATE_BAD  => 3;
+
+our @statename = qw(STATE_MX STATE_A STATE_DONE STATE_BAD);
+
+use constant MX_PREF_FAKE => -1;
+
+# new RESOLVER DOMAIN
+# Return a new task for resolving DOMAIN using RESOLVER.
+sub new ($$$) {
+    my DomainResolver::Task $self = shift;
+    my Net::DNS::Resolver $r = shift;
+    my $domain = shift;
+    $self = fields::new($self)
+        unless (ref($self));
+
+    $self->{starttime} = time();
+    $self->{r} = $r;
+    $self->{domain} = $domain;
+    $self->{state} = STATE_MX;
+    $self->{sockets} = { };
+    $self->{mx} = [ ];
+    $self->{a} = { };
+
+    # Start the first query.
+    my $s = $r->bgsend($domain, 'MX');
+    $self->{sockets}->{$s} = $s;
+
+    return $self;
+}
+
+sub state ($;$) {
+    my DomainResolver::Task $self = shift;
+    $self->{state} = $_[0] if (@_);
+    return $self->{state};
+}
+
+sub domain ($) {
+    my DomainResolver::Task $self = shift;
+    return $self->{domain};
+}
+
+sub pre_select ($$$) {
+    my DomainResolver::Task $self = shift;
+    return if ($self->state() != STATE_MX && $self->state() != STATE_A);
+    my IO::Select $rds = shift;
+    my IO::Select $wrs = shift;
+    foreach my $s (values(%{$self->{sockets}})) {
+        $rds->add($s);
+    }
+}
+
+use Data::Dumper;
+
+# post_select RDS WRS
+# Post-select processing. RDS and WRS are references to hashes whose keys are
+# handles which are, respectively, available for reading and for writing.
+sub post_select ($$) {
+    my DomainResolver::Task $self = shift;
+    my ($rds, $wrs) = @_;
+    foreach my $s (values(%{$self->{sockets}})) {
+        if ($rds->{$s}) {
+            my $result = $self->{r}->bgread($s);
+            if (!defined($result)) {
+                Log::print('warning', "DNS request for ", $self->domain(), " failed in state $statename[$self->state()]; system error $!");
+                $self->state(STATE_BAD);
+                return;
+            }
+            delete($self->{sockets}->{$s});
+            undef $s;
+            if ($self->state() == STATE_MX) {
+                #
+                # Response to query for MX records for the domain.
+                # 
+
+                if ($result->header()->rcode() eq 'NXDOMAIN') {
+                    # There is no such domain, so the mail would be unroutable.
+                    $self->{mx} = undef;
+                    $self->state(STATE_DONE);
+                    return;
+                }
+
+                # XXX should sanity-check packet to make sure it's one we're
+                # expecting.
+                $self->{mx} = [ sort { $a->preference() <=> $b->preference() } $result->answer() ];
+                
+                # If there is no MX record, make one up.
+                $self->{mx} = [
+                        new Net::DNS::RR(
+                            type => 'MX',
+                            name => $self->domain(),
+                            exchange => $self->domain,
+                            preference => MX_PREF_FAKE
+                        )
+                    ] if (!@{$self->{mx}});
+
+                Log::print('debug', $self->domain(), ": MXs are: ", join(', ', map { $_->preference() . " " . $_->exchange() } @{$self->{mx}}));
+
+                # Now do all the A queries.
+                foreach my $mx (@{$self->{mx}}) {
+                
+                    my $host = $mx->exchange();
+                    # Some sites have MX records pointing to IP addresses.
+                    # This is wrong but not uncommon, so accept it.
+                    if ($host =~ /^$RE{net}{IPv4}$/) {
+                        $self->{a}->{$host} = [
+                                new Net::DNS::RR(
+                                        name => $host,
+                                        type => 'A',
+                                        address => $host
+                                    )
+                            ];
+                    } else {
+                        my $s = $self->{r}->bgsend($mx->exchange(), 'A');
+                        $self->{sockets}->{$s} = $s;
+                    }
+                }
+
+                $self->state(STATE_A);
+            } elsif ($self->state() == STATE_A) {
+                # 
+                # Response to query for A records for mail exchangers.
+                #
+
+                # XXX should sanity-check packet to make sure it's one we're
+                # expecting.
+                my $q = ($result->question())[0]->qname();
+                $self->{a}->{$q} = [ $result->answer() ];
+
+                Log::print('debug', $self->domain(), ": MX $q has A records: ", join(', ', map { $_->address() } @{$self->{a}->{$q}}));
+
+                # If that was the last query in progress, we're done.
+                $self->state(STATE_DONE) if (!keys(%{$self->{sockets}}));
+            } else {
+                croak "bad state " . $self->state() . " in post_select";
+            }
+        }
+    }
+}
+
+#
+# Accessors
+#
+
+sub starttime ($) {
+    my DomainResolver::Task $self = shift;
+    return $self->{starttime};
+}
+
+sub done ($) {
+    my DomainResolver::Task $self = shift;
+    return $self->{state} == STATE_DONE;
+}
+
+sub failed ($) {
+    my DomainResolver::Task $self = shift;
+    return $self->{state} == STATE_BAD;
+}
+
+# unroutable
+# Return true if the domain is unroutable.
+sub unroutable ($) {
+    my DomainResolver::Task $self = shift;
+    return !defined($self->{mx});
+}
+
+# mx
+# Returns a reference to a list of the MXs for this domain, as Net::DNS::RR::MX
+# objects. It is an error to call this method unless the request is complete.
+sub mx ($) {
+    my DomainResolver::Task $self = shift;
+    croak "can't call ->mx() outside STATE_DONE" unless ($self->done());
+    croak "can't call ->mx() for an unroutable domain" unless (defined($self->{mx}));
+    return $self->{mx};
+}
+
+# a HOST
+# Returns a reference to a list of the addresses of HOST. HOST must be one of
+# the mail exchanges indicated in the domain's MX records. It is an error to
+# call this method unless the request is complete.
+sub a ($$) {
+    my DomainResolver::Task $self = shift;
+    croak "can't call ->a(HOST) outside STATE_DONE" unless ($self->done());
+    my $host = shift;
+    croak "can't use ->a(HOST) to resolve $host, which is not an MX for $self->{domain}"
+        unless (exists($self->{a}->{$host}));
+    return $self->{a}->{$host};
+}
+
+# valid
+# Return true if the cached result is still valid, or false otherwise.
+sub valid ($) {
+    my DomainResolver::Task $self = shift;
+    croak "can't call ->valid() outside STATE_DONE" unless ($self->done());
+    # Cache negative responses for a fixed time.
+    if (!defined($self->mx())) {
+        if ($self->starttime() + 10 < time()) {
+            return 0;
+        }
+    } else {
+        foreach my $mx (@{$self->mx()}) {
+            return 0 if ($self->starttime() + $mx->ttl() < time());
+            foreach my $a (@{$self->a($mx->exchange())}) {
+                return 0 if ($self->starttime() + $mx->ttl() < time());
+            }
+        }
+    }
+    return 1;
+}
+
+package DomainResolver;
+
+use Carp;
+use Net::DNS;
+
+use fields qw(r maxrequests queue state results);
+
+# new NUM
+# Create a new DomainResolver, with a limit of NUM simultaneous outstanding
+# requests. (Each consumes a small number of file descriptors.)
+sub new ($$) {
+    my DomainResolver $self = shift;
+    my $max = shift;
+    $self = fields::new($self)
+        unless (ref($self));
+
+    croak "NUM must be a positive integer" unless ($max =~ /^[1-9]\d*$/);
+
+    $self->{r} = new Net::DNS::Resolver()
+        or croak "cannot create Net::DNS::Resolver; system error: $!";
+    $self->{maxrequests} = $max;
+    
+    # Queue of domains to resolve.
+    $self->{queue} = [ ];
+    # Hash of domains to resolution tasks.
+    $self->{state} = { };
+    # Hash of domains to resolution results.
+    $self->{results} = { };
+        
+    return $self;
+}
+
+# Accessors
+foreach (qw(r maxrequests state results)) {
+    eval <<EOF;
+sub $_ (\$) {
+    my DomainResolver \$self = shift;
+    return \$self->{$_};
+}
+EOF
+}
+
+# add DOMAIN
+# Add DOMAIN to the queue of domains to resolve.
+sub add ($$) {
+    my DomainResolver $self = shift;
+    my $domain = shift;
+    push(@{$self->{queue}}, $domain)
+        unless (exists($self->state()->{$domain})
+                || exists($self->results()->{$domain}));
+}
+
+# getqueue
+# Get a domain to resolve off the queue.
+sub getqueue ($) {
+    my DomainResolver $self = shift;
+    return shift(@{$self->{queue}});
+}
+
+# get DOMAIN
+# Return information about the mailservers for DOMAIN. If they have not yet
+# been resolved or if the cached result is not valid, return undef; otherwise
+# return the task object generated.
+sub get ($$) {
+    my DomainResolver $self = shift;
+    my $domain = shift;
+    if (!exists($self->results()->{$domain})) {
+        return undef;   # add to queue?
+    } elsif (!$self->results()->{$domain}->valid()) {
+        return undef;
+    } else {
+        return $self->results()->{$domain};
+    }
+}
+
+# queuelength
+# Return the current length of the queue.
+sub queuelength ($) {
+    my DomainResolver $self = shift;
+    return scalar(@{$self->{queue}});
+}
+
+# pre_select RDS WRS
+#
+sub pre_select ($$$) {
+    my DomainResolver $self = shift;
+    my IO::Select $rds = shift;
+    my IO::Select $wrs = shift;
+
+    # Add existing tasks to the masks.
+    foreach my $t (values(%{$self->state()})) {
+        $t->pre_select($rds, $wrs);
+    }
+
+    # Consider starting some new ones.
+    while (scalar(keys(%{$self->state()})) < $self->maxrequests()
+            && @{$self->{queue}}) {
+        my $domain = $self->getqueue();
+        next if (exists($self->state()->{$domain})
+                 || defined($self->get($domain)));
+        Log::print('debug', "$domain: beginning resolution");
+        my $t = new DomainResolver::Task($self->r(), $domain);
+        $t->pre_select($rds, $wrs);
+        $self->state()->{$domain} = $t;
+    }
+}
+
+# post_select RDS WRS
+# Call after select. RDS and WRS are hashes containing a key for each handle
+# which was marked readable or writable respectively.
+sub post_select ($$) {
+    my DomainResolver $self = shift;
+    my ($rds, $wrs) = @_;
+    
+    foreach my $t (values(%{$self->state()})) {
+        $t->post_select($rds, $wrs);
+        if ($t->done() || $t->failed()) {
+            Log::print('debug', $t->domain(), ": resolution completed");
+            # save results, whether negative or positive
+            $self->results()->{$t->domain()} = $t;
+            delete($self->state()->{$t->domain()});
+        }
+    }
+}
+
+package main;
+
+my $S = new Source();
+my $Q = new Queue($S);
+
+while (1) {
+    my $rds = new IO::Select();
+    my $wrs = new IO::Select();
+    $Q->pre_select($rds, $wrs);
+    my ($r, $w) = IO::Select::select($rds, $wrs, undef, 1);
+    $rds = { map { $_ => 1 } @$r };
+    $wrs = { map { $_ => 1 } @$w };
+    $Q->post_select($rds, $wrs);
+}
+
