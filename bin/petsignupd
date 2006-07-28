@@ -1,0 +1,203 @@
+#!/usr/bin/perl -w
+#
+# petsignupd:
+# Back-end signup service for petitions site.
+#
+# Clients -- the web scripts on the front-end servers -- send signup details to
+# us in UDP packets. On receipt of such a packet we write a row to the
+# database, but do not commit it immediately. Instead we set an alarm for a
+# short interval in the future. Any more packets that arrive before the alarm
+# fires also result in writes to the database; when the alarm fires, we commit
+# them all and acknowledge them to the senders.
+#
+# The idea here is that a commit of ten inserts takes about as long as a commit
+# of one insert, so we can improve throughput by batching inserts. That's very
+# inconvenient in the front-end scripts, because it means they'd have to share
+# database handles, but is easy with a coordinating daemon. If the daemon fails
+# or the packets don't get through, then the web scripts can sign up in the
+# usual way.
+#
+# Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+# Email: chris@mysociety.org; WWW: http://www.mysociety.org/
+# 
+#
+
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.1 2006-07-28 17:38:10 chris Exp $';
+
+use strict;
+
+use Digest::HMAC_SHA1 ();
+use Encode;
+use Errno;
+use IO::Select;
+use IO::Socket;
+use MIME::Base64 ();
+use Socket;
+use Tie::Cache;
+use Time::Hires qw(time alarm);
+
+use mySociety::DBHandle qw(dbh);
+
+use Petitions;
+
+sub hmac_sha1_b64 ($$) {
+    my $d = Digest::HMAC_SHA1::hmac_sha1($_[0], $_[1]);
+    return MIME::Base64::encode_base64($d);
+}
+
+sub parse_packet ($$) {
+    # Check that the packet is in a sane format.
+    if ($_[0] !~ m#^([^\0]+\0){6}[^\0]+$#) {
+        $_[1] = 'invalid packet format';
+        return undef;
+    }
+    # Decompose it into fields, ensure that it is valid UTF-8, and convert the
+    # on-the-wire data into perl strings.
+    my $bad = 0;
+    my ($cookie, $ref, $email, $name, $address, $postcode, $mac)
+        = map { my $x = decode_utf8($_) or ++$bad; $x } split(/\0/, $_[0]);
+    if ($bad) {
+        $_[1] = 'invalid UTF-8 sequence in packet';
+        return undef;
+    }
+    # Verify the contents.
+    if ($mac ne digest_sha1_b64("$cookie\0$ref\0$email\0$name\0$address\0$postcode", $secret)) {
+        $_[1] = 'signature mismatch';
+        return undef;
+    }
+    # Find the petition ID.
+    my $id = dbh()->selectrow_array('select id from petition where ref = ?', {}, $ref);
+    if (!defined($id)) {
+        $_[1] = qq(unknown petition '$ref');
+        return undef;
+    }
+    # We win.
+    return {
+            cookie => $cookie,
+            id => $id,
+            email => $email,
+            name => $name,
+            address => $address,
+            postcode => $postcode
+        };
+}
+
+# Maximum (ideal) interval from signup request to commit.
+use constant MAX_SIGNUP_TIME    => 0.25;    # seconds
+
+my $s = new IO::Socket::INET(
+                    LocalAddr => '0.0.0.0',
+                    LocalPort => 12345,
+                    Type => SOCK_DGRAM,
+                    Protocol => 'udp',
+                    ReuseAddr => 1,
+                    Blocking => 0) or die "socket: $!";
+
+my $foad = 0;
+$SIG{TERM} = sub { $foad = 1; };
+
+my $alarm_pending = 0;
+my $alarm_fired = 0;
+$SIG{ALRM} = sub { $alarm_fired = 1; $alarm_pending = 0; };
+
+# Cache signups we've seen so that we can avoid round trips to the database
+# when a packet is lost and the client resends.
+my %signercache;
+tie(%signercache, 'Tie::Cache', { MaxCount => 10000, Debug => 0 });
+
+my @pending = ( );
+
+while (!$foad) {
+    my $buf = '';
+    my $sender;
+    my @ready = IO::Select->new($s)->can_read(MAX_SIGNUP_TIME / 10);
+    if (@ready && defined($sender = $s->recv($buf, 65536, 0))) {
+        my $err = undef;
+        if (my $r = parse_packet($buf, $err)) {
+            # We have a valid signup packet. Schedule an alarm so that we will
+            # send a response within the deadline.
+            if (!$alarm_pending) {
+                $alarm_pending = 1;
+                alarm(MAX_SIGNUP_TIME);
+            }
+            # Record address to which we send acknowledgement.
+            $r->{client} = $sender;
+            # Attempt the insert, detecting any error which occurs.
+            my $doadd = 0;
+            try {
+                dbh()->do('
+                        insert into signer (
+                            petition_id,
+                            email, name, address, postcode,
+                            showname, signtime
+                        ) values (
+                            ?,
+                            ?, ?, ?, ?,
+                            true, ms_current_timestamp()
+                        )', {},
+                        map { $r->{$_} } qw(id email name address postcode))
+                    unless (exists($signercache{"$r->{id}\0$r->{email}"}));
+                $signercache{"$r->{id}\0$r->{email}"} = 1;
+                $doadd = 1;
+            } catch mySociety::DBHandle::Error {
+                my $E = shift;
+                # See if the user has already signed.
+                my $i = dbh()->selectrow_array('
+                        select id from signer
+                        where petition_id = ? and email = ?', {},
+                        $r->{id}, $r->{email});
+                if (defined($i)) {
+                    # Already signed up. Behave as normal.
+                    $doadd = 1;
+                } else {
+                    # Not sure what happened there.
+                    print STDERR "unexpected db error: ", $E->text(), "\n";
+                        # XXX
+                }
+            };
+            push(@pending, $r) if ($doadd);
+            # Done handling this request.
+        } else {
+            # Invalid packet of some sort. Log and continue.
+            my ($port, $ip) = sockaddr_in($r->{sender});
+            print STDERR "packet from $ip:$port: $err\n";
+        }
+    } elsif (!$!{EAGAIN}) {
+        print STDERR "recvfrom: $!\n";
+    }
+
+    # If the alarm has fired, then commit the transaction and send
+    # acknowledgements to the clients.
+    if ($alarm_fired && @pending) {
+        dbh()->commit();
+        $s->blocking(1);
+        foreach my $r (@pending) {
+            if (!$s->sendto("ACK\0$r->{cookie}\0"
+                                    . hmac_sha1_b64("ACK\0$r->{cookie}"),
+                                0,
+                                $r->{sender})) {
+                my ($port, $ip) = sockaddr_in($r->{sender});
+                print STDERR "sending to $ip:$port: $!\n";
+            }
+        }
+        $s->blocking(0);
+        @pending = ( );
+        $alarm_fired = 0;
+    }
+}
+
+if (@pending) {
+    dbh()->commit();
+    $s->blocking(1);
+    foreach my $r (@pending) {
+        if (!$s->sendto("ACK\0$r->{cookie}\0"
+                    . hmac_sha1_b64("ACK\0$r->{cookie}"),
+                    0,
+                    $r->{sender})) {
+            my ($port, $ip) = sockaddr_in($r->{sender});
+            print STDERR "sending to $ip:$port: $!\n";
+        }
+    }
+}
+
+untie(%signercache);
