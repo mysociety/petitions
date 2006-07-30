@@ -8,7 +8,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.3 2006-07-30 19:11:41 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.4 2006-07-30 23:44:10 chris Exp $';
 
 use strict;
 
@@ -981,11 +981,142 @@ EOF
 }
 
 #
+# Message used to communicate between the database subprocess and the source.
+# 
+package Source::Packet;
+
+use Storable;
+
+use fields qw(type data wire);
+
+            # a new message to be sent
+use constant TYPE_NEWMESSAGE => 0;
+            # identified message has been delivered
+use constant TYPE_DELIVERED =>  1;
+            # identified message could not be delivered
+use constant TYPE_FAILED =>     2;
+            # shutting down, please exit
+use constant TYPE_QUIT =>       3;
+
+my @typename = qw(TYPE_NEWMESSAGE TYPE_DELIVERED TYPE_FAILED TYPE_QUIT);
+
+# new TYPE DATA
+# 
+sub new ($$$) {
+    my Source::Packet $self = shift;
+    my ($type, $data) = @_;
+    
+    $self = fields::new($self)
+        unless (ref($self));
+
+    $self->{type} = $type;
+    $self->{data} = $data;
+
+    return $self;
+}
+
+# parse BUFFER
+# BUFFER is a reference to a buffer. Returns undef if no packet is available or
+# a packet object if one is, shifting the buffer to the beginning of the next
+# packet.
+sub parse ($) {
+    my $buf = shift;
+    my $l = unpack('N', $$buf);
+    return undef if (length($$buf) < $l + 4);
+    my $d = Storable::thaw(substr($$buf, 4, $l));
+    die "bad wire data" if (!defined($data));
+    die "wire data should be reference to list" unless (ref($data) eq 'ARRAY');
+    my ($type, $data) = @$d;
+    $$buf = substr($$buf, $l + 4);  # shift buffer
+    return new Store::Packet($type, $data);
+}
+
+# type
+# Type of the packet.
+sub type ($) {
+    my Source::Packet $self = shift;
+    return $self->{type};
+}
+
+# data
+# Payload.
+sub data ($) {
+    my Source::Packet $self = shift;
+    return $self->{data};
+}
+
+# wire
+# On-the-wire copy of the data.
+sub wire ($) {
+    my Source::Packet $self = shift;
+    if (!defined($self->{wire})) {
+        my $w = Storable::freeze([ $self->type(), $self->data() ]);
+        my $l = length($w);
+        $self->{wire} = pack('N', $l) . $w;
+    }
+    return $self->{wire};
+}
+
+#
 # The source obtains emails to send from some outside source, in this case the
 # petitions database, and adds them to the queue.
 # 
 package Source;
 
+use IO::Socket;
+
+use mySociety::DBHandle qw(dbh);
+use RABX;   # for serialisation/unserialisation
+
+use Petitions;
+
+use fields qw(s pid queue);
+
+# Because we can't integrate PostgreSQL into the select loop in any sane
+# fashion we fork a subprocess which polls the database for new messages to
+# send. That's pretty lame, of course, but welcome to database land.
+
+# new
+# 
+sub new ($) {
+    
+    # Ideally we'd use SOCK_DGRAM here, and on Linux it'd be OK (typically you
+    # can have a packet of up to ~100KB) but for portability we resist
+    # temptation and use a stream format instead.
+    my ($s1, $s2) = IO::Socket::socketpair(PF_UNIX, SOCK_STREAM, 0)
+        or die "socketpair: $!";
+    
+    my $pid = fork();
+    if (!defined($pid)) {
+        die "fork: $!";
+    } elsif (0 == $pid) {
+        database_child_process($s2);
+        exit(0);
+    }
+}
+
+# notify ID RESULT
+# Notify the database that processing of the message ID has been completed with
+# RESULT; true means successful and false means failure.
+sub notify ($$$) {
+    my Source $self = shift;
+    my ($id, $result) = @_;
+    push(@{$self->{queue}}, [$id, $result]);
+}
+
+# database_child_process SOCKET
+#
+sub database_child_process ($) {
+    my IO::Socket $s = shift;
+    
+    # On startup, we obtain a list of all the pending messages (this will
+    # typically happen when we're starting up after a crash or shutdown) and
+    # communicate them to the queue. Once that's done we poll the database
+    # occasionally, passing news of new messages to the queue. We also need to
+    # process messages coming in the other direction which tell us when
+    # delivery of messages has completed or failed, so that the database can be
+    # updated appropriately.
+}
 
 #
 # A single domain-resolution task.
