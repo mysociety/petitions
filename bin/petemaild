@@ -8,7 +8,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.4 2006-07-30 23:44:10 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.5 2006-07-30 23:44:29 chris Exp $';
 
 use strict;
 
@@ -1028,7 +1028,7 @@ sub parse ($) {
     die "wire data should be reference to list" unless (ref($data) eq 'ARRAY');
     my ($type, $data) = @$d;
     $$buf = substr($$buf, $l + 4);  # shift buffer
-    return new Store::Packet($type, $data);
+    return new Source::Packet($type, $data);
 }
 
 # type
