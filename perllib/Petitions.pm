@@ -6,13 +6,14 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.14 2006-07-31 13:27:03 chris Exp $
+# $Id: Petitions.pm,v 1.15 2006-07-31 16:13:19 chris Exp $
 #
 
 package Petitions::DB;
 
 use strict;
 
+use Carp;
 use DBI;
 
 use mySociety::Config;
@@ -160,22 +161,19 @@ sub make ($$) {
     croak("WHAT must be 'p' or 's'")
         unless ($what =~ /^[ps]/);
     $what = substr($what, 0, 1);
-    croak("ID must be undef or a positive integer")
-        unless (!defined($id) || $id =~ /^[1-9]\d*$/);
-    $id ||= 0;
+    croak("ID must be a positive integer")
+        unless (defined($id) && $id =~ /^[1-9]\d*$/);
 
     warn "ID '$id' is quite large; the token format may have to be expanded soon"
         if ($id > 0x10000000);
 
     my @salt = unpack('C4', random_bytes(4));
-    # Top three bits of first byte of salt encode WHAT and whether ID is valid.
-    # 000       p
-    # 001       s
-    # 01x       bad
-    # 1xy       reserved
-    $salt[0] &= 0x1f;
-    $salt[0] |= 0x20 if ($what eq 's');
-    $salt[0] |= 0x40 if (!$id);
+    # Top two bits of first byte of salt encode WHAT.
+    # 00        p
+    # 01        s
+    # 1x        reserved
+    $salt[0] &= 0x3f;
+    $salt[0] |= 0x40 if ($what eq 's');
     
     my $plaintext = pack('C4N', @salt, $id);
     my $hmac = hmac_sha1($plaintext, Petitions::DB::secret());
@@ -209,11 +207,13 @@ sub check ($) {
 
     return () unless ($hmac7 eq substr($hmac, 0, 7));
 
-    my (@salt, $id) = unpack('C4N', $plaintext);
+    # ugh. What I want is my (@salt[0 .. 3], $id) = unpack(...), but that
+    # doesn't work, at least as written.
+    my (@salt) = unpack('C4N', $plaintext);
+    my $id = pop(@salt);
 
     return () if ($salt[0] & 0x80);     # reserved for future
-    my $what = ($salt[0] & 0x20) ? 's' : 'p';
-    $id = 0 if ($salt[0] & 0x40);
+    my $what = ($salt[0] & 0x40) ? 's' : 'p';
 
     return ($what, $id);
 }
@@ -222,6 +222,7 @@ package Petitions;
 
 use strict;
 
+use Carp;
 use POSIX qw();
 
 use mySociety::Util;
