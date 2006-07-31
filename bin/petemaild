@@ -8,7 +8,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.6 2006-07-31 13:18:45 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.7 2006-07-31 13:59:14 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1031,6 +1031,7 @@ sub new ($$$) {
 # packet.
 sub parse ($) {
     my $buf = shift;
+    return undef if (length($$buf) < 4);
     my $l = unpack('N', $$buf);
     return undef if (length($$buf) < $l + 4);
     my $d = Storable::thaw(substr($$buf, 4, $l));
@@ -1073,13 +1074,13 @@ sub wire ($) {
 # 
 package Source;
 
+use Carp;
 use File::Slurp qw();
 use FindBin;
 use IO::Socket;
 
 use mySociety::DBHandle qw(dbh);
 use mySociety::Email;
-use RABX;   # for serialisation/unserialisation
 
 use Petitions;
 
@@ -1100,6 +1101,9 @@ sub new ($$) {
     # temptation and use a stream format instead.
     my ($s1, $s2) = IO::Socket->socketpair(PF_UNIX, SOCK_STREAM, 0)
         or die "socketpair: $!";
+    
+    $s1->blocking(0);
+    $s2->blocking(0);
     
     my $pid = fork();
     if (!defined($pid)) {
@@ -1140,18 +1144,21 @@ sub pre_select ($$$) {
     my IO::Select $rds = shift;
     my IO::Select $wrs = shift;
     $rds->add($self->{s});
+    $wrs->add($self->{s}) if (length(${$self->{wrbuf}}) || @{$self->{q}});
 }
 
 sub post_select ($$$) {
     my Source $self = shift;
-    # lazy
-    do_ipc($self->s(), $self->{rdbuf}, $self->{wrbuf}, $self->{queue},
+    my ($rds, $wrs) = @_;
+    do_ipc($self->s(), $self->{rdbuf}, $self->{wrbuf}, $self->{q},
             sub ($) {
                 my Source::Packet $packet = shift;
-                if ($packet->type() == Source::Packet::TYPE_NEWMESSAGE) {
+                if ($packet->type() == Source::Packet::TYPE_NEWMESSAGE) { warn "got a new message " . $packet->data()->id() . "\n";
                     $self->queue()->add($packet->data());
                 }
-            })
+            },
+            $rds, $wrs);
+warn "done post_select\n";
 }
 
 # notify ID RESULT
@@ -1163,27 +1170,34 @@ sub notify ($$$) {
     push(@{$self->{queue}}, [$id, $result]);
 }
 
-# do_ipc HANDLE READBUF WRITEBUF QUEUE CALLBACK
+# do_ipc HANDLE READBUF WRITEBUF QUEUE CALLBACK [RDS WRS]
 #
 sub do_ipc ($$$$$;$$) {
     my IO::Handle $h = shift;
-    my ($rdbuf, $wrbuf, $queue, $callback) = @_;
+    my ($rdbuf, $wrbuf, $queue, $callback, $rds, $wrs) = @_;
     
-    my $rds = new IO::Select();
-    my $wrs = new IO::Select();
+    if (!defined($rds) && !defined($wrs)) {
+        $rds = new IO::Select();
+        $wrs = new IO::Select();
 
-    $rds->add($h);
-    $wrs->add($h) if (length($$wrbuf) || @$queue);
+        $rds->add($h);
+        $wrs->add($h) if (length($$wrbuf) || @$queue);
 
-    ($rds, $wrs) = IO::Select::select($rds, $wrs, undef, 1);
+        ($rds, $wrs) = IO::Select::select($rds, $wrs, undef, 0.1)
+    #        or die "select: $!";
+            or return;
+
+        $rds = {map { $_ => $_ } @$rds};
+        $wrs = {map { $_ => $_ } @$wrs};
+    }
     
-    if (@$rds) {
+    if (keys(%$rds)) {
         while (1) {
             while (my $packet = Source::Packet::parse($rdbuf)) {
                 &$callback($packet);
             }
         
-            my $n = $h->read($$rdbuf, 8192, length($$rdbuf));
+            my $n = $h->sysread($$rdbuf, 8192, length($$rdbuf));
             if (!defined($n)) {
                 if ($!{EAGAIN}) {
                     last;
@@ -1194,13 +1208,15 @@ sub do_ipc ($$$$$;$$) {
         }
     }
 
-    if (@$wrs) {
+    if (keys(%$wrs)) {
         while (length($$wrbuf) || @$queue) {
             while (@$queue && length($$wrbuf) < 32768) {
-                $$wrbuf .= shift(@$queue)->wire();
+                my $pkt = shift(@$queue);
+                croak("bad packet object type on queue") if (!$pkt->isa('Source::Packet'));
+                $$wrbuf .= $pkt->wire();
             }
 
-            my $n = $h->write($$wrbuf, length($$wrbuf));
+            my $n = $h->syswrite($$wrbuf, length($$wrbuf));
             if (!defined($n)) {
                 if ($!{EAGAIN}){
                     last;
@@ -1208,7 +1224,6 @@ sub do_ipc ($$$$$;$$) {
                     die "writing to IPC socket: $!";
                 }
             }
-
             $$wrbuf = substr($$wrbuf, $n);
         }
     }
@@ -1220,11 +1235,11 @@ sub do_ipc ($$$$$;$$) {
 
 # make_signer_email SIGNER PETITION
 # Make a confirmation email for SIGNER signing PETITION. Returns a MIME::Entity.
-sub do_signer_email ($$$) {
+sub make_signer_email ($$) {
     my ($signer, $petition) = @_;
     
     our $template;
-    $template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/signer-confirm");
+    $template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/signature-confirm");
 
     my %h = ( );
     $h{title} = $petition->{title};
@@ -1235,6 +1250,8 @@ sub do_signer_email ($$$) {
                 . '/C/' . Petitions::Token::make('s', $signer->{id});
     $h{creator_name} = $signer->{name};
     $h{sentence} = Petitions::sentence($petition);
+
+    $h{signature} = '-- the Number 10 petitions team';
 
     return mySociety::Email::construct_email({
                 _template_ => $template,
@@ -1261,7 +1278,7 @@ sub database_child_process ($) {
                     select *
                     from signer where emailsent = 'pending'
                         and id > ?
-                    group by petition_id");
+                    order by petition_id");
 
     my $p;
     my $petition_id;
@@ -1309,7 +1326,7 @@ sub database_child_process ($) {
         $st->execute($max_signer_id);
         while (my $s = $st->fetchrow_hashref()) {
             # Grab petition info if we don't have it.
-            $p = Petitions::get($petition_id)
+            $p = Petitions::DB::get($s->{petition_id})
                 if (!defined($p) || $p->{id} != $s->{petition_id});
 
             # XXX decide what we're doing about return-path. Possibly we should
@@ -1733,16 +1750,18 @@ sub post_select ($$) {
 #
 package main;
 
-my $S = new Source();
-my $Q = new Queue($S);
+my $Q = new Queue();
+my $S = new Source($Q);
 
 while (1) {
     my $rds = new IO::Select();
     my $wrs = new IO::Select();
     $Q->pre_select($rds, $wrs);
+    $S->pre_select($rds, $wrs);
     my ($r, $w) = IO::Select::select($rds, $wrs, undef, 1);
     $rds = { map { $_ => 1 } @$r };
     $wrs = { map { $_ => 1 } @$w };
     $Q->post_select($rds, $wrs);
+    $S->post_select($rds, $wrs);
 }
 
