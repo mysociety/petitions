@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.4 2006-07-27 18:17:50 matthew Exp $
+// $Id: list.php,v 1.5 2006-07-31 09:03:25 chris Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -58,7 +58,9 @@ if ($q_sort == 'creationtime' || $q_sort == 'created' || $q_sort == 'whensucceed
 $sql_params[] = PAGE_SIZE;
 $qrows = db_query("
         SELECT petition.*, '$pet_today' <= petition.deadline AS open,
-            (SELECT count(*) FROM signer WHERE showname and signer.petition_id = petition.id) AS signers
+            (SELECT count(*) FROM signer
+                WHERE showname and signer.petition_id = petition.id
+                    and signer.emailstatus = 'confirmed') AS signers
             FROM petition
             WHERE status = ?".
             ($open ? " AND deadline $open '$pet_today' " : ""). 
