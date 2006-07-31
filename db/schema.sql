@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.15 2006-07-27 12:57:15 matthew Exp $
+-- $Id: schema.sql,v 1.16 2006-07-31 09:01:42 chris Exp $
 --
 
 -- global_seq
@@ -132,10 +132,16 @@ create table signer (
     -- when they signed
     signtime timestamp not null,
 
-    -- has the user confirmed their email address?
-    confirmed boolean not null default false
-    
-    -- add fields for confirmation email stuff
+    -- has the confirmation mail been sent to the user, and have they
+    -- clicked the confirm link?
+    emailsent text not null default ('pending') check (
+        emailsent in (
+        'pending',          -- not sent yet
+        'sent',             -- successfully sent
+        'failed',           -- permanent failure
+        'confirmed'         -- confirm link clicked
+        )
+    )
 );
 
 create index signer_petition_id_idx on signer(petition_id);
