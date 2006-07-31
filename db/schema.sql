@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.17 2006-07-31 09:07:45 chris Exp $
+-- $Id: schema.sql,v 1.18 2006-07-31 17:08:16 chris Exp $
 --
 
 -- global_seq
@@ -190,3 +190,24 @@ create function petition_is_valid_to_sign(integer, text)
         return ''ok'';
     end;
     ' language 'plpgsql';
+
+-- petition_last_change_time PETITION
+-- Return the time of the last change to PETITION.
+create function petition_last_change_time(integer)
+    returns timestamp as '
+    declare
+        t timestamp;
+        t2 timestamp;
+    begin
+        t := (select creationtime from petition where id = $1);
+--        t2 := (select changetime from petition where id = $1);
+--        if t2 > t then
+--            t = t2;
+--        end if;
+        t2 := (select signtime from signer where petition_id = $1 order by signtime desc limit 1);
+        if t2 > t then
+            t = t2;
+        end if;
+        return t;
+    end;
+' language 'plpgsql';
