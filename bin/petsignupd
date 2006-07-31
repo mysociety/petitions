@@ -22,7 +22,7 @@
 # 
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.1 2006-07-28 17:38:10 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.2 2006-07-31 23:06:37 chris Exp $';
 
 use strict;
 
@@ -39,48 +39,7 @@ use Time::Hires qw(time alarm);
 use mySociety::DBHandle qw(dbh);
 
 use Petitions;
-
-sub hmac_sha1_b64 ($$) {
-    my $d = Digest::HMAC_SHA1::hmac_sha1($_[0], $_[1]);
-    return MIME::Base64::encode_base64($d);
-}
-
-sub parse_packet ($$) {
-    # Check that the packet is in a sane format.
-    if ($_[0] !~ m#^([^\0]+\0){6}[^\0]+$#) {
-        $_[1] = 'invalid packet format';
-        return undef;
-    }
-    # Decompose it into fields, ensure that it is valid UTF-8, and convert the
-    # on-the-wire data into perl strings.
-    my $bad = 0;
-    my ($cookie, $ref, $email, $name, $address, $postcode, $mac)
-        = map { my $x = decode_utf8($_) or ++$bad; $x } split(/\0/, $_[0]);
-    if ($bad) {
-        $_[1] = 'invalid UTF-8 sequence in packet';
-        return undef;
-    }
-    # Verify the contents.
-    if ($mac ne digest_sha1_b64("$cookie\0$ref\0$email\0$name\0$address\0$postcode", $secret)) {
-        $_[1] = 'signature mismatch';
-        return undef;
-    }
-    # Find the petition ID.
-    my $id = dbh()->selectrow_array('select id from petition where ref = ?', {}, $ref);
-    if (!defined($id)) {
-        $_[1] = qq(unknown petition '$ref');
-        return undef;
-    }
-    # We win.
-    return {
-            cookie => $cookie,
-            id => $id,
-            email => $email,
-            name => $name,
-            address => $address,
-            postcode => $postcode
-        };
-}
+use Petitions::RPC;
 
 # Maximum (ideal) interval from signup request to commit.
 use constant MAX_SIGNUP_TIME    => 0.25;    # seconds
@@ -106,6 +65,18 @@ my %signercache;
 tie(%signercache, 'Tie::Cache', { MaxCount => 10000, Debug => 0 });
 
 my @pending = ( );
+sub acknowledge_pending () {
+    $s->blocking(1);
+    foreach my $r (@pending) {
+        my $packet = Petitions::RPC::make_ack_packet($r->{cookie});
+        if (!$s->sendto($packet, $r->{client})) {
+            my ($port, $ip) = sockaddr_in($r->{sender});
+            print STDERR "sending to $ip:$port: $!\n";
+        }
+    }
+    $s->blocking(0);
+    @pending = ( );
+}
 
 while (!$foad) {
     my $buf = '';
@@ -113,7 +84,7 @@ while (!$foad) {
     my @ready = IO::Select->new($s)->can_read(MAX_SIGNUP_TIME / 10);
     if (@ready && defined($sender = $s->recv($buf, 65536, 0))) {
         my $err = undef;
-        if (my $r = parse_packet($buf, $err)) {
+        if (my $r = Petitions::RPC::parse_packet($buf, $err)) {
             # We have a valid signup packet. Schedule an alarm so that we will
             # send a response within the deadline.
             if (!$alarm_pending) {
@@ -122,45 +93,23 @@ while (!$foad) {
             }
             # Record address to which we send acknowledgement.
             $r->{client} = $sender;
-            # Attempt the insert, detecting any error which occurs.
-            my $doadd = 0;
-            try {
-                dbh()->do('
-                        insert into signer (
-                            petition_id,
-                            email, name, address, postcode,
-                            showname, signtime
-                        ) values (
-                            ?,
-                            ?, ?, ?, ?,
-                            true, ms_current_timestamp()
-                        )', {},
-                        map { $r->{$_} } qw(id email name address postcode))
-                    unless (exists($signercache{"$r->{id}\0$r->{email}"}));
-                $signercache{"$r->{id}\0$r->{email}"} = 1;
-                $doadd = 1;
-            } catch mySociety::DBHandle::Error {
-                my $E = shift;
-                # See if the user has already signed.
-                my $i = dbh()->selectrow_array('
-                        select id from signer
-                        where petition_id = ? and email = ?', {},
-                        $r->{id}, $r->{email});
-                if (defined($i)) {
-                    # Already signed up. Behave as normal.
-                    $doadd = 1;
-                } else {
-                    # Not sure what happened there.
-                    print STDERR "unexpected db error: ", $E->text(), "\n";
-                        # XXX
-                }
-            };
+            if (!exists($signercache{"$r->{ref}\0$r->{email}"})) {
+                # Attempt the insert, detecting any error which occurs.
+                try {
+                    Petitions::RPC::sign_petition_db($r);
+                    $signercache{"$r->{ref}\0$r->{email}"} = 1;
+                    push(@pending, $r);
+                } catch mySociety::DBHandle::Error {
+                    my $E = shift;
+                    print STDERR "attempt to sign $r->{email} up to $r->{ref} failed; DB error: ", $E->text(), "\n";
+                };
+            }
             push(@pending, $r) if ($doadd);
             # Done handling this request.
         } else {
             # Invalid packet of some sort. Log and continue.
             my ($port, $ip) = sockaddr_in($r->{sender});
-            print STDERR "packet from $ip:$port: $err\n";
+            print STDERR "bad packet from $ip:$port\n";
         }
     } elsif (!$!{EAGAIN}) {
         print STDERR "recvfrom: $!\n";
@@ -169,35 +118,25 @@ while (!$foad) {
     # If the alarm has fired, then commit the transaction and send
     # acknowledgements to the clients.
     if ($alarm_fired && @pending) {
-        dbh()->commit();
-        $s->blocking(1);
-        foreach my $r (@pending) {
-            if (!$s->sendto("ACK\0$r->{cookie}\0"
-                                    . hmac_sha1_b64("ACK\0$r->{cookie}"),
-                                0,
-                                $r->{sender})) {
-                my ($port, $ip) = sockaddr_in($r->{sender});
-                print STDERR "sending to $ip:$port: $!\n";
-            }
-        }
-        $s->blocking(0);
-        @pending = ( );
-        $alarm_fired = 0;
+        try {
+            dbh()->commit();
+            acknowledge_pending();
+            $alarm_fired = 0;
+        } catch mySociety::DBHandle::Error {
+            my $E = shift;
+            print STDERR "committing ", scalar(@pending), " requests failed; DB error: ", $E->text(), "\n";
+        };
     }
 }
 
 if (@pending) {
-    dbh()->commit();
-    $s->blocking(1);
-    foreach my $r (@pending) {
-        if (!$s->sendto("ACK\0$r->{cookie}\0"
-                    . hmac_sha1_b64("ACK\0$r->{cookie}"),
-                    0,
-                    $r->{sender})) {
-            my ($port, $ip) = sockaddr_in($r->{sender});
-            print STDERR "sending to $ip:$port: $!\n";
-        }
-    }
+    try {
+        dbh()->commit();
+        acknowledge_pending();
+    } catch mySociety::DBHandle::Error {
+        my $E = shift;
+        print STDERR "committing ", scalar(@pending), " requests failed (at shutdown); DB error: ", $E->text(), "\n";
+    };
 }
 
 untie(%signercache);
