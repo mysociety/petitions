@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.11 2006-07-31 09:05:33 chris Exp $
+# $Id: Petitions.pm,v 1.12 2006-07-31 09:13:14 chris Exp $
 #
 
 package Petitions::DB;
@@ -80,11 +80,11 @@ sub check_ref ($) {
     }
 }
 
-=item get REF
+=item get REF | ID
 
-Return a hash of database fields to values for the petition with the given REF,
-or undef if there is no such petition. Also make up a signers field giving the
-number of people who've signed the petition so far.
+Return a hash of database fields to values for the petition with the given REF
+or ID, or undef if there is no such petition. Also make up a signers field
+giving the number of people who've signed the petition so far.
 
 =cut
 sub get ($) {
@@ -98,7 +98,10 @@ sub get ($) {
                         and signer.emailsent = 'confirmed')
                     as signers
             from petition";
-    my $p = dbh()->selectrow_hashref("$s where ref = ?", {}, $ref);
+    my $p;
+    $p || = dbh()->selectrow_hashref("$s where id = ?", {}, $ref)
+            if ($ref =~ /^[1-9]\d*$/);
+    $p || = dbh()->selectrow_hashref("$s where ref = ?", {}, $ref);
     $p ||= dbh()->selectrow_hashref("$s where ref ilike ?", {}, $ref);
     return $p;
 }
