@@ -1,13 +1,13 @@
 #!/usr/bin/perl -w -I../perllib -I../../perllib
 #
 # ref-sign.cgi:
-# Signup form for petitions site.
+# Signup form for petitions site. Also process confirmation mail links.
 #
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.4 2006-07-27 18:17:50 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.5 2006-07-31 19:14:23 chris Exp $';
 
 use strict;
 
@@ -32,34 +32,22 @@ sub i_check_postcode ($$) {
     return mySociety::Util::is_valid_postcode($_[1]);
 }
 
-my $foad = 0;
-$SIG{TERM} = sub { $foad = 1; };
-while (!$foad && (my $q = new mySociety::Web())) {
-    our $qp_ref;
-    $q->Import('p', ref => [qr/^[A-Za-z0-9-]{6,16}$/, undef]);
-    my $ref = Petitions::DB::check_ref($qp_ref);
-    if (!defined($ref)) {
-        Petitions::Page::bad_ref_page($q, $qp_ref);
-        next;
-    }
+use Data::Dumper;
 
-    # Perhaps redirect to canonical ref if non-canonical was given.
-    if ($qp_ref ne $ref && $q->request_method() =~ /^(GET|HEAD)$/) {
-        print $q->redirect("/$ref/sign?" . $q->query_string());
-        next;
-    }
-
+# signup_page Q REF
+# Generate the signup page for REF.
+sub signup_page ($$) {
+    my mySociety::Web $q = shift;
+    my $ref = shift;
+    
     my $html =
         Petitions::Page::header($q, 'Signature addition');
 
-    our ($qp_name, $qp_email, $qp_email2, $qp_address, $qp_postcode);
-    $q->Import('p',
-            name =>     [qr/./, undef],
-            email =>    [\&i_check_email, undef],
-            email2 =>   [\&i_check_email, undef],
-            address =>  [qr/./, undef],
-            postcode => [\&i_check_postcode, undef]
-        );
+    my $qp_name = $q->param('name');
+    my $qp_email = $q->ParamValidate(email => \&i_check_email);
+    my $qp_email2 = $q->ParamValidate(email2 => \&i_check_email);
+    my $qp_address = $q->param('name');
+    my $qp_postcode = $q->ParamValidate(postcode => \&i_check_postcode);
 
     my %errors;
     $errors{name} = 'Please enter your name'
@@ -73,8 +61,9 @@ while (!$foad && (my $q = new mySociety::Web())) {
         if (!$qp_address);
     $errors{postcode} = 'Please enter a valid postcode, such as OX1 3DR'
         if (!$qp_postcode);
-    
-    my $p = Petitions::DB::get($ref);
+
+    our $p;
+    $p = Petitions::DB::get($ref, 1) if (!$p || $p->{ref} ne $ref);
     if (!keys(%errors)) {
         # Success. Add the signature, assuming that we can.
         my $s = Petitions::DB::is_valid_to_sign($p->{id}, $qp_email);
@@ -106,10 +95,15 @@ while (!$foad && (my $q = new mySociety::Web())) {
                         select id from signer
                         where petition_id = ? and email = ?', {},
                         $p->{id}, $qp_email);
-                # XXX if the user has already signed but not confirmed, reset
-                # their email status so that another mail gets sent. The first
-                # might have been lost.
-                # if ($didaddsignature) { ... }
+                # If the user has already signed but not confirmed, reset their
+                # email status so that another mail gets sent. The first might
+                # have been lost.
+                dbh()->do("
+                        update signer set emailsent = 'pending'
+                        where petition_id = ? and email = ?
+                            and emailsent <> 'confirmed'", {},
+                        $p->{id}, $qp_email)
+                    if (!$didaddsignature);
                 dbh()->commit();
             }
 
@@ -133,5 +127,65 @@ while (!$foad && (my $q = new mySociety::Web())) {
     $html .= Petitions::Page::footer($q);
 
     print $q->header(-content_length => length($html)), $html;
+
+}
+
+# confirm_page Q TOKEN
+# Given a confirm TOKEN, validate a signup.
+sub confirm_page ($$) {
+    my ($q, $token) = @_;
+    
+    my $html = '';
+    my ($what, $id);
+    if (!(($what, $id) = Petitions::Token::check($token))) {
+        # Token was not valid.
+        $html = Petitions::Page::header($q, "Something is wrong")
+                . $q->p("
+                    Unfortunately, we couldn't understand the signup link that
+                    you've used. If you typed the link in manually, please
+                    re-check that you've got it absolutely right.")
+                . Petitions::Page::footer($q);
+    } else {
+        # if ($what ne 'p') ...
+        # Confirm signer.
+        dbh()->do("update signer set emailsent = 'confirmed' where id = ?", {}, $id);
+        dbh()->commit();
+
+        my $ref = dbh()->selectrow_array('
+                    select ref from petition, signer
+                    where signer.petition_id = petition.id
+                        and signer.id = ?', {},
+                    $id);
+
+        # Now we should redirect so that the token URL isn't left in the browser.
+        print $q->redirect("/$ref?signed=1");
+    }
+}
+
+my $foad = 0;
+$SIG{TERM} = sub { $foad = 1; };
+while (!$foad && (my $q = new mySociety::Web())) {
+    my $qp_token = $q->ParamValidate(token => qr/^[A-Za-z0-9_-]+$/);
+    if (defined($qp_token)) {
+        confirm_page($q, $qp_token);
+        next;
+    }
+
+    my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
+    # This page is only ever invoked for a POST form, so redirect to the
+    # petition page if this is a GET.
+    if ($q->request_method() ne 'POST') {
+        print $q->redirect("/$qp_ref");
+        next;
+    }
+
+    my $ref = Petitions::DB::check_ref($qp_ref);
+    if (!defined($ref)) {
+        Petitions::Page::bad_ref_page($q, $qp_ref);
+        next;
+    }
+
+    signup_page($q, $ref);
+
     $W->exit_if_changed();
 }
