@@ -8,7 +8,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.7 2006-07-31 13:59:14 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.8 2006-07-31 15:35:56 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -739,7 +739,7 @@ package Queue;
 use Carp;
 use IO::Select;
 
-use fields qw(messages badhosts r ss);
+use fields qw(messages finished badhosts r ss);
 
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
@@ -761,6 +761,9 @@ sub new ($) {
 
     # hash of opaque ID to message object
     $self->{messages} = { };
+
+    # list of completed messages
+    $self->{finished} = [ ];
     
     # records of times when we've seen problems with hosts
     $self->{badhosts} = { };
@@ -864,8 +867,11 @@ sub pre_select ($$$) {
     foreach my $msg (values(%{$self->{messages}})) {
 Log::print('debug', "considering ", $msg->id());
         # Skip if this message has already been delivered.
-        # XXX notify source
-        next if ($msg->state() != Queue::Message::STATE_PENDING);
+        if ($msg->state() != Queue::Message::STATE_PENDING) {
+            delete($self->{messages}->{$msg->id()});
+            push(@{$self->{finished}}, $msg);
+            next;
+        }
 Log::print('debug', " ... not already delivered");
         # Skip if a sender is already handling this message.
         next if (defined($msg->owner()));
@@ -978,6 +984,13 @@ sub post_select ($$$) {
         }
     }
     $self->{ss} = \@ss;
+}
+
+# get_finished
+#
+sub get_finished ($) {
+    my Queue $self = shift;
+    return shift(@{$self->{finished}});
 }
 
 # accessors
@@ -1143,6 +1156,11 @@ sub pre_select ($$$) {
     my Source $self = shift;
     my IO::Select $rds = shift;
     my IO::Select $wrs = shift;
+
+    while (my $msg = $self->queue()->get_finished()) {
+        $self->notify($msg->id(), $msg->state() == Queue::Message::STATE_DONE);
+    }
+    
     $rds->add($self->{s});
     $wrs->add($self->{s}) if (length(${$self->{wrbuf}}) || @{$self->{q}});
 }
@@ -1153,12 +1171,11 @@ sub post_select ($$$) {
     do_ipc($self->s(), $self->{rdbuf}, $self->{wrbuf}, $self->{q},
             sub ($) {
                 my Source::Packet $packet = shift;
-                if ($packet->type() == Source::Packet::TYPE_NEWMESSAGE) { warn "got a new message " . $packet->data()->id() . "\n";
+                if ($packet->type() == Source::Packet::TYPE_NEWMESSAGE) {
                     $self->queue()->add($packet->data());
                 }
             },
             $rds, $wrs);
-warn "done post_select\n";
 }
 
 # notify ID RESULT
@@ -1167,15 +1184,26 @@ warn "done post_select\n";
 sub notify ($$$) {
     my Source $self = shift;
     my ($id, $result) = @_;
-    push(@{$self->{queue}}, [$id, $result]);
+    push(@{$self->{q}},
+        new Source::Packet(
+                $result
+                    ? Source::Packet::TYPE_DELIVERED
+                    : Source::Packet::TYPE_FAILED,
+                $id));
 }
 
 # do_ipc HANDLE READBUF WRITEBUF QUEUE CALLBACK [RDS WRS]
-#
+# Perform IPC between this process and its peer over HANDLE. READBUF and
+# WRITEBUF are references to scalars which are used as buffers for IO in each
+# direction; QUEUE is a reference to the array of unsent Source::Packet
+# objects, and CALLBACK is invoked once for each received packet with that
+# packet as its single argument. If RDS and WRS are set they should be a hash
+# indicating whether HANDLE is readable or writable respectively.
 sub do_ipc ($$$$$;$$) {
     my IO::Handle $h = shift;
     my ($rdbuf, $wrbuf, $queue, $callback, $rds, $wrs) = @_;
     
+    # Do the select ourself (for the child process).
     if (!defined($rds) && !defined($wrs)) {
         $rds = new IO::Select();
         $wrs = new IO::Select();
@@ -1183,7 +1211,7 @@ sub do_ipc ($$$$$;$$) {
         $rds->add($h);
         $wrs->add($h) if (length($$wrbuf) || @$queue);
 
-        ($rds, $wrs) = IO::Select::select($rds, $wrs, undef, 0.1)
+        ($rds, $wrs) = IO::Select::select($rds, $wrs, undef, 1)
     #        or die "select: $!";
             or return;
 
@@ -1257,7 +1285,7 @@ sub make_signer_email ($$) {
                 _template_ => $template,
                 _parameters_ => \%h,
 
-                To => [$signer->{name}, $signer->{email}],
+                To => [[$signer->{email}, $signer->{name}]],
                 From => mySociety::Config::get('CONTACT_EMAIL'),
                 'Message-ID' =>
                     sprintf('<%s@%s>',
@@ -1303,9 +1331,11 @@ sub database_child_process ($) {
                         my $id = $packet->data();
                         if ($id =~ /^s-([1-9]\d*)$/) {
                             my $signer_id = $1;
+                            # NB never unconfirm a confirmed email.
                             dbh()->do("
                                     update signer set emailsent = ?
-                                    where id = ?", {},
+                                    where id = ?
+                                        and emailsent <> 'confirmed'", {},
                                     $packet->type() == Source::Packet::TYPE_DELIVERED
                                         ? 'delivered' : 'failed',
                                     $signer_id);
