@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.12 2006-07-31 09:13:14 chris Exp $
+# $Id: Petitions.pm,v 1.13 2006-07-31 13:09:18 chris Exp $
 #
 
 package Petitions::DB;
@@ -99,9 +99,9 @@ sub get ($) {
                     as signers
             from petition";
     my $p;
-    $p || = dbh()->selectrow_hashref("$s where id = ?", {}, $ref)
+    $p ||= dbh()->selectrow_hashref("$s where id = ?", {}, $ref)
             if ($ref =~ /^[1-9]\d*$/);
-    $p || = dbh()->selectrow_hashref("$s where ref = ?", {}, $ref);
+    $p ||= dbh()->selectrow_hashref("$s where ref = ?", {}, $ref);
     $p ||= dbh()->selectrow_hashref("$s where ref ilike ?", {}, $ref);
     return $p;
 }
