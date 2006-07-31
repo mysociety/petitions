@@ -7,9 +7,11 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.2 2006-07-27 18:17:50 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.3 2006-07-31 17:30:40 chris Exp $';
 
 use strict;
+
+use HTTP::Date qw();
 
 use mySociety::Config;
 BEGIN {
@@ -43,6 +45,12 @@ while (!$foad && (my $q = new mySociety::Web())) {
         next;
     }
 
+    my $lastmodified = dbh()->selectrow_array('select extract(epoch from petition_last_change_time((select id from petition where ref = ?)))', {}, $ref);
+    next if ($q->Maybe304($lastmodified));
+
+    our $qp_signed;
+    $q->Import('p', signed => [qr/./, 0]);
+
     my $p = Petitions::DB::get($ref);
     my $title = Petitions::sentence($p, 1);
     my $html =
@@ -53,6 +61,18 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     $html .= $q->p({ -id => 'finished' }, "This petition is now closed, as its deadline has passed.")
         if (!$p->{open});
+
+    if ($qp_signed) {
+        $html .=
+            $q->div({ -style => 'font-size: 125%; border: 2px solid blue' },    # XXX design
+                    "You're now signed up to this petition! If you'd like to
+                    tell your friends about it, its permanent web address is,",
+                    $q->br(),
+                    $q->strong($q->a({ -href => "/$ref" },
+                        ent(mySociety::Config::get('BASE_URL') . "/$ref"
+                    ))));
+                    
+    }
 
     $html .= Petitions::Page::display_box($q, $p);
 
@@ -67,6 +87,9 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     $html .= Petitions::Page::footer($q);
 
-    print $q->header(-content_length => length($html)), $html;
+    print $q->header(
+                -content_length => length($html),
+                -last_modified => HTTP::Date::time2str($lastmodified)),
+                $html;
     $W->exit_if_changed();
 }
