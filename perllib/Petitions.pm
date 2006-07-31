@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.10 2006-07-21 17:15:55 chris Exp $
+# $Id: Petitions.pm,v 1.11 2006-07-31 09:05:33 chris Exp $
 #
 
 package Petitions::DB;
@@ -90,13 +90,14 @@ number of people who've signed the petition so far.
 sub get ($) {
     my $ref = shift;
     return undef unless ($ref);
-    my $s = '
+    my $s = "
             select *,
                 ms_current_date() <= deadline as open,
                 (select count(id) from signer
-                where showname and signer.petition_id = petition.id)
+                    where showname and signer.petition_id = petition.id
+                        and signer.emailsent = 'confirmed')
                     as signers
-            from petition';
+            from petition";
     my $p = dbh()->selectrow_hashref("$s where ref = ?", {}, $ref);
     $p ||= dbh()->selectrow_hashref("$s where ref ilike ?", {}, $ref);
     return $p;
