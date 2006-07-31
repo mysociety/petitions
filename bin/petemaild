@@ -8,7 +8,17 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.5 2006-07-30 23:44:29 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.6 2006-07-31 13:18:45 chris Exp $';
+
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
 
 use strict;
 
@@ -1024,8 +1034,8 @@ sub parse ($) {
     my $l = unpack('N', $$buf);
     return undef if (length($$buf) < $l + 4);
     my $d = Storable::thaw(substr($$buf, 4, $l));
-    die "bad wire data" if (!defined($data));
-    die "wire data should be reference to list" unless (ref($data) eq 'ARRAY');
+    die "bad wire data" if (!defined($d));
+    die "wire data should be reference to list" unless (ref($d) eq 'ARRAY');
     my ($type, $data) = @$d;
     $$buf = substr($$buf, $l + 4);  # shift buffer
     return new Source::Packet($type, $data);
@@ -1063,36 +1073,85 @@ sub wire ($) {
 # 
 package Source;
 
+use File::Slurp qw();
+use FindBin;
 use IO::Socket;
 
 use mySociety::DBHandle qw(dbh);
+use mySociety::Email;
 use RABX;   # for serialisation/unserialisation
 
 use Petitions;
 
-use fields qw(s pid queue);
+use fields qw(s pid queue q rdbuf wrbuf);
 
 # Because we can't integrate PostgreSQL into the select loop in any sane
 # fashion we fork a subprocess which polls the database for new messages to
 # send. That's pretty lame, of course, but welcome to database land.
 
-# new
+# new QUEUE
 # 
-sub new ($) {
+sub new ($$) {
+    my Source $self = shift;
+    my Queue $queue = shift;
     
     # Ideally we'd use SOCK_DGRAM here, and on Linux it'd be OK (typically you
     # can have a packet of up to ~100KB) but for portability we resist
     # temptation and use a stream format instead.
-    my ($s1, $s2) = IO::Socket::socketpair(PF_UNIX, SOCK_STREAM, 0)
+    my ($s1, $s2) = IO::Socket->socketpair(PF_UNIX, SOCK_STREAM, 0)
         or die "socketpair: $!";
     
     my $pid = fork();
     if (!defined($pid)) {
         die "fork: $!";
     } elsif (0 == $pid) {
+        $s1->close();
         database_child_process($s2);
         exit(0);
     }
+
+    $s2->close();
+
+    $self = fields::new($self)
+        unless (ref($self));
+    
+    $self->{s} = $s1;
+    $self->{pid} = $pid;
+    $self->{queue} = $queue;
+    $self->{q} = [ ];           # confusing -- that's the packet queue
+    my $rdbuf = ''; $self->{rdbuf} = \$rdbuf;
+    my $wrbuf = ''; $self->{wrbuf} = \$wrbuf;
+
+    return $self;
+}
+
+sub s ($) {
+    my Source $self = shift;
+    return $self->{s};
+}
+
+sub queue ($) {
+    my Source $self = shift;
+    return $self->{queue};
+}
+
+sub pre_select ($$$) {
+    my Source $self = shift;
+    my IO::Select $rds = shift;
+    my IO::Select $wrs = shift;
+    $rds->add($self->{s});
+}
+
+sub post_select ($$$) {
+    my Source $self = shift;
+    # lazy
+    do_ipc($self->s(), $self->{rdbuf}, $self->{wrbuf}, $self->{queue},
+            sub ($) {
+                my Source::Packet $packet = shift;
+                if ($packet->type() == Source::Packet::TYPE_NEWMESSAGE) {
+                    $self->queue()->add($packet->data());
+                }
+            })
 }
 
 # notify ID RESULT
@@ -1104,18 +1163,172 @@ sub notify ($$$) {
     push(@{$self->{queue}}, [$id, $result]);
 }
 
+# do_ipc HANDLE READBUF WRITEBUF QUEUE CALLBACK
+#
+sub do_ipc ($$$$$;$$) {
+    my IO::Handle $h = shift;
+    my ($rdbuf, $wrbuf, $queue, $callback) = @_;
+    
+    my $rds = new IO::Select();
+    my $wrs = new IO::Select();
+
+    $rds->add($h);
+    $wrs->add($h) if (length($$wrbuf) || @$queue);
+
+    ($rds, $wrs) = IO::Select::select($rds, $wrs, undef, 1);
+    
+    if (@$rds) {
+        while (1) {
+            while (my $packet = Source::Packet::parse($rdbuf)) {
+                &$callback($packet);
+            }
+        
+            my $n = $h->read($$rdbuf, 8192, length($$rdbuf));
+            if (!defined($n)) {
+                if ($!{EAGAIN}) {
+                    last;
+                } else {
+                    die "reading from socket in child process: $!";
+                }
+            }
+        }
+    }
+
+    if (@$wrs) {
+        while (length($$wrbuf) || @$queue) {
+            while (@$queue && length($$wrbuf) < 32768) {
+                $$wrbuf .= shift(@$queue)->wire();
+            }
+
+            my $n = $h->write($$wrbuf, length($$wrbuf));
+            if (!defined($n)) {
+                if ($!{EAGAIN}){
+                    last;
+                } else {
+                    die "writing to IPC socket: $!";
+                }
+            }
+
+            $$wrbuf = substr($$wrbuf, $n);
+        }
+    }
+}
+
+#
+# Child process talking to the database.
+#
+
+# make_signer_email SIGNER PETITION
+# Make a confirmation email for SIGNER signing PETITION. Returns a MIME::Entity.
+sub do_signer_email ($$$) {
+    my ($signer, $petition) = @_;
+    
+    our $template;
+    $template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/signer-confirm");
+
+    my %h = ( );
+    $h{title} = $petition->{title};
+    $h{user_name} = $signer->{name};
+
+
+    $h{url} = mySociety::Config::get('BASE_URL')
+                . '/C/' . Petitions::Token::make('s', $signer->{id});
+    $h{creator_name} = $signer->{name};
+    $h{sentence} = Petitions::sentence($petition);
+
+    return mySociety::Email::construct_email({
+                _template_ => $template,
+                _parameters_ => \%h,
+
+                To => [$signer->{name}, $signer->{email}],
+                From => mySociety::Config::get('CONTACT_EMAIL'),
+                'Message-ID' =>
+                    sprintf('<%s@%s>',
+                        unpack('h*', mySociety::Util::random_bytes(5)),
+                        mySociety::Config::get('EMAIL_DOMAIN'))
+            })->stringify();
+}
+
 # database_child_process SOCKET
 #
 sub database_child_process ($) {
     my IO::Socket $s = shift;
+
+    # Queue of messages to send.
+    my @queue = ( );
     
-    # On startup, we obtain a list of all the pending messages (this will
-    # typically happen when we're starting up after a crash or shutdown) and
-    # communicate them to the queue. Once that's done we poll the database
-    # occasionally, passing news of new messages to the queue. We also need to
-    # process messages coming in the other direction which tell us when
-    # delivery of messages has completed or failed, so that the database can be
-    # updated appropriately.
+    my $st = dbh()->prepare("
+                    select *
+                    from signer where emailsent = 'pending'
+                        and id > ?
+                    group by petition_id");
+
+    my $p;
+    my $petition_id;
+    my $max_signer_id = 0;
+    
+    # Now we run a simple loop, sending messages to the parent and receiving
+    # messages from the parent until told to quit.
+    my $rdbuf = '';
+    my $wrbuf = '';
+    my $quit = 0;
+    do {
+        #
+        # Process incoming/outgoing messages.
+        # 
+        my $docommit = 0;
+        do_ipc($s, \$rdbuf, \$wrbuf, \@queue,
+                sub ($) {
+                    my Source::Packet $packet = shift;
+                    if ($packet->type() == Source::Packet::TYPE_DELIVERED
+                        || $packet->type() == Source::Packet::TYPE_FAILED) {
+
+                        my $id = $packet->data();
+                        if ($id =~ /^s-([1-9]\d*)$/) {
+                            my $signer_id = $1;
+                            dbh()->do("
+                                    update signer set emailsent = ?
+                                    where id = ?", {},
+                                    $packet->type() == Source::Packet::TYPE_DELIVERED
+                                        ? 'delivered' : 'failed',
+                                    $signer_id);
+                            $docommit = 1;
+                        } else {
+                            Log::print('err', "unknown ID $id sent to child process");
+                        }
+                    } elsif ($packet->type() == Source::Packet::TYPE_QUIT) {
+                        $quit = 1;
+                    }
+                }
+            );
+        dbh()->commit() if ($docommit);
+
+        # 
+        # See if there are any new signers.
+        #
+        $st->execute($max_signer_id);
+        while (my $s = $st->fetchrow_hashref()) {
+            # Grab petition info if we don't have it.
+            $p = Petitions::get($petition_id)
+                if (!defined($p) || $p->{id} != $s->{petition_id});
+
+            # XXX decide what we're doing about return-path. Possibly we should
+            # VERP it.
+
+            push(@queue,
+                    new Source::Packet(
+                        Source::Packet::TYPE_NEWMESSAGE,
+                        new Queue::Message(
+                            "s-$s->{id}",       # message ID
+                            mySociety::Config::get('CONTACT_EMAIL'),
+                            $s->{email},
+                            make_signer_email($s, $p)
+                        )));
+
+            $max_signer_id = $s->{id} if ($s->{id} > $max_signer_id);
+        }
+    } while (!$quit);
+
 }
 
 #
