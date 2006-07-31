@@ -8,7 +8,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.9 2006-07-31 19:16:27 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.10 2006-07-31 19:38:03 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1317,6 +1317,7 @@ sub database_child_process ($) {
     my $rdbuf = '';
     my $wrbuf = '';
     my $quit = 0;
+    my %already = ( );
     do {
         #
         # Process incoming/outgoing messages.
@@ -1329,6 +1330,7 @@ sub database_child_process ($) {
                         || $packet->type() == Source::Packet::TYPE_FAILED) {
 
                         my $id = $packet->data();
+                        delete($already{$id});
                         if ($id =~ /^s-([1-9]\d*)$/) {
                             my $signer_id = $1;
                             # NB never unconfirm a confirmed email.
@@ -1371,7 +1373,9 @@ sub database_child_process ($) {
                             mySociety::Config::get('CONTACT_EMAIL'),
                             $s->{email},
                             make_signer_email($s, $p)
-                        )));
+                        )))
+                unless (exists($already{"s-$s->{id}"}));
+            $already{"s-$s->{id}"} = 1;
 
             $max_signer_id = $s->{id} if ($s->{id} > $max_signer_id);
         }
