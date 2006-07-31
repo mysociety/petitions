@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.3 2006-07-31 17:30:40 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.4 2006-07-31 18:38:35 chris Exp $';
 
 use strict;
 
@@ -29,8 +29,7 @@ my $W = new mySociety::WatchUpdate();
 my $foad = 0;
 $SIG{TERM} = sub { $foad = 1; };
 while (!$foad && (my $q = new mySociety::Web())) {
-    our $qp_ref;
-    $q->Import('p', ref => [qr/^[A-Za-z0-9-]{6,16}$/, undef]);
+    my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
     my $ref = Petitions::DB::check_ref($qp_ref);
     if (!defined($ref)) {
         Petitions::Page::bad_ref_page($q, $qp_ref);
@@ -48,8 +47,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     my $lastmodified = dbh()->selectrow_array('select extract(epoch from petition_last_change_time((select id from petition where ref = ?)))', {}, $ref);
     next if ($q->Maybe304($lastmodified));
 
-    our $qp_signed;
-    $q->Import('p', signed => [qr/./, 0]);
+    my $qp_signed = $q->param('signed');
 
     my $p = Petitions::DB::get($ref);
     my $title = Petitions::sentence($p, 1);
