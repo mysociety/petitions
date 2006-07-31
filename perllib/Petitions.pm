@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.13 2006-07-31 13:09:18 chris Exp $
+# $Id: Petitions.pm,v 1.14 2006-07-31 13:27:03 chris Exp $
 #
 
 package Petitions::DB;
@@ -235,6 +235,7 @@ my $petition_prefix = "We the undersigned petition the Prime Minister to";
 sub sentence ($;$) {
     my ($p, $html) = @_;
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
+    croak("Field 'content' missing from PETITION") unless (exists($p->{content}));
     my $sentence = sprintf('%s %s', $petition_prefix, $p->{content});
     $sentence = ent($sentence) if ($html);
     return $sentence;
