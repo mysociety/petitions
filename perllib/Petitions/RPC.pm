@@ -6,19 +6,21 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.1 2006-07-31 23:06:25 chris Exp $
+# $Id: RPC.pm,v 1.2 2006-08-01 01:37:13 chris Exp $
 #
 
 package Petitions::RPC;
 
 use strict;
 
-use Digest::HMAC_SHA1;
+use Carp;
+use Digest::HMAC_SHA1 qw(hmac_sha1);
 use Error qw(:try);
 use IO::Select;
 use IO::Socket;
 use IO::String;
 use RABX;
+use Socket;
 use Time::HiRes qw(time alarm sleep);
 
 use mySociety::Config;
@@ -35,7 +37,7 @@ use constant RPC_TIMEOUT => 2;
 # Retry schedule for the RPC packets. The back end caches completed requests
 # so we can be reasonably aggressive with this.
 use constant RPC_RETRY_TIME => 0.1;
-use constant RPC_RETRY_EXP => 1.1;
+use constant RPC_RETRY_EXP => 1.5;
 
 # Bytes of random data in request ID.
 use constant COOKIE_LEN => 4;
@@ -46,7 +48,7 @@ sub make_packet ($) {
     my $r = shift;
     my $packet = '';
     my $h = new IO::String($packet);
-    RABX::wire_wr($h);
+    RABX::wire_wr($r, $h);
     $h->close();
     my $hmac = hmac_sha1($packet, Petitions::DB::secret());
     return $packet . $hmac;
@@ -58,7 +60,7 @@ Given a REQUEST (to sign a petition) make a signed packet suitable for
 transmitting to the server.
 
 =cut
-sub make_packet ($) {
+sub make_sign_packet ($) {
     my $r = shift;
     croak "REQUEST must be reference-to-hash" unless (ref($r) eq 'HASH');
     my @required = qw(cookie ref email name address postcode);
@@ -76,7 +78,7 @@ Given the COOKIE from a request, return an ack packet.
 =cut
 sub make_ack_packet ($) {
     my $c = shift;
-    croak "COOKIE may not be undef" unless (!defined($c));
+    croak "COOKIE may not be undef" unless (defined($c));
     croak "COOKIE must be scalar" unless (ref($c) eq '');
 
     return make_packet($c);
@@ -94,21 +96,16 @@ sub parse_packet ($) {
     return undef if (length($packet) < 4 + HMAC_SHA1_LEN);
     # Check signature.
     my $hmac = hmac_sha1(substr($packet, 0, length($packet) - HMAC_SHA1_LEN), Petitions::DB::secret());
-    return undef if ($hmac ne substr($packet, -HMAC_SHA1_LEN));
+    return undef if ($hmac ne substr($packet, length($packet) - HMAC_SHA1_LEN));
     # Decode.
-    my $h = new IO::String(substr($packet, PADDING_LEN));
+    my $h = new IO::String($packet);
     my $r;
     try {
         $r = RABX::wire_rd($h);
-    } otherwise {
+    } catch RABX::Error with {
         $r = undef;
     };
     return $r;
-}
-
-sub sign_petition_db ($) {
-    my $r = shift;
-    
 }
 
 =item sign_petition_db REQUEST
@@ -119,7 +116,7 @@ Sign a petition using REQUEST in the normal way. Does not commit.
 sub sign_petition_db ($) {
     my $r = shift;
     
-    local dbh()->{RaiseError};
+    local dbh()->{HandleError};
     dbh()->do('
             insert into signer (
                 petition_id,
@@ -160,45 +157,50 @@ sub sign_petition ($) {
 
         if ($host && $port) {
             $have_rpc_server = 1;
-            $serveraddr = sockaddr_in($port, $host);
+            $serveraddr = sockaddr_in($port, inet_aton($host));
         } else {
             $have_rpc_server = 0;
         }
     }
     
     our $s;
-    $s ||= IO::Socket::INET(
+    $s ||= new IO::Socket::INET(
+                    LocalAddr => '0.0.0.0',
                     Type => SOCK_DGRAM,
-                    Protocol => 'udp',
+                    Proto => 'udp',
                     ReuseAddr => 1,
                     Blocking => 0);
 
     if ($s && $have_rpc_server) {
         $r->{cookie} = random_bytes(COOKIE_LEN);
-        my $packet = make_request_packet($r);
+        my $packet = make_sign_packet($r);
         
         my $deadline = time() + RPC_TIMEOUT;
         my $nextsend = 0;
         my $interval = RPC_RETRY_TIME;
         while (time() < $deadline) {
             if ($nextsend < time()) {
-                my $n = $s->sendto($packet, 0, $serveraddr);
-                last if (!defined($n))
+                my $n = $s->send($packet, 0, $serveraddr);
+                last if (!defined($n) && !$!{EAGAIN});
                 $nextsend = time() + $interval;
                 $interval *= RPC_RETRY_EXP;
             }
 
-            my $S = new IO::Select();
-            $S->add($s):
-            if ($S->can_read($interval / 2)) {
+            if (IO::Select->new($s)->can_read($interval)) {
                 my $ack = '';
                 my $sender = $s->recv($ack, 1024, 0);
                 my $cookie = parse_packet($ack);
-                if ($cookie
-                    && $sender eq $serveraddr
-                    && $cookie eq $r->{cookie}) {
+                if ($cookie && $cookie eq $r->{cookie}) {
                     # Success.
                     return;
+                } elsif ($ack) {
+                    warn "got a response packet but it was bad";
+                    if ($cookie) {
+                        warn "sent cookie = "
+                                . unpack('h*', $r->{cookie})
+                                . "; received cookie = "
+                                . unpack('h*', $cookie);
+                    }
                 }
             }
         }
