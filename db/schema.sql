@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.18 2006-07-31 17:08:16 chris Exp $
+-- $Id: schema.sql,v 1.19 2006-08-01 08:41:47 chris Exp $
 --
 
 -- global_seq
@@ -162,25 +162,22 @@ create function petition_is_valid_to_sign(integer, text)
     begin
         select into p *
             from petition
-            where petition.id = $1 
-            for update;
+            where petition.id = $1;
 
         if not found then
             return ''none'';
         end if;
 
-        -- check for signed by email (before finished, so repeat sign-ups
-        -- by same person give the best message)
-        if $2 is not null then
-            if $2 = p.email then
-                return ''signed'';
-            end if;
-            perform signer.id from signer
-                where petition_id = $1
-                    and signer.email = $2;
-            if found then
-                return ''signed'';
-            end if;
+        -- check for signed before finished, so repeat sign-ups by same
+        -- person give the best message
+        if $2 = p.email then
+            return ''signed'';
+        end if;
+        perform signer.id from signer
+            where petition_id = $1
+                and signer.email = $2;
+        if found then
+            return ''signed'';
         end if;
 
         if p.deadline < ms_current_date() then
