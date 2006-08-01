@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.15 2006-07-31 16:13:19 chris Exp $
+# $Id: Petitions.pm,v 1.16 2006-08-01 01:36:30 chris Exp $
 #
 
 package Petitions::DB;
@@ -46,7 +46,8 @@ Return the site shared secret.
 
 =cut
 sub secret () {
-    return scalar(dbh()->selectrow_array('select secret from secret'));
+    $secret ||= dbh()->selectrow_array('select secret from secret');
+    return $secret;
 }
 
 =item today
@@ -81,23 +82,28 @@ sub check_ref ($) {
     }
 }
 
-=item get REF | ID
+=item get REF [NOCOUNT]
+
+=item get ID [NOCOUNT]
 
 Return a hash of database fields to values for the petition with the given REF
 or ID, or undef if there is no such petition. Also make up a signers field
-giving the number of people who've signed the petition so far.
+giving the number of people who've signed the petition so far, unless NOCOUNT
+is set.
 
 =cut
-sub get ($) {
+sub get ($;$) {
     my $ref = shift;
     return undef unless ($ref);
+    my $nocount = shift;
     my $s = "
             select *,
-                ms_current_date() <= deadline as open,
-                (select count(id) from signer
+                ms_current_date() <= deadline as open";
+    $s .= ", (select count(id) from signer
                     where showname and signer.petition_id = petition.id
                         and signer.emailsent = 'confirmed')
-                    as signers
+                    as signers" unless ($nocount);
+    $s .= "
             from petition";
     my $p;
     $p ||= dbh()->selectrow_hashref("$s where id = ?", {}, $ref)
