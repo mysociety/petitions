@@ -1,5 +1,3 @@
-- Don't keep you logged in after petition creation etc.?
 - Send email to administrator with link to admin interface upon petition creation
 - Whole initial rejection/resubmission structure
 - Make email confirmation screens not have header/footer
-- Grep for pb_ and PledgeBank in the source
