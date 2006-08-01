@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.4 2006-08-01 21:13:25 chris Exp $
+# $Id: RPC.pm,v 1.5 2006-08-01 21:36:42 chris Exp $
 #
 
 package Petitions::RPC;
@@ -15,6 +15,7 @@ use strict;
 
 use Carp;
 use Digest::HMAC_SHA1 qw(hmac_sha1);
+use Errno;
 use Error qw(:try);
 use IO::Select;
 use IO::Socket;
@@ -166,31 +167,38 @@ sub sign_petition ($) {
     }
     
     our $s;
-    $s ||= new IO::Socket::INET(
-                    LocalAddr => '0.0.0.0',
-                    Type => SOCK_DGRAM,
-                    Proto => 'udp',
-                    ReuseAddr => 1,
-                    Blocking => 0);
+    if (!$s && $have_rpc_server) {
+        $s = new IO::Socket::INET(
+                        LocalAddr => '0.0.0.0',
+                        Type => SOCK_DGRAM,
+                        Proto => 'udp',
+                        ReuseAddr => 1,
+                        Blocking => 0)
+            or warn "socket: $!";
+    }
 
     if ($s && $have_rpc_server) {
         $r->{cookie} = random_bytes(COOKIE_LEN);
         my $packet = make_sign_packet($r);
         
-        my $deadline = time() + RPC_TIMEOUT;
-        my $nextsend = 0;
         my $interval = RPC_RETRY_TIME;
-        while (time() < $deadline) {
-            if ($nextsend < time()) {
-                my $n = $s->send($packet, 0, $serveraddr);
-                last if (!defined($n) && !$!{EAGAIN});
-                $nextsend = time() + $interval;
-                $interval *= RPC_RETRY_EXP;
-            }
+        my $alarmfired = 0;
+        local $SIG{ALRM} = sub { $alarmfired = 1; };
+        alarm(RPC_TIMEOUT);
+        while (!$alarmfired) {
+            my $n = $s->send($packet, 0, $serveraddr);
+            last if (!defined($n) && !$!{EAGAIN});
 
+            # We'll send more packets than intended if we catch a signal or
+            # something. So sue me.
             if (IO::Select->new($s)->can_read($interval)) {
                 my $ack = '';
-                my $sender = $s->recv($ack, 1024, 0);
+                my $sender;
+                do {
+                    $sender = $s->recv($ack, 1024, 0);
+                } while (!$sender && $!{EINTR});
+                return if (!$sender);
+                
                 my $cookie = parse_packet($ack);
                 if ($cookie && $cookie eq $r->{cookie}) {
                     # Success.
@@ -205,6 +213,8 @@ sub sign_petition ($) {
                     }
                 }
             }
+
+            $interval *= RPC_RETRY_EXP;
         }
 
         warn "unable to sign petition over RPC, using database instead";
