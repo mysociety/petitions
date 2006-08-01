@@ -4,11 +4,11 @@
 # Back-end signup service for petitions site.
 #
 # Clients -- the web scripts on the front-end servers -- send signup details to
-# us in UDP packets. On receipt of such a packet we write a row to the
-# database, but do not commit it immediately. Instead we set an alarm for a
-# short interval in the future. Any more packets that arrive before the alarm
-# fires also result in writes to the database; when the alarm fires, we commit
-# them all and acknowledge them to the senders.
+# us in UDP packets. On receipt of such a packet we record that a signature is
+# to be made, but do not make any change to the database. Instead we set an
+# alarm for a short interval in the future. Any more packets that arrive before
+# the alarm fires are also recorded; when the alarm fires, we insert them all,
+# commit the changes, and acknowledge them to the senders.
 #
 # The idea here is that a commit of ten inserts takes about as long as a commit
 # of one insert, so we can improve throughput by batching inserts. That's very
@@ -19,10 +19,9 @@
 #
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
-# 
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.4 2006-08-01 20:56:43 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.5 2006-08-01 21:08:09 chris Exp $';
 
 use strict;
 
@@ -42,7 +41,6 @@ use Error qw(:try);
 use IO::Select;
 use IO::Socket;
 use Socket;
-use Tie::Cache;
 use Time::HiRes qw(time alarm);
 
 use mySociety::DBHandle qw(dbh);
@@ -51,7 +49,6 @@ use Petitions;
 use Petitions::RPC;
 
 # Maximum (ideal) interval from signup request to commit.
-#use constant MAX_SIGNUP_TIME    => 0.25;    # seconds
 use constant MAX_SIGNUP_TIME    => 0.25;    # seconds
 
 my $s = new IO::Socket::INET(
@@ -69,23 +66,28 @@ my $alarm_pending = 0;
 my $alarm_fired = 0;
 $SIG{ALRM} = sub { $alarm_fired = 1; $alarm_pending = 0; };
 
-# Cache signups we've seen so that we can avoid round trips to the database
-# when a packet is lost and the client resends.
-my %signercache;
-tie(%signercache, 'Tie::Cache', { MaxCount => 10000, Debug => 0 });
-
 my %pending = ( );
-sub acknowledge_pending () {
+sub do_pending () {
+    # Write them to the database.
+    
+    # Lock against concurrent processes.
+    dbh()->do('lock table signer in row exclusive mode');
+
+    foreach my $r (values(%pending)) {
+        Petitions::RPC::sign_petition_db($r);
+    }
+
+    dbh()->commit();
+
     $s->blocking(1);
     foreach my $r (values(%pending)) {
         my $packet = Petitions::RPC::make_ack_packet($r->{cookie});
         if (!$s->send($packet, 0, $r->{client})) {
             my ($port, $ip) = sockaddr_in($r->{client});
-            print STDERR "sending to $ip:$port: $!\n";
+            print STDERR "sending acknowledgment to $ip:$port: $!\n";
         }
     }
     $s->blocking(0);
-    %pending = ( );
 }
 
 my $inlock = 0;
@@ -96,31 +98,15 @@ while (!$foad) {
     if (@ready) {
         while (defined($sender = $s->recv($buf, 65536, 0))) {
             if (my $r = Petitions::RPC::parse_packet($buf)) {
-                # We have a valid signup packet. Schedule an alarm so that we will
-                # send a response within the deadline.
+                # We have a valid signup packet. Schedule an alarm so that we
+                # will send a response within the deadline.
                 if (!$alarm_pending) {
                     $alarm_pending = 1;
                     alarm(MAX_SIGNUP_TIME);
                 }
                 # Record address to which we send acknowledgement.
                 $r->{client} = $sender;
-                if (!exists($signercache{"$r->{ref}\0$r->{email}"})) {
-                    # Attempt the insert, detecting any error which occurs.
-                    try {
-                        if (!$inlock) {
-                            dbh()->do('lock table signer in row exclusive mode')
-                            $inlock = 1;
-                        }
-                        Petitions::RPC::sign_petition_db($r);
-                        $signercache{"$r->{ref}\0$r->{email}"} = 1;
-                        $pending{$r->{cookie}} = $r;
-                    } catch mySociety::DBHandle::Error with {
-                        my $E = shift;
-                        print STDERR "attempt to sign $r->{email} up to $r->{ref} failed; DB error: ", $E->text(), "\n";
-                    };
-                } else {
-                    $pending{$r->{cookie}} = $r;
-                }
+                $pending{$r->{cookie}} = $r;
                 # Done handling this request.
             } else {
                 # Invalid packet of some sort. Log and continue.
@@ -134,26 +120,23 @@ while (!$foad) {
         }
     }
 
-    # If the alarm has fired, then commit the transaction and send
+    # If the alarm has fired, then do the signatures and send the
     # acknowledgements to the clients.
     if ($alarm_fired && keys(%pending)) {
         try {
-            print STDERR "committing rows\n";
-            dbh()->commit();
-            $inlock = 0;
-            acknowledge_pending();
+            do_pending();
             $alarm_fired = 0;
         } catch mySociety::DBHandle::Error with {
             my $E = shift;
             print STDERR "committing ", scalar(keys(%pending)), " requests failed; DB error: ", $E->text(), "\n";
         };
+        %pending = ( );
     }
 }
 
 if (keys(%pending)) {
     try {
-        dbh()->commit();
-        acknowledge_pending();
+        do_pending();
     } catch mySociety::DBHandle::Error with {
         my $E = shift;
         print STDERR "committing ", scalar(keys(%pending)), " requests failed (at shutdown); DB error: ", $E->text(), "\n";
