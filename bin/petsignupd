@@ -22,19 +22,28 @@
 # 
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.2 2006-07-31 23:06:37 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.3 2006-08-01 01:35:56 chris Exp $';
 
 use strict;
 
-use Digest::HMAC_SHA1 ();
-use Encode;
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
+
+use Carp;
 use Errno;
+use Error qw(:try);
 use IO::Select;
 use IO::Socket;
-use MIME::Base64 ();
 use Socket;
 use Tie::Cache;
-use Time::Hires qw(time alarm);
+use Time::HiRes qw(time alarm);
 
 use mySociety::DBHandle qw(dbh);
 
@@ -42,13 +51,14 @@ use Petitions;
 use Petitions::RPC;
 
 # Maximum (ideal) interval from signup request to commit.
+#use constant MAX_SIGNUP_TIME    => 0.25;    # seconds
 use constant MAX_SIGNUP_TIME    => 0.25;    # seconds
 
 my $s = new IO::Socket::INET(
                     LocalAddr => '0.0.0.0',
-                    LocalPort => 12345,
+                    LocalPort => mySociety::Config::get('RPC_SERVER_PORT'),
                     Type => SOCK_DGRAM,
-                    Protocol => 'udp',
+                    Proto => 'udp',
                     ReuseAddr => 1,
                     Blocking => 0) or die "socket: $!";
 
@@ -64,78 +74,83 @@ $SIG{ALRM} = sub { $alarm_fired = 1; $alarm_pending = 0; };
 my %signercache;
 tie(%signercache, 'Tie::Cache', { MaxCount => 10000, Debug => 0 });
 
-my @pending = ( );
+my %pending = ( );
 sub acknowledge_pending () {
     $s->blocking(1);
-    foreach my $r (@pending) {
+    foreach my $r (values(%pending)) {
         my $packet = Petitions::RPC::make_ack_packet($r->{cookie});
-        if (!$s->sendto($packet, $r->{client})) {
-            my ($port, $ip) = sockaddr_in($r->{sender});
+        if (!$s->send($packet, 0, $r->{client})) {
+            my ($port, $ip) = sockaddr_in($r->{client});
             print STDERR "sending to $ip:$port: $!\n";
         }
     }
     $s->blocking(0);
-    @pending = ( );
+    %pending = ( );
 }
 
 while (!$foad) {
     my $buf = '';
     my $sender;
     my @ready = IO::Select->new($s)->can_read(MAX_SIGNUP_TIME / 10);
-    if (@ready && defined($sender = $s->recv($buf, 65536, 0))) {
-        my $err = undef;
-        if (my $r = Petitions::RPC::parse_packet($buf, $err)) {
-            # We have a valid signup packet. Schedule an alarm so that we will
-            # send a response within the deadline.
-            if (!$alarm_pending) {
-                $alarm_pending = 1;
-                alarm(MAX_SIGNUP_TIME);
+    if (@ready) {
+        while (defined($sender = $s->recv($buf, 65536, 0))) {
+            if (my $r = Petitions::RPC::parse_packet($buf)) {
+                # We have a valid signup packet. Schedule an alarm so that we will
+                # send a response within the deadline.
+                if (!$alarm_pending) {
+                    $alarm_pending = 1;
+                    alarm(MAX_SIGNUP_TIME);
+                }
+                # Record address to which we send acknowledgement.
+                $r->{client} = $sender;
+                if (!exists($signercache{"$r->{ref}\0$r->{email}"})) {
+                    # Attempt the insert, detecting any error which occurs.
+                    try {
+                        Petitions::RPC::sign_petition_db($r);
+                        $signercache{"$r->{ref}\0$r->{email}"} = 1;
+                        $pending{$r->{cookie}} = $r;
+                    } catch mySociety::DBHandle::Error with {
+                        my $E = shift;
+                        print STDERR "attempt to sign $r->{email} up to $r->{ref} failed; DB error: ", $E->text(), "\n";
+                    };
+                } else {
+                    $pending{$r->{cookie}} = $r;
+                }
+                # Done handling this request.
+            } else {
+                # Invalid packet of some sort. Log and continue.
+                my ($port, $ip) = sockaddr_in($r->{sender});
+                print STDERR "bad packet from $ip:$port\n";
             }
-            # Record address to which we send acknowledgement.
-            $r->{client} = $sender;
-            if (!exists($signercache{"$r->{ref}\0$r->{email}"})) {
-                # Attempt the insert, detecting any error which occurs.
-                try {
-                    Petitions::RPC::sign_petition_db($r);
-                    $signercache{"$r->{ref}\0$r->{email}"} = 1;
-                    push(@pending, $r);
-                } catch mySociety::DBHandle::Error {
-                    my $E = shift;
-                    print STDERR "attempt to sign $r->{email} up to $r->{ref} failed; DB error: ", $E->text(), "\n";
-                };
-            }
-            push(@pending, $r) if ($doadd);
-            # Done handling this request.
-        } else {
-            # Invalid packet of some sort. Log and continue.
-            my ($port, $ip) = sockaddr_in($r->{sender});
-            print STDERR "bad packet from $ip:$port\n";
         }
-    } elsif (!$!{EAGAIN}) {
-        print STDERR "recvfrom: $!\n";
+        
+        if (!$!{EAGAIN}) {
+            print STDERR "recvfrom: $!\n";
+        }
     }
 
     # If the alarm has fired, then commit the transaction and send
     # acknowledgements to the clients.
-    if ($alarm_fired && @pending) {
+    if ($alarm_fired && keys(%pending)) {
         try {
+            print STDERR "committing rows\n";
             dbh()->commit();
             acknowledge_pending();
             $alarm_fired = 0;
-        } catch mySociety::DBHandle::Error {
+        } catch mySociety::DBHandle::Error with {
             my $E = shift;
-            print STDERR "committing ", scalar(@pending), " requests failed; DB error: ", $E->text(), "\n";
+            print STDERR "committing ", scalar(keys(%pending)), " requests failed; DB error: ", $E->text(), "\n";
         };
     }
 }
 
-if (@pending) {
+if (keys(%pending)) {
     try {
         dbh()->commit();
         acknowledge_pending();
-    } catch mySociety::DBHandle::Error {
+    } catch mySociety::DBHandle::Error with {
         my $E = shift;
-        print STDERR "committing ", scalar(@pending), " requests failed (at shutdown); DB error: ", $E->text(), "\n";
+        print STDERR "committing ", scalar(keys(%pending)), " requests failed (at shutdown); DB error: ", $E->text(), "\n";
     };
 }
 
