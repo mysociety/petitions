@@ -22,7 +22,7 @@
 # 
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.3 2006-08-01 01:35:56 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.4 2006-08-01 20:56:43 chris Exp $';
 
 use strict;
 
@@ -88,6 +88,7 @@ sub acknowledge_pending () {
     %pending = ( );
 }
 
+my $inlock = 0;
 while (!$foad) {
     my $buf = '';
     my $sender;
@@ -106,6 +107,10 @@ while (!$foad) {
                 if (!exists($signercache{"$r->{ref}\0$r->{email}"})) {
                     # Attempt the insert, detecting any error which occurs.
                     try {
+                        if (!$inlock) {
+                            dbh()->do('lock table signer in row exclusive mode')
+                            $inlock = 1;
+                        }
                         Petitions::RPC::sign_petition_db($r);
                         $signercache{"$r->{ref}\0$r->{email}"} = 1;
                         $pending{$r->{cookie}} = $r;
@@ -135,6 +140,7 @@ while (!$foad) {
         try {
             print STDERR "committing rows\n";
             dbh()->commit();
+            $inlock = 0;
             acknowledge_pending();
             $alarm_fired = 0;
         } catch mySociety::DBHandle::Error with {
