@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.5 2006-07-31 19:14:23 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.6 2006-08-01 01:37:28 chris Exp $';
 
 use strict;
 
@@ -21,6 +21,7 @@ use mySociety::WatchUpdate;
 
 use Petitions;
 use Petitions::Page;
+use Petitions::RPC;
 
 my $W = new mySociety::WatchUpdate();
 
@@ -67,6 +68,7 @@ sub signup_page ($$) {
     if (!keys(%errors)) {
         # Success. Add the signature, assuming that we can.
         my $s = Petitions::DB::is_valid_to_sign($p->{id}, $qp_email);
+        dbh()->commit();    # finish transaction
         if ($s eq 'finished') {
             $html .= $q->p('Sorry, but that petition has finished, so you cannot sign it.');
         } elsif ($s eq 'none') {
@@ -75,37 +77,13 @@ sub signup_page ($$) {
             # Either OK or already signed. We must not give away the fact that
             # any particular person has already signed a petition, so act the
             # same in each case.
-            my $id = undef;
-            if ($s eq 'ok') {
-                # It's still possible for this to fail, if two signatures are
-                # attempted in very close succession, so ignore errors.
-                local dbh()->{RaiseError};
-                my $didaddsignature;
-                dbh()->do('
-                        insert into signer
-                            (petition_id, email, name, address, postcode,
-                            showname, signtime)
-                        values (?, ?, ?, ?, ?, true,
-                            ms_current_timestamp())', {},
-                        $p->{id}, $qp_email, $qp_name, $qp_address,
-                        $qp_postcode)
-                    and $didaddsignature = 1
-                    or dbh()->rollback();   # just in case
-                $id = dbh()->selectrow_array('
-                        select id from signer
-                        where petition_id = ? and email = ?', {},
-                        $p->{id}, $qp_email);
-                # If the user has already signed but not confirmed, reset their
-                # email status so that another mail gets sent. The first might
-                # have been lost.
-                dbh()->do("
-                        update signer set emailsent = 'pending'
-                        where petition_id = ? and email = ?
-                            and emailsent <> 'confirmed'", {},
-                        $p->{id}, $qp_email)
-                    if (!$didaddsignature);
-                dbh()->commit();
-            }
+            Petitions::RPC::sign_petition({
+                        ref => $p->{ref},
+                        email => $qp_email,
+                        name => $qp_name,
+                        address => $qp_address,
+                        postcode => $qp_postcode
+                    });
 
             $html .=
                 $q->p({-class => 'noprint loudmessage', -align => 'center'},
