@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.2 2006-08-01 01:37:13 chris Exp $
+# $Id: RPC.pm,v 1.3 2006-08-01 09:26:40 chris Exp $
 #
 
 package Petitions::RPC;
@@ -117,6 +117,19 @@ sub sign_petition_db ($) {
     my $r = shift;
     
     local dbh()->{HandleError};
+
+    # First try updating the row.
+    my $n = dbh()->do("
+            update signer set emailsent = 'pending'
+            where petition_id = (select id from petition where ref = ?)
+                and email = ? and emailsent <> 'confirmed'", {},
+            map { $r->{$_} } qw(ref email));
+
+    return if ($n > 0);
+
+    # XXX This could fail if another thread inserts between the update
+    # completing and issuing this command. We could change isolation level, but
+    # that might suck performance-wise.
     dbh()->do('
             insert into signer (
                 petition_id,
@@ -131,12 +144,6 @@ sub sign_petition_db ($) {
             )', {},
             map { $r->{$_} } qw(ref email name address postcode));
 
-    # Force email resend for user who's already signed.
-    dbh()->do("
-            update signer set emailsent = 'pending'
-            where petition_id = (select id from petition where ref = ?)
-                and email = ? and emailsent <> 'confirmed'", {},
-            map { $r->{$_} } qw(ref email));
 }
 
 =item sign_petition REQUEST
