@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.3 2006-08-01 09:26:40 chris Exp $
+# $Id: RPC.pm,v 1.4 2006-08-01 21:13:25 chris Exp $
 #
 
 package Petitions::RPC;
@@ -110,14 +110,13 @@ sub parse_packet ($) {
 
 =item sign_petition_db REQUEST
 
-Sign a petition using REQUEST in the normal way. Does not commit.
+Sign a petition using REQUEST in the normal way. Does not commit. Must be
+called while holding a lock against concurrent signatures (e.g. row exclusive).
 
 =cut
 sub sign_petition_db ($) {
     my $r = shift;
     
-    local dbh()->{HandleError};
-
     # First try updating the row.
     my $n = dbh()->do("
             update signer set emailsent = 'pending'
@@ -127,9 +126,6 @@ sub sign_petition_db ($) {
 
     return if ($n > 0);
 
-    # XXX This could fail if another thread inserts between the update
-    # completing and issuing this command. We could change isolation level, but
-    # that might suck performance-wise.
     dbh()->do('
             insert into signer (
                 petition_id,
@@ -143,7 +139,6 @@ sub sign_petition_db ($) {
                 ms_current_timestamp()
             )', {},
             map { $r->{$_} } qw(ref email name address postcode));
-
 }
 
 =item sign_petition REQUEST
