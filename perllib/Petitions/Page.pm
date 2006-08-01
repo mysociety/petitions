@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.11 2006-07-31 16:12:48 chris Exp $
+# $Id: Page.pm,v 1.12 2006-08-01 01:36:50 chris Exp $
 #
 
 package Petitions::Page;
@@ -233,7 +233,9 @@ sub display_box ($$%) {
             $q->p({ -align => 'center' },
                 'Submitted by ', ent($p->{name}), ' &ndash; ',
 		$q->strong('Deadline to sign up by:'), Petitions::pretty_deadline($p, 1),
-		' &ndash; ', $q->strong('Signatures:'), $p->{signers}
+                (defined($p->{signers})
+                    ? (' &ndash; ', $q->strong('Signatures:'), $p->{signers})
+                    : ())
             )
         );
 
