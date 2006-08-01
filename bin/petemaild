@@ -8,7 +8,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.10 2006-07-31 19:38:03 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.11 2006-08-01 01:38:24 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -739,7 +739,7 @@ package Queue;
 use Carp;
 use IO::Select;
 
-use fields qw(messages finished badhosts r ss);
+use fields qw(messages finished badhosts r ss lastcheckedqueue);
 
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
@@ -773,6 +773,8 @@ sub new ($) {
 
     # SMTP clients.
     $self->{ss} = [ ];
+
+    $self->{lastcheckedqueue} = time();
 
     return $self;
 }
@@ -863,6 +865,8 @@ sub pre_select ($$$) {
     }
 
     # Now see whether we should start any more connections.
+    return if ($self->{lastcheckedqueue} > time() - 0.25);
+    $self->{lastcheckedqueue} = time();
     Log::print('debug', "iterating over queue");
     foreach my $msg (values(%{$self->{messages}})) {
 Log::print('debug', "considering ", $msg->id());
