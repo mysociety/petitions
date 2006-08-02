@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.8 2006-07-27 13:32:19 matthew Exp $
+ * $Id: admin-pet.php,v 1.9 2006-08-02 12:39:27 chris Exp $
  * 
  */
 
@@ -427,13 +427,9 @@ class ADMIN_PAGE_PET_MAIN {
     );
 
     function prettify_categories($categories, $newlines) {
-        $cat = 1;
         $out = array();
-        while ($categories>0) {
-            if ($categories % 2) $out[] = $this->categories[$cat];
-            $categories = floor($categories / 2);
-            $cat *= 2;
-        }
+        foreach ($this->categories as $k => $v)
+            if ($categories & $k) $out[] = $v;
         if ($newlines)
             return '    ' . join("\n    ", $out) . "\n";
         return join(', ', $out);
