@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.19 2006-08-01 08:41:47 chris Exp $
+-- $Id: schema.sql,v 1.20 2006-08-02 12:44:15 chris Exp $
 --
 
 -- global_seq
@@ -94,14 +94,31 @@ create table petition (
         )
     ),
 
-    rejection_first_categories int,
+    -- the _categories fields are bitmasks of possible reasons in
+    -- admin-pet.php; the constraints here must be kept up to date
+    -- with that list of reasons.
+    rejection_first_categories integer not null default 0
+        check (rejection_first_categories >= 0
+                and rejection_first_categories < 256)
     rejection_first_reason text,
-    rejection_second_categories int,
+    rejection_second_categories integer not null default 0
+        check (rejection_first_categories >= 0
+                and rejection_first_categories < 256),
     rejection_second_reason text,
 
     laststatuschange timestamp not null
 
     -- add fields to run confirmation email stuff
+
+    check ((rejection_first_categories = 0
+                and rejection_first_reason is null)
+            or (rejection_first_categories <> 0
+                and rejection_first_reason is not null)),
+
+    check ((rejection_second_categories = 0
+                and rejection_second_reason is null)
+            or (rejection_second_categories <> 0
+                and rejection_second_reason is not null)),
 );
 
 create unique index petition_ref_idx on petition(ref);
