@@ -5,11 +5,12 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.7 2006-07-27 18:17:50 matthew Exp $
+// $Id: index.php,v 1.8 2006-08-02 14:58:39 chris Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
 
+header('Cache-Control: max-age=5');
 page_header('Introduction to e-petitions');
 ?>
 
@@ -56,8 +57,12 @@ foreach ($recent as $petition) {
 <p>We the undersigned petition the Prime Minister to&hellip;</p>
 <ul>
 <?
-$recent = db_getAll("select ref, title,
-    (select count(id) from signer where showname and petition_id=petition.id) as signers
+$recent = db_getAll("
+    select ref, title,
+        (select count(id) from signer
+            where showname
+            and petition_id = petition.id
+            and emailsent = 'confirmed') as signers
     from petition
     where status = 'live'
     order by signers desc limit 5");
@@ -66,7 +71,7 @@ foreach ($recent as $petition) {
     print '<li><a href="/' . $petition['ref'] . '">';
     print htmlspecialchars($petition['title']) . '</a> <small>(';
     print $petition['signers'] . ' signature';
-    print ($petition['signers']==1 ? '' : 's') . ')</small></li>';
+    print ($petition['signers'] == 1 ? '' : 's') . ')</small></li>';
 }
 ?>
 </ul>
