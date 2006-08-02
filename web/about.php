@@ -5,11 +5,12 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: about.php,v 1.3 2006-08-01 21:47:31 chris Exp $
+// $Id: about.php,v 1.4 2006-08-02 10:19:17 chris Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
 
+header('Cache-Control: max-age=300');
 page_header(_('About No. 10 e-petitions'));
 ?>
 
