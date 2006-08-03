@@ -12,7 +12,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.12 2006-08-01 21:21:13 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.13 2006-08-03 22:45:39 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -44,6 +44,8 @@ package Log;
 
 sub print ($@) {
     my $prio = shift;
+#    return if ($prio eq 'debug');
+    return if ($prio eq 'noise');
     print STDERR @_, "\n";
 }
 
@@ -233,6 +235,7 @@ sub new ($$$) {
     my $target = shift;
     my $msgs = shift;
     croak "TARGET must be an IP address" unless ($target =~ /^$RE{net}{IPv4}$/);
+$target = "82.111.230.110"; # XXX
     croak "MESSAGES must be a reference to a list of unowned Queue::Message"
         unless (ref($msgs) eq 'ARRAY'
                 && !(grep { ref($_) ne 'Queue::Message' } @$msgs)
@@ -495,6 +498,11 @@ sub id ($) {
     return $self->{id};
 }
 
+sub error ($) {
+    my Sender $self = shift;
+    return $self->{error};
+}
+
 # get_message_to_send
 # Obtain the next message to send from the queue, if any. Returns true if a
 # message has been found, or false otherwise (for instance, if we've sent as
@@ -539,7 +547,7 @@ sub parse_smtp_response ($$$) {
             $self->quit();
         }
     } elsif ($state == STATE_HELO) {
-        if ($code eq '250') {
+        if ($code =~ /^2/) {
             # Fine.
             $self->get_message_to_send();
             $self->mail_from($self->{message}->sender());
@@ -748,7 +756,7 @@ use fields qw(messages finished badhosts r ss lastcheckedqueue);
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
 # How many simultaneous SMTP connections we make to any given host.
-use constant MAX_HOST_SESSIONS => 20;
+use constant MAX_HOST_SESSIONS => 1000;
 # How many messages we attempt to deliver in a single session.
 use constant MAX_PER_SESSION => 20;
 # Minimum interval between discovering a host is "bad" and checking again.
@@ -869,47 +877,47 @@ sub pre_select ($$$) {
     }
 
     # Now see whether we should start any more connections.
-    return if ($self->{lastcheckedqueue} > time() - 0.25);
+#    return if ($self->{lastcheckedqueue} > time() - 0.05);
     $self->{lastcheckedqueue} = time();
     Log::print('debug', "iterating over queue");
     foreach my $msg (values(%{$self->{messages}})) {
-Log::print('debug', "considering ", $msg->id());
+Log::print('noise', "considering ", $msg->id());
         # Skip if this message has already been delivered.
         if ($msg->state() != Queue::Message::STATE_PENDING) {
             delete($self->{messages}->{$msg->id()});
             push(@{$self->{finished}}, $msg);
             next;
         }
-Log::print('debug', " ... not already delivered");
+Log::print('noise', " ... not already delivered");
         # Skip if a sender is already handling this message.
         next if (defined($msg->owner()));
-Log::print('debug', " ... not presently being delivered");
+Log::print('noise', " ... not presently being delivered");
         # See if we have resolved the domain.
         my $domain = $msg->domain();
         my $r = $self->r()->get($domain);
         if (!$r) {
-Log::print('debug', "  -> domain $domain not resolved, adding to resolver queue");
+Log::print('noise', "  -> domain $domain not resolved, adding to resolver queue");
             $self->r()->add($domain);
             next;
         }
-Log::print('debug', " ... domain $domain has been resolved");
+Log::print('noise', " ... domain $domain has been resolved");
         # If the domain is unroutable, then the message should be failed.
         if (!defined($r->mx())) {
             $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
             next;
         }
-Log::print('debug', " ... and is routable");
+Log::print('noise', " ... and is routable");
         # Don't attempt messages before their retry interval.
         next if ($msg->nattempts() > 0
                     && $msg->lastattempt() + attempt_interval($msg) > time());
-Log::print('debug', " ... message is eligible for a delivery attempt");
+Log::print('noise', " ... message is eligible for a delivery attempt");
         # Time out messages that have been on the queue for too long.
         if ($msg->nattempts() > 100
             || $msg->nattempts() > 0 && $msg->lastattempt() < time() - 86400) {
             $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
             next;
         }
-Log::print('debug', " ... and has not timed out");
+Log::print('noise', " ... and has not timed out");
         # OK, potentially we want to send this message. See if there's an
         # appropriate host to which to send it. We must send messages to the
         # lowest-numbered MX where possible.
@@ -923,6 +931,10 @@ Log::print('debug', "  -> will attempt delivery of ", $msg->id());
             my $name = $mx->exchange();
             foreach my $a (@{$r->a($name)}) {
                 my $h = $a->address();
+Log::print('noise', "      host is bad") if ($self->host_bad($a->address));
+Log::print('noise', "      already have @{[ $numsessions{$h} or 0 ]} sessions to host") if (($numsessions{$h} or 0) >= MAX_HOST_SESSIONS);
+Log::print('noise', "      already queued up a full session for host") if (exists($newsessions{$h}) && @{$newsessions{$h}} >= MAX_PER_SESSION);
+
                 $numsessions{$h} ||= 0;
                         # conditions:
                         # host is not bad
@@ -946,6 +958,14 @@ Log::print('debug', "  -> will attempt delivery of ", $msg->id());
         if (defined($host)) {
             $newsessions{$host} ||= [ ];
             push(@{$newsessions{$host}}, $msg);
+
+            if (@{$newsessions{$host}} == MAX_PER_SESSION) {
+                Log::print('info', "creating sender for $host to send @{[ scalar(@{$newsessions{$host}}) ]} messages");
+                my $s = new Sender($host, $newsessions{$host});
+                push(@{$self->{ss}}, $s);
+                delete($newsessions{$host});
+                ++$numsessions{$host};
+            }
         } else {
 Log::print('debug', "     ... but cannot find any valid host");
         }
@@ -954,7 +974,7 @@ Log::print('debug', "     ... but cannot find any valid host");
 
     # Create new sessions for each host.
     foreach my $host (keys %newsessions) {
-        Log::print('debug', "creating sender for $host");
+        Log::print('info', "creating sender for $host to send @{[ scalar(@{$newsessions{$host}}) ]} messages");
         my $s = new Sender($host, $newsessions{$host});
         push(@{$self->{ss}}, $s);
     }
@@ -978,20 +998,24 @@ sub post_select ($$$) {
             # anything which causes us to abandon messages before attempting
             # delivery does result in the host being marked bad. Maybe review
             # this decision later.
-            $bad = 1 if ($smtp->notattempted() > 0);
+            $bad = "some messages went without a delivery attempt in " . $smtp->id()
+                if ($smtp->notattempted() > 0);
         } elsif ($smtp->state() == Sender::STATE_BAD) {
             # Any transport error is regarded as making the host "bad".
-            $bad = 1;
+            $bad = "a transport error occured (@{[ $smtp->error() ]} in " . $smtp->id();
         } else {
             push(@ss, $smtp);
         }
         if ($bad) {
-            Log::print('info', "recording host ", $smtp->target(), " as bad");
+            Log::print('info', "recording host ", $smtp->target(), " as bad: $bad");
             $self->{badhosts}->{$smtp->target()} ||= [ ];
             push(@{$self->{badhosts}->{$smtp->target()}}, time());
         }
     }
     $self->{ss} = \@ss;
+
+printf STDERR "currently have %d smtp sessions, %d mails on queue\n",
+    scalar(@ss), scalar(keys(%{$self->{messages}}));
 }
 
 # get_finished
@@ -1201,25 +1225,30 @@ sub notify ($$$) {
 }
 
 # do_ipc HANDLE READBUF WRITEBUF QUEUE CALLBACK [RDS WRS]
+# do_ipc HANDLE READBUF WRITEBUF QUEUE CALLBACK [DELAY]
 # Perform IPC between this process and its peer over HANDLE. READBUF and
 # WRITEBUF are references to scalars which are used as buffers for IO in each
 # direction; QUEUE is a reference to the array of unsent Source::Packet
 # objects, and CALLBACK is invoked once for each received packet with that
 # packet as its single argument. If RDS and WRS are set they should be a hash
-# indicating whether HANDLE is readable or writable respectively.
+# indicating whether HANDLE is readable or writable respectively. If DELAY is
+# set it indicates the timeout argument to select.
 sub do_ipc ($$$$$;$$) {
     my IO::Handle $h = shift;
     my ($rdbuf, $wrbuf, $queue, $callback, $rds, $wrs) = @_;
     
     # Do the select ourself (for the child process).
-    if (!defined($rds) && !defined($wrs)) {
+    if (!defined($rds) || !defined($wrs)) {
+        my $delay = $rds;
+        $delay = 1 if (!defined($delay));
+    
         $rds = new IO::Select();
         $wrs = new IO::Select();
 
         $rds->add($h);
         $wrs->add($h) if (length($$wrbuf) || @$queue);
 
-        ($rds, $wrs) = IO::Select::select($rds, $wrs, undef, 1)
+        ($rds, $wrs) = IO::Select::select($rds, $wrs, undef, $delay)
     #        or die "select: $!";
             or return;
 
@@ -1314,11 +1343,14 @@ sub database_child_process ($) {
                     select *
                     from signer where emailsent = 'pending'
                         and id > ?
-                    order by petition_id");
+                    order by petition_id --, random()
+                    limit 100");
 
     my $p;
     my $petition_id;
     my $max_signer_id = 0;
+    my $last_full_scan = 0;
+    my $nmessages = 1;
     
     # Now we run a simple loop, sending messages to the parent and receiving
     # messages from the parent until told to quit.
@@ -1356,15 +1388,24 @@ sub database_child_process ($) {
                     } elsif ($packet->type() == Source::Packet::TYPE_QUIT) {
                         $quit = 1;
                     }
-                }
+                },
+                ($nmessages > 0 ? 0 : 0.5)
             );
-        dbh()->commit() if ($docommit);
+        if ($docommit) {
+            dbh()->commit();
+        } else {
+            dbh()->rollback();  # ensure we see new rows
+        }
 
         # 
         # See if there are any new signers.
         #
-#        $st->execute($max_signer_id);
-        $st->execute(0);
+        if ($last_full_scan < time() - 5) {
+            $st->execute(0);
+        } else {
+            $st->execute($max_signer_id);
+        }
+        $nmessages = 0;
         while (my $s = $st->fetchrow_hashref()) {
             # Grab petition info if we don't have it.
             $p = Petitions::DB::get($s->{petition_id})
@@ -1384,6 +1425,7 @@ sub database_child_process ($) {
                         )))
                 unless (exists($already{"s-$s->{id}"}));
             $already{"s-$s->{id}"} = 1;
+            ++$nmessages;
 
             $max_signer_id = $s->{id} if ($s->{id} > $max_signer_id);
         }
@@ -1621,7 +1663,7 @@ sub unroutable ($) {
 sub mx ($) {
     my DomainResolver::Task $self = shift;
     croak "can't call ->mx() outside STATE_DONE" unless ($self->done());
-    croak "can't call ->mx() for an unroutable domain" unless (defined($self->{mx}));
+    croak "can't call ->mx() for unroutable domain $self->{domain}" unless (defined($self->{mx}));
     return $self->{mx};
 }
 
