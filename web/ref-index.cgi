@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.4 2006-07-31 18:38:35 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.5 2006-08-03 22:49:44 chris Exp $';
 
 use strict;
 
@@ -49,7 +49,8 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     my $qp_signed = $q->param('signed');
 
-    my $p = Petitions::DB::get($ref);
+    our $p;
+    $p = Petitions::DB::get($ref) if (!$p || $p->{ref} ne $ref);
     my $title = Petitions::sentence($p, 1);
     my $html =
         Petitions::Page::header($q, $title);
@@ -87,7 +88,8 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     print $q->header(
                 -content_length => length($html),
-                -last_modified => HTTP::Date::time2str($lastmodified)),
+                -last_modified => HTTP::Date::time2str($lastmodified),
+                -cache_control => 'max-age=10'),
                 $html;
     $W->exit_if_changed();
 }
