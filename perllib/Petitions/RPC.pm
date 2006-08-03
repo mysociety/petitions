@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.7 2006-08-03 11:22:19 chris Exp $
+# $Id: RPC.pm,v 1.8 2006-08-03 12:14:44 chris Exp $
 #
 
 package Petitions::RPC;
@@ -118,7 +118,10 @@ called while holding a lock against concurrent signatures (e.g. row exclusive).
 sub sign_petition_db ($) {
     my $r = shift;
     
-    my $s = dbh()->selectrow_array('select emailsent from signer where email = ? and petition_id = (select id from petition where ref = ?)', {}, map { $r->{$_} } qw(email ref));
+    my $s = dbh()->selectrow_array('
+            select emailsent from signer
+            where petition_id = (select id from petition where ref = ?)
+                and email = ?', {}, map { $r->{$_} } qw(ref email));
     return if (defined($s) && $s =~ /^(confirmed|pending)$/);
     
     # First try updating the row.
@@ -147,9 +150,9 @@ sub sign_petition_db ($) {
 
 =item sign_petition REQUEST
 
-Sign a petition using REQUEST by talking to the server over UDP. If this fails
-then sign up using the database instead. REQUEST must contain keys 'ref', 
-'email', 'name', 'address' and 'postcode'.
+Sign a petition using REQUEST by talking to the server over UDP, returning true
+on success or false on failure.  REQUEST must contain keys 'ref', 'email',
+'name', 'address' and 'postcode'.
 
 =cut
 sub sign_petition ($) {
@@ -193,7 +196,8 @@ sub sign_petition ($) {
         do {
             $n = $s->send($packet, 0, $serveraddr);
         } while (!defined($n) && !$!{EINTR});
-        while (!$alarmfired && IO::Select->new($s)->can_read($interval)) {
+        while (!$alarmfired) {
+            next unless IO::Select->new($s)->can_read($interval);
             my $ack = '';
             my $sender;
             do {
@@ -212,7 +216,7 @@ sub sign_petition ($) {
             if ($cookie && $cookie eq $r->{cookie}) {
                 # Success.
                 alarm(0);
-                return;
+                return 1;
             } elsif ($ack) {
                 warn "got a response packet after " . (time() - $t0) . "s but it was bad; ignoring it";
                 if ($cookie) {
@@ -227,13 +231,10 @@ sub sign_petition ($) {
         }
         alarm(0);
 
-        warn "unable to sign petition over RPC, using database instead";
+        warn "unable to sign petition over RPC";
     }
 
-    my $d = dbh();
-    sign_petition_db($r);
-    dbh()->commit();
-    dbh()->disconnect();
+    return 0;
 }
 
 1;
