@@ -6,13 +6,14 @@
 #
 # TODO: turn this into a proper daemon; rationalise the logging (in particular
 # provide a means to switch off the debugging logging for production use); test
-# it against a greater variety of real mail servers.
+# it against a greater variety of real mail servers; occasionally checkpoint
+# retry data so that we can recover after a crash.
 #
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.13 2006-08-03 22:45:39 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.14 2006-08-03 22:47:26 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;

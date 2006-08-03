@@ -17,13 +17,14 @@
 # or the packets don't get through, then the web scripts can sign up in the
 # usual way.
 #
-# TODO: proper logging; make it a proper daemon; verify performance.
+# TODO: proper logging; make it a proper daemon; LRU cache of recent inserts so
+# that we can immediately acknowledge resent requests from front end.
 #
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.7 2006-08-03 22:46:11 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.8 2006-08-03 22:46:51 chris Exp $';
 
 use strict;
 
