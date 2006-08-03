@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.12 2006-08-01 01:36:50 chris Exp $
+# $Id: Page.pm,v 1.13 2006-08-03 08:45:32 chris Exp $
 #
 
 package Petitions::Page;
@@ -14,9 +14,12 @@ package Petitions::Page;
 use strict;
 
 use Carp;
+use Digest::HMAC_SHA1 qw(hmac_sha1);
+use MIME::Base64;
 
-use mySociety::Web qw(ent);
 use mySociety::DBHandle qw(dbh);
+use mySociety::Util qw(random_bytes);
+use mySociety::Web qw(ent);
 
 use Petitions;
 
@@ -254,10 +257,18 @@ sub sign_box ($$) {
             or croak "bad ref '$ref' in sign_box";
     }
 
+    $p->{salt} = random_bytes(4);
+    my $buf = '';
+    my $h = new IO::String($buf);
+    RABX::wire_wr($p, $h);
+    $h->close();
+    my $ser = encode_base64($buf . hmac_sha1($buf, Petitions::DB::secret()));
+    delete($p->{salt});
+
     return
         $q->start_form(-method => 'POST', -action => "/$p->{ref}/sign")
         . qq(<input type="hidden" name="add_signatory" value="1" />)
-        . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
+        . qq(<input type="hidden" name="ref" value="@{[ ent($ser) ]}" />)
 #        . $q->h2($q->span({-class => 'ltr'}, 'Sign up now'))
         . $q->div({ -style => 'float: left; width: 50%; border: none; border-right: dotted 1px black;' }, 
           $q->p("I, ",
