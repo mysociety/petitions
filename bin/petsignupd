@@ -23,7 +23,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.6 2006-08-01 21:24:37 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.7 2006-08-03 22:46:11 chris Exp $';
 
 use strict;
 
@@ -51,7 +51,7 @@ use Petitions;
 use Petitions::RPC;
 
 # Maximum (ideal) interval from signup request to commit.
-use constant MAX_SIGNUP_TIME    => 0.25;    # seconds
+use constant MAX_SIGNUP_TIME    => 0.1;    # seconds
 
 my $s = new IO::Socket::INET(
                     LocalAddr => '0.0.0.0',
@@ -72,27 +72,35 @@ my %pending = ( );
 sub do_pending () {
     # Write them to the database.
     
+    my $t0 = time();
+    
     # Lock against concurrent processes.
-    dbh()->do('lock table signer in row exclusive mode');
-
     foreach my $r (values(%pending)) {
         Petitions::RPC::sign_petition_db($r);
     }
-
     dbh()->commit();
 
+    my $t1 = time();
+    printf STDERR "writing to db took %fs\n", $t1 - $t0;
+
     $s->blocking(1);
+    my $maxtime = 0;
     foreach my $r (values(%pending)) {
         my $packet = Petitions::RPC::make_ack_packet($r->{cookie});
+        my ($port, $ip) = sockaddr_in($r->{client});
         if (!$s->send($packet, 0, $r->{client})) {
-            my ($port, $ip) = sockaddr_in($r->{client});
-            print STDERR "sending acknowledgment to $ip:$port: $!\n";
+            print STDERR "sending acknowledgment to @{[ inet_ntoa($ip) ]}:$port: $!\n";
+        } else {
+            $maxtime = time() - $r->{time} if (time() - $r->{time} > $maxtime);
+#            print STDERR "send ack to @{[ inet_ntoa($ip) ]}:$port cookie @{[ unpack('h*', $r->{cookie}) ]}\n";
         }
     }
     $s->blocking(0);
+
+    printf STDERR "sending acks took %fs; max %fs since received req\n", time() - $t1, $maxtime;
 }
 
-my $inlock = 0;
+my $t0;
 while (!$foad) {
     my $buf = '';
     my $sender;
@@ -103,17 +111,24 @@ while (!$foad) {
                 # We have a valid signup packet. Schedule an alarm so that we
                 # will send a response within the deadline.
                 if (!$alarm_pending) {
+                    $t0 = time();
                     $alarm_pending = 1;
                     alarm(MAX_SIGNUP_TIME);
                 }
                 # Record address to which we send acknowledgement.
                 $r->{client} = $sender;
-                $pending{$r->{cookie}} = $r;
+                $r->{time} = time();
+                if (!exists($pending{$r->{cookie}})) {
+                    $pending{$r->{cookie}} = $r;
+                    print STDERR ".";
+                }
                 # Done handling this request.
+                my ($port, $ip) = sockaddr_in($sender);
+#                print STDERR "got packet from @{[ inet_ntoa($ip) ]}:$port cookie @{[ unpack('h*', $r->{cookie} ) ]}\n";
             } else {
                 # Invalid packet of some sort. Log and continue.
-                my ($port, $ip) = sockaddr_in($r->{sender});
-                print STDERR "bad packet from $ip:$port\n";
+                my ($port, $ip) = sockaddr_in($sender);
+                print STDERR "bad packet from @{[ inet_ntoa($ip) ]}:$port\n";
             }
         }
         
@@ -125,6 +140,8 @@ while (!$foad) {
     # If the alarm has fired, then do the signatures and send the
     # acknowledgements to the clients.
     if ($alarm_fired && keys(%pending)) {
+        my $n = scalar(keys(%pending));
+        print STDERR "alarm fired; have $n signatures to make\n";
         try {
             do_pending();
             $alarm_fired = 0;
@@ -133,6 +150,8 @@ while (!$foad) {
             print STDERR "committing ", scalar(keys(%pending)), " requests failed; DB error: ", $E->text(), "\n";
         };
         %pending = ( );
+        my $t1 = time();
+        printf STDERR "time from first request = %fs; %f sigs/s\n", $t1 - $t0, $n / ($t1 - $t0);
     }
 }
 
@@ -145,4 +164,3 @@ if (keys(%pending)) {
     };
 }
 
-untie(%signercache);
