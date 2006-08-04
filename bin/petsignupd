@@ -24,7 +24,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.8 2006-08-03 22:46:51 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.9 2006-08-04 00:28:32 chris Exp $';
 
 use strict;
 
@@ -44,6 +44,7 @@ use Error qw(:try);
 use IO::Select;
 use IO::Socket;
 use Socket;
+use Tie::Cache;
 use Time::HiRes qw(time alarm);
 
 use mySociety::DBHandle qw(dbh);
@@ -69,15 +70,21 @@ my $alarm_pending = 0;
 my $alarm_fired = 0;
 $SIG{ALRM} = sub { $alarm_fired = 1; $alarm_pending = 0; };
 
+my %cache;
+tie(%cache, 'Tie::Cache', 5000);
+
+# do_pending
+# Actually perform the queue of requests against the database.
 my %pending = ( );
 sub do_pending () {
-    # Write them to the database.
-    
     my $t0 = time();
     
-    # Lock against concurrent processes.
     foreach my $r (values(%pending)) {
-        Petitions::RPC::sign_petition_db($r);
+        if (exists($r->{confirm})) {
+            Petitions::RPC::confirm_db($r);
+        } else {
+            Petitions::RPC::sign_petition_db($r);
+        }
     }
     dbh()->commit();
 
@@ -87,6 +94,7 @@ sub do_pending () {
     $s->blocking(1);
     my $maxtime = 0;
     foreach my $r (values(%pending)) {
+        $cache{$r->{cookie}} = 1;
         my $packet = Petitions::RPC::make_ack_packet($r->{cookie});
         my ($port, $ip) = sockaddr_in($r->{client});
         if (!$s->send($packet, 0, $r->{client})) {
@@ -109,23 +117,31 @@ while (!$foad) {
     if (@ready) {
         while (defined($sender = $s->recv($buf, 65536, 0))) {
             if (my $r = Petitions::RPC::parse_packet($buf)) {
-                # We have a valid signup packet. Schedule an alarm so that we
-                # will send a response within the deadline.
+                # We have a valid request. Schedule an alarm so that we will
+                # send a response within the deadline.
                 if (!$alarm_pending) {
                     $t0 = time();
                     $alarm_pending = 1;
                     alarm(MAX_SIGNUP_TIME);
                 }
+
                 # Record address to which we send acknowledgement.
                 $r->{client} = $sender;
                 $r->{time} = time();
-                if (!exists($pending{$r->{cookie}})) {
+
+                # See if this is a packet we've recently processed. If it is,
+                # immediately send an acknowledgement. Otherwise, add it to the
+                # list of requests to process later.
+                if (exists($cache{$r->{cookie}}) {
+                    my $ack = Petitions::RPC::make_ack_packet($r->{cookie});
+                    $s->send($ack, 0, $r->{client});
+                        # don't care much if this fails
+                } elsif (!exists($pending{$r->{cookie}})) {
                     $pending{$r->{cookie}} = $r;
                     print STDERR ".";
                 }
+
                 # Done handling this request.
-                my ($port, $ip) = sockaddr_in($sender);
-#                print STDERR "got packet from @{[ inet_ntoa($ip) ]}:$port cookie @{[ unpack('h*', $r->{cookie} ) ]}\n";
             } else {
                 # Invalid packet of some sort. Log and continue.
                 my ($port, $ip) = sockaddr_in($sender);
@@ -165,3 +181,4 @@ if (keys(%pending)) {
     };
 }
 
+untie(%cache);
