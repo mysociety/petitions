@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.9 2006-08-04 00:20:57 chris Exp $
+# $Id: RPC.pm,v 1.10 2006-08-04 00:32:47 chris Exp $
 #
 
 package Petitions::RPC;
@@ -107,27 +107,27 @@ sub sign_petition_db ($) {
     return if (defined($s) && $s =~ /^(confirmed|pending)$/);
     
     # First try updating the row.
-    my $n = dbh()->do("
-            update signer set emailsent = 'pending'
-            where petition_id = (select id from petition where ref = ?)
-                and email = ? and emailsent <> 'confirmed'", {},
-            map { $r->{$_} } qw(ref email));
-
-    return if ($n > 0);
-
-    dbh()->do('
-            insert into signer (
-                petition_id,
-                email, name, address, postcode,
-                showname,
-                signtime
-            ) values (
-                (select id from petition where ref = ?),
-                ?, ?, ?, ?,
-                true,
-                ms_current_timestamp()
-            )', {},
-            map { $r->{$_} } qw(ref email name address postcode));
+    if (defined($s)) {
+        dbh()->do("
+                update signer set emailsent = 'pending'
+                where petition_id = (select id from petition where ref = ?)
+                    and email = ? and emailsent <> 'confirmed'", {},
+                map { $r->{$_} } qw(ref email));
+    } else {
+        dbh()->do('
+                insert into signer (
+                    petition_id,
+                    email, name, address, postcode,
+                    showname,
+                    signtime
+                ) values (
+                    (select id from petition where ref = ?),
+                    ?, ?, ?, ?,
+                    true,
+                    ms_current_timestamp()
+                )', {},
+                map { $r->{$_} } qw(ref email name address postcode));
+    }
 }
 
 =item confirm_db REQUEST
