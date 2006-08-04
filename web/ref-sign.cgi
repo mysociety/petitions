@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.9 2006-08-04 00:38:37 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.10 2006-08-04 00:43:53 chris Exp $';
 
 use strict;
 
@@ -125,7 +125,7 @@ sub signup_page ($$) {
 
 # confirm_page Q REF TOKEN
 # Given a confirm TOKEN, validate a signup or petition creation.
-sub confirm_page ($$) {
+sub confirm_page ($$$) {
     my ($q, $ref, $token) = @_;
     
     my $html = '';
