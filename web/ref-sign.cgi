@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.7 2006-08-03 22:55:33 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.8 2006-08-04 00:09:10 chris Exp $';
 
 use strict;
 
@@ -83,7 +83,7 @@ sub signup_page ($$) {
             # Either OK or already signed. We must not give away the fact that
             # any particular person has already signed a petition, so act the
             # same in each case.
-            if (Petitions::RPC::sign_petition({
+            if (Petitions::RPC::do_rpc({
                             ref => $p->{ref},
                             email => $qp_email,
                             name => $qp_name,
@@ -123,11 +123,10 @@ sub signup_page ($$) {
 
 }
 
-# confirm_page Q TOKEN
-# Given a confirm TOKEN, validate a signup.
-# XXX this is broken -- we need to call through to petsignupd instead.
+# confirm_page Q REF TOKEN
+# Given a confirm TOKEN, validate a signup or petition creation.
 sub confirm_page ($$) {
-    my ($q, $token) = @_;
+    my ($q, $ref, $token) = @_;
     
     my $html = '';
     my ($what, $id);
@@ -139,21 +138,34 @@ sub confirm_page ($$) {
                     you've used. If you typed the link in manually, please
                     re-check that you've got it absolutely right.")
                 . Petitions::Page::footer($q);
-    } else {
-        # if ($what ne 'p') ...
-        # Confirm signer.
-        dbh()->do("update signer set emailsent = 'confirmed' where id = ?", {}, $id);
-        dbh()->commit();
-
-        my $ref = dbh()->selectrow_array('
-                    select ref from petition, signer
-                    where signer.petition_id = petition.id
-                        and signer.id = ?', {},
-                    $id);
-
+    } elsif (Petitions::RPC::do_rpc({
+                    confirm => $what,
+                    id => $id
+                })) {
         # Now we should redirect so that the token URL isn't left in the browser.
-        print $q->redirect("/$ref?signed=1");
+        if ($what = 'p') {
+            # XXX redirect to somewhere appropriate
+            return;
+        } else {
+            print $q->redirect("/$ref?signed=1");
+            return;
+        }
+    } else {
+        my $desc;
+        if ($what eq 'p') {
+            $desc = "the creation of your petition";
+        } else {
+            $desc = "your signature";
+        }
+        $html = Petitions::Page::header($q, "Sorry, we couldn't confirm $desc")
+                . $q->p("
+                    Unfortunately, we weren't able to confirm $desc,
+                    because our site is extremely busy at the moment.
+                    Please try again in a few minutes' time.")
+                . Petitions::Page::footer($q);
     }
+
+    print $q->header(-content_length => length($html)), $html;
 }
 
 # Awful. We need lots of processes to handle lots of concurrent signups (since
@@ -188,15 +200,16 @@ exit(0);
 # Accept and handle FastCGI requests.
 sub accept_loop () {
     while (!$foad && (my $q = new mySociety::Web())) {
-        my $qp_token = $q->ParamValidate(token => qr/^[A-Za-z0-9_-]+$/);
-        if (defined($qp_token)) {
-            confirm_page($q, $qp_token);
-            next;
-        }
-
         my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
         if (!defined($qp_ref)) {
             print $q->redirect("/");
+            next;
+        }
+
+        # Confirm page.
+        my $qp_token = $q->ParamValidate(token => qr/^[A-Za-z0-9_-]+$/);
+        if (defined($qp_token)) {
+            confirm_page($q, $qp_ref, $qp_token);
             next;
         }
 
