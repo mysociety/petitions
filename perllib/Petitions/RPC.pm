@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.10 2006-08-04 00:32:47 chris Exp $
+# $Id: RPC.pm,v 1.11 2006-08-04 00:33:24 chris Exp $
 #
 
 package Petitions::RPC;
@@ -84,7 +84,7 @@ sub parse_packet ($) {
     # Decode.
     my $r;
     try {
-        $r = RABX::unserialise($h);
+        $r = RABX::unserialise($packet);
     } catch RABX::Error with {
         $r = undef;
     };
