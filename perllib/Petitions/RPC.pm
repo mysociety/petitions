@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.8 2006-08-03 12:14:44 chris Exp $
+# $Id: RPC.pm,v 1.9 2006-08-04 00:20:57 chris Exp $
 #
 
 package Petitions::RPC;
@@ -41,35 +41,19 @@ use constant RPC_RETRY_TIME => 0.1;
 use constant RPC_RETRY_EXP => 1.5;
 
 # Bytes of random data in request ID.
-use constant COOKIE_LEN => 4;
+use constant COOKIE_LEN => 6;
 
-# make_packet R
-#
-sub make_packet ($) {
-    my $r = shift;
-    my $packet = '';
-    my $h = new IO::String($packet);
-    RABX::wire_wr($r, $h);
-    $h->close();
-    my $hmac = hmac_sha1($packet, Petitions::DB::secret());
-    return $packet . $hmac;
-}
+=item make_packet REQUEST
 
-=item make_sign_packet REQUEST
-
-Given a REQUEST (to sign a petition) make a signed packet suitable for
-transmitting to the server.
+Given a REQUEST, make a signed packet expressing it.
 
 =cut
-sub make_sign_packet ($) {
+sub make_packet ($) {
     my $r = shift;
-    croak "REQUEST must be reference-to-hash" unless (ref($r) eq 'HASH');
-    my @required = qw(cookie ref email name address postcode);
-    my @missing = grep { !exists($r->{$_}) } @required;
-    croak "REQUEST is missing fields " . join(", ", @missing)
-        if (@missing);
-
-    return make_packet($r);;
+    croak "REQUEST must not be undef" unless (defined($r));
+    my $packet = RABX::serialise($r);
+    my $hmac = hmac_sha1($packet, Petitions::DB::secret());
+    return $packet . $hmac;
 }
 
 =item make_ack_packet COOKIE
@@ -85,7 +69,6 @@ sub make_ack_packet ($) {
     return make_packet($c);
 }
 
-
 =item parse_packet PACKET
 
 Given an on-the-wire PACKET, parse it.
@@ -99,10 +82,9 @@ sub parse_packet ($) {
     my $hmac = hmac_sha1(substr($packet, 0, length($packet) - HMAC_SHA1_LEN), Petitions::DB::secret());
     return undef if ($hmac ne substr($packet, length($packet) - HMAC_SHA1_LEN));
     # Decode.
-    my $h = new IO::String($packet);
     my $r;
     try {
-        $r = RABX::wire_rd($h);
+        $r = RABX::unserialise($h);
     } catch RABX::Error with {
         $r = undef;
     };
@@ -148,90 +130,100 @@ sub sign_petition_db ($) {
             map { $r->{$_} } qw(ref email name address postcode));
 }
 
-=item sign_petition REQUEST
+=item confirm_db REQUEST
 
-Sign a petition using REQUEST by talking to the server over UDP, returning true
-on success or false on failure.  REQUEST must contain keys 'ref', 'email',
-'name', 'address' and 'postcode'.
+Confirm a signature or petition creation according to REQUEST.
 
 =cut
-sub sign_petition ($) {
+sub confirm_db ($) {
     my $r = shift;
 
-    our $have_rpc_server;
-    our $serveraddr;
-    if (!defined($have_rpc_server)) {
-        my $host = mySociety::Config::get('RPC_SERVER_HOST', '');
-        my $port = mySociety::Config::get('RPC_SERVER_PORT', 0);
-
-        if ($host && $port) {
-            $have_rpc_server = 1;
-            $serveraddr = sockaddr_in($port, inet_aton($host));
-        } else {
-            $have_rpc_server = 0;
-        }
+    if ($r->{confirm} eq 'p') {
+        # never move a petition backwards in status...
+        dbh()->do("
+                update petition set status = 'draft'
+                where id = ? and status = 'unconfirmed'", {},
+                $r->{id});
+    } elsif ($r->{confirm} eq 's') {
+        dbh()->do("
+                update signer set emailsent = 'confirmed'
+                where id = ?", {},
+                $r->{id});
     }
-    
+}
+
+=item do_rpc REQUEST
+
+Submit an RPC REQUEST to the server, returning true if it is positively
+acknowledged and false otherwise. REQUEST should be a reference to a hash of
+fields which are sent to the server; this function will add a unique
+identifying cookie to distinguish it from other requests.
+
+=cut
+sub do_rpc ($) {
+    my $r = shift;
+    croak("REQUEST should be reference to hash") unless (defined($r) && ref($r) eq 'HASH');
+
     our $s;
-    if (!$s && $have_rpc_server) {
-        $s = new IO::Socket::INET(
+    our $serveraddr;
+    if (!$serveraddr) {
+        my $host = mySociety::Config::get('PETSIGNUPD_HOST');
+        my $port = mySociety::Config::get('PETSIGNUPD_POST');
+        $serveraddr = sockaddr_in($port, inet_aton($host))
+            or die "sockaddr_in($port, '$host'): $!";
+    }
+
+    if (!$s) {
+        $s ||= new IO::Socket::INET(
                         LocalAddr => '0.0.0.0',
                         Type => SOCK_DGRAM,
                         Proto => 'udp',
                         ReuseAddr => 0,
                         Blocking => 0)
-            or warn "socket: $!";
+            or die "socket: $!";
     }
 
-    if ($s && $have_rpc_server) {
-        $r->{cookie} = pack('N', int(rand(0xffffffff))); #random_bytes(COOKIE_LEN);
-        my $packet = make_sign_packet($r);
+    $r->{cookie} = random_bytes(COOKIE_LEN);
 
-        my $interval = RPC_RETRY_TIME;
-        my $alarmfired = 0;
-        local $SIG{ALRM} = sub { $alarmfired = 1; };
-        alarm(RPC_TIMEOUT);
-        my $t0 = time();
+    my $packet = make_packet($r);
+
+    my $interval = RPC_RETRY_TIME;
+    my $alarmfired = 0;
+    local $SIG{ALRM} = sub { $alarmfired = 1; };
+    alarm(RPC_TIMEOUT);
+
+    while (!$alarmfired) {
+        # Send request.
         my $n;
         do {
             $n = $s->send($packet, 0, $serveraddr);
-        } while (!defined($n) && !$!{EINTR});
-        while (!$alarmfired) {
-            next unless IO::Select->new($s)->can_read($interval);
+        } while (!defined($n) && $!{EINTR});
+        # XXX handle transmission errors?
+        
+        if (IO::Select->new($s)->can_read($interval)) {
             my $ack = '';
             my $sender;
             do {
                 $sender = $s->recv($ack, 1024, 0);
             } while (!$sender && $!{EINTR});
-            if (!$sender) {
-                if ($!{EAGAIN}) {
-                    next;
-                } else {
-                    alarm(0);
-                    last;
-                }
-            }
-
-            my $cookie = parse_packet($ack);
-            if ($cookie && $cookie eq $r->{cookie}) {
-                # Success.
-                alarm(0);
-                return 1;
-            } elsif ($ack) {
-                warn "got a response packet after " . (time() - $t0) . "s but it was bad; ignoring it";
+            # XXX errors?
+    
+            if ($sender) {
+                my ($port, $host) = sockaddr_in($sender);
+                $host = inet_ntoa($host);
+                my $cookie = parse_packet($ack);
                 if ($cookie) {
-                    warn "sent cookie = "
-                        . unpack('h*', $r->{cookie})
-                        . "; received cookie = "
-                        . unpack('h*', $cookie);
+                    if ($cookie eq $r->{cookie}) {
+                        alarm(0);
+                        return 1;
+                    } # else it's an old ack, presumably; just ignore it
+                } else {
+                    warn "received invalid packet from $host:$port";
                 }
             }
-
-            $interval *= RPC_RETRY_EXP;
         }
-        alarm(0);
 
-        warn "unable to sign petition over RPC";
+        $interval *= RPC_RETRY_EXP;
     }
 
     return 0;
