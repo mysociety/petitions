@@ -24,7 +24,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.9 2006-08-04 00:28:32 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.10 2006-08-04 00:46:39 chris Exp $';
 
 use strict;
 
@@ -132,7 +132,7 @@ while (!$foad) {
                 # See if this is a packet we've recently processed. If it is,
                 # immediately send an acknowledgement. Otherwise, add it to the
                 # list of requests to process later.
-                if (exists($cache{$r->{cookie}}) {
+                if (exists($cache{$r->{cookie}})) {
                     my $ack = Petitions::RPC::make_ack_packet($r->{cookie});
                     $s->send($ack, 0, $r->{client});
                         # don't care much if this fails

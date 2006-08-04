@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.11 2006-08-04 00:33:24 chris Exp $
+# $Id: RPC.pm,v 1.12 2006-08-04 00:44:07 chris Exp $
 #
 
 package Petitions::RPC;
@@ -168,7 +168,7 @@ sub do_rpc ($) {
     our $serveraddr;
     if (!$serveraddr) {
         my $host = mySociety::Config::get('PETSIGNUPD_HOST');
-        my $port = mySociety::Config::get('PETSIGNUPD_POST');
+        my $port = mySociety::Config::get('PETSIGNUPD_PORT');
         $serveraddr = sockaddr_in($port, inet_aton($host))
             or die "sockaddr_in($port, '$host'): $!";
     }
