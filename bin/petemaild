@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.14 2006-08-03 22:47:26 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.15 2006-08-04 00:30:00 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1313,7 +1313,8 @@ sub make_signer_email ($$) {
 
 
     $h{url} = mySociety::Config::get('BASE_URL')
-                . '/C/' . Petitions::Token::make('s', $signer->{id});
+                . "/$petition->{ref}/"
+                . Petitions::Token::make('s', $signer->{id});
     $h{creator_name} = $signer->{name};
     $h{sentence} = Petitions::sentence($petition);
 
