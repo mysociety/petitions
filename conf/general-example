@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.3 2006-07-28 17:45:37 chris Exp $
+ * $Id: general-example,v 1.4 2006-08-04 00:43:29 chris Exp $
  * 
  */
 
@@ -27,8 +27,8 @@ define('OPTION_PHP_MAINDB', 'PET');
 
 // Optionally, where petsignupd runs. This is used to batch signup requests
 // from front-end scripts to improve throughput.
-// define('OPTION_PET_SIGNUPD_HOST', 'some.host.com');
-// define('OPTION_PET_SIGNUPD_PORT', 92134);
+define('OPTION_PETSIGNUPD_HOST', '192.168.1.42');
+define('OPTION_PETSIGNUPD_PORT', 12345);
 
 // Base domain of the website. This is used to distinguish internal from
 // external referrers, for instance.
