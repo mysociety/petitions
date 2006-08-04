@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.8 2006-08-04 00:09:10 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.9 2006-08-04 00:38:37 chris Exp $';
 
 use strict;
 
@@ -143,7 +143,7 @@ sub confirm_page ($$) {
                     id => $id
                 })) {
         # Now we should redirect so that the token URL isn't left in the browser.
-        if ($what = 'p') {
+        if ($what eq 'p') {
             # XXX redirect to somewhere appropriate
             return;
         } else {
