@@ -6,7 +6,7 @@
 # Copyright (c) 2006 Chris Lightfoot. All rights reserved.
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
-# $Id: Petitions.pm,v 1.16 2006-08-01 01:36:30 chris Exp $
+# $Id: Petitions.pm,v 1.17 2006-08-04 00:20:23 chris Exp $
 #
 
 package Petitions::DB;
@@ -241,6 +241,7 @@ my $petition_prefix = "We the undersigned petition the Prime Minister to";
 =cut
 sub sentence ($;$) {
     my ($p, $html) = @_;
+    croak("PETITION may not be undef") unless (defined($p));
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     croak("Field 'content' missing from PETITION") unless (exists($p->{content}));
     my $sentence = sprintf('%s %s', $petition_prefix, $p->{content});
@@ -253,6 +254,7 @@ sub sentence ($;$) {
 =cut
 sub pretty_deadline ($;$) {
     my ($p, $html) = @_;
+    croak("PETITION may not be undef") unless (defined($p));
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     my ($Y, $m, $d) = split(/-/, $p->{deadline});
     my $day = mySociety::Util::ordinal($d);
