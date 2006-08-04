@@ -3,10 +3,10 @@
 # Petitions.pm:
 # Petition utilities.
 #
-# Copyright (c) 2006 Chris Lightfoot. All rights reserved.
-# Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
+# Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+# Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.17 2006-08-04 00:20:23 chris Exp $
+# $Id: Petitions.pm,v 1.18 2006-08-04 00:45:06 chris Exp $
 #
 
 package Petitions::DB;
