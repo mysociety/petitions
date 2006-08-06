@@ -7,10 +7,11 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.5 2006-08-03 22:49:44 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.6 2006-08-06 18:17:43 chris Exp $';
 
 use strict;
 
+use Compress::Zlib;
 use HTTP::Date qw();
 
 use mySociety::Config;
@@ -86,10 +87,27 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     $html .= Petitions::Page::footer($q);
 
+    # Perhaps send gzipped content.
+    my $ce = undef;
+    my $ae = $q->http('Accept-Encoding');
+    if ($ae) {
+        my %encodings  = map { s/;.*$//; $_ => 1 } split(/,\s*/, $ae);
+        if ($encodings{'*'}
+            || $encodings{'gzip'}
+            || $encodings{'x-gzip'}) {
+            $html = Compress::Zlib::memGzip($html);
+            $ce = 'gzip';
+        }
+    }
+
     print $q->header(
                 -content_length => length($html),
                 -last_modified => HTTP::Date::time2str($lastmodified),
-                -cache_control => 'max-age=10'),
+                ($ce
+                    ? (-content_encoding => $ce)
+                    : () ),
+                -cache_control => 'max-age=60',
+                -expires => '+1m'),
                 $html;
     $W->exit_if_changed();
 }
