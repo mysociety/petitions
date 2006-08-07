@@ -5,7 +5,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: pet.css,v 1.5 2006-08-07 14:18:24 matthew Exp $
+ * $Id: pet.css,v 1.6 2006-08-07 15:19:26 matthew Exp $
  *
  */
 
@@ -24,6 +24,50 @@
     padding: 10px;
 }
 
+.primeminister #content div#content_clipboard {
+    border: none;
+    padding: 10px;
+    margin: 0;
+    background: url(images/clipboard-background-bottom.jpg) no-repeat 100% 0;
+}
+div#content_clipboard p {
+    margin: 0;
+}
+div#content_clipboard blockquote {
+    font-weight: bold;
+}
+
+ul#petition_actions {
+    text-align: center;
+    float: left;
+    width: 45%;
+    background-color: #ffffff;
+    border: solid 1px #cccccc;
+    list-style-type: none;
+    font-size: 150%;
+    margin-right: 1em;
+}
+ul#petition_actions li {
+    width: 48%;
+    padding: 0;
+    background: none;
+}
+
+/* List page */
+.primeminister #content p#petition_view_tabs {
+    background-color: #ffffff;
+    border-bottom: solid 2px #b9adb1;
+    margin: 0;
+    padding: 0.5em 0;
+}
+#petition_view_tabs span {
+    font-weight: bold;
+    background-color: #b9adb1;
+    color: #ffffff;
+    padding: 0.6em;
+}
+
+/* Errors */
 div#errors {
     margin: 0 auto 1em;
     color: #000000;

@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.8 2006-08-02 14:58:39 chris Exp $
+// $Id: index.php,v 1.9 2006-08-07 15:19:26 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -16,22 +16,22 @@ page_header('Introduction to e-petitions');
 
 <h1><span dir="ltr">E-Petitions</span></h1>
 
-<div style="border: none; padding: 10px; margin: 0; background: url(images/clipboard-background-bottom.jpg) no-repeat 100% 0;">
+<div id="content_clipboard">
 
-<ul style="text-align: center; float: left; width: 45%; background-color: #ffffff; list-style-type: none; font-size: 150%;">
-<li style="list-style-type: none; float: left; width: 45%;"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder">
+<ul id="petition_actions">
+<li style="float: left;"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder">
 <br />Create a Petition</a></li>
-<li style="float: right; width: 45%;"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder">
+<li style="float: right;"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder">
 <br />View Petitions</a></li>
 </ul>
 
-<p style="margin-top: 0">Petitions have long been sent to the Prime Minister by post or delivered to
+<p>Petitions have long been sent to the Prime Minister by post or delivered to
 the Number 10 door in person. You can now both create and sign petitions on
 this website, giving you the opportunity to reach a potentially wider audience
 and to deliver your petition directly to Downing Street.</p>
 
 <blockquote>"Being able to start a petition online where millions can read it is just great!"</blockquote>
-<p style="margin-bottom: 0" align="right">&mdash; David Jones, UK</p>
+<p align="right">&mdash; David Jones, UK</p>
 
 </div>
 

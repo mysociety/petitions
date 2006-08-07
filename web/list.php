@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.6 2006-08-07 14:18:24 matthew Exp $
+// $Id: list.php,v 1.7 2006-08-07 15:19:26 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -99,8 +99,11 @@ if (!$rss) {
     $views = "";
     $b = false;
     foreach ($viewsarray as $s => $desc) {
-        if ($b) $views .= ' | ';
-        if ($q_type != $s) $views .= "<a href=\"/list/$s\">$desc</a>"; else $views .= $desc;
+        if ($b) $views .= ' &nbsp; ';
+        if ($q_type == $s)
+	    $views .= '<span>' . $desc . '</span>';
+        else
+	    $views .= "<a href=\"/list/$s\">$desc</a>";
 	$b = true;
     }
 
@@ -116,7 +119,7 @@ if (!$rss) {
         $n = $q_offset + PAGE_SIZE;
         $next = "<a href=\"?offset=$n$sort\">Next page</a>";
     }
-    $navlinks = '<p>' . $views . "</p>\n";
+    $navlinks = '<p id="petition_view_tabs">' . $views . "</p>\n";
     if ($ntotal > 0) {
         $navlinks .= '<p align="center" style="font-size: 89%">' . _('Sort by'). ': ';
         $arr = array(
@@ -144,10 +147,10 @@ $rss_items = array();
 if ($ntotal > 0) {
     $c = 0;
     if (!$rss) { ?>
-<table>
-<tr><th>We the undersigned petition the Prime Minister to&hellip;</th>
-<th>Submitted by</th>
-<th>Deadline to sign by</th>
+<table cellpadding="3" cellspacing="0" border="0">
+<tr><th align="left">We the undersigned petition the Prime Minister to&hellip;</th>
+<th>Submitted&nbsp;by</th>
+<th>Deadline&nbsp;to&nbsp;sign&nbsp;by</th>
 <th>Signatures</th>
 </tr>
 <?  }

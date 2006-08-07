@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.6 2006-08-06 18:17:43 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.7 2006-08-07 15:19:26 matthew Exp $';
 
 use strict;
 
@@ -50,8 +50,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     my $qp_signed = $q->param('signed');
 
-    our $p;
-    $p = Petitions::DB::get($ref) if (!$p || $p->{ref} ne $ref);
+    my $p = Petitions::DB::get($ref);
     my $title = Petitions::sentence($p, 1);
     my $html =
         Petitions::Page::header($q, $title);
@@ -61,6 +60,8 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     $html .= $q->p({ -id => 'finished' }, "This petition is now closed, as its deadline has passed.")
         if (!$p->{open});
+
+# XXX: Link to government response somewhere in here...
 
     if ($qp_signed) {
         $html .=
