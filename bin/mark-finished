@@ -1,0 +1,76 @@
+#!/usr/bin/php -q
+<?php
+/* 
+ * mark-finished:
+ * Run from cron daily to detect petitions which have finished
+ *
+ * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+ * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
+ *
+ * $Id: mark-finished,v 1.1 2006-08-07 14:18:24 matthew Exp $
+ *
+ */
+
+$short_opts = '';
+$long_opts = array('verbose','help');
+
+chdir(dirname($_SERVER['SCRIPT_FILENAME']));
+require_once "../phplib/pbcli.php";
+require_once '../phplib/fns.php';
+require_once '../phplib/petition.php';
+require_once '../../phplib/db.php';
+require_once '../../phplib/utility.php';
+
+function verbose($str) {
+    global $verbose;
+    if ($verbose) 
+        fwrite(STDERR, "mark-finished: $str\n");
+}
+function error($str) {
+    fwrite(STDERR, "mark-finished: ERROR: $str\n");
+}
+
+$switches = $options[0];
+$args = $options[1];
+$verbose = 0; 
+foreach ($switches as $switch) {
+    if ($switch[0]=='--verbose') $verbose = 1;
+    if ($switch[0]=='--help') {
+?>
+
+Petitions mark finished script. This is responsible for completing
+petitions. It should be run daily from cron.
+
+Usage: mark-finished [--verbose]
+
+--help      Display this help message
+--verbose   Display more information
+
+<?
+        exit;
+    }
+}
+
+verbose("finding newly finished petitions");
+/* Do a query before locking the table. */
+if (!db_getOne("
+            select id from petition
+            where '$pet_today' > deadline
+                and status != 'finished'
+            for update")) {
+    verbose("... no newly finished petitions");
+    return;
+}
+    
+$q = db_query("
+            select * from petition
+            where '$pet_today' > deadline
+                and status != 'finished'
+            for update");
+while ($petition = db_fetch_array($q)) {
+    verbose("petition #${petition['id']} (${petition['ref']}) has finished");
+    db_query("update petition set status='finished' where id=?", $petition['id']);
+}
+db_commit();
+verbose("finished newly finished petitions");
+

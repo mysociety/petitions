@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.19 2006-07-27 22:09:58 matthew Exp $
+// $Id: new.php,v 1.20 2006-08-07 14:18:24 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -24,6 +24,9 @@ if (get_http_var('tostepmain')
 $contents = ob_get_contents();
 ob_end_clean();
 page_header($page_title, array());
+?>
+<h1><span dir="ltr">E-Petitions</span></h1>
+<?
 print $contents;
 page_footer();
 
@@ -101,7 +104,7 @@ function nextprevbuttons($prev, $prevdesc, $next, $nextdesc) {
         if (!is_null($prev)) print "<br />";
     }
     if (!is_null($prev)) {
-        if (is_null($prevdesc)) $prevdesc = _('Prev');
+        if (is_null($prevdesc)) $prevdesc = _('Previous');
         printf('<input type="submit" name="%s" value="%s" />',
                 htmlspecialchars($prev), htmlspecialchars($prevdesc));
     }
@@ -117,10 +120,10 @@ function endform($data = null) {
 
 function errorlist($errors) {
     if (sizeof($errors))
-        print '<ul class="errors"><li>'
+        print '<div id="errors"><p>Please check the following and try again:</p><ul><li>'
                 . join('</li><li>',
                     array_map('htmlspecialchars', array_values($errors)))
-                . '</li></ul>';
+                . '</li></ul></div>';
 }
 
 function textarea($name, $val, $cols, $rows, $errors) {
@@ -129,31 +132,37 @@ function textarea($name, $val, $cols, $rows, $errors) {
             $cols, $rows,
             array_key_exists($name, $errors) ? ' class="error"' : '',
             htmlspecialchars(is_null($val) ? '' : $val));
+    if (array_key_exists($name, $errors))
+        print '<br /><span class="errortext">'. $errors[$name] . '</span>';
 }
 
-function textfield($name, $val, $size, $errors) {
+function textfield($name, $val, $size, $errors, $after = '') {
     printf('<input onfocus="fadein(this)" onblur="fadeout(this)" '
             . 'type="text" name="%s" id="%s" size="%d" value="%s"%s />',
             htmlspecialchars($name), htmlspecialchars($name),
             $size,
             htmlspecialchars(is_null($val) ? '' : $val),
             array_key_exists($name, $errors) ? ' class="error"' : '');
+    if ($after)
+        print ' <small>' . $after . '</small>';
+    if (array_key_exists($name, $errors))
+        print '<br /><span class="errortext">'. $errors[$name] . '</span>';
 }
 
 function petition_form_main($data = array(), $errors = array()) {
     global $pet_time, $petition_prefix;
-
-    print 'There are 5 stages to the petition process:';
-    print petition_breadcrumbs(0);
-    print '<a href="/steps">More detailed description of these steps</a>';
-
+?>
+There are 5 stages to the petition process:
+<?=petition_breadcrumbs(0); ?>
+<a href="/steps">More detailed description of these steps</a>
+<?
     foreach (array('content', 'title', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
-    errorlist($errors);
     startform();
     ?>
 <h2><span dir="ltr"><?=_('New petition &#8211; Part 1 of 3 &#8211; Your petition') ?></span></h2>
+<?  errorlist($errors); ?>
 
 <p><strong><?=$petition_prefix ?>...</strong> <br />
     <?
@@ -166,15 +175,15 @@ function petition_form_main($data = array(), $errors = array()) {
 </p>
 <p>Requested duration:
     <?
-    textfield('rawdeadline', $data['rawdeadline'], 15, $errors);
-    ?> <small>(e.g. "2 months")</small>
+    textfield('rawdeadline', $data['rawdeadline'], 15, $errors, '(e.g. "2 months")');
+    ?>
 </p>
 
 <p><?=_('Choose a short name for your petition (6 to 16 letters):') ?>
     <?
     textfield('ref', $data['ref'], 16, $errors);
     ?>
-<br><small><?=htmlspecialchars(_('This gives your petition an easy web address. e.g. http://petitions.number10.gov.uk/badgers')) ?></small>
+<br /><small><?=htmlspecialchars(_('This gives your petition an easy web address. e.g. http://petitions.number10.gov.uk/badgers')) ?></small>
 </p>
 
 <?
@@ -201,7 +210,7 @@ function petition_form_you($data = array(), $errors = array()) {
         );
 
     foreach ($fields as $name => $desc) {
-        printf('<strong>%s:</strong>', htmlspecialchars($desc));
+        printf('<p><strong>%s:</strong>', htmlspecialchars($desc));
 
         if (!array_key_exists($name, $data))
             $data[$name] = '';
@@ -214,18 +223,16 @@ function petition_form_you($data = array(), $errors = array()) {
                 $size = 10;
             else if ($name == 'telephone')
                 $size = 15;
-            textfield($name, $data[$name], $size, $errors);
+            $after = '';
+	    if ($name == 'email2')
+	        $after = '(we need your email so we can get in touch with you when your petition completes, and so on)';
+            textfield($name, $data[$name], $size, $errors, $after);
         }
 
         if ($name == 'org_url')
             print "(optional)";
 
-        if ($name == 'email2')
-            print "<small>"
-                    . htmlspecialchars(_('(we need your email so we can get in touch with you when your petition completes, and so on)'))
-                    . "</small>";
-        
-        print "<br /><br />";
+        print '</p>';
     }
 
     nextprevbuttons('tostepmain', null, 'tosteppreview', null);
@@ -254,7 +261,7 @@ function step_main_error_check($data) {
 
     $dupe = db_getOne('SELECT id FROM petition WHERE ref ILIKE ?', array($data['ref']));
     if ($dupe)
-        $errors['ref'] = _('That short name is already taken!');
+        $errors['ref'] = _('That short name is already taken');
     if (!$data['title'])
         $errors['title'] = _('Please enter a title');
     elseif (strlen($data['title']) > 100)
@@ -292,9 +299,9 @@ function step_you_error_check($data) {
     $vars = array(
         'name' => 'name',
         'address' => 'postal address',
-        'email' => 'email address',
         'postcode' => 'postcode',
         'telephone' => 'phone number',
+        'email' => 'email address',
     );
     foreach ($vars as $var => $p_var) {
     	if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
@@ -310,7 +317,7 @@ function preview_error_check($data) {
 function preview_petition($data, $errors) {
     errorlist($errors);
 ?>
-<h1><span dir="ltr"><?=_('New petition &#8211; Part 3 of 3')?></span></h1>
+<h2><span dir="ltr"><?=_('New petition &#8211; Part 3 of 3')?></span></h2>
 <p>Your petition, with short name <em><?=$data['ref'] ?></em>, will look like this:</p>
 <?
     $partial_petition = new Petition($data);
@@ -334,7 +341,7 @@ longer be valid.")?></p>
 
 <p style="text-align: right;">
 <input type="submit" name="tostepmain" value="Change petition text">
-<br><input type="submit" name="tostepyou" value="Change my contact details">
+<br /><input type="submit" name="tostepyou" value="Change my contact details">
 </p>
 
 <p>When you're happy with your petition, <strong>click "Create"</strong> to
