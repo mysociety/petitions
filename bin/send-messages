@@ -1,0 +1,275 @@
+#!/usr/bin/php -q
+<?php
+/* 
+ * send-messages
+ * Run from cron regularly to send out Government responses to petitions
+ * so forth, and take appropriate action.
+ *
+ * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+ * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
+ *
+ * $Id: send-messages,v 1.1 2006-08-07 10:36:05 matthew Exp $
+ *
+ */
+
+$short_opts = '';
+$long_opts = array('verbose','help');
+
+chdir(dirname($_SERVER['SCRIPT_FILENAME']));
+require_once '../conf/general';
+require_once "../../phplib/phpcli.php";
+require_once '../phplib/fns.php';
+require_once '../phplib/petition.php';
+require_once '../../phplib/db.php';
+require_once '../../phplib/utility.php';
+
+function verbose($str) {
+    global $verbose;
+    if ($verbose) 
+        fwrite(STDERR, "send-messages: $str\n");
+}
+function error($str) {
+    fwrite(STDERR, "send-messages: ERROR: $str\n");
+}
+
+$switches = $options[0];
+$args = $options[1];
+$verbose = 0; 
+foreach ($switches as $switch) {
+    if ($switch[0]=='--verbose') $verbose = 1;
+    if ($switch[0]=='--help') {
+?>
+
+No10 Petitions message sending script. This is responsible for sending
+out government responses to petitions and so forth. It should be run
+periodically from cron.
+
+Usage: send-messages [--verbose]
+
+--help      Display this help message
+--verbose   Display more information
+
+<?
+        exit;
+    }
+}
+
+db_connect();
+send_pending_messages();
+
+# ---
+
+/* send_pending_messages
+ * Dispatch messages to petition signers and creators which have not yet been
+ * sent. */
+function send_pending_messages() {
+    /* Messages to creators. */
+    verbose("sending pending creator messages");
+    
+    $q = db_query('
+                select * from message
+                where sendtocreator
+                    and (select message_id
+                        from message_creator_recipient
+                        where message_id = id
+                            and message_creator_recipient.petition_id
+                                = message.petition_id) is null
+                order by random()');
+
+    while ($msg = db_fetch_array($q)) {
+        /* Grab lock. As ever, this is bloody ugly, because we have to do
+         * something (send an email) which isn't transactional in the
+         * database, so we must do only one thing per transaction and commit
+         * once that transaction has succeeded. */
+        db_query("lock table message_creator_recipient in exclusive mode");
+        $f = db_getOne('
+                    select message_id
+                    from message_creator_recipient
+                    where message_id = ?
+                    for update', $msg['id']);
+
+        if (!is_null($f)) {
+            verbose("message #${msg['id']} sent while waiting for lock; skipping");
+            continue;
+        }
+    
+        $petition = new Petition(intval($msg['petition_id']));
+        $data = $petition->data;
+        verbose("message #${msg['id']} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
+
+        /* XXX we also need a URL containing a token which is sent on
+         * success to the signer. For now just generate this here, but
+         * later on we'll need to move it into message, so that we can send
+         * reminders. */
+	/* XXX Not using creator messages yet */
+        if ($msg['circumstance'] == 'announce-post') {
+            $announce_url = $petition->url_announce();
+            $params = array();
+            $data['url'] = pb_person_make_signon_url(null, $petition->creator_email(), 
+                "GET", $petition->url_announce(), $params);
+        }
+
+        // Case when it is a copy sent to creator
+        if ($msg['sendtosigners'] == 't' && in_array($msg['circumstance'], array('general-announce') )) {
+            $msg['emailbody'] = sprintf(_("[ This is a copy of the message you have just sent to everyone who signed your petition %s ]\n\n%s"), $petition->url_main(), $msg['emailbody']);
+        }
+
+        // Make any extra headers
+        $headers = array();
+
+        // Send with template or raw appropriately
+        $f = false;
+        if (isset($msg['emailtemplatename'])) {
+            verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
+            $f = pb_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $headers);
+        } else {
+            verbose("sending message #${msg['id']} as raw email, subject '${msg['emailsubject']}'");
+            $f = pb_send_email($petition->creator_email(), $msg['emailsubject'], $msg['emailbody'], $headers);
+        }
+
+        // Store success
+        if ($f)
+            db_query('
+                    insert into message_creator_recipient
+                        (message_id, petition_id)
+                    values (?, ?)', array($msg['id'], $petition->id()));
+        else
+            error("failed to send message #${msg['id']} to creator of petition #" . $petition->id() . " (" . $petition->ref() . ")");
+
+        db_commit();
+    }
+
+    /* Messages to signers. We grab message and recipient
+     * info for each signer-message pair which is pending on delivery. */
+    verbose("sending pending signer messages");
+     
+    $q = db_query('
+                select message.*,
+                    signer.id as signer_id,
+                    signer.name as signer_name,
+                    signer.email as signer_email,
+                    extract(epoch from signer.signtime)
+                        - extract(epoch from message.whencreated) as howlongago,
+                    (sendtolatesigners and signer.signtime >= message.whencreated) as islatesigner,
+                    petition.ref,
+                    petition.id as petition_id
+                from message, petition, signer
+                where sendtosigners
+                    and message.petition_id = signer.petition_id
+                    and message.petition_id = petition.id
+                    and (select signer_id
+                        from message_signer_recipient
+                        where message_id = message.id
+                            and signer_id = signer.id) is null
+                order by whencreated desc');
+        /* XXX ugly. For a raw email we will transmit the (possibly large)
+         * body of the mail over the wire once for each row. Should do a
+         * subquery for it and cache the result. */
+
+    $latesigners = array();
+    while ($r = db_fetch_array($q)) {
+        /* Grab a lock. */
+        db_query("lock table message_signer_recipient in exclusive mode");
+        db_getOne('select id from signer where id = ? for update', $r['id']);
+
+        /* Check that the message hasn't already been sent. */
+        $f = db_getOne('
+                    select message_id
+                    from message_signer_recipient
+                    where message_id = ? and signer_id = ?',
+                    array($r['id'], $r['signer_id']));
+
+        if (!is_null($f)) {
+            verbose("message #${r['id']} sent to signer #${r['signer_id']} while waiting for lock; skipping");
+            continue;
+        }
+
+        verbose("message #${r['id']} to be sent to signer #${r['signer_id']}");
+
+        // Make any extra headers
+        $petition = new Petition($r['ref']);
+
+        $headers = array();
+        if ($r['fromaddress'] == 'number10') {
+            // the default in pet_send_email_internal is from Number10
+        } elseif ($r['fromaddress'] == 'creator') {
+            $headers['From'] = $petition->creator_name() . " <" . $petition->creator_email() .">";
+        } else {
+            error("Unknown 'from' in message " . $r['id'] . ": " . $msg['fromaddress']);
+        }
+
+        if (isset($r['emailtemplatename'])) {
+            $data = $petition->data;
+            /* Send email template. */
+            verbose("sending message #${r['id']} using email template '${r['emailtemplatename']}'");
+            $f = pb_send_email_template($r['signer_email'], $r['emailtemplatename'], $data, $headers);
+        } else {
+            /* Send raw mail. */
+            $emailbody = $r['emailbody'];
+
+            /* Check if this is being sent to a late signer */
+            $send_it = true;
+            if ($r['islatesigner'] == 't') {
+                if (is_null($emailbody)) {
+                    err('Late signer emails must have text bodies, not templates');
+                }
+
+                /* If already sent late signer message for this, record that
+                 * we don't want to send this message */
+                if (array_key_exists($r['signer_id'], $latesigners)) {
+                    $send_it = false;
+                }
+
+                /* Add special header */
+                if ($r['howlongago'] > 2 * 86400)
+                    $h = sprintf(_('%d days ago'), intval($r['howlongago'] / 86400));
+                elseif ($r['howlongago'] > 2 * 3600)
+                    $h = sprintf(_('%d hours ago'), intval($r['howlongago'] / 3600));
+                elseif ($r['howlongago'] > 2 * 60)
+                    $h = sprintf(_('%d minutes ago'), intval($r['howlongago'] / 60));
+                else
+                    $h = _('a minute ago');
+                $url = pb_person_make_signon_url(null, $r['signer_email'], "GET", $petition->url_announce_archive(), array());
+		# TRANS: The first %s is one of the time strings above.
+                $emailbody = sprintf(_("[ You signed this petition after this message was sent to the other signers. They will have received copies of this message %s. You can read older messages from the petition creator that you missed here: %s ]"), $h, $url)
+                             . "\n\n" . $emailbody;
+                
+                /* Record that it is a late signer message */
+                $latesigners[$r['signer_id']] = 1;
+            }
+
+            /* Send the message */
+            if ($send_it) {
+                verbose("sending message #${r['id']} as raw email, subject '${r['emailsubject']}'");
+                $f = pb_send_email($r['signer_email'], $r['emailsubject'], $emailbody, $headers);
+            } else {
+                $f = true;
+                verbose("not sending message #${r['id']} to late signer, subject '${r['emailsubject']}'");
+            }
+        }
+
+        if ($f) {
+            if ($r['islatesigner'] == 't')
+                /* Record this as if all the messages were sent, since
+                 * otherwise two concurrent runs of this script might send two
+                 * late signer messages. */
+                db_query('
+                    insert into message_signer_recipient (message_id, signer_id)
+                    select id as message_id, ? as signer_id from message
+                    where message.petition_id = ?
+                        and (select signer_id
+                            from message_signer_recipient
+                            where message_id = message.id
+                                and signer_id = ?) is null
+                        and sendtolatesigners', array($r['signer_id'], $r['petition_id'], $r['signer_id']));
+            else
+                db_query('
+                    insert into message_signer_recipient (message_id, signer_id)
+                    values (?, ?)', array($r['id'], $r['signer_id']));
+        } else
+            error("failed to send message #${r['id']} to signer #${r['signer_id']} of petition #${r['petition_id']}");
+
+        db_commit();
+    }
+}
+

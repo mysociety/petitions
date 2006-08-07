@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.9 2006-08-02 12:39:27 chris Exp $
+ * $Id: admin-pet.php,v 1.10 2006-08-07 10:36:05 matthew Exp $
  * 
  */
 
@@ -44,29 +44,26 @@ class ADMIN_PAGE_PET_SEARCH {
     }
 
     function display() {
-        // Perform actions
-        if (get_http_var('remove_signer_id')) {
-            $signer_id = get_http_var('remove_signer_id');
-            if (ctype_digit($signer_id)) {
-                petition_admin_remove_signer($signer_id);
-            }
-        }
-
+        petition_admin_perform_actions();
         $search = get_http_var('search');
         petition_admin_navigation(array('search'=>$search));
         if ($search) {
-            $q = db_query("select signer.id, ref, signer.name, signer.email
+            $q = db_query("select signer.id, ref, signer.name, signer.email, emailsent
                 from signer, petition
                 where signer.petition_id = petition.id
-                and showname
+                and showname and emailsent in ('sent', 'confirmed')
                 and (signer.name like '%'||?||'%' or signer.email like '%'||?||'%')
                 order by signer.email
             ", array($search, $search));
             $out = '';
             while ($r = db_fetch_array($q)) {
                 $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td>$r[ref]</td>";
-                $out .= '<td><form method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'"><input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" value="Remove signer"></form></td>';
-                $out .= "</tr>";
+                $out .= '<td><form method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
+                if ($r['emailsent'] == 'confirmed')
+                        $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" value="Remove signer">';
+                elseif ($r['emailsent'] == 'sent')
+                        $out .= '<input type="hidden" name="confirm_signer_id" value="' . $r['id'] . '"><input type="submit" value="Confirm signer">';
+                $out .= "</form></td></tr>";
             }
             if ($out) {
                     print "<table cellpadding=3 border=0><tr><th>Email</th><th>Name</th><th>Petition</th><th>Actions</th></tr>";
@@ -78,10 +75,31 @@ class ADMIN_PAGE_PET_SEARCH {
     }
 }
 
-function petition_admin_remove_signer($id) {
-    db_query('UPDATE signer set showname = false where id = ?', $id);
-    db_commit();
-    print '<p><em>That signer has been removed.</em></p>';
+function petition_admin_perform_actions() {
+    $petition_id = null;
+    if (get_http_var('remove_signer_id')) {
+        $signer_id = get_http_var('remove_signer_id');
+        if (ctype_digit($signer_id)) {
+            $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
+            db_query('UPDATE signer set showname = false where id = ?', $signer_id);
+            $p = new Petition($petition_id);
+            $p->log_event('Admin hid signer ' . $signer_id, null);
+            db_commit();
+            print '<p><em>That signer has been removed.</em></p>';
+        }
+    }
+    if (get_http_var('confirm_signer_id')) {
+        $signer_id = get_http_var('confirm_signer_id');
+        if (ctype_digit($signer_id)) {
+            $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
+            db_query("UPDATE signer set emailsent = 'confirmed' where id = ?", $signer_id);
+            $p = new Petition($petition_id);
+            $p->log_event('Admin confirmed signer ' . $signer_id, null);
+            db_commit();
+            print '<p><em>That signer has been confirmed.</em></p>';
+        }
+    }
+    return $petition_id;
 }
 
 function petition_admin_navigation($array = array()) {
@@ -157,7 +175,7 @@ class ADMIN_PAGE_PET_MAIN {
             if ($sort != $s) print '</a>';
             print '</th>';
         }
-        if ($status == 'draft')
+        if ($status == 'draft' || $status == 'finished')
             print '<th>Actions</th>';
         print '</tr>';
         print "\n";
@@ -188,8 +206,10 @@ class ADMIN_PAGE_PET_MAIN {
             SELECT petition.*,
                 date_trunc('second',creationtime) AS creationtime, 
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id) AS signers,
-                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge
+                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
+                message.id AS message_id
             FROM petition
+            LEFT JOIN message ON petition.id = message.petition_id
             WHERE $status_query
             " .  ($order ? ' ORDER BY ' . $order : '') );
         $found = array();
@@ -223,6 +243,14 @@ class ADMIN_PAGE_PET_MAIN {
                 if ($r['status'] == 'resubmitted') {
                     $row .= ' resubmitted';
                 }
+                $row .= '</td>';
+            } elseif ($status == 'finished') {
+                $row .= '<td>';
+                if ($r['message_id']) 
+                    $row .= 'Response sent';
+                else 
+                    $row .= '<form method="post"><input type="hidden" name="petition" value="' . $r['id'] . 
+                        '"><input type="submit" name="respond" value="Write response"></form>';
                 $row .= '</td>';
             }
             $found[] = $row;
@@ -293,11 +321,11 @@ class ADMIN_PAGE_PET_MAIN {
 
         // Signers
         print "<h2>Signers (".$pdata['signers'].")</h2>";
-        $query = 'SELECT signer.name as signname, signer.email as signemail,
-                         date_trunc(\'second\',signtime) AS signtime,
-                         signer.id AS signid 
+        $query = "SELECT signer.name as signname, signer.email as signemail,
+                         date_trunc('second',signtime) AS signtime,
+                         signer.id AS signid, emailsent
                    FROM signer
-                   WHERE showname AND petition_id=?';
+                   WHERE showname AND petition_id=? AND emailsent in ('sent', 'confirmed')";
         if ($sort=='t') $query .= ' ORDER BY signtime DESC';
         else $query .= ' ORDER BY signname DESC';
         if ($list_limit) 
@@ -318,8 +346,12 @@ class ADMIN_PAGE_PET_MAIN {
             $out[$e] .= '<td>'.prettify($r['signtime']).'</td>';
 
             $out[$e] .= '<td>';
-            $out[$e] .= '<form name="removesignerform'.$c.'" method="post" action="'.$this->self_link.'"><input type="hidden" name="remove_signer_id" value="' . $r['signid'] . '"><input type="submit" name="remove_signer" value="Remove signer"></form>';
-            $out[$e] .= '</td>';
+            $out[$e] .= '<form name="removesignerform'.$c.'" method="post" action="'.$this->self_link.'">';
+            if ($r['emailsent'] == 'confirmed')
+                    $out[$e] .= '<input type="hidden" name="remove_signer_id" value="' . $r['signid'] . '"><input type="submit" name="remove_signer" value="Remove signer">';
+            elseif ($r['emailsent'] == 'sent')
+                    $out[$e] .= '<input type="hidden" name="confirm_signer_id" value="' . $r['signid'] . '"><input type="submit" name="confirm_signer" value="Confirm signer">';
+            $out[$e] .= '</form></td>';
         }
         if ($sort == 'e') {
             function sort_by_domain($a, $b) {
@@ -401,7 +433,7 @@ class ADMIN_PAGE_PET_MAIN {
             print "No messages yet.";
         }
 
-        print '<h2>Actions</h2>';
+#        print '<h2>Actions</h2>';
 #        print '<form name="sendannounceform" method="post" action="'.$this->self_link.'"><input type="hidden" name="send_announce_token_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="send_announce_token" value="Send announce URL to creator"></form>';
 
 #print '<form name="removepledgepermanentlyform" method="post" action="'.$this->self_link.'" style="clear:both"><strong>Caution!</strong> This really is forever, you probably don\'t want to do it: <input type="hidden" name="remove_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="remove_pledge" value="Remove pledge permanently"></form>';
@@ -479,7 +511,6 @@ class ADMIN_PAGE_PET_MAIN {
             db_commit();
             err("Should only be able to reject petitions in draft or resubmitted state");
         }
-        return;
         db_commit();
         $to = $p->creator_email();
         $values = array_merge($p->data, array(
@@ -495,29 +526,86 @@ class ADMIN_PAGE_PET_MAIN {
         print '</em></p>';
     }
 
+    function respond($id) {
+        global $q_message_id, $q_submit, $q_message_subject, $q_message_body;
+        global $q_h_message_id, $q_h_message_subject, $q_h_message_body;
+        $p = new Petition($id);
+
+        $status = $p->status();
+        if ($status != 'finished') {
+            $p->log_event("Bad response state", null);
+            db_commit();
+            err("Should only be able to respond to petitions in finished state");
+            return;
+        }
+
+        $email_subject = sprintf("Government response to petition '%s'", $p->ref());
+        importparams(
+            array('message_id', '/^[1-9]\d*$/',      '',     null),
+            array('submit', '//',      '',     null),
+            array('message_subject', '//', '', $email_subject),
+            array('message_body', '//', '', '')
+        );
+        if (is_null($q_message_id))
+            $q_message_id = $q_h_message_id = db_getOne("select nextval('global_seq')");
+        elseif (!is_null(db_getOne('select id from message where id = ?', $q_message_id)))
+            $this->respond_success();
+
+        $n = db_getOne("select id from message where petition_id = ? and circumstance = 'government-response'", $id);
+        if (!is_null($n)) {
+            print '<p><strong>You have already sent a response to this petition!</strong></p>';
+            return;
+        }
+
+        $errors = array();
+        if ($q_submit) {
+            if (strlen($q_message_body) < 50)
+                $errors[] = 'Please enter a longer message.';
+        }
+
+        if ($q_submit && !sizeof($errors)) {
+            $p->log_event("Admin responded to petition", null);
+            /* User mail must be submitted with \n line endings. */
+            $q_message_body = str_replace("\r\n", "\n", $q_message_body);
+            /* Got all the data we need. Just drop the announcement into the database
+             * and let the send-messages script pass it to the signers. */
+            db_query("insert into message
+                    (id, petition_id, circumstance, circumstance_count, fromaddress,
+                    sendtocreator, sendtosigners, sendtolatesigners,
+                    emailsubject, emailbody)
+                values
+                    (?, ?, 'government-response', 0, 'number10', true, true, true, ?, ?)",
+            array(
+                $q_message_id, $p->id(),
+                $q_message_subject, $q_message_body));
+            db_commit();
+            $this->respond_success();
+        } else {
+            if (sizeof($errors))
+                print '<div id="errors"><ul><li>' . 
+                    join('</li><li>' , $errors) . '</li></ul></div>';
+# XXX Next line ?>
+<p>You are responding to the petition '<?=$p->ref() ?>'. <b>Should say contents of petition here</b></p>
+<form accept-charset="utf-8" method="post">
+<input type="hidden" name="respond" value="1"><input type="hidden" name="submit" value="1">
+<input type="hidden" name="petition" value="<?=$id ?>">
+<p><label for="message_subject">Subject:</label> <input name="message_subject" id="message_subject" size="40" value="<?=$q_h_message_subject ?>"></p>
+<p>Response:
+<br><textarea name="message_body" rows="20" cols="72"><?=$q_h_message_body ?></textarea></p>
+<input type="submit" value="Respond to petition">
+</form>
+<?
+        }
+    }
+    function respond_success() {
+        print '<p><em>Your response has been recorded and will be sent out shortly.</em></p>';
+    }
+
     function display() {
         db_connect();
-
         $petition = get_http_var('petition'); # currently ID
-        $petition_id = null;
+        $petition_id = petition_admin_perform_actions();
 
-        // Perform actions
-        if (get_http_var('remove_signer_id')) {
-            $signer_id = get_http_var('remove_signer_id');
-            if (ctype_digit($signer_id)) {
-                $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
-                petition_admin_remove_signer($signer_id);
-            }
-        }
-/*
-        } elseif (get_http_var('send_announce_token')) {
-            $petition_id = get_http_var('send_announce_token_pledge_id');
-            if (ctype_digit($petition_id)) {
-                send_announce_token($petition_id);
-                print p(_('<em>Announcement permission mail sent</em>'));
-            }
-        }
-*/
         if (get_http_var('approve')) {
             $p = new Petition($petition);
             db_getOne("UPDATE petition SET status='live',deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)) WHERE id=?", $petition);
@@ -538,6 +626,9 @@ class ADMIN_PAGE_PET_MAIN {
             } else {
                 $this->reject_form($petition);
             }
+            $petition = null;
+        } elseif (get_http_var('respond')) {
+            $this->respond($petition);
             $petition = null;
         }
 

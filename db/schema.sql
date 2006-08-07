@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.23 2006-08-02 12:51:55 chris Exp $
+-- $Id: schema.sql,v 1.24 2006-08-07 10:36:05 matthew Exp $
 --
 
 -- global_seq
@@ -225,3 +225,52 @@ create function petition_last_change_time(integer)
         return t;
     end;
 ' language 'plpgsql';
+
+create table message (
+    id integer not null primary key default nextval('global_seq'),
+    petition_id integer not null references petition(id),
+    circumstance text not null,
+    circumstance_count int not null default 0,
+    whencreated timestamp not null default ms_current_timestamp(),
+    fromaddress text not null default 'number10'
+        check (fromaddress in ('number10', 'creator')),
+
+    -- who should receive it
+    sendtocreator boolean not null,
+    sendtosigners boolean not null,
+    sendtolatesigners boolean not null,
+    -- content of message
+    emailtemplatename text,
+    emailsubject text, -- LLL
+    emailbody text, -- LLL
+
+    check (
+        -- Raw email message
+        (emailbody is not null and emailsubject is not null
+            and emailtemplatename is null)
+        -- Templated email message
+        or (emailtemplatename is not null
+            and emailsubject is null and emailbody is null)
+    )
+);
+
+create unique index message_petition_id_circumstance_idx
+    on message(petition_id, circumstance, circumstance_count);
+
+-- To whom have messages been sent?
+create table message_creator_recipient (
+    message_id integer not null references message(id),
+    petition_id integer not null references petition(id)
+);
+
+create unique index message_creator_recipient_message_id_petition_id_idx
+    on message_creator_recipient(message_id, petition_id);
+
+create table message_signer_recipient (
+    message_id integer not null references message(id),
+    signer_id integer not null references signer(id)
+);
+
+create unique index message_signer_recipient_message_id_signer_id_idx
+    on message_signer_recipient(message_id, signer_id);
+
