@@ -1,0 +1,44 @@
+Templates for emails sent by the petitions system. As usual, in pseudo-PHP.
+Available substitution variables are:
+
+About the petition:
+
+    title
+        title of the petition
+
+    ref
+        short reference
+
+    content
+        content (the bit after "We the undersigned petition ... to")
+
+    categories
+        list of categories under which the petition was rejected
+
+    reason
+        explanation of reasons for rejection
+
+    creator_name
+        name of the creator of the petition
+
+    creator_email
+        email address of creator of the petition
+
+    comments
+        comments/notes left by petition creator for admins
+
+About a signer:
+
+    user_name
+        name of signer
+
+Other:
+
+    signature
+        signature for bottom of mail
+
+    url
+        url to take further action (depends on circumstance)
+
+
+$Id: README,v 1.1 2006-08-10 18:04:05 chris Exp $
