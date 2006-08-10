@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.13 2006-08-10 17:42:53 chris Exp $
+# $Id: RPC.pm,v 1.14 2006-08-10 18:27:07 chris Exp $
 #
 
 package Petitions::RPC;
@@ -140,13 +140,8 @@ sub confirm_db ($) {
 
     if ($r->{confirm} eq 'p') {
         # never move a petition backwards in status...
-        dbh()->do("
-                update petition set status = 'draft'
-                where id = ? and status = 'unconfirmed'", {},
-                $r->{id});
-    } elsif ($r->{confirm} eq 's') {
         my $n = dbh()->do("
-                update signer set status = 'draft'
+                update petition set status = 'draft'
                 where id = ? and status = 'unconfirmed'", {},
                 $r->{id});
         Petitions::send_message(
@@ -156,6 +151,11 @@ sub confirm_db ($) {
                 'created',
                 'admin-new-petition'
             ) if ($n);
+    } elsif ($r->{confirm} eq 's') {
+        dbh()->do("
+                update signer set emailsent = 'confirmed'
+                where id = ?", {},
+                $r->{id});
     }
 }
 
