@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.18 2006-08-04 00:45:06 chris Exp $
+# $Id: Petitions.pm,v 1.19 2006-08-10 17:37:34 chris Exp $
 #
 
 package Petitions::DB;
@@ -268,6 +268,55 @@ sub pretty_deadline ($;$) {
     return "$day $monthyear";
 }
 
+use constant MSG_ADMIN => 1;
+use constant MSG_CREATOR => 2;
+use constant MSG_SIGNERS => 4;
+use constant MSG_ALL => MSG_ADMIN | MSG_CREATOR | MSG_SIGNERS;
+
+=item send_message ID SENDER RECIPIENTS CIRCUMSTANCE TEMPLATE
+
+Send a message to the RECIPIENTS in respect of the petition with the given ID,
+constructing it from the given email TEMPLATE. RECIPIENTS should be the bitwise
+combination of one or more of MSG_ADMIN, MSG_CREATOR and MSG_SIGNERS. The
+message will appear to come from SENDER, which must be MSG_ADMIN or
+MSG_CREATOR; CIRCUMSTANCE indicates the reason for its sending.
+
+=cut
+sub send_message ($$$$$) {
+    my ($id, $sender, $recipients, $circumstance, $template) = @_;
+
+    croak "ID must be a positive integer"
+        unless (defined($id) && $id =~ /^[1-9]\d*$/);
+    croak "SENDER must be MSG_ADMIN or MSG_CREATOR"
+        unless (defined($sender) && ($sender == MSG_ADMIN || $sender == MSG_CREATOR));
+    croak "RECIPIENTS must be a combination of MSG_ADMIN, MSG_CREATOR and MSG_SIGNERS"
+        unless (defined($recipients) && $recipients =~ /^[1-9]\d*$/
+                    && !($recipients & ~MSG_ALL));
+
+    dbh()->do("
+            insert into message(
+                petition_id,
+                circumstance,
+                circumstance_count,
+                fromaddress,
+                sendtoadmin, sendtocreator, sendtosigners, sendtolatesigners,
+                emailtemplatename
+            ) values (
+                ?,
+                ?,
+                coalesce((select max(circumstance_count)
+                            from message where petition_id = ?
+                                and circumstance = ?), 0) + 1,
+                ?,
+                ?, ?, ?, 'f', -- XXX
+                ?
+            )", {},
+            $petition_id,
+            $circumstance,
+            $sender == MSG_ADMIN ? 'number10' : 'creator',
+            (map { $recipients & $_ } (MSG_ADMIN, MSG_CREATOR, MSG_SIGNERS)),
+            $template);
+}
 
 
 1;
