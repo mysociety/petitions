@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.8 2006-07-20 13:20:05 matthew Exp $
+// $Id: page.php,v 1.9 2006-08-10 12:39:23 matthew Exp $
 
 require_once '../../phplib/person.php';
 
@@ -113,6 +113,52 @@ function page_check_ref($ref) {
     
     page_footer();
     exit();
+}
+
+/* rss_header TITLE DESCRIPTION
+ * Display header for RSS versions of page  
+ */
+function rss_header($title, $description, $params) {
+    $main_page = str_replace('rss/', '', $_SERVER['REQUEST_URI']);
+    header('Content-Type: application/xml; charset=utf-8');
+    print '<?xml version="1.0" encoding="UTF-8"?>';
+?>
+
+<rdf:RDF
+ xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+ xmlns="http://purl.org/rss/1.0/"
+>
+
+<channel rdf:about="<?=$main_page?>">
+<title><?=$title?> - Number 10 E-Petitions</title>
+<link><?=$main_page?></link>
+<description><?=$description?></description>
+
+<?
+}
+
+/* rss_footer ITEMS
+ * Display items and footer for RSS versions of page. The items
+ * is an array of entries. Each entry is an associative array
+ * containing title, link and description
+ */
+function rss_footer($items) {
+?> <items> <rdf:Seq>
+<?  foreach ($items as $item) { ?>
+  <rdf:li rdf:resource="<?=$item['link']?>" />
+<? } ?>
+ </rdf:Seq>
+</items>
+</channel>
+<? foreach ($items as $item) { ?>
+<item rdf:about="<?=$item['link']?>">
+<title><?=$item['title']?></title>
+<link><?=$item['link']?></link>
+<description><?=$item['description']?></description>
+</item>
+<? } ?>
+</rdf:RDF>
+<?
 }
 
 ?>

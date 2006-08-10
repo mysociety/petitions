@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.7 2006-08-07 15:19:26 matthew Exp $
+// $Id: list.php,v 1.8 2006-08-10 12:39:23 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -83,7 +83,7 @@ if ($rss)
 else {
     page_header($heading, array('id'=>'all',
             'rss'=> array(
-#                    $heading => pb_domain_url(array('explicit'=>true, 'path'=>'/rss'.$_SERVER['REQUEST_URI']))
+                    $heading => '/rss' . $_SERVER['REQUEST_URI']
                     ),
     ));
 }
