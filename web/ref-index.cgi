@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.7 2006-08-07 15:19:26 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.8 2006-08-10 12:04:54 chris Exp $';
 
 use strict;
 
@@ -107,8 +107,8 @@ while (!$foad && (my $q = new mySociety::Web())) {
                 ($ce
                     ? (-content_encoding => $ce)
                     : () ),
-                -cache_control => 'max-age=60',
-                -expires => '+1m'),
+                -cache_control => 'max-age=1',
+                -expires => '+1s'),
                 $html;
     $W->exit_if_changed();
 }
