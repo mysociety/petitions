@@ -24,7 +24,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.10 2006-08-04 00:46:39 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.11 2006-08-10 13:38:12 chris Exp $';
 
 use strict;
 
@@ -57,7 +57,7 @@ use constant MAX_SIGNUP_TIME    => 0.1;    # seconds
 
 my $s = new IO::Socket::INET(
                     LocalAddr => '0.0.0.0',
-                    LocalPort => mySociety::Config::get('RPC_SERVER_PORT'),
+                    LocalPort => mySociety::Config::get('PETSIGNUPD_PORT'),
                     Type => SOCK_DGRAM,
                     Proto => 'udp',
                     ReuseAddr => 1,
