@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.16 2006-08-10 14:03:33 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.17 2006-08-10 14:05:17 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -236,7 +236,7 @@ sub new ($$$) {
     my $target = shift;
     my $msgs = shift;
     croak "TARGET must be an IP address" unless ($target =~ /^$RE{net}{IPv4}$/);
-$target = "82.111.230.110"; # XXX
+
     croak "MESSAGES must be a reference to a list of unowned Queue::Message"
         unless (ref($msgs) eq 'ARRAY'
                 && !(grep { ref($_) ne 'Queue::Message' } @$msgs)
