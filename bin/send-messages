@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.1 2006-08-07 10:36:05 matthew Exp $
+ * $Id: send-messages,v 1.2 2006-08-10 16:52:06 chris Exp $
  *
  */
 
@@ -121,10 +121,10 @@ function send_pending_messages() {
         $f = false;
         if (isset($msg['emailtemplatename'])) {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
-            $f = pb_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $headers);
+            $f = pet_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $headers);
         } else {
             verbose("sending message #${msg['id']} as raw email, subject '${msg['emailsubject']}'");
-            $f = pb_send_email($petition->creator_email(), $msg['emailsubject'], $msg['emailbody'], $headers);
+            $f = pet_send_email($petition->creator_email(), $msg['emailsubject'], $msg['emailbody'], $headers);
         }
 
         // Store success
@@ -202,7 +202,7 @@ function send_pending_messages() {
             $data = $petition->data;
             /* Send email template. */
             verbose("sending message #${r['id']} using email template '${r['emailtemplatename']}'");
-            $f = pb_send_email_template($r['signer_email'], $r['emailtemplatename'], $data, $headers);
+            $f = pet_send_email_template($r['signer_email'], $r['emailtemplatename'], $data, $headers);
         } else {
             /* Send raw mail. */
             $emailbody = $r['emailbody'];
@@ -241,7 +241,7 @@ function send_pending_messages() {
             /* Send the message */
             if ($send_it) {
                 verbose("sending message #${r['id']} as raw email, subject '${r['emailsubject']}'");
-                $f = pb_send_email($r['signer_email'], $r['emailsubject'], $emailbody, $headers);
+                $f = pet_send_email($r['signer_email'], $r['emailsubject'], $emailbody, $headers);
             } else {
                 $f = true;
                 verbose("not sending message #${r['id']} to late signer, subject '${r['emailsubject']}'");
