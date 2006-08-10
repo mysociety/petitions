@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.17 2006-08-10 14:05:17 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.18 2006-08-10 14:17:38 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1381,7 +1381,7 @@ sub database_child_process ($) {
                                     where id = ?
                                         and emailsent <> 'confirmed'", {},
                                     $packet->type() == Source::Packet::TYPE_DELIVERED
-                                        ? 'delivered' : 'failed',
+                                        ? 'sent' : 'failed',
                                     $signer_id);
                             $docommit = 1;
                         } else {
