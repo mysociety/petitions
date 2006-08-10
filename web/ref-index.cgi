@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.8 2006-08-10 12:04:54 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.9 2006-08-10 14:17:57 matthew Exp $';
 
 use strict;
 
@@ -65,13 +65,14 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     if ($qp_signed) {
         $html .=
-            $q->div({ -style => 'font-size: 125%; border: 2px solid blue' },    # XXX design
-                    "You're now signed up to this petition! If you'd like to
-                    tell your friends about it, its permanent web address is,",
+            $q->p({ -id =>'success' },
+                    "Thank you, you're now signed up to this petition! If you'd like to
+                    tell your friends about it, its permanent web address is:",
                     $q->br(),
                     $q->strong($q->a({ -href => "/$ref" },
                         ent(mySociety::Config::get('BASE_URL') . "/$ref"
                     ))));
+                    # XXX: *** Send to friend ***
                     
     }
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.10 2006-08-10 13:53:52 chris Exp $
+// $Id: page.php,v 1.11 2006-08-10 14:17:57 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -35,20 +35,6 @@ function page_header($title, $params = array()) {
     $devwarning = join('<br>', $devwarning);
 
     include "../templates/website/head.php";
-
-/*
-    if ($P) {
-        print '<p id="signedon" class="noprint">';
-        print _('Hello, ');
-        if ($P->has_name())
-            print htmlspecialchars($P->name);
-        else 
-            print htmlspecialchars($P->email);
-        print ' <small>(<a href="/logout">';
-        print _('this isn\'t you?  click here');
-        print '</a>)</small></p>';
-    }
-*/
 }
 
 /* page_footer PARAMS

@@ -9,14 +9,14 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.8 2006-08-10 13:59:53 chris Exp $
+ * $Id: pet.php,v 1.9 2006-08-10 14:17:57 matthew Exp $
  * 
  */
 
 // Load configuration file
 require_once "../conf/general";
-// Some early config files - put most config files after language negotiation below
 require_once "../../phplib/error.php";
+require_once "../../phplib/db.php";
 require_once 'page.php';
 require_once 'fns.php';
 
