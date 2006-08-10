@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.21 2006-08-10 15:25:51 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.22 2006-08-10 15:31:20 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1432,7 +1432,7 @@ sub database_child_process ($) {
                             dbh()->do("
                                     update petition set status = ?
                                     where id = ?
-                                        and status 'unconfirmed'", {},
+                                        and status = 'unconfirmed'", {},
                                     $packet->type() == Source::Packet::TYPE_DELIVERED
                                         ? 'draft' : 'failedconfirm',
                                     $petition_id);
