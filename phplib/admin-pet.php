@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.11 2006-08-10 13:57:04 chris Exp $
+ * $Id: admin-pet.php,v 1.12 2006-08-10 17:57:14 chris Exp $
  * 
  */
 
@@ -490,41 +490,42 @@ class ADMIN_PAGE_PET_MAIN {
 </form>
 <?  }
 
+    /* reject_petition ID CATEGORIES REASON
+     * Reject the petition with the given ID because it falls foul of the given
+     * CATEGORIES (bitwise combination of values); REASON is a text explanation
+     * of the rejection. */
     function reject_petition($id, $categories, $reason) {
         $p = new Petition($id);
         $status = $p->status();
         $cats_pretty = $this->prettify_categories($categories, false);
-        $cats_pretty_nl = $this->prettify_categories($categories, true);
         if ($status == 'draft') {
-            db_getOne("UPDATE petition SET status='rejectedonce', rejection_first_categories=?, rejection_first_reason=? WHERE id=?", array($categories, $reason, $id));
+            db_getOne("
+                    UPDATE petition
+                    SET status = 'rejectedonce',
+                        rejection_first_categories = ?,
+                        rejection_first_reason = ?
+                    WHERE id=?", $categories, $reason, $id);
             $p->log_event("Admin rejected petition for the first time. Category $cats_pretty, reason $reason", null);
             $template = 'admin-rejected-once';
-            $post_data = array('data' => base64_encode(serialize($p->data)), 'tostepintro' => 1);
-            $stash = stash_new_request('POST', OPTION_BASE_URL . '/new', $post_data);
-            $url = OPTION_BASE_URL . '/new?stashpost=' . $stash;
+            $circumstance = 'rejected-once';
         } elseif ($status == 'resubmitted') {
-            db_getOne("UPDATE petition SET status='rejected', rejection_second_categories=?, rejection_second_reason=? WHERE id=?", array($categories, $reason, $id));
+            db_getOne("
+                    UPDATE petition
+                    SET status = 'rejected',
+                        rejection_second_categories = ?,
+                        rejection_second_reason = ?
+                    WHERE id = ?", $categories, $reason, $id);
             $p->log_event("Admin rejected petition for the second time. Category $cats_pretty, reason $reason", null);
             $template = 'admin-rejected-again';
-            $url = '';
+            $circumstance = 'rejected-again';
         } else {
             $p->log_event("Bad rejection", null);
             db_commit();
             err("Should only be able to reject petitions in draft or resubmitted state");
         }
+        pet_send_message($id, MSG_ADMIN, MSG_CREATOR, $circumstance, $template);
         db_commit();
-        $to = $p->creator_email();
-        $values = array_merge($p->data, array(
-            'url' => $url,
-            'categories' => $cats_pretty_nl,
-            'reason' => $reason
-        ));
-        print '<p><em>That petition has been rejected.';
-        if (pet_send_email_template($to, $template, $values))
-            print ' Message sent to creator.';
-        else
-            print ' Email to creator failed!';
-        print '</em></p>';
+        print '<p><em>That petition has been rejected.</em></p>';
     }
 
     function respond($id) {
