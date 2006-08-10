@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.2 2006-08-10 16:52:06 chris Exp $
+ * $Id: send-messages,v 1.3 2006-08-10 17:07:02 chris Exp $
  *
  */
 
@@ -63,6 +63,55 @@ send_pending_messages();
  * Dispatch messages to petition signers and creators which have not yet been
  * sent. */
 function send_pending_messages() {
+
+    /* Messages to the administrators. */
+    verbose("sending pending admin messages");
+    
+    $q = db_query('
+                select * from message
+                where sendtoadmin
+                    and (select message_id
+                        from message_admin_recipient
+                        where message_id = id) is null
+                order by random()');
+
+    while ($msg = db_fetch_array($q)) {
+        db_query("lock table message_admin_recipient in exclusive mode");
+        $f = db_getOne('
+                    select message_id
+                    from message_admin_recipient
+                    where message_id = ?
+                    for update', $msg['id']);
+        
+        if (!is_null($f)) {
+            verbose("message #${msg['id']} sent while waiting for lock; skipping");
+            continue;
+        }
+
+        $petition = new Petition(intval($msg['petition_id']));
+        $data = $petition->data;
+        $data['url'] = OPTION_ADMIN_URL . '?page=pet&o=draft';  /* ??? */
+        verbose("message #${msg['id'} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
+        
+        $f = false;
+        if (isset($msg['emailtemplatename'])) {
+            verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
+            $f = pet_send_email_template(OPTION_CONTACT_EMAIL, $msg['emailtemplatename'], $data, $headers);
+        } else {
+            verbose("sending message #${msg['id']} as raw email, subject '${msg['emailsubject']}'");
+            $f = pet_send_email(OPTION_CONTACT_EMAIL, $msg['emailsubject'], $msg['emailbody'], $headers);
+        }
+
+        if ($f)
+            db_query('
+                    insert into message_admin_recipient (message_id)
+                    values (?, ?)', $msg['id']);
+        else
+            error("failed to send message #${msg['id']} to admins");
+
+        db_commit();
+    }
+
     /* Messages to creators. */
     verbose("sending pending creator messages");
     
@@ -92,7 +141,7 @@ function send_pending_messages() {
             verbose("message #${msg['id']} sent while waiting for lock; skipping");
             continue;
         }
-    
+
         $petition = new Petition(intval($msg['petition_id']));
         $data = $petition->data;
         verbose("message #${msg['id']} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
