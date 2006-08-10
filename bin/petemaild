@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.20 2006-08-10 15:24:42 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.21 2006-08-10 15:25:51 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1305,7 +1305,7 @@ sub message_id () {
     return sprintf('<%08x.%08x@%s>',
                 int(rand(0xffffffff)),
                 time(),
-                mySociety::Config::get('EMAIL_DOMAIN');
+                mySociety::Config::get('EMAIL_DOMAIN'));
 }
 
 # make_signer_email SIGNER PETITION
@@ -1330,7 +1330,7 @@ sub make_signer_email ($$) {
     $h{signature} = '-- the Number 10 petitions team';
 
     return mySociety::Email::construct_email({
-                _template_ => $template,
+                _template_ => $sig_template,
                 _parameters_ => \%h,
 
                 To => [[$signer->{email}, $signer->{name}]],
@@ -1360,7 +1360,7 @@ sub make_petition_email ($) {
     $h{signature} = '-- the Number 10 petitions team';
 
     return mySociety::Email::construct_email ({
-                _template_ => $template,
+                _template_ => $pet_template,
                 _parameters_ => \%h,
 
                 To => [[$petition->{email}, $petition->{name}]],
@@ -1487,7 +1487,7 @@ sub database_child_process ($) {
 
         # ... or any new petitions.
         $st_p->execute($fullscan ? 0 : $max_petition_id);
-        while (my $p = $sp_p->fetchrow_hashref()) {
+        while (my $p = $st_p->fetchrow_hashref()) {
             $id = "p-$p->{id}";
             push(@queue,
                     new Source::Packet(
