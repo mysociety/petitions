@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.18 2006-08-10 14:17:38 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.19 2006-08-10 15:00:18 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1300,7 +1300,8 @@ sub do_ipc ($$$$$;$$) {
 #
 
 # make_signer_email SIGNER PETITION
-# Make a confirmation email for SIGNER signing PETITION. Returns a MIME::Entity.
+# Make a confirmation email for SIGNER signing PETITION. Returns on-the-wire
+# text of the email.
 sub make_signer_email ($$) {
     my ($signer, $petition) = @_;
     
