@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.15 2006-08-04 00:30:00 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.16 2006-08-10 14:03:33 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1330,7 +1330,7 @@ sub make_signer_email ($$) {
                     sprintf('<%s@%s>',
                         unpack('h*', mySociety::Util::random_bytes(5)),
                         mySociety::Config::get('EMAIL_DOMAIN'))
-            })->stringify();
+            });
 }
 
 # database_child_process SOCKET
