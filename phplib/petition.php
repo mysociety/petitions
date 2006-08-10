@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.10 2006-08-10 13:56:41 chris Exp $
+ * $Id: petition.php,v 1.11 2006-08-10 14:01:00 chris Exp $
  * 
  */
 
@@ -153,11 +153,6 @@ function petition_sign_box() {
     $email2 = get_http_var('email2');
     $name = get_http_var('name', true);
 
-    $P = person_if_signed_on();
-    if (!is_null($P)) {
-        if (!$email) $email = $P->email();
-        if (!$name) $name = $P->name_or_blank();
-    }
 ?>
 <form accept-charset="utf-8" action="/<?=htmlspecialchars(get_http_var('ref')) ?>/sign" method="post">
 <input type="hidden" name="add_signatory" value="1">
