@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.19 2006-08-10 15:00:18 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.20 2006-08-10 15:24:42 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1299,19 +1299,27 @@ sub do_ipc ($$$$$;$$) {
 # Child process talking to the database.
 #
 
+# message_id
+# Return a value suitable for use as a Message-ID: in an email.
+sub message_id () {
+    return sprintf('<%08x.%08x@%s>',
+                int(rand(0xffffffff)),
+                time(),
+                mySociety::Config::get('EMAIL_DOMAIN');
+}
+
 # make_signer_email SIGNER PETITION
 # Make a confirmation email for SIGNER signing PETITION. Returns on-the-wire
 # text of the email.
 sub make_signer_email ($$) {
     my ($signer, $petition) = @_;
     
-    our $template;
-    $template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/signature-confirm");
+    our $sig_template;
+    $sig_template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/signature-confirm");
 
     my %h = ( );
     $h{title} = $petition->{title};
     $h{user_name} = $signer->{name};
-
 
     $h{url} = mySociety::Config::get('BASE_URL')
                 . "/$petition->{ref}/"
@@ -1327,10 +1335,37 @@ sub make_signer_email ($$) {
 
                 To => [[$signer->{email}, $signer->{name}]],
                 From => mySociety::Config::get('CONTACT_EMAIL'),
-                'Message-ID' =>
-                    sprintf('<%s@%s>',
-                        unpack('h*', mySociety::Util::random_bytes(5)),
-                        mySociety::Config::get('EMAIL_DOMAIN'))
+                'Message-ID' => message_id()
+            });
+}
+
+# make_petition_email PETITION
+# Make a confirmation mail for the creation of PETITION. Returns on-the-wire
+# text of the email.
+sub make_petition_email ($) {
+    my $petition = shift;
+
+    our $pet_template;
+    $pet_template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/petition-confirm");
+
+    my %h = ( );
+    $h{title} = $petition->{title};
+    $h{name} = $petition->{name};
+
+    $h{url} = mySociety::Config::get('BASE_URL')
+                . "/$petition->{ref}/"
+                . Petitions::Token::make('p', $petition->{id});
+    $h{content} = $petition->{content};
+
+    $h{signature} = '-- the Number 10 petitions team';
+
+    return mySociety::Email::construct_email ({
+                _template_ => $template,
+                _parameters_ => \%h,
+
+                To => [[$petition->{email}, $petition->{name}]],
+                From => mySociety::Config::get('CONTACT_EMAIL'),
+                'Message-ID' => message_id()
             });
 }
 
@@ -1342,16 +1377,23 @@ sub database_child_process ($) {
     # Queue of messages to send.
     my @queue = ( );
     
-    my $st = dbh()->prepare("
+    my $st_s = dbh()->prepare("
                     select *
                     from signer where emailsent = 'pending'
                         and id > ?
                     order by petition_id --, random()
                     limit 100");
 
+    my $st_p = dbh()->prepare("
+                    select *
+                    from petition where status = 'unconfirmed'
+                        and id > ?
+                    limit 100");
+
     my $p;
     my $petition_id;
     my $max_signer_id = 0;
+    my $max_petition_id = 0;
     my $last_full_scan = 0;
     my $nmessages = 1;
     
@@ -1385,6 +1427,16 @@ sub database_child_process ($) {
                                         ? 'sent' : 'failed',
                                     $signer_id);
                             $docommit = 1;
+                        } elsif ($id =~ /^p-([1-9]\d*)$/) {
+                            my $petition_id = $1;
+                            dbh()->do("
+                                    update petition set status = ?
+                                    where id = ?
+                                        and status 'unconfirmed'", {},
+                                    $packet->type() == Source::Packet::TYPE_DELIVERED
+                                        ? 'draft' : 'failedconfirm',
+                                    $petition_id);
+                            $docommit = 1;
                         } else {
                             Log::print('err', "unknown ID $id sent to child process");
                         }
@@ -1400,16 +1452,15 @@ sub database_child_process ($) {
             dbh()->rollback();  # ensure we see new rows
         }
 
-        # 
-        # See if there are any new signers.
-        #
+        my $fullscan = 0;
         if ($last_full_scan < time() - 5) {
-            $st->execute(0);
-        } else {
-            $st->execute($max_signer_id);
+            $fullscan = 1;
         }
+
+        # See if there are any new signers...
+        $st_s->execute($fullscan ? 0 : $max_signer_id);
         $nmessages = 0;
-        while (my $s = $st->fetchrow_hashref()) {
+        while (my $s = $st_s->fetchrow_hashref()) {
             # Grab petition info if we don't have it.
             $p = Petitions::DB::get($s->{petition_id})
                 if (!defined($p) || $p->{id} != $s->{petition_id});
@@ -1417,23 +1468,43 @@ sub database_child_process ($) {
             # XXX decide what we're doing about return-path. Possibly we should
             # VERP it.
 
+            my $id = "s-$s->{id}";
             push(@queue,
                     new Source::Packet(
                         Source::Packet::TYPE_NEWMESSAGE,
                         new Queue::Message(
-                            "s-$s->{id}",       # message ID
+                            $id,
                             mySociety::Config::get('CONTACT_EMAIL'),
                             $s->{email},
                             make_signer_email($s, $p)
                         )))
                 unless (exists($already{"s-$s->{id}"}));
-            $already{"s-$s->{id}"} = 1;
+            $already{$id} = 1;
             ++$nmessages;
 
             $max_signer_id = $s->{id} if ($s->{id} > $max_signer_id);
         }
-    } while (!$quit);
 
+        # ... or any new petitions.
+        $st_p->execute($fullscan ? 0 : $max_petition_id);
+        while (my $p = $sp_p->fetchrow_hashref()) {
+            $id = "p-$p->{id}";
+            push(@queue,
+                    new Source::Packet(
+                        Source::Packet::TYPE_NEWMESSAGE,
+                        new Queue::Message(
+                            $id,
+                            mySociety::Config::get('CONTACT_EMAIL'),
+                            $p->{email},
+                            make_petition_email($p)
+                        )))
+                unless (exists($already{$id}));
+            $already{$id} = 1;
+            ++$nmessages;
+
+            $max_petition_id = $p->{id} if ($p->{id} > $max_petition_id);
+        }
+    } while (!$quit);
 }
 
 #
