@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.7 2006-08-10 13:58:41 chris Exp $
+ * $Id: pet.php,v 1.8 2006-08-10 13:59:53 chris Exp $
  * 
  */
 
@@ -17,7 +17,6 @@
 require_once "../conf/general";
 // Some early config files - put most config files after language negotiation below
 require_once "../../phplib/error.php";
-require_once '../../phplib/stash.php';
 require_once 'page.php';
 require_once 'fns.php';
 
@@ -57,9 +56,6 @@ function pet_handle_error($num, $message, $file, $line, $context) {
     }
 }
 err_set_handler_display('pet_handle_error');
-
-/* POST redirects */
-stash_check_for_post_redirect();
 
 /* Date which petition application believes it is */
 $pet_today = db_getOne('select ms_current_date()');
