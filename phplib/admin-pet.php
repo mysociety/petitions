@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.10 2006-08-07 10:36:05 matthew Exp $
+ * $Id: admin-pet.php,v 1.11 2006-08-10 13:57:04 chris Exp $
  * 
  */
 
@@ -447,6 +447,7 @@ class ADMIN_PAGE_PET_MAIN {
     }
 */
 
+    /* Must keep this synchronised with constraint in schema. */
     var $categories = array(
         1 => 'Party political material',
         2 => 'False or defamatory statements',
