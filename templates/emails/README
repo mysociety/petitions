@@ -38,7 +38,7 @@ Other:
         signature for bottom of mail
 
     url
-        url to take further action (depends on circumstance)
+        URL to take further action (depends on circumstance)
 
 
-$Id: README,v 1.1 2006-08-10 18:04:05 chris Exp $
+$Id: README,v 1.2 2006-08-11 15:29:53 chris Exp $
