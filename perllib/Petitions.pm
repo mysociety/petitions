@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.22 2006-08-11 17:56:32 chris Exp $
+# $Id: Petitions.pm,v 1.23 2006-08-11 18:03:54 chris Exp $
 #
 
 package Petitions::DB;
@@ -130,7 +130,7 @@ package Petitions::Token;
 
 use strict;
 
-use Crypt::IDEA;
+use Crypt::Blowfish;
 use Digest::HMAC_SHA1 qw(hmac_sha1);
 use Digest::SHA1 qw(sha1);
 use MIME::Base64;
@@ -192,7 +192,7 @@ sub make ($$) {
     my $hmac = hmac_sha1($plaintext, Petitions::DB::secret());
     
         # XXX is this safe or ought we to have two different secrets?
-    our $crypt ||= new IDEA(substr(sha1(Petitions::DB::secret()), 0, IDEA::keysize()));
+    our $crypt ||= new Crypt::Blowfish(substr(sha1(Petitions::DB::secret()), 0, 8));
     my $ciphertext = $crypt->encrypt($plaintext);
 
     # 8 bytes of ciphertext plus 7 bytes of HMAC gives 15 bytes, 20 chars
@@ -213,11 +213,11 @@ sub check ($) {
 
     my $data = decode_base64ish($token);
     return () unless ($data);
-    
+
     my $ciphertext = substr($data, 0, 8);
     my $hmac7 = substr($data, 8, 7);
     
-    our $crypt ||= new IDEA(substr(sha1(Petitions::DB::secret()), 0, IDEA::keysize()));
+    our $crypt ||= new Crypt::Blowfish(substr(sha1(Petitions::DB::secret()), 0, 8));
     my $plaintext = $crypt->decrypt($ciphertext);
     my $hmac = hmac_sha1($plaintext, Petitions::DB::secret());
 
