@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.3 2006-08-10 17:28:07 chris Exp $
+// $Id: fns.php,v 1.4 2006-08-11 15:30:05 chris Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
@@ -22,7 +22,7 @@ define(MSG_ALL, MSG_ADMIN | MSG_CREATOR | MSG_SIGNERS);
  * MSG_SIGNERS. The message will appear to come from SENDER, which must be
  * MSG_ADMIN or MSG_CREATOR; CIRCUMSTANCE indicates the reason for its
  * sending. */
-function pet_send_message($petition_id, $sender, $recips, $template) {
+function pet_send_message($petition_id, $sender, $recips, $circumstance, $template) {
     if(!is_int($petition_id))
         err("ID must be integer in pet_send_message");
 
