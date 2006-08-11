@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.21 2006-08-11 15:57:53 chris Exp $
+# $Id: Petitions.pm,v 1.22 2006-08-11 17:56:32 chris Exp $
 #
 
 package Petitions::DB;
@@ -329,7 +329,7 @@ sub send_message ($$$$$) {
                 ?, ?, ?, 'f', -- XXX
                 ?
             )", {},
-            $petition_id,
+            $id,
             $circumstance,
             $sender == MSG_ADMIN ? 'number10' : 'creator',
             (map { $recipients & $_ } (MSG_ADMIN, MSG_CREATOR, MSG_SIGNERS)),
