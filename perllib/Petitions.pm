@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.19 2006-08-10 17:37:34 chris Exp $
+# $Id: Petitions.pm,v 1.20 2006-08-11 15:29:39 chris Exp $
 #
 
 package Petitions::DB;
@@ -161,11 +161,16 @@ use constant TOKEN_LENGTH_B64 => 20;
 
 =item make WHAT ID
 
+Make a token identifying the given ID (of a petition or signer). WHAT indicates
+what is identified and the context in which it is identified; 'p' means a
+petition for confirmation; 's' means a signer for confirmation; and 'e' means a
+petition for editing after a first rejection.
+
 =cut
 sub make ($$) {
     my ($what, $id) = @_;
-    croak("WHAT must be 'p' or 's'")
-        unless ($what =~ /^[ps]/);
+    croak("WHAT must be 'p', 's' or 'e'")
+        unless ($what =~ /^[pse]/);
     $what = substr($what, 0, 1);
     croak("ID must be a positive integer")
         unless (defined($id) && $id =~ /^[1-9]\d*$/);
@@ -177,9 +182,11 @@ sub make ($$) {
     # Top two bits of first byte of salt encode WHAT.
     # 00        p
     # 01        s
-    # 1x        reserved
+    # 10        e
+    # 11        reserved
     $salt[0] &= 0x3f;
     $salt[0] |= 0x40 if ($what eq 's');
+    $salt[0] |= 0x80 if ($what eq 'e');
     
     my $plaintext = pack('C4N', @salt, $id);
     my $hmac = hmac_sha1($plaintext, Petitions::DB::secret());
@@ -194,6 +201,9 @@ sub make ($$) {
 }
 
 =item check TOKEN
+
+Check the validity of a TOKEN. Returns in list context the WHAT and ID that
+were passed to make; or, if TOKEN is invalid, the empty list.
 
 =cut
 sub check ($) {
@@ -218,8 +228,16 @@ sub check ($) {
     my (@salt) = unpack('C4N', $plaintext);
     my $id = pop(@salt);
 
-    return () if ($salt[0] & 0x80);     # reserved for future
-    my $what = ($salt[0] & 0x40) ? 's' : 'p';
+    return () if (($salt[0] & 0xc0) == 0xc0);   # reserved for future
+
+    my $what;
+    if ($salt[0] & 0x40) {
+        $what = 's';
+    } elsif ($salt[0] & 0x80) {
+        $what = 'e';
+    } else {
+        $what = 'p';
+    }
 
     return ($what, $id);
 }
