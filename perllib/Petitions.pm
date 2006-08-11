@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.20 2006-08-11 15:29:39 chris Exp $
+# $Id: Petitions.pm,v 1.21 2006-08-11 15:57:53 chris Exp $
 #
 
 package Petitions::DB;
@@ -197,7 +197,7 @@ sub make ($$) {
 
     # 8 bytes of ciphertext plus 7 bytes of HMAC gives 15 bytes, 20 chars
     # base64.
-    my $token = encode_base64ish($ciphertext . substr($hmac, 0, 7));
+    return encode_base64ish($ciphertext . substr($hmac, 0, 7));
 }
 
 =item check TOKEN
