@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.24 2006-08-14 13:17:37 chris Exp $
+# $Id: Petitions.pm,v 1.25 2006-08-14 14:06:15 chris Exp $
 #
 
 package Petitions::DB;
@@ -178,7 +178,7 @@ sub make ($$) {
     warn "ID '$id' is quite large; the token format may have to be expanded soon"
         if ($id > 0x10000000);
 
-    my @salt = unpack('C4', random_bytes(4, 1));
+    my @salt = unpack('C4', random_bytes(4));
     # Top two bits of first byte of salt encode WHAT.
     # 00        p
     # 01        s
