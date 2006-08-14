@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.11 2006-08-10 14:01:00 chris Exp $
+ * $Id: petition.php,v 1.12 2006-08-14 12:26:04 matthew Exp $
  * 
  */
 
@@ -28,7 +28,7 @@ class Petition {
                                (SELECT count(*) FROM signer WHERE showname and 
                                     signer.petition_id = petition.id) AS signers,
                                email,
-                               content, title
+                               content, detail
                            FROM petition";
         if (gettype($ref) == "integer" or (gettype($ref) == "string" and preg_match('/^[1-9]\d*$/', $ref))) {
             $q = db_query("$main_query_part WHERE petition.id = ?", array($ref));
@@ -90,10 +90,13 @@ class Petition {
         }
         return $sentence;
     }
+    function h_content() {
+        return htmlspecialchars($this->data['content']);
+    }
 
     // Basic data access for HTML display
-    function title() { return $this->data['title']; }
-    function h_title() { return htmlspecialchars($this->data['title']); }
+    function detail() { return $this->data['detail']; }
+    function h_detail() { return htmlspecialchars($this->data['detail']); }
     function h_name() { return htmlspecialchars($this->data['name']); }
     function h_pretty_deadline() { return prettify(htmlspecialchars($this->data['deadline'])); }
 
@@ -135,11 +138,11 @@ class Petition {
 
     function rss_entry() {
         return array(
-          'title' => htmlspecialchars(trim_characters($this->title(), 0, 80)),
-          'link' => $this->url_main(),
-          'description' => "'" . 
+          'title' => "'" . 
                 htmlspecialchars($this->sentence(array('firstperson'=>true, 'html'=>false)))
                 . "' -- " . $this->h_name(),
+          'description' => htmlspecialchars(trim_characters($this->detail(), 0, 80)),
+          'link' => $this->url_main(),
           'creationtime' => $this->data['creationtime']
         );
     }

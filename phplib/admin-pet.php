@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.12 2006-08-10 17:57:14 chris Exp $
+ * $Id: admin-pet.php,v 1.13 2006-08-14 12:26:04 matthew Exp $
  * 
  */
 
@@ -187,7 +187,7 @@ class ADMIN_PAGE_PET_MAIN {
         if (!$sort || preg_match('/[^radecsz]/', $sort)) $sort = 'c';
         $order = '';
         if ($sort=='r') $order = 'ref';
-        elseif ($sort=='a') $order = 'title';
+        elseif ($sort=='a') $order = 'content';
         elseif ($sort=='d') $order = 'deadline desc';
         elseif ($sort=='e') $order = 'email';
         elseif ($sort=='c') $order = 'petition.creationtime desc';
@@ -225,7 +225,7 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '</a>';
             $row .= '<br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
             $row .= '</td>';
-            $row .= '<td>'.trim_characters(htmlspecialchars($r['title']),0,100).'</td>';
+            $row .= '<td>'.trim_characters(htmlspecialchars($r['content']),0,100).'</td>';
             $row .= '<td>'.htmlspecialchars($r['signers']) . '</td>';
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
@@ -316,8 +316,8 @@ class ADMIN_PAGE_PET_MAIN {
         print "<br>Created: " . prettify($pdata['creationtime']);
         print "<br>Deadline: <b>" . prettify($pdata['deadline']) . "</b> (" . htmlspecialchars($pdata['rawdeadline']) . ')';
         print '<br>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
-        print '<br>Title: <b>' . htmlspecialchars($pdata['title']) . '</b>';
-        print '<p>Content of petition: ' . htmlspecialchars($pdata['content']);
+        print '<br>Title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
+        print '<p>Details of petition: ' . htmlspecialchars($pdata['detail']);
 
         // Signers
         print "<h2>Signers (".$pdata['signers'].")</h2>";
@@ -417,8 +417,6 @@ class ADMIN_PAGE_PET_MAIN {
             print "<br>has been queued to evel for ";
             print "<strong>$got_creator_count creators</strong>";
             print " and <strong>$got_signer_count signers</strong>";
-            if ($r['sms'])
-                print "<br><strong>sms content:</strong> " . $r['sms'];
             if ($r['emailtemplatename'])
                 print "<br><strong>email template:</strong> " . $r['emailtemplatename'];
             if ($r['emailsubject'])

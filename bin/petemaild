@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.23 2006-08-10 18:07:01 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.24 2006-08-14 12:26:03 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1318,7 +1318,8 @@ sub make_signer_email ($$) {
     $sig_template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/signature-confirm");
 
     my %h = ( );
-    $h{title} = $petition->{title};
+    $h{detail} = $petition->{detail};
+    $h{content} = $petition->{content};
     $h{user_name} = $signer->{name};
 
     $h{url} = mySociety::Config::get('BASE_URL')
@@ -1349,7 +1350,7 @@ sub make_petition_email ($) {
     $pet_template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/petition-confirm");
 
     my %h = ( );
-    $h{title} = $petition->{title};
+    $h{detail} = $petition->{detail};
     $h{creator_name} = $petition->{name};
 
     $h{url} = mySociety::Config::get('BASE_URL')

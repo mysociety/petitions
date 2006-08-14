@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.8 2006-08-10 12:39:23 matthew Exp $
+// $Id: list.php,v 1.9 2006-08-14 12:26:04 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -17,7 +17,7 @@ define('PAGE_SIZE', 50);
 
 $err = importparams(
             array('offset', '/^(0|[1-9]\d*)$/', '', 0),
-            array('sort', '/^(title|deadline|name|ref|creationtime)\/?$/', '', 'default'),
+            array('sort', '/^(content|deadline|name|ref|creationtime)\/?$/', '', 'default'),
             array('type', '/^[a-z_]*$/', '', 'open')
         );
 if ($err) {
@@ -162,7 +162,7 @@ if ($ntotal > 0) {
             $rss_items[] = $petition->rss_entry();
         else {
 	    print '<tr><td><a href="/' . $petition->ref() . '">';
-	    print $petition->h_title() . '</a></td>';
+	    print $petition->h_content() . '</a></td>';
 	    print '<td>' . $petition->h_name() . '</td>';
 	    print '<td>' . $petition->h_pretty_deadline() . '</td>';
 	    print '<td>' . $petition->signers() . '</td>';

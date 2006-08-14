@@ -6,7 +6,7 @@
 # Email: chris@ex-parrot.com; WWW: http://www.ex-parrot.com/~chris/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.5 2006-07-10 17:28:27 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: speedtest,v 1.6 2006-08-14 12:26:03 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -52,7 +52,7 @@ sub create_petition () {
     dbh()->do("
         insert into petition (
             id, ref,
-            title,
+            detail,
             content,
             deadline,
             rawdeadline,
@@ -72,7 +72,7 @@ sub create_petition () {
             ms_current_timestamp(), 'live', ms_current_timestamp()
         )", {},
         $petition_id, 'TestPetition',
-        'Test petition',
+        'More details on the test petition',
         'benchmark the petition system to find out how many servers we need',
         $creator_id, 'Test Testy McTest', 'Test Organisation',
         '1 Test Street, Test Town, Testshire', 'ZZ9 9ZZ',

@@ -15,10 +15,10 @@ Your petition will now appear in the list of rejected petitions.
 
 Your petition reads:
 
-<?=$values['title']?>
-
 We the undersigned petition the Prime Minister to:
 '<?=$values['content']?>'
+
+<?=$values['detail']?>
 
 <?=$values['signature']?>
 

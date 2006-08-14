@@ -5,15 +5,15 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.4 2006-08-11 15:30:05 chris Exp $
+// $Id: fns.php,v 1.5 2006-08-14 12:26:04 matthew Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
 
-define(MSG_ADMIN, 1);
-define(MSG_CREATOR, 2);
-define(MSG_SIGNERS, 4);
-define(MSG_ALL, MSG_ADMIN | MSG_CREATOR | MSG_SIGNERS);
+define('MSG_ADMIN', 1);
+define('MSG_CREATOR', 2);
+define('MSG_SIGNERS', 4);
+define('MSG_ALL', MSG_ADMIN | MSG_CREATOR | MSG_SIGNERS);
 
 /* pet_send_message ID SENDER RECIPIENTS CIRCUMSTANCE TEMPLATE
  * Send a message to the RECIPIENTS in respect of the petition with the given

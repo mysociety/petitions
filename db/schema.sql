@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.26 2006-08-10 16:49:59 chris Exp $
+-- $Id: schema.sql,v 1.27 2006-08-14 12:26:03 matthew Exp $
 --
 
 -- global_seq
@@ -61,10 +61,10 @@ create table petition (
     -- short name of petition for URLs
     ref text not null,
 
-    -- summary of petition
-    title text not null, -- LLL
     -- "We the undersigned petition the Prime Minister to..."
     content text not null default '', -- LLL
+    -- more details of petition
+    detail text not null, -- LLL
     -- target deadline, midnight at end of this day
     deadline date not null,
     -- actual text entered, just in case parse_date() goes wrong

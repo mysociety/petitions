@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.9 2006-08-07 15:19:26 matthew Exp $
+// $Id: index.php,v 1.10 2006-08-14 12:26:04 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -40,13 +40,13 @@ and to deliver your petition directly to Downing Street.</p>
 <p>We the undersigned petition the Prime Minister to&hellip;</p>
 <ul>
 <?
-$recent = db_getAll("select ref, title from petition
+$recent = db_getAll("select ref, content from petition
     where status = 'live'
     order by creationtime desc limit 5");
 # XXX: Creation time is order of creation, not order of going live...
 foreach ($recent as $petition) {
     print '<li><a href="/' . $petition['ref'] . '">';
-    print htmlspecialchars($petition['title']) . '</a></li>';
+    print htmlspecialchars($petition['content']) . '</a></li>';
 }
 ?>
 </ul>
@@ -58,7 +58,7 @@ foreach ($recent as $petition) {
 <ul>
 <?
 $recent = db_getAll("
-    select ref, title,
+    select ref, content,
         (select count(id) from signer
             where showname
             and petition_id = petition.id
@@ -69,7 +69,7 @@ $recent = db_getAll("
 # XXX: Creation time is order of creation, not order of going live...
 foreach ($recent as $petition) {
     print '<li><a href="/' . $petition['ref'] . '">';
-    print htmlspecialchars($petition['title']) . '</a> <small>(';
+    print htmlspecialchars($petition['content']) . '</a> <small>(';
     print $petition['signers'] . ' signature';
     print ($petition['signers'] == 1 ? '' : 's') . ')</small></li>';
 }

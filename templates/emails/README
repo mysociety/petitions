@@ -3,14 +3,14 @@ Available substitution variables are:
 
 About the petition:
 
-    title
-        title of the petition
-
     ref
         short reference
 
     content
         content (the bit after "We the undersigned petition ... to")
+
+    detail
+        More details of the petition
 
     categories
         list of categories under which the petition was rejected
@@ -41,4 +41,4 @@ Other:
         URL to take further action (depends on circumstance)
 
 
-$Id: README,v 1.2 2006-08-11 15:29:53 chris Exp $
+$Id: README,v 1.3 2006-08-14 12:26:04 matthew Exp $

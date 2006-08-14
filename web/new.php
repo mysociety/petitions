@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.21 2006-08-14 12:18:27 chris Exp $
+// $Id: new.php,v 1.22 2006-08-14 12:26:04 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -197,7 +197,7 @@ There are 5 stages to the petition process:
 <?=petition_breadcrumbs(0); ?>
 <a href="/steps">More detailed description of these steps</a>
 <?
-    foreach (array('content', 'title', 'rawdeadline', 'ref') as $x)
+    foreach (array('content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
     startform();
@@ -207,11 +207,11 @@ There are 5 stages to the petition process:
 
 <p><strong><?=$petition_prefix ?>...</strong> <br />
     <?
-    textarea('content', $data['content'], 40, 7, $errors);
+    textfield('content', $data['content'], 80, $errors);
     ?>
-<p><?=_('Title of your petition:') ?> <br />
+<p>More details about your petition:<br />
     <?
-    textfield('title', $data['title'], 60, $errors);
+    textarea('detail', $data['detail'], 40, 7, $errors);
     ?>
 </p>
 <p>Requested duration:
@@ -331,10 +331,10 @@ function step_main_error_check($data) {
             $errors['ref'] = _('That short name is already taken');
     }
     
-    if (!$data['title'])
-        $errors['title'] = _('Please enter a title');
-    elseif (strlen($data['title']) > 100)
-        $errors['title'] = _('Please make the title a bit shorter (at most 100 characters).');
+#    if (!$data['detail'])
+#        $errors['detail'] = _('Please enter more details');
+#    elseif (strlen($data['title']) > 100)
+#        $errors['title'] = _('Please make the title a bit shorter (at most 100 characters).');
     if (!$data['content'])
         $errors['content'] = _('Please enter the text of your petition');
 
@@ -453,14 +453,14 @@ function petition_create($data) {
 
         $n = db_query("
                 update petition set
-                    title = ?, content = ?,
+                    detail = ?, content = ?,
                     deadline = ?, rawdeadline = ?,
                     name = ?, ref = ?, organisation = ?,
                     postcode = ?, telephone = ?, org_url = ?,
                     status = 'resubmitted',
                     laststatuschange = ms_current_timestamp()
                 where id = ? and status = 'rejectedonce'",
-                $data['title'], $data['content'],
+                $data['detail'], $data['content'],
                 $data['deadline'], $data['rawdeadline'],
                 $data['name'], $data['ref'], $data['organisation'],
                 $data['postcode', $data['telephone'], $data['org_url'],
@@ -489,7 +489,7 @@ function petition_create($data) {
 
             db_query("
                     insert into petition (
-                        id, title, content,
+                        id, detail, content,
                         deadline, rawdeadline,
                         email, name, ref, 
                         organisation, address,
@@ -505,7 +505,7 @@ function petition_create($data) {
                         ms_current_timestamp(), 
                         'unconfirmed', ms_current_timestamp()
                     )",
-                    $data['id'], $data['title'], $data['content'],
+                    $data['id'], $data['detail'], $data['content'],
                     $data['deadline'], $data['rawdeadline'],
                     $data['email'], $data['name'], $data['ref'],
                     $data['organisation'], $data['address'],
