@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.23 2006-08-14 13:51:36 chris Exp $
+// $Id: new.php,v 1.24 2006-08-14 13:51:59 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -206,7 +206,7 @@ There are 5 stages to the petition process:
 <?=petition_breadcrumbs(0); ?>
 <a href="/steps">More detailed description of these steps</a>
 <?
-print_r($data);
+
     foreach (array('content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
