@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.9 2006-08-10 14:17:57 matthew Exp $
+ * $Id: pet.php,v 1.10 2006-08-14 14:06:04 chris Exp $
  * 
  */
 
@@ -47,7 +47,7 @@ function pet_handle_error($num, $message, $file, $line, $context) {
             ob_end_clean();
         }
         /* Message will be in log file, don't display it for cleanliness */
-        $err = p(_('Please try again later, or XXXemail usXXX for help resolving the problem.'));
+        $err = '<p>' . _('Please try again later, or XXXemail usXXX for help resolving the problem.') . '</p>';
         if ($num & E_USER_ERROR) {
             $err = "<p><em>$message</em></p> $err";
         }
