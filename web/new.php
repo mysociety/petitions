@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.22 2006-08-14 12:26:04 matthew Exp $
+// $Id: new.php,v 1.23 2006-08-14 13:51:36 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -22,7 +22,13 @@ if (get_http_var('tostepmain')
     || get_http_var('tocreate')) {
     petition_form_submitted();
 } else {
-    petition_form_main();
+    $token = get_http_var('token');
+    if ($token) {
+        $data = array('token' => $token);
+        check_edited_petition($data);
+    } else
+        $data = array();
+    petition_form_main($data);
 }
 $contents = ob_get_contents();
 ob_end_clean();
@@ -39,23 +45,23 @@ page_footer();
  * any missing values. Aborts if the token is invalid or if the petition has
  * already been resubmitted. Returns true if this is a rejected petition being
  * re-edited, or false otherwise. */
-function check_edited_petition($data) {
+function check_edited_petition(&$data) {
     if (!array_key_exists('token', $data))
         return false;
-        
+
     list($what, $id) = token_check($data['token']);
     if (!isset($what) || $what != 'e')
         /* Should never happen so just bail. */
         err("The supplied token is invalid");
 
-    $petition = get_getRow('select * from petition where id = ?', $id);
+    $petition = db_getRow('select * from petition where id = ?', $id);
 
     if ($petition['status'] != 'rejectedonce')
         err("Cannot edit a petition with status \"${petition['status']}\"");
  
     /* Fill out data with data from database. */
     foreach (array_keys($petition) as $field) {
-        if (!array_key_exists($data[$field]) || !$data[$field])
+        if (!array_key_exists($field, $data) || !$data[$field])
             $data[$field] = $petition[$field];
     }
 
@@ -69,6 +75,9 @@ function petition_form_submitted() {
     global $pet_time;
     $errors = array();
     $data = array();
+
+    $data['token'] = get_http_var('token');
+    
     foreach (array_keys($_POST) as $field) {
         $data[$field] = get_http_var($field);
     }
@@ -197,6 +206,7 @@ There are 5 stages to the petition process:
 <?=petition_breadcrumbs(0); ?>
 <a href="/steps">More detailed description of these steps</a>
 <?
+print_r($data);
     foreach (array('content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
@@ -252,10 +262,7 @@ function petition_form_you($data = array(), $errors = array()) {
 
     if (!array_key_exists('token', $data)) {
         $fields['email'] = _('Your email');
-        $fields['email2'] = 
-            'email' =>          _('Your email'),
-            'email2' =>         _('Confirm email')
-        );
+        $fields['email2'] = _('Confirm email'); 
     }
 
     foreach ($fields as $name => $desc) {
@@ -463,7 +470,7 @@ function petition_create($data) {
                 $data['detail'], $data['content'],
                 $data['deadline'], $data['rawdeadline'],
                 $data['name'], $data['ref'], $data['organisation'],
-                $data['postcode', $data['telephone'], $data['org_url'],
+                $data['postcode'], $data['telephone'], $data['org_url'],
                 $id);
 
         /* If we did the update, also send the admins an email about it. */
