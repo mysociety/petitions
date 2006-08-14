@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.10 2006-08-04 00:43:53 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.11 2006-08-14 12:25:39 chris Exp $';
 
 use strict;
 
@@ -142,11 +142,23 @@ sub confirm_page ($$$) {
                     confirm => $what,
                     id => $id
                 })) {
-        # Now we should redirect so that the token URL isn't left in the browser.
+
         if ($what eq 'p') {
-            # XXX redirect to somewhere appropriate
-            return;
+            # Display message about petition creation.
+            $html = Petitions::Page::header($q, "Petition created")
+                    . $q->p({ -class => 'noprint loudmessage' },
+                        "Thank you for creating your petition")
+                    . $q->p({ -class => 'noprint loudmessage'
+                        -align => 'center' }, "
+                        It has been entered on our system and will now go to
+                        the Number 10 team for approval.")
+                    . Petitions::Page::footer($q);
+            print $q->header(-content_length => length($html)), $html;
+        } elsif ($what eq 'e') {
+            # Edit rejected petition for resubmission. Redirect to /new.
+            print $q->redirect("/new?token=$token");
         } else {
+            # Redirect so that the token isn't left in the browser.
             print $q->redirect("/$ref?signed=1");
             return;
         }
