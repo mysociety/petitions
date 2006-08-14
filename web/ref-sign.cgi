@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.13 2006-08-14 12:27:36 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.14 2006-08-14 13:21:57 chris Exp $';
 
 use strict;
 
@@ -139,6 +139,9 @@ sub confirm_page ($$$) {
                     you've used. If you typed the link in manually, please
                     re-check that you've got it absolutely right.")
                 . Petitions::Page::footer($q);
+    } elsif ($what eq 'e') {
+        # Edit rejected petition for resubmission. Redirect to /new.
+        print $q->redirect("/new?token=$token");
     } elsif (Petitions::RPC::do_rpc({
                     confirm => $what,
                     id => $id
@@ -154,9 +157,6 @@ sub confirm_page ($$$) {
                         It has been entered on our system and will now go to
                         the Number 10 team for approval.")
                     . Petitions::Page::footer($q);
-        } elsif ($what eq 'e') {
-            # Edit rejected petition for resubmission. Redirect to /new.
-            print $q->redirect("/new?token=$token");
         } else {
             # Redirect so that the token isn't left in the browser.
             print $q->redirect("/$ref?signed=1");
