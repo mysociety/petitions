@@ -1,0 +1,20 @@
+Subject: Resubmitted petition to the Prime Minister
+
+A rejected petition has been resubmitted with the title:
+'<?=$values['title']?>'
+
+The creator added the following comments for you:
+<?=$values['comments']?>
+
+Please click on the link below to visit the admin page to approve
+or reject this petition:
+
+<?=$values['url']?>
+
+<?=$values['signature']?>
+
+The petition reads:
+
+We the undersigned petition the Prime Minister to:
+'<?=$values['content']?>'
+
