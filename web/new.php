@@ -1,22 +1,25 @@
 <?
+//
 // new.php:
-// New petitions
+// New petitions form; also handles resubmission of rejected-once petitions.
 //
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.20 2006-08-07 14:18:24 matthew Exp $
+// $Id: new.php,v 1.21 2006-08-14 12:18:27 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
+require_once '../phplib/token.php';
 require_once '../../phplib/datetime.php';
 
 $page_title = 'Create a new petition';
 ob_start();
 if (get_http_var('tostepmain')
-   || get_http_var('tostepyou') || get_http_var('tosteppreview')
-   || get_http_var('tocreate') ) {
+    || get_http_var('tostepyou')
+    || get_http_var('tosteppreview')
+    || get_http_var('tocreate')) {
     petition_form_submitted();
 } else {
     petition_form_main();
@@ -30,6 +33,38 @@ page_header($page_title, array());
 print $contents;
 page_footer();
 
+/* check_edited_petition DATA
+ * If a token is present in DATA, indicating that we are re-editing a rejected
+ * petition, check the token and values in the database, and fill out DATA with
+ * any missing values. Aborts if the token is invalid or if the petition has
+ * already been resubmitted. Returns true if this is a rejected petition being
+ * re-edited, or false otherwise. */
+function check_edited_petition($data) {
+    if (!array_key_exists('token', $data))
+        return false;
+        
+    list($what, $id) = token_check($data['token']);
+    if (!isset($what) || $what != 'e')
+        /* Should never happen so just bail. */
+        err("The supplied token is invalid");
+
+    $petition = get_getRow('select * from petition where id = ?', $id);
+
+    if ($petition['status'] != 'rejectedonce')
+        err("Cannot edit a petition with status \"${petition['status']}\"");
+ 
+    /* Fill out data with data from database. */
+    foreach (array_keys($petition) as $field) {
+        if (!array_key_exists($data[$field]) || !$data[$field])
+            $data[$field] = $petition[$field];
+    }
+
+    /* User may not edit the email field. */
+    $data['email'] = $petition['email'];
+
+    return true;
+}
+
 function petition_form_submitted() {
     global $pet_time;
     $errors = array();
@@ -37,13 +72,15 @@ function petition_form_submitted() {
     foreach (array_keys($_POST) as $field) {
         $data[$field] = get_http_var($field);
     }
-    
+
     if (array_key_exists('data', $data)) {
         $alldata = unserialize(base64_decode($data['data']));
         if (!$alldata) $errors[] = _('Transferring the data from previous page failed :(');
         unset($data['data']);
         $data = array_merge($alldata, $data);
     }
+
+    $isedited = check_edited_petition($data);
 
     # Step 1 fixes
     if (!array_key_exists('rawdeadline', $data)) $data['rawdeadline'] = '';
@@ -90,7 +127,9 @@ function petition_form_submitted() {
     petition_create($data);
 }
 
-/* various HTML utilities for these forms */
+/* 
+ * Various HTML utilities for these forms
+ */
 function startform() {
     print '<form accept-charset="utf-8" method="post" action="/new">';
 }
@@ -149,6 +188,8 @@ function textfield($name, $val, $size, $errors, $after = '') {
         print '<br /><span class="errortext">'. $errors[$name] . '</span>';
 }
 
+/* petition_form_main [DATA [ERRORS]]
+ * Display the first stage of the petitions form. */
 function petition_form_main($data = array(), $errors = array()) {
     global $pet_time, $petition_prefix;
 ?>
@@ -191,6 +232,8 @@ There are 5 stages to the petition process:
     endform($data);
 }
 
+/* petition_form_you [DATA [ERRORS]]
+ * Display the "about you" (second) section of the petition creation form. */
 function petition_form_you($data = array(), $errors = array()) {
     errorlist($errors);
     startform();
@@ -204,10 +247,16 @@ function petition_form_you($data = array(), $errors = array()) {
             'address' =>        _('Address'),
             'postcode' =>       _('Postcode'),
             'telephone' =>      _('Telephone number'),
-            'org_url' =>        _('URL of campaign/organisation'),
+            'org_url' =>        _('URL of campaign/organisation')
+        );
+
+    if (!array_key_exists('token', $data)) {
+        $fields['email'] = _('Your email');
+        $fields['email2'] = 
             'email' =>          _('Your email'),
             'email2' =>         _('Confirm email')
         );
+    }
 
     foreach ($fields as $name => $desc) {
         printf('<p><strong>%s:</strong>', htmlspecialchars($desc));
@@ -239,7 +288,8 @@ function petition_form_you($data = array(), $errors = array()) {
     endform($data);
 }
 
-
+/* step_main_error_check DATA
+ * */
 function step_main_error_check($data) {
     global $pet_today;
 
@@ -259,9 +309,28 @@ function step_main_error_check($data) {
     elseif (!preg_match('/[a-z]/i', $data['ref']))
         $errors['ref'] = _('The short name must contain at least one letter.');
 
-    $dupe = db_getOne('SELECT id FROM petition WHERE ref ILIKE ?', array($data['ref']));
-    if ($dupe)
-        $errors['ref'] = _('That short name is already taken');
+    /*
+     * We can reach this page either for a genuinely new petition, or for
+     * editing a resubmitted rejected petition. In the latter case we will have
+     * an 'e' token. A user is permitted to change the ref on a resubmitted
+     * petition.
+     */
+    $check_ref = true;
+    if (array_key_exists('token', $data)) {
+        list($what, $id) = token_check($data['token']);
+        $ref = db_getOne('select ref from petition where id = ?', $id);
+        if (strtolower($ref) <> strtolower($data['ref']))
+            $check_ref = true;
+        else
+            $check_ref = false;
+    }
+    
+    if ($check_ref) {
+        $dupe = db_getOne('select id from petition where ref ilike ?', $data['ref']);
+        if ($dupe)
+            $errors['ref'] = _('That short name is already taken');
+    }
+    
     if (!$data['title'])
         $errors['title'] = _('Please enter a title');
     elseif (strlen($data['title']) > 100)
@@ -278,15 +347,20 @@ function step_main_error_check($data) {
         $errors['rawdeadline'] = _('The deadline must be in the future');
     if ($data['deadline_details']['error'])
         $errors['rawdeadline'] = _('Please enter a valid date for the deadline');
-    if (!$data['rawdeadline'] || !$data['deadline']) $errors['rawdeadline'] = _('Please enter a duration');
-    if ($data['deadline'] < $pet_today) $errors['rawdeadline'] = _('The duration must be positive');
-    if ($data['deadline_details']['error']) $errors['rawdeadline'] = _("Sorry, we did not recognise that duration. Please try again");
+    if (!$data['rawdeadline'] || !$data['deadline'])
+        $errors['rawdeadline'] = _('Please enter a duration');
+    if ($data['deadline'] < $pet_today)
+        $errors['rawdeadline'] = _('The duration must be positive');
+    if ($data['deadline_details']['error'])
+        $errors['rawdeadline'] = _("Sorry, we did not recognise that duration. Please try again");
     if ($deadline_limit < $data['deadline'])
         $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year.'), $deadline_limit_years);
 
     return $errors;
 }
 
+/* step_you_error_check DATA
+ * */
 function step_you_error_check($data) {
     global $pet_today;
     $errors = array();
@@ -363,59 +437,94 @@ here:<br />
     endform($data);
 }
 
-# Someone has submitted a new petition
+/* petition_create DATA
+ * Create or update a petition, using the fields in DATA. */
 function petition_create($data) {
     global $pet_time;
 
-    if (is_null(db_getOne('select id from petition where ref = ?', $data['ref']))) {
-        $data['id'] = db_getOne("select nextval('global_seq')");
+    /* Recalculate deadline, as email confirmation might have been on a
+     * different day. */
+    $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
+    $data['deadline'] = $data['deadline_details']['iso'];
 
-        /* Guard against double-insertion. */
-        db_query('lock table petition in share mode');
-            /* Can't just use SELECT ... FOR UPDATE since that wouldn't prevent an
-             * insert on the table. */
+    if (array_key_exists('token', $data)) {
+        /* Resubmitted petition. */
+        list($what, $id) = token_check($data['token']);
 
-        # Recalculate deadline, as email confirmation might have been on a different day
-        $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
-        $data['deadline'] = $data['deadline_details']['iso'];
-        db_query("
-                insert into petition (
-                    id, title, content,
-                    deadline, rawdeadline,
-                    email, name, ref, 
-		    organisation, address,
-		    postcode, telephone, org_url,
-                    creationtime, 
-                    status, laststatuschange
-                ) values (
-                    ?, ?, ?,
-                    ?, ?,
-                    ?, ?, ?, 
-		    ?, ?,
-		    ?, ?, ?,
-                    ms_current_timestamp(), 
-                    'unconfirmed', ms_current_timestamp()
-                )", array(
+        $n = db_query("
+                update petition set
+                    title = ?, content = ?,
+                    deadline = ?, rawdeadline = ?,
+                    name = ?, ref = ?, organisation = ?,
+                    postcode = ?, telephone = ?, org_url = ?,
+                    status = 'resubmitted',
+                    laststatuschange = ms_current_timestamp()
+                where id = ? and status = 'rejectedonce'",
+                $data['title'], $data['content'],
+                $data['deadline'], $data['rawdeadline'],
+                $data['name'], $data['ref'], $data['organisation'],
+                $data['postcode', $data['telephone'], $data['org_url'],
+                $id);
+
+        /* If we did the update, also send the admins an email about it. */
+        if ($n > 0)
+            pet_send_message($id, MSG_ADMIN, MSG_ADMIN, 'petition-resubmitted', 'admin-resubmitted-petition');
+
+        db_commit();
+
+        global $page_title;
+        $page_title = _("Thank you for resubmitting your petition");
+?>
+    <p class="noprint loudmessage">We have resubmitted your petition for
+    approval. You'll be notified shortly with the results.</p>
+<?
+    } else {
+        if (is_null(db_getOne('select id from petition where ref = ?', $data['ref']))) {
+            $data['id'] = db_getOne("select nextval('global_seq')");
+
+            /* Guard against double-insertion. */
+            db_query('lock table petition in share mode');
+                /* Can't just use SELECT ... FOR UPDATE since that wouldn't prevent an
+                 * insert on the table. */
+
+            db_query("
+                    insert into petition (
+                        id, title, content,
+                        deadline, rawdeadline,
+                        email, name, ref, 
+                        organisation, address,
+                        postcode, telephone, org_url,
+                        creationtime, 
+                        status, laststatuschange
+                    ) values (
+                        ?, ?, ?,
+                        ?, ?,
+                        ?, ?, ?, 
+                        ?, ?,
+                        ?, ?, ?,
+                        ms_current_timestamp(), 
+                        'unconfirmed', ms_current_timestamp()
+                    )",
                     $data['id'], $data['title'], $data['content'],
                     $data['deadline'], $data['rawdeadline'],
                     $data['email'], $data['name'], $data['ref'],
-		    $data['organisation'], $data['address'],
-		    $data['postcode'], $data['telephone'], $data['org_url']
-                ));
-        db_commit();
-    }
+                    $data['organisation'], $data['address'],
+                    $data['postcode'], $data['telephone'], $data['org_url']);
+            db_commit();
+        }
 
-    global $page_title;
-    $page_title = _('Now check your email');
+        global $page_title;
+        $page_title = _('Now check your email');
 ?>
     <p class="noprint loudmessage">We have sent you an email to confirm
     that we've received your petition details. In order for us to approve
     your petition, we need you to open this email and click on an activation
     link, which will send your petition details to our team for approval.</p>
-<?  
+<?
+    }
 }
 
-/* fyr_breadcrumbs NUMBER
+/* petition_breadcrumbs NUMBER
  * Numbered "breadcrumbs" trail for current user; NUMBER is the (1-based)
  * number of the step to hilight. */
 function petition_breadcrumbs($num) {
