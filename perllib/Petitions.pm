@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.23 2006-08-11 18:03:54 chris Exp $
+# $Id: Petitions.pm,v 1.24 2006-08-14 13:17:37 chris Exp $
 #
 
 package Petitions::DB;
@@ -178,7 +178,7 @@ sub make ($$) {
     warn "ID '$id' is quite large; the token format may have to be expanded soon"
         if ($id > 0x10000000);
 
-    my @salt = unpack('C4', random_bytes(4));
+    my @salt = unpack('C4', random_bytes(4, 1));
     # Top two bits of first byte of salt encode WHAT.
     # 00        p
     # 01        s
@@ -249,6 +249,7 @@ use strict;
 use Carp;
 use POSIX qw();
 
+use mySociety::DBHandle qw(dbh);
 use mySociety::Util;
 use mySociety::Web qw(ent);
 
@@ -331,6 +332,8 @@ sub send_message ($$$$$) {
             )", {},
             $id,
             $circumstance,
+                $id,
+                $circumstance,
             $sender == MSG_ADMIN ? 'number10' : 'creator',
             (map { $recipients & $_ } (MSG_ADMIN, MSG_CREATOR, MSG_SIGNERS)),
             $template);
