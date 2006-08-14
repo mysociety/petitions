@@ -7,12 +7,13 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.9 2006-08-10 14:17:57 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.10 2006-08-14 12:27:23 chris Exp $';
 
 use strict;
 
 use Compress::Zlib;
 use HTTP::Date qw();
+use utf8;
 
 use mySociety::Config;
 BEGIN {
@@ -102,6 +103,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
         }
     }
 
+    utf8::encode($html);
     print $q->header(
                 -content_length => length($html),
                 -last_modified => HTTP::Date::time2str($lastmodified),

@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.11 2006-08-14 12:25:39 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.12 2006-08-14 12:26:58 chris Exp $';
 
 use strict;
 
@@ -119,8 +119,8 @@ sub signup_page ($$) {
     }
     $html .= Petitions::Page::footer($q);
 
+    utf8::encode($html);
     print $q->header(-content_length => length($html)), $html;
-
 }
 
 # confirm_page Q REF TOKEN
@@ -153,7 +153,6 @@ sub confirm_page ($$$) {
                         It has been entered on our system and will now go to
                         the Number 10 team for approval.")
                     . Petitions::Page::footer($q);
-            print $q->header(-content_length => length($html)), $html;
         } elsif ($what eq 'e') {
             # Edit rejected petition for resubmission. Redirect to /new.
             print $q->redirect("/new?token=$token");
@@ -177,6 +176,7 @@ sub confirm_page ($$$) {
                 . Petitions::Page::footer($q);
     }
 
+    utf8::encode($html);
     print $q->header(-content_length => length($html)), $html;
 }
 
