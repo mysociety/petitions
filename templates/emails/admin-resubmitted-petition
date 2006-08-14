@@ -1,7 +1,9 @@
 Subject: Resubmitted petition to the Prime Minister
 
 A rejected petition has been resubmitted with the title:
-'<?=$values['title']?>'
+
+We the undersigned petition the Prime Minister to:
+'<?=$values['content']?>'
 
 The creator added the following comments for you:
 <?=$values['comments']?>
@@ -13,8 +15,6 @@ or reject this petition:
 
 <?=$values['signature']?>
 
-The petition reads:
+The petition's details read:
 
-We the undersigned petition the Prime Minister to:
-'<?=$values['content']?>'
-
+<?=$values['detail']?>
