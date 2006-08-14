@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: chris@mysociety.org; WWW: http://www.mysociety.org/
  *
- * $Id: token.php,v 1.2 2006-08-11 18:09:58 chris Exp $
+ * $Id: token.php,v 1.3 2006-08-14 09:55:07 chris Exp $
  * 
  */
 
@@ -34,7 +34,10 @@ define('TOKEN_LENGTH', 15);
 define('TOKEN_LENGTH_B64', 20);
 
 /* token_make WHAT ID
- */
+ * Make a token identifying the given ID (of a petition or signer). WHAT
+ * indicates what is identified and the context in which it is identified; 'p'
+ * means a petition for confirmation; 's' means a signer for confirmation; and
+ * 'e' means a petition for editing after a first rejection.*/
 function token_make($what, $id) {
     if ($what != 'p' && $what != 's' && $what != 'e')
         err("WHAT must be 'p', 's' or 'e'");
@@ -65,7 +68,8 @@ function token_make($what, $id) {
 }
 
 /* token_check TOKEN
- */
+ * Check the validity of a TOKEN. Returns an array giving the WHAT and ID that
+ * were passed to token_make; or if the TOKEN is invalid, an empty array. */
 function token_check($token) {
     if (!isset($token))
         err("TOKEN must be set");
