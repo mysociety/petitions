@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.24 2006-08-14 13:51:59 chris Exp $
+// $Id: new.php,v 1.25 2006-08-14 13:58:23 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -76,7 +76,8 @@ function petition_form_submitted() {
     $errors = array();
     $data = array();
 
-    $data['token'] = get_http_var('token');
+    if (!array_key_exists('token', $data) && get_http_var('token'))
+        $data['token'] = get_http_var('token');
     
     foreach (array_keys($_POST) as $field) {
         $data[$field] = get_http_var($field);
