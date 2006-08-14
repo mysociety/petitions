@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: chris@mysociety.org; WWW: http://www.mysociety.org/
  *
- * $Id: token.php,v 1.3 2006-08-14 09:55:07 chris Exp $
+ * $Id: token.php,v 1.4 2006-08-14 13:57:58 chris Exp $
  * 
  */
 
@@ -69,7 +69,8 @@ function token_make($what, $id) {
 
 /* token_check TOKEN
  * Check the validity of a TOKEN. Returns an array giving the WHAT and ID that
- * were passed to token_make; or if the TOKEN is invalid, an empty array. */
+ * were passed to token_make; or if the TOKEN is invalid, an array of two
+ * nulls. */
 function token_check($token) {
     if (!isset($token))
         err("TOKEN must be set");
@@ -88,13 +89,13 @@ function token_check($token) {
 
     $hmac = mhash(MHASH_SHA1, $plaintext, db_secret());
     if (substr($hmac, 0, 7) != $hmac7)
-        return array();
+        return array(null, null);
 
     $s1 = unpack('C', $plaintext);
     $s1 = $s1[1];
 
     if (($s1 & 0xc0) == 0xc0)   /* reserved for future expansion */
-        return array();
+        return array(null, null);
 
     if ($s1 & 0x40)
         $what = 's';
