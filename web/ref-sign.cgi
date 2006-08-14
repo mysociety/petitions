@@ -7,12 +7,13 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.12 2006-08-14 12:26:58 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.13 2006-08-14 12:27:36 chris Exp $';
 
 use strict;
 
 use Digest::HMAC_SHA1 qw(hmac_sha1);
 use MIME::Base64;
+use utf8;
 
 use mySociety::Config;
 BEGIN {
