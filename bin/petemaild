@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.25 2006-09-04 16:43:52 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.26 2006-09-04 16:46:12 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -782,7 +782,7 @@ use fields qw(messages finished badhosts r ss lastcheckedqueue);
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
 # How many simultaneous SMTP connections we make to any given host.
-use constant MAX_HOST_SESSIONS => 1000;
+use constant MAX_HOST_SESSIONS => 5;
 # How many messages we attempt to deliver in a single session.
 use constant MAX_PER_SESSION => 20;
 # Minimum interval between discovering a host is "bad" and checking again.
