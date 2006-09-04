@@ -23,7 +23,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.12 2006-08-10 15:47:55 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.13 2006-09-04 14:35:26 chris Exp $';
 
 use strict;
 
@@ -50,9 +50,6 @@ use mySociety::DBHandle qw(dbh);
 
 use Petitions;
 use Petitions::RPC;
-
-# Maximum (ideal) interval from signup request to commit.
-use constant MAX_SIGNUP_TIME    => 0.1;    # seconds
 
 my $s = new IO::Socket::INET(
                     LocalAddr => '0.0.0.0',
@@ -108,11 +105,13 @@ sub do_pending () {
     printf STDERR "sending acks took %fs; max %fs since received req\n", time() - $t1, $maxtime;
 }
 
+my $max_signup_time = mySociety::Config::get('MAX_SIGNUP_TIME', 0.1);
+
 my $t0;
 while (!$foad) {
     my $buf = '';
     my $sender;
-    my @ready = IO::Select->new($s)->can_read(MAX_SIGNUP_TIME / 10);
+    my @ready = IO::Select->new($s)->can_read($max_signup_time / 10);
     if (@ready) {
         while (defined($sender = $s->recv($buf, 65536, 0))) {
             if (my $r = Petitions::RPC::parse_packet($buf)) {
@@ -121,7 +120,7 @@ while (!$foad) {
                 if (!$alarm_pending) {
                     $t0 = time();
                     $alarm_pending = 1;
-                    alarm(MAX_SIGNUP_TIME);
+                    alarm($max_signup_time);
                 }
 
                 # Record address to which we send acknowledgement.
