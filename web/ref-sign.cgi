@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.14 2006-08-14 13:21:57 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.15 2006-09-04 14:22:10 chris Exp $';
 
 use strict;
 
@@ -181,34 +181,6 @@ sub confirm_page ($$$) {
     print $q->header(-content_length => length($html)), $html;
 }
 
-# Awful. We need lots of processes to handle lots of concurrent signups (since
-# they need to wait while petsignupd batches requests and acks them) but we
-# mustn't have lots of database connections (because they're expensive). So do
-# a dummy query to force Petitions::DB to cache the secret, which we need to
-# validate incoming data, and then disconnect.
-my $secret = Petitions::DB::secret();
-dbh()->disconnect();
-
-my $foad = 0;
-$SIG{TERM} = sub { $foad = 1; };
-
-# Fork a bunch of processes and wait around for them to complete. This doesn't
-# do the process management correctly; should use something like
-# mySociety::Util::manage_child_processes instead.
-sub accept_loop ();
-for (my $i = 0; $i < 200; ++$i) {
-    if (0 == fork()) {
-        accept_loop();
-        exit(0);
-    }
-}
-
-for (my $i = 0; $i < 200; ++$i) {
-    wait;
-}
-
-exit(0);
-
 # accept_loop
 # Accept and handle FastCGI requests.
 sub accept_loop () {
@@ -255,3 +227,22 @@ sub accept_loop () {
     #    $W->exit_if_changed();
     }
 }
+
+# Awful. We need lots of processes to handle lots of concurrent signups (since
+# they need to wait while petsignupd batches requests and acks them) but we
+# mustn't have lots of database connections (because they're expensive). So do
+# a dummy query to force Petitions::DB to cache the secret, which we need to
+# validate incoming data, and then disconnect.
+my $secret = Petitions::DB::secret();
+dbh()->disconnect();
+
+my $foad = 0;
+$SIG{TERM} = sub { $foad = 1; };
+
+manage_child_processes({
+                web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
+                        accept_loop()]
+            });
+
+exit(0);
+
