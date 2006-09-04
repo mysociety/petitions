@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.10 2006-08-14 12:26:04 matthew Exp $
+// $Id: index.php,v 1.11 2006-09-04 10:07:02 chris Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -19,10 +19,10 @@ page_header('Introduction to e-petitions');
 <div id="content_clipboard">
 
 <ul id="petition_actions">
-<li style="float: left;"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder">
-<br />Create a Petition</a></li>
-<li style="float: right;"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder">
-<br />View Petitions</a></li>
+<li style="float: left;"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
+><br />Create a Petition</a></li>
+<li style="float: right;"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
+><br />View Petitions</a></li>
 </ul>
 
 <p>Petitions have long been sent to the Prime Minister by post or delivered to
