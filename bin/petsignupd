@@ -14,8 +14,7 @@
 # of one insert, so we can improve throughput by batching inserts. That's very
 # inconvenient in the front-end scripts, because it means they'd have to share
 # database handles, but is easy with a coordinating daemon. If the daemon fails
-# or the packets don't get through, then the web scripts can sign up in the
-# usual way.
+# or the packets don't get through, then the web scripts emit an error.
 #
 # TODO: proper logging; make it a proper daemon.
 #
@@ -23,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.13 2006-09-04 14:35:26 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.14 2006-09-04 14:38:33 chris Exp $';
 
 use strict;
 
