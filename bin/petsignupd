@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.19 2006-09-04 16:24:14 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.20 2006-09-04 16:25:52 chris Exp $';
 
 use strict;
 
@@ -39,8 +39,10 @@ BEGIN {
 use Carp;
 use Errno;
 use Error qw(:try);
+use Getopt::Long;
 use IO::Select;
 use IO::Socket;
+use Pod::Usage;
 use Socket;
 use Tie::Cache;
 use Time::HiRes qw(time alarm);
@@ -260,5 +262,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.19 2006-09-04 16:24:14 chris Exp $
+$Id: petsignupd,v 1.20 2006-09-04 16:25:52 chris Exp $
 
