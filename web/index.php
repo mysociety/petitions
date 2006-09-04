@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.13 2006-09-04 10:56:37 francis Exp $
+// $Id: index.php,v 1.14 2006-09-04 10:57:09 francis Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -22,7 +22,7 @@ page_header('Introduction to e-petitions');
 <!--<li style="float: left;"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
 ><br />Create a Petition</a></li>-->
 <li style="float: left;"><img src="/images/clipboard-add.gif" alt="" class="noborder"
-><br />Create a Petition <small>(Closed during Beta Test, see right for details)</small></li>
+><br />Create a Petition <br /><small>(Closed during Beta Test, see right for details)</small></li>
 <li style="float: right;"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
 ><br />View Petitions</a></li>
 </ul>
