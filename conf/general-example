@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.6 2006-09-04 14:36:53 chris Exp $
+ * $Id: general-example,v 1.7 2006-09-04 15:45:52 francis Exp $
  * 
  */
 
@@ -47,9 +47,6 @@ define('OPTION_ADMIN_URL', 'https://secure.---.com');
 // Domain name for emails to current website
 define('OPTION_EMAIL_DOMAIN', '---.com');
 define('OPTION_CONTACT_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
-// Prefix of return-path local part. All mail for EMAIL_PREFIX(.*)@EMAIL_DOMAIN
-// must be delivered to the bounce processing scripts.
-define('OPTION_EMAIL_PREFIX', 'pet-');
 
 // Debug log level for PHP website
 define('OPTION_PHP_DEBUG_LEVEL', 0);
