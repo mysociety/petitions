@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.5 2006-09-04 14:23:09 chris Exp $
+ * $Id: general-example,v 1.6 2006-09-04 14:36:53 chris Exp $
  * 
  */
 
@@ -32,6 +32,9 @@ define('OPTION_PETSIGNUPD_PORT', 12345);
 
 // How many ref-sign.cgi processes to fork.
 define('OPTION_NUM_SIGN_PROCESSES', 20);    // higher than this for production
+
+// Time for which we collect signup requests to batch insert.
+define('OPTION_MAX_SIGNUP_TIME', 0.25);
 
 // Base domain of the website. This is used to distinguish internal from
 // external referrers, for instance.
