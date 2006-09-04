@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.26 2006-09-04 16:46:12 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.27 2006-09-04 17:35:59 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -26,6 +26,8 @@ BEGIN {
 }
 
 use strict;
+
+my $foad = 0;
 
 #
 # Counter to give unique IDs to objects (for logging purposes, mostly).
@@ -43,11 +45,20 @@ sub value () {
 
 package Log;
 
+use mySociety::Util qw(print_log);
+
+my $verboselevel = 0;
+sub verbose ($) {
+    $verboselevel = shift;
+}
+
 sub print ($@) {
     my $prio = shift;
-#    return if ($prio eq 'debug');
-    return if ($prio eq 'noise');
-    print STDERR @_, "\n";
+    if ($verboselevel < 2) {
+        return if ($prio eq 'noise');
+        return if ($verboselevel < 1 && $prio eq 'debug')
+    }
+    print_log($prio, @_);
 }
 
 #
@@ -531,7 +542,7 @@ sub get_message_to_send ($) {
 # does not remove the next message from the queue.
 sub have_message_to_send ($) {
     my Sender $self = shift;
-    return (@{$self->{messagees}} > 0);
+    return (@{$self->{messages}} > 0);
 }
 
 # do_reset
@@ -1935,10 +1946,56 @@ sub post_select ($$) {
 #
 package main;
 
+use Error qw(:try);
+use Getopt::Long;
+
+use mySociety::PIDFile;
+use mySociety::Util qw(print_log);
+
+my $pidfilepath = mySociety::Config::get('PETEMAILD_PIDFILE', '/var/run/petemaild.pid');
+my $debug = 0;
+my $verbose = 0;
+my $help = 0;
+if (!GetOptions(
+        'pidfile=s' =>  \$pidfilepath,
+        debug =>        \$debug,
+        verbose =>      \$verbose
+    )) {
+    print_log('err', "bad options; try --help for help");
+    exit(1);
+}
+
+if ($help) {
+    pod2usage(-exitval => 0, -verbose => 1);
+    exit(0);
+}
+
+mySociety::Util::log_to_stderr(0) if (!$debug);
+mySociety::Util::daemon() unless ($debug);
+
+$SIG{TERM} = $SIG{INT} = sub { $foad = 1; };
+
+my $pidfile;
+try {
+    $pidfile = new mySociety::PIDFile($pidfilepath);
+} catch mySociety::PIDFile::Error with {
+    my $E = shift;
+    print_log('err', $E->text());
+    exit(1);
+};
+
+if ($debug) {
+    Log::verbose($verbose ? 2 : 1);
+} else {
+    Log::verbose($verbose ? 1 : 0);
+    mySociety::Util::daemon();
+}
+
 my $Q = new Queue();
 my $S = new Source($Q);
 
-while (1) {
+    # XXX ugly -- we'll drop all connections at the moment of termination.
+while (!$foad) {
     my $rds = new IO::Select();
     my $wrs = new IO::Select();
     $Q->pre_select($rds, $wrs);
@@ -1950,3 +2007,6 @@ while (1) {
     $S->post_select($rds, $wrs);
 }
 
+exit(0);
+
+__END__
