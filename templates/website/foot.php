@@ -8,7 +8,7 @@
 <ul>
 <li><a href="/">Home</a></li>
 <li><a href="/list">View petitions</a></li>
-<li><a href="/new">Create a petition</a></li>
+<!--<li><a href="/new">Create a petition</a></li>-->
 <li><a href="/about">About e-petitions</a>
 <li><a href="/steps">Step by Step Guide</a></li>
 <li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>

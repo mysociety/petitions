@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: about.php,v 1.4 2006-08-02 10:19:17 chris Exp $
+// $Id: about.php,v 1.5 2006-09-04 10:55:18 francis Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -24,7 +24,7 @@ page_header(_('About No. 10 e-petitions'));
 
 <p>No petition will be rejected unless it fails to meet these basic requirements. The system has been designed to make it impossible to delete or lose petitions.</p>
 
-<p>Every petition that we receive will be recorded publicly on the website, whether it is accepted or not. The <a href="/new">step-by-step guide</a> to the e-petition system explains in detail how the process for accepting petitions works, and what will happen if we reject a petition. Further information about the e-petition system is available in our <a href="/faq">questions and answers section</a>.</p>
+<p>Every petition that we receive will be recorded publicly on the website, whether it is accepted or not. The <!--<a href="/new">-->step-by-step guide<!--</a>--> to the e-petition system explains in detail how the process for accepting petitions works, and what will happen if we reject a petition. Further information about the e-petition system is available in our <a href="/faq">questions and answers section</a>.</p>
 
 <p>If you have any questions about the e-petitions service, you can email either the Downing Street web team at <a href="mailto:webmaster&#64;pmo.gov.uk">webmaster&#64;pmo.gov.uk</a> or mySociety at <a href="mailto:team&#64;mysociety.org">team&#64;mysociety.org</a>.</p>
 

@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.16 2006-09-04 10:13:04 francis Exp $
+# $Id: Page.pm,v 1.17 2006-09-04 10:55:18 francis Exp $
 #
 
 package Petitions::Page;
@@ -149,7 +149,7 @@ sub footer ($%) {
 <ul>
 <li><a href="/">Home</a></li>
 <li><a href="/list">View petitions</a></li>
-<li><a href="/new">Create a petition</a></li>
+<!--<li><a href="/new">Create a petition</a></li>-->
 <li><a href="/about">About e-petitions</a>
 <li><a href="/steps">Step by Step Guide</a></li>
 <li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
