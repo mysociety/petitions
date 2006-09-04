@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.9 2006-08-14 12:26:04 matthew Exp $
+// $Id: list.php,v 1.10 2006-09-04 18:02:15 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -158,9 +158,11 @@ if ($ntotal > 0) {
         $petition = new Petition($row);
         #$arr = array('class'=>"petition-".$c%2, 'href' => $petition->url_main() );
         #if ($q_type == 'succeeded_closed' || $q_type == 'failed') $arr['closed'] = true;
-        if ($rss)
+        if ($rss) {
             $rss_items[] = $petition->rss_entry();
-        else {
+        } elseif ($petition->rejected_show_nothing()) {
+	    print '<tr><td colspan="4">Petition details cannot be shown</td></tr>';
+	} else {
 	    print '<tr><td><a href="/' . $petition->ref() . '">';
 	    print $petition->h_content() . '</a></td>';
 	    print '<td>' . $petition->h_name() . '</td>';

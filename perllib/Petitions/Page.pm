@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.17 2006-09-04 10:55:18 francis Exp $
+# $Id: Page.pm,v 1.18 2006-09-04 18:02:14 matthew Exp $
 #
 
 package Petitions::Page;
@@ -328,7 +328,8 @@ sub reject_box ($$) {
         $p = Petitions::DB::get($p)
             or croak "bad ref '$ref' in reject_box";
     }
-
+ 
+    # XXX: Should show rejection reason(s) here...
     return $q->p('This petition has been <strong>rejected</strong>.');
 }
 
