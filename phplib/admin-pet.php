@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.13 2006-08-14 12:26:04 matthew Exp $
+ * $Id: admin-pet.php,v 1.14 2006-09-04 10:14:31 matthew Exp $
  * 
  */
 
@@ -454,7 +454,10 @@ class ADMIN_PAGE_PET_MAIN {
         16 => 'Names of individual officials of public bodies, unless part of the senior management of those organisations',
         32 => 'Names of family members of officials of public bodies, or elected representatives',
         64 => 'Names of individuals, or information where they may be identified, in relation to criminal accusations',
-        128 => 'Offensive language'
+        128 => 'Offensive language',
+	256 => 'Isn\'t clear what the petition is asking signers to endorse',
+	512 => 'Doesn\'t actually ask for an action',
+	1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
     );
 
     function prettify_categories($categories, $newlines) {
