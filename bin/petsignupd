@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.18 2006-09-04 15:48:18 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.19 2006-09-04 16:24:14 chris Exp $';
 
 use strict;
 
@@ -53,6 +53,8 @@ use Petitions::RPC;
 # do_pending
 # Actually perform the queue of requests against the database.
 my %pending = ( );
+my %cache;
+my $s;
 sub do_pending () {
     my $t0 = time();
     
@@ -121,7 +123,7 @@ try {
 
 print_log('info', "starting up");
 
-my $s = new IO::Socket::INET(
+$s = new IO::Socket::INET(
                     LocalAddr => '0.0.0.0',
                     LocalPort => mySociety::Config::get('PETSIGNUPD_PORT'),
                     Type => SOCK_DGRAM,
@@ -137,7 +139,6 @@ my $alarm_pending = 0;
 my $alarm_fired = 0;
 $SIG{ALRM} = sub { $alarm_fired = 1; $alarm_pending = 0; };
 
-my %cache;
 tie(%cache, 'Tie::Cache', 5000);
 
 my $t0;
@@ -259,5 +260,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.18 2006-09-04 15:48:18 chris Exp $
+$Id: petsignupd,v 1.19 2006-09-04 16:24:14 chris Exp $
 
