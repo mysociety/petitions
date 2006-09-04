@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.24 2006-08-14 12:26:03 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.25 2006-09-04 16:43:52 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -421,9 +421,16 @@ sub send ($$) {
 # SMTP commands
 #
 
-sub ehlo ($$) {
+sub ehlo ($) {
     my Sender $self = shift;
-    my $name = shift;
+    # Figure out our name.
+    # XXX this could block, but that's probably not a disaster
+    my ($port, $addr) = sockaddr_in(getsockname($self->s()));
+    my $name = gethostbyaddr($addr, AF_INET);
+    if (!$name) {
+        $self->log('warning', "unable to get name for local address @{[ inet_ntoa($addr) ]}");
+        $name = sprintf('[%s]', inet_ntoa($addr));
+    }
     $self->send("EHLO $name");
     $self->state(STATE_HELO);
 }
@@ -519,6 +526,26 @@ sub get_message_to_send ($) {
     }
 }
 
+# have_message_to_send
+# Returns true if the next call to get_message_to_send would return true, but
+# does not remove the next message from the queue.
+sub have_message_to_send ($) {
+    my Sender $self = shift;
+    return (@{$self->{messagees}} > 0);
+}
+
+# do_reset
+# If there are further messages to send, send RSET and go into STATE_RSET;
+# otherwise, send QUIT and go into STATE_QUIT.
+sub do_reset ($) {
+    my Sender $self = shift;
+    if ($self->have_message_to_send()) {
+        $self->rset();
+    } else {
+        $self->quit();
+    }
+}
+
 # parse_smtp_response CODE TEXT
 # Given an SMTP response with the given CODE and TEXT, push our state machine
 # around.
@@ -532,16 +559,13 @@ sub parse_smtp_response ($$$) {
     $ltext =~ s/\n/\\n/gs;
     
     # XXX we could probably be a little more lenient with parsing some of the
-    # codes. A further infelicity is that we will send RSET then QUIT in the
-    # case where delivery of the last message in the per-connection queue fails
-    # -- we should look ahead and send QUIT immediately if there are no more
-    # messages to send.
+    # codes.
     my $state = $self->state();
     if ($state == STATE_BANNER) {
         if ($code =~ /^2/) {
             # Fine.
             # QUEUE: note success.
-            $self->ehlo("fish.invalid"); # XXX
+            $self->ehlo();
         } else {
             # Refused. Need to send quit, if we can.
             # QUEUE: note failure to begin transaction with server.
@@ -566,14 +590,14 @@ sub parse_smtp_response ($$$) {
             # Transient failure. 
             $self->tempfail();
             $self->log('warning', "transient failure response after MAIL FROM: \"$ltext\"");
-            $self->rset();
+            $self->do_reset();
         } elsif ($code =~ /^5/) {
             # Permanent failure. That's pretty bad since it means that we'd
             # never be able to deliver a mail to this host from this sender.
             # So pretend that it's a transient failure instead.
             $self->tempfail();
             $self->log('err', "permanent failure response after MAIL FROM: \"$ltext\"");
-            $self->rset();
+            $self->do_reset();
         } else {
             # Bad response code.
             $self->tempfail(); # XXX ?
@@ -588,12 +612,12 @@ sub parse_smtp_response ($$$) {
             # Transient failure.
             $self->tempfail();
             $self->log('warning', "transient failure response after RCPT TO: \"$ltext\"");
-            $self->rset();
+            $self->do_reset();
         } elsif ($code =~ /^5/) {
             # Permanent failure. Presumably a bad address.
             $self->permfail();
             $self->log('err', "permanent failure response after RCPT TO: \"$ltext\"");
-            $self->rset();
+            $self->do_reset();
         } else {
             # Bad response code.
             $self->tempfail();
@@ -634,12 +658,12 @@ sub parse_smtp_response ($$$) {
             # Temporary failure.
             $self->tempfail();
             $self->log('warning', "transient failure response after message data: \"$ltext\"");
-            $self->rset();
+            $self->do_reset();
         } elsif ($code =~ /^5/) {
             # Permanent failure (presumably spam filter or similar).
             $self->permfail();
             $self->log('warning', "permanent failure response after message data: \"$ltext\"");
-            $self->rset();
+            $self->do_reset();
         }
     } elsif ($state == STATE_QUIT) {
         $self->state(STATE_EOF);
@@ -647,6 +671,7 @@ sub parse_smtp_response ($$$) {
         if ($self->get_message_to_send()) {
             $self->mail_from($self->{message}->sender());
         } else {
+            $self->log('err', "no message to send in STATE_RSET (shouldn't happen)");
             $self->quit();
         }
     }
