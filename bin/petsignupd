@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.14 2006-09-04 14:38:33 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.15 2006-09-04 15:39:56 chris Exp $';
 
 use strict;
 
@@ -50,24 +50,6 @@ use mySociety::DBHandle qw(dbh);
 use Petitions;
 use Petitions::RPC;
 
-my $s = new IO::Socket::INET(
-                    LocalAddr => '0.0.0.0',
-                    LocalPort => mySociety::Config::get('PETSIGNUPD_PORT'),
-                    Type => SOCK_DGRAM,
-                    Proto => 'udp',
-                    ReuseAddr => 1,
-                    Blocking => 0) or die "socket: $!";
-
-my $foad = 0;
-$SIG{TERM} = sub { $foad = 1; };
-
-my $alarm_pending = 0;
-my $alarm_fired = 0;
-$SIG{ALRM} = sub { $alarm_fired = 1; $alarm_pending = 0; };
-
-my %cache;
-tie(%cache, 'Tie::Cache', 5000);
-
 # do_pending
 # Actually perform the queue of requests against the database.
 my %pending = ( );
@@ -84,7 +66,7 @@ sub do_pending () {
     dbh()->commit();
 
     my $t1 = time();
-    printf STDERR "writing to db took %fs\n", $t1 - $t0;
+    printf_log('debug', 'writing to db took %fs', $t1 - $t0);
 
     $s->blocking(1);
     my $maxtime = 0;
@@ -93,18 +75,68 @@ sub do_pending () {
         my $packet = Petitions::RPC::make_ack_packet($r->{cookie});
         my ($port, $ip) = sockaddr_in($r->{client});
         if (!$s->send($packet, 0, $r->{client})) {
-            print STDERR "sending acknowledgment to @{[ inet_ntoa($ip) ]}:$port: $!\n";
+            print_log('err', "sending ack to @{[ inet_ntoa($ip) ]}:$port: $!");
         } else {
             $maxtime = time() - $r->{time} if (time() - $r->{time} > $maxtime);
-#            print STDERR "send ack to @{[ inet_ntoa($ip) ]}:$port cookie @{[ unpack('h*', $r->{cookie}) ]}\n";
+            printf_log('debug', 'send ack to %s:%d cookie %s',
+                        inet_ntoa($ip), $port, unpack('h*', $r->{cookie}));
         }
     }
     $s->blocking(0);
 
-    printf STDERR "sending acks took %fs; max %fs since received req\n", time() - $t1, $maxtime;
+    printf_log('debug', 'sending acks took %fs; max %fs since request received',
+                time() - $t1, $maxtime);
 }
 
+# Entry point.
 my $max_signup_time = mySociety::Config::get('MAX_SIGNUP_TIME', 0.1);
+my $pidfilepath = mySociety::Config::get('PETSIGNUPD_PIDFILE', '/var/run/petsignupd.pid');
+my $debug = 0;
+my $help = 0;
+if (!GetOptions(
+        'pidfile=s' =>  \$pidfilepath,
+        debug =>        \$debug,
+        help =>         \$help
+    )) {
+    print_log('err', "bad options; try --help for help");
+    exit(1);
+}
+
+if ($help) {
+    pod2usage(-exitval => 0, -verbose => 1);
+    exit(0);
+}
+
+mySociety::Util::daemon() unless ($debug);
+
+my $pidfile;
+try {
+    $pidfile = new mySociety::PIDFile($pidfilepath);
+} catch mySociety::PIDFile::Error with {
+    my $E = shift;
+    print_log('err', $E->text());
+    exit(1);
+};
+
+print_log('info', "starting up");
+
+my $s = new IO::Socket::INET(
+                    LocalAddr => '0.0.0.0',
+                    LocalPort => mySociety::Config::get('PETSIGNUPD_PORT'),
+                    Type => SOCK_DGRAM,
+                    Proto => 'udp',
+                    ReuseAddr => 1,
+                    Blocking => 0) or die "socket: $!";
+
+my $foad = 0;
+$SIG{TERM} = $SIG{INT} = sub { $foad = 1; };
+
+my $alarm_pending = 0;
+my $alarm_fired = 0;
+$SIG{ALRM} = sub { $alarm_fired = 1; $alarm_pending = 0; };
+
+my %cache;
+tie(%cache, 'Tie::Cache', 5000);
 
 my $t0;
 while (!$foad) {
@@ -142,12 +174,13 @@ while (!$foad) {
             } else {
                 # Invalid packet of some sort. Log and continue.
                 my ($port, $ip) = sockaddr_in($sender);
-                print STDERR "bad packet from @{[ inet_ntoa($ip) ]}:$port\n";
+                printf_log('err', 'bad packet from %s:%d',
+                            inet_ntoa($ip), $port);
             }
         }
         
         if (!$!{EAGAIN}) {
-            print STDERR "recvfrom: $!\n";
+            print_log('err', 'recvfrom: %s', $!);
         }
     }
 
@@ -155,17 +188,19 @@ while (!$foad) {
     # acknowledgements to the clients.
     if ($alarm_fired && keys(%pending)) {
         my $n = scalar(keys(%pending));
-        print STDERR "alarm fired; have $n signatures to make\n";
+        printf_log('debug', 'alarm fired; have %d signatures to make', $n);
         try {
             do_pending();
             $alarm_fired = 0;
         } catch mySociety::DBHandle::Error with {
             my $E = shift;
-            print STDERR "committing ", scalar(keys(%pending)), " requests failed; DB error: ", $E->text(), "\n";
+            printf_log('err', 'committing %d requests failed; DB error: %s',
+                        scalar(keys(%pending)), $E->text());
         };
         %pending = ( );
         my $t1 = time();
-        printf STDERR "time from first request = %fs; %f sigs/s\n", $t1 - $t0, $n / ($t1 - $t0);
+        printf_log('debug', 'time from first request %fs; %f sigs/s',
+                    $t1 - $t0, $n / ($t1 - $t0));
     }
 }
 
@@ -174,8 +209,54 @@ if (keys(%pending)) {
         do_pending();
     } catch mySociety::DBHandle::Error with {
         my $E = shift;
-        print STDERR "committing ", scalar(keys(%pending)), " requests failed (at shutdown); DB error: ", $E->text(), "\n";
+        printf_log('err', 'committing %d requests failed (at shutdown); DB error: %s',
+                    scalar(keys(%pending)), $E->text());
     };
 }
 
 untie(%cache);
+
+exit(0);
+
+__END__
+
+=head1 NAME
+
+petsignupd
+
+=head1 SYNOPSIS
+
+petsignupd --help | [OPTIONS]
+
+=head1 DESCRIPTION
+
+Signup-processing daemon for the petitions site.
+
+=head1 OPTIONS
+
+=over 4
+
+=item --help
+
+Display information about using the program.
+
+=item debug
+
+Don't detach from controlling terminal; log diagnostics to standard error as
+well as the system log.
+
+=item --pidfile PATH
+
+Use PATH as the location of the PID file. By default, uses the value defined in
+the config file, or "/var/run/petsignupd.pid".
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (c) 2006 UK Citizens Online Democracy
+
+=head1
+
+$Id: petsignupd,v 1.15 2006-09-04 15:39:56 chris Exp $
+
