@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.10 2006-08-14 12:27:23 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.11 2006-09-04 12:28:24 chris Exp $';
 
 use strict;
 
@@ -90,6 +90,8 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     $html .= Petitions::Page::footer($q);
 
+    utf8::encode($html);
+
     # Perhaps send gzipped content.
     my $ce = undef;
     my $ae = $q->http('Accept-Encoding');
@@ -103,7 +105,6 @@ while (!$foad && (my $q = new mySociety::Web())) {
         }
     }
 
-    utf8::encode($html);
     print $q->header(
                 -content_length => length($html),
                 -last_modified => HTTP::Date::time2str($lastmodified),
