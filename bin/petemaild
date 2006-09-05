@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.28 2006-09-05 09:23:47 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.29 2006-09-05 09:26:27 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -59,6 +59,16 @@ sub print ($@) {
         return if ($verboselevel < 1 && $prio eq 'debug')
     }
     print_log($prio, join("", @_));
+}
+
+sub printf ($$;@) {
+    my $prio = shift;
+    if ($verboselevel < 2) {
+        return if ($prio eq 'noise');
+        return if ($verboselevel < 1 && $prio eq 'debug')
+    }
+    my $fmt = shift;
+    print_log($prio, sprintf($fmt, @_));
 }
 
 #
@@ -1051,8 +1061,7 @@ sub post_select ($$$) {
     }
     $self->{ss} = \@ss;
 
-printf STDERR "currently have %d smtp sessions, %d mails on queue\n",
-    scalar(@ss), scalar(keys(%{$self->{messages}}));
+    Log::printf('noise', 'currently have %d smtp sessions, %d mails on queue', scalar(@ss), scalar(keys(%{$self->{messages}}));
 }
 
 # get_finished
@@ -2053,4 +2062,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.28 2006-09-05 09:23:47 chris Exp $
+$Id: petemaild,v 1.29 2006-09-05 09:26:27 chris Exp $
