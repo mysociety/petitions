@@ -6,13 +6,14 @@
 #
 # TODO: test it against a greater variety of real mail servers; occasionally
 # checkpoint retry data so that we can recover after a crash; implement a
-# graceful shutdown procedure.
+# graceful shutdown procedure; use this program to send announcement messages,
+# as well as confirmations.
 #
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.32 2006-09-05 09:32:59 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.33 2006-09-05 09:35:21 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2072,4 +2073,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.32 2006-09-05 09:32:59 chris Exp $
+$Id: petemaild,v 1.33 2006-09-05 09:35:21 chris Exp $
