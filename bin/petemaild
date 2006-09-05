@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.29 2006-09-05 09:26:27 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.30 2006-09-05 09:27:03 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1061,7 +1061,7 @@ sub post_select ($$$) {
     }
     $self->{ss} = \@ss;
 
-    Log::printf('noise', 'currently have %d smtp sessions, %d mails on queue', scalar(@ss), scalar(keys(%{$self->{messages}}));
+    Log::printf('noise', 'currently have %d smtp sessions, %d mails on queue', scalar(@ss), scalar(keys(%{$self->{messages}})));
 }
 
 # get_finished
@@ -2062,4 +2062,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.29 2006-09-05 09:26:27 chris Exp $
+$Id: petemaild,v 1.30 2006-09-05 09:27:03 chris Exp $
