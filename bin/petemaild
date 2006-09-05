@@ -4,16 +4,15 @@
 # High-performance email sending tool, for sending confirmation and other mails
 # from the petitions site.
 #
-# TODO: turn this into a proper daemon; rationalise the logging (in particular
-# provide a means to switch off the debugging logging for production use); test
-# it against a greater variety of real mail servers; occasionally checkpoint
-# retry data so that we can recover after a crash.
+# TODO: test it against a greater variety of real mail servers; occasionally
+# checkpoint retry data so that we can recover after a crash; implement a
+# graceful shutdown procedure.
 #
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.31 2006-09-05 09:32:17 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.32 2006-09-05 09:32:59 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2073,4 +2072,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.31 2006-09-05 09:32:17 chris Exp $
+$Id: petemaild,v 1.32 2006-09-05 09:32:59 chris Exp $
