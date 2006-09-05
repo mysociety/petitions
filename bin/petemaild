@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.30 2006-09-05 09:27:03 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.31 2006-09-05 09:32:17 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1278,10 +1278,12 @@ sub notify ($$$) {
 # objects, and CALLBACK is invoked once for each received packet with that
 # packet as its single argument. If RDS and WRS are set they should be a hash
 # indicating whether HANDLE is readable or writable respectively. If DELAY is
-# set it indicates the timeout argument to select.
+# set it indicates the timeout argument to select. Returns true if the HANDLE
+# was closed.
 sub do_ipc ($$$$$;$$) {
     my IO::Handle $h = shift;
     my ($rdbuf, $wrbuf, $queue, $callback, $rds, $wrs) = @_;
+    my $didclose = 0;
     
     # Do the select ourself (for the child process).
     if (!defined($rds) || !defined($wrs)) {
@@ -1315,6 +1317,8 @@ sub do_ipc ($$$$$;$$) {
                 } else {
                     die "reading from socket in child process: $!";
                 }
+            } elsif (0 == $n) {
+                $didclose = 1;
             }
         }
     }
@@ -1331,6 +1335,8 @@ sub do_ipc ($$$$$;$$) {
             if (!defined($n)) {
                 if ($!{EAGAIN}){
                     last;
+                } elsif ($!{EPIPE}) {
+                    $didclose = 1;
                 } else {
                     die "writing to IPC socket: $!";
                 }
@@ -1338,6 +1344,8 @@ sub do_ipc ($$$$$;$$) {
             $$wrbuf = substr($$wrbuf, $n);
         }
     }
+
+    return $didclose;
 }
 
 #
@@ -1454,7 +1462,8 @@ sub database_child_process ($) {
         # Process incoming/outgoing messages.
         # 
         my $docommit = 0;
-        do_ipc($s, \$rdbuf, \$wrbuf, \@queue,
+        my $didclose = 
+            do_ipc($s, \$rdbuf, \$wrbuf, \@queue,
                 sub ($) {
                     my Source::Packet $packet = shift;
                     if ($packet->type() == Source::Packet::TYPE_DELIVERED
@@ -1497,6 +1506,8 @@ sub database_child_process ($) {
         } else {
             dbh()->rollback();  # ensure we see new rows
         }
+
+        last if ($didclose);
 
         my $fullscan = 0;
         if ($last_full_scan < time() - 5) {
@@ -2062,4 +2073,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.30 2006-09-05 09:27:03 chris Exp $
+$Id: petemaild,v 1.31 2006-09-05 09:32:17 chris Exp $
