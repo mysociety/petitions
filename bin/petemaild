@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.27 2006-09-04 17:35:59 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.28 2006-09-05 09:23:47 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -58,7 +58,7 @@ sub print ($@) {
         return if ($prio eq 'noise');
         return if ($verboselevel < 1 && $prio eq 'debug')
     }
-    print_log($prio, @_);
+    print_log($prio, join("", @_));
 }
 
 #
@@ -2010,3 +2010,47 @@ while (!$foad) {
 exit(0);
 
 __END__
+
+=head1 NAME
+
+petemaild
+
+=head1 SYNOPSIS
+
+petemaild --help | [OPTIONS]
+
+=head1 DESCRIPTION
+
+Fast mail-sending daemon for the petitions site.
+
+=head1 OPTIONS
+
+=over 4
+
+=item --help
+
+Display information about using the program.
+
+=item --debug
+
+Don't detach from controlling terminal; log diagnostics to standard error as
+well as the system log.
+
+=item --verbose
+
+Log lots of debugging information.
+
+=item --pidfile PATH
+
+Use PATH as the location of the PID file. By default, uses the value defined in
+the config file, or "/var/run/petsignupd.pid".
+
+=back
+
+=head1 COPYRIGHT
+
+Copyright (c) 2006 UK Citizens Online Democracy
+
+=head1 VERSION
+
+$Id: petemaild,v 1.28 2006-09-05 09:23:47 chris Exp $
