@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.15 2006-09-04 14:22:10 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.16 2006-09-11 11:48:36 chris Exp $';
 
 use strict;
 
@@ -181,6 +181,9 @@ sub confirm_page ($$$) {
     print $q->header(-content_length => length($html)), $html;
 }
 
+my $foad = 0;
+$SIG{TERM} = sub { $foad = 1; };
+
 # accept_loop
 # Accept and handle FastCGI requests.
 sub accept_loop () {
@@ -235,9 +238,6 @@ sub accept_loop () {
 # validate incoming data, and then disconnect.
 my $secret = Petitions::DB::secret();
 dbh()->disconnect();
-
-my $foad = 0;
-$SIG{TERM} = sub { $foad = 1; };
 
 manage_child_processes({
                 web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
