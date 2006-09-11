@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.18 2006-09-04 18:02:14 matthew Exp $
+# $Id: Page.pm,v 1.19 2006-09-11 08:13:43 francis Exp $
 #
 
 package Petitions::Page;
@@ -149,7 +149,7 @@ sub footer ($%) {
 <ul>
 <li><a href="/">Home</a></li>
 <li><a href="/list">View petitions</a></li>
-<!--<li><a href="/new">Create a petition</a></li>-->
+<li><a href="/new">Create a petition</a></li>
 <li><a href="/about">About e-petitions</a>
 <li><a href="/steps">Step by Step Guide</a></li>
 <li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
@@ -165,19 +165,8 @@ sub footer ($%) {
 <h3>BETA TEST</h3>
 
 <p>The petitions system is currently in a public beta test. This means
-that users are free to sign petitions, but changes are expected over
+that users are free to sign and create petitions, but changes are expected over
 the coming weeks in response to feedback from our users.</p>
-
-<p>For the first part of the beta test the "Create a new petition"
-function is closed&mdash; this is so that we can get feedback from initial
-testers on the usability of the current petition creation interface,
-and so that we can monitor our server load.</p>
-
-<p>As of October 3rd all users will be able to create petitions on this site.</p>
-
-<p>The current testing petitions were selected simply by asking the last
-10 people who submitted paper petitions to Number 10 if they'd like to
-create a test petition here, and through mySociety's contacts.</p>
 
 <!--<h2>Important Links</h2><div class="downingstreet"><div class="header">&nbsp;</div><div><h3><a href="http://www.number10.gov.uk/output/page41.asp"><img src="http://www.number10.gov.uk/files/images/take_a_tour_of_N10_purple.jpg" alt="" />
                                         Take a tour of Number 10</a></h3><p>Have you seen our virtual tour of 10 Downing Street?</p></div><div class="footer">&nbsp;</div></div><div class="primeminister"><div class="header">Â| </div><div><h3><img width="80" alt="House of Parliament. Picture: Britain on View" height="60" border="0" src="http://www.number10.gov.uk/files/images/New Parliament 5 SMALL.jpg" /> <a href="http://www.number10.gov.uk/output/Page8809.asp">The Big Issues</a></h3><p>In-depth coverage of the main policy areas currently being addressed by the PM and the government</p></div><div class="footer"></div></div><img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
