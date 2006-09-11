@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.16 2006-09-11 11:48:36 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.17 2006-09-11 11:52:17 chris Exp $';
 
 use strict;
 
@@ -22,6 +22,7 @@ BEGIN {
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
+use mySociety::Util;
 
 use Petitions;
 use Petitions::Page;
@@ -239,7 +240,7 @@ sub accept_loop () {
 my $secret = Petitions::DB::secret();
 dbh()->disconnect();
 
-manage_child_processes({
+mySociety::Util::manage_child_processes({
                 web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
                         accept_loop()]
             });
