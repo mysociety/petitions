@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.25 2006-08-14 13:58:23 chris Exp $
+// $Id: new.php,v 1.26 2006-09-12 21:30:39 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -208,7 +208,7 @@ There are 5 stages to the petition process:
 <a href="/steps">More detailed description of these steps</a>
 <?
 
-    foreach (array('content', 'detail', 'rawdeadline', 'ref') as $x)
+    foreach (array('pet_content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
     startform();
@@ -218,7 +218,7 @@ There are 5 stages to the petition process:
 
 <p><strong><?=$petition_prefix ?>...</strong> <br />
     <?
-    textfield('content', $data['content'], 80, $errors);
+    textfield('pet_content', $data['pet_content'], 80, $errors);
     ?>
 <p>More details about your petition:<br />
     <?
@@ -343,8 +343,8 @@ function step_main_error_check($data) {
 #        $errors['detail'] = _('Please enter more details');
 #    elseif (strlen($data['title']) > 100)
 #        $errors['title'] = _('Please make the title a bit shorter (at most 100 characters).');
-    if (!$data['content'])
-        $errors['content'] = _('Please enter the text of your petition');
+    if (!$data['pet_content'])
+        $errors['pet_content'] = _('Please enter the text of your petition');
 
     $pet_today_arr = explode('-', $pet_today);
     $deadline_limit_years = 1; # in years
@@ -468,7 +468,7 @@ function petition_create($data) {
                     status = 'resubmitted',
                     laststatuschange = ms_current_timestamp()
                 where id = ? and status = 'rejectedonce'",
-                $data['detail'], $data['content'],
+                $data['detail'], $data['pet_content'],
                 $data['deadline'], $data['rawdeadline'],
                 $data['name'], $data['ref'], $data['organisation'],
                 $data['postcode'], $data['telephone'], $data['org_url'],
@@ -513,7 +513,7 @@ function petition_create($data) {
                         ms_current_timestamp(), 
                         'unconfirmed', ms_current_timestamp()
                     )",
-                    $data['id'], $data['detail'], $data['content'],
+                    $data['id'], $data['detail'], $data['pet_content'],
                     $data['deadline'], $data['rawdeadline'],
                     $data['email'], $data['name'], $data['ref'],
                     $data['organisation'], $data['address'],
