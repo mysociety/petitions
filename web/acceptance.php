@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: acceptance.php,v 1.2 2006-08-01 21:45:47 chris Exp $
+// $Id: acceptance.php,v 1.3 2006-09-13 15:27:55 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -43,7 +43,14 @@ identified, in relation to criminal accusations;</li>
 
 <li>offensive language, such as obvious swear words or language that
 is intemperate, inflammatory, or provocative, or to which people
-reading it could reasonably take offence.</li>
+reading it could reasonably take offence;</li>
+
+<li>it isn't clear what the petition is asking signers to endorse;</li>
+
+<li>it doesn't actually ask for an action;</li>
+
+<li>attempting to market a product irrelevent to the role and office of the PM.</li>
+
 </ul>
 
 <?
