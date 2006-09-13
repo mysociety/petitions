@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.3 2006-08-10 17:07:02 chris Exp $
+ * $Id: send-messages,v 1.4 2006-09-13 11:04:33 matthew Exp $
  *
  */
 
@@ -18,10 +18,8 @@ $long_opts = array('verbose','help');
 chdir(dirname($_SERVER['SCRIPT_FILENAME']));
 require_once '../conf/general';
 require_once "../../phplib/phpcli.php";
-require_once '../phplib/fns.php';
+require_once '../phplib/pet.php';
 require_once '../phplib/petition.php';
-require_once '../../phplib/db.php';
-require_once '../../phplib/utility.php';
 
 function verbose($str) {
     global $verbose;
@@ -91,7 +89,7 @@ function send_pending_messages() {
         $petition = new Petition(intval($msg['petition_id']));
         $data = $petition->data;
         $data['url'] = OPTION_ADMIN_URL . '?page=pet&o=draft';  /* ??? */
-        verbose("message #${msg['id'} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
+        verbose("message #${msg['id']} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
         
         $f = false;
         if (isset($msg['emailtemplatename'])) {
