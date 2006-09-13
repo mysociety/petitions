@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.27 2006-09-13 15:14:32 matthew Exp $
+// $Id: new.php,v 1.28 2006-09-13 18:12:38 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -472,6 +472,7 @@ function petition_create($data) {
                     deadline = ?, rawdeadline = ?,
                     name = ?, ref = ?, organisation = ?,
                     postcode = ?, telephone = ?, org_url = ?,
+		    comments = ?,
                     status = 'resubmitted',
                     laststatuschange = ms_current_timestamp()
                 where id = ? and status = 'rejectedonce'",
@@ -479,7 +480,7 @@ function petition_create($data) {
                 $data['deadline'], $data['rawdeadline'],
                 $data['name'], $data['ref'], $data['organisation'],
                 $data['postcode'], $data['telephone'], $data['org_url'],
-                $id);
+                $data['comments'], $id);
 
         /* If we did the update, also send the admins an email about it. */
         if ($n > 0)
@@ -509,7 +510,7 @@ function petition_create($data) {
                         email, name, ref, 
                         organisation, address,
                         postcode, telephone, org_url,
-                        creationtime, 
+                        comments, creationtime, 
                         status, laststatuschange
                     ) values (
                         ?, ?, ?,
@@ -517,14 +518,15 @@ function petition_create($data) {
                         ?, ?, ?, 
                         ?, ?,
                         ?, ?, ?,
-                        ms_current_timestamp(), 
+			?, ms_current_timestamp(), 
                         'unconfirmed', ms_current_timestamp()
                     )",
                     $data['id'], $data['detail'], $data['pet_content'],
                     $data['deadline'], $data['rawdeadline'],
                     $data['email'], $data['name'], $data['ref'],
                     $data['organisation'], $data['address'],
-                    $data['postcode'], $data['telephone'], $data['org_url']);
+                    $data['postcode'], $data['telephone'], $data['org_url'],
+		    $data['comments']);
             db_commit();
         }
 

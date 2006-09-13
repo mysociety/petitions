@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.28 2006-09-04 10:14:30 matthew Exp $
+-- $Id: schema.sql,v 1.29 2006-09-13 18:12:37 matthew Exp $
 --
 
 -- global_seq
@@ -69,6 +69,7 @@ create table petition (
     deadline date not null,
     -- actual text entered, just in case parse_date() goes wrong
     rawdeadline text not null,
+    comments text not null,
 
     -- petition creator
     email text not null,
