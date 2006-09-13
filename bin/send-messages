@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.7 2006-09-13 17:46:55 francis Exp $
+ * $Id: send-messages,v 1.8 2006-09-13 17:48:05 francis Exp $
  *
  */
 
@@ -93,11 +93,6 @@ function send_pending_messages() {
         
         $f = false;
         $headers = array();
-        // Send with template or raw appropriately
-        $f = false;
-        if (isset($msg['emailtemplatename'])) {
-            verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
-            $f = pet_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, 
         if (isset($msg['emailtemplatename'])) {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
             $f = pet_send_email_template(OPTION_CONTACT_EMAIL, $msg['emailtemplatename'], $data, $headers);
