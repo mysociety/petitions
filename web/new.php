@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.26 2006-09-12 21:30:39 matthew Exp $
+// $Id: new.php,v 1.27 2006-09-13 15:14:32 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -286,8 +286,8 @@ function petition_form_you($data = array(), $errors = array()) {
             textfield($name, $data[$name], $size, $errors, $after);
         }
 
-        if ($name == 'org_url')
-            print "(optional)";
+        if ($name == 'org_url' || $name == 'organisation')
+            print " (optional)";
 
         print '</p>';
     }
@@ -408,29 +408,36 @@ function preview_petition($data, $errors) {
     startform();
     ?>
 <p>Now please read through your petition, above, and check the details thoroughly.
-<strong>Read carefully</strong> - we can't let you
-<a href="/faq#editpetition" id="changethewording" onclick="return toggleNewModifyFAQ()">change the wording</a>
-of your petition once people have started to sign up to it.</p>
-
-<div id="modifyfaq">
-<h3><?=_("Why can't I modify my petition after I've made it?")?></h3>
-
-<p><?=_("People who sign up to a petition are signing up to the specific wording of
+<strong>Read carefully</strong> &ndash; we can't let you change the wording of your petition once people have started to sign up to it.
+People who sign up to a petition are signing up to the specific wording of
 the petition. If you change the wording, then their signatures would no
-longer be valid.")?></p>
-
-</div>
+longer be valid.
+</p>
 
 <p style="text-align: right;">
 <input type="submit" name="tostepmain" value="Change petition text">
-<br /><input type="submit" name="tostepyou" value="Change my contact details">
+</p>
+
+<p>Please also check your contact details:</p>
+<ul><li>Name: <strong><?=$data['name'] ?></strong></li>
+<li>Email: <strong><?=$data['email'] ?></strong></li>
+<li>Organisation: <strong><?=$data['organisation'] ?></strong></li>
+<li>URL: <strong><?=$data['org_url'] ?></strong></li>
+<li>Address: <strong><?=$data['address'] ?></strong></li>
+<li>Postcode: <strong><?=$data['postcode'] ?></strong></li>
+<li>Telephone: <strong><?=$data['telephone'] ?></strong></li>
+</ul>
+
+<p style="text-align: right;">
+<input type="submit" name="tostepyou" value="Change my contact details">
 </p>
 
 <p>When you're happy with your petition, <strong>click "Create"</strong> to
 confirm that you wish www.number10.gov.uk to display the petition at the top
 of this page in your name, and that you agree to the terms and conditions below.
 <br />If you have any special requests for the Number 10 web team, please include them
-here:<br />
+here:</p>
+<p>
 <textarea name="comments" rows="7" cols="40"><? if (isset($data['comments'])) print htmlspecialchars($data['comments']) ?></textarea>
 </p>
 

@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.13 2006-09-04 18:02:14 matthew Exp $
+ * $Id: petition.php,v 1.14 2006-09-13 15:14:32 matthew Exp $
  * 
  */
 
@@ -43,6 +43,8 @@ class Petition {
             $this->data = db_fetch_array($q);
         } elseif (gettype($ref) == "array") {
             $this->data = $ref;
+	    if (isset($ref['pet_content']))
+	    	$this->data['content'] = $ref['pet_content'];
         } else {
             err("Unknown type '" . gettype($ref) . "' to Petition constructor");
         }
@@ -114,13 +116,16 @@ class Petition {
             </p> 
             <p align="right">&mdash; <?=$this->h_name() ?></p>
             <p>
-            <?=_('Deadline to sign up by:') ?> <strong><?=$this->h_pretty_deadline()?></strong>
-            <br>
+            <?=_('Deadline to sign up by:') ?> <strong><?=$this->h_pretty_deadline()?></strong></p>
+	    <? if ($this->h_detail()) {
+	    print '<p><strong>More details</strong><br />' . $this->h_detail();
+	    print '</p>';
+	    }
 
-            <?      if ($this->signers() >= 0) { ?>
-            <i>
+            if ($this->signers() >= 0) { ?>
+            <p><i>
             <?printf(ngettext('%s person has signed the petition', '%s people have signed the petition', $this->signers()), prettify($this->signers()));?>
-            </i>
+            </i></p>
             <? } ?>
 
         </div>
