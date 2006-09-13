@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.4 2006-09-13 11:04:33 matthew Exp $
+ * $Id: send-messages,v 1.5 2006-09-13 17:43:38 francis Exp $
  *
  */
 
@@ -17,8 +17,7 @@ $long_opts = array('verbose','help');
 
 chdir(dirname($_SERVER['SCRIPT_FILENAME']));
 require_once '../conf/general';
-require_once "../../phplib/phpcli.php";
-require_once '../phplib/pet.php';
+require_once "../phplib/petcli.php";
 require_once '../phplib/petition.php';
 
 function verbose($str) {

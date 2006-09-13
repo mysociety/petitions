@@ -7,7 +7,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: mark-finished,v 1.1 2006-08-07 14:18:24 matthew Exp $
+ * $Id: mark-finished,v 1.2 2006-09-13 17:43:38 francis Exp $
  *
  */
 
@@ -15,7 +15,7 @@ $short_opts = '';
 $long_opts = array('verbose','help');
 
 chdir(dirname($_SERVER['SCRIPT_FILENAME']));
-require_once "../phplib/pbcli.php";
+require_once "../phplib/petcli.php";
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
 require_once '../../phplib/db.php';
