@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.9 2006-09-13 18:17:12 matthew Exp $
+ * $Id: send-messages,v 1.10 2006-09-13 22:59:46 matthew Exp $
  *
  */
 
@@ -89,6 +89,10 @@ function send_pending_messages() {
         $petition = new Petition(intval($msg['petition_id']));
         $data = $petition->data;
         $data['url'] = OPTION_ADMIN_URL . '?page=pet&o=draft';  /* ??? */
+	$data['comments_blurb'] = '';
+	if ($data['comments'])
+		$data['comments_blurb'] = "\nThe creator added the following comments for you:\n" . $data['comments'];
+
         verbose("message #${msg['id']} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
         
         $f = false;

@@ -4,9 +4,7 @@ A new petition has been posted with the title:
 
 We the undersigned petition the Prime Minister to:
 '<?=$values['content']?>'
-
-The creator added the following comments for you:
-<?=$values['comments']?>
+<?=$values['comments_blurb']?>
 
 Please click on the link below to visit the admin page to approve
 or reject this petition:
@@ -15,6 +13,6 @@ or reject this petition:
 
 <?=$values['signature']?>
 
-The petition's details reads:
+The petition's details read:
 
 <?=$values['detail']?>
