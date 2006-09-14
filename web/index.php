@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.17 2006-09-14 15:40:45 matthew Exp $
+// $Id: index.php,v 1.18 2006-09-14 16:18:36 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -32,7 +32,8 @@ the Number 10 door in person. You can now both create and sign petitions on
 this website, giving you the opportunity to reach a potentially wider audience
 and to deliver your petition directly to Downing Street.</p>
 
-<blockquote>"Being able to start a petition online where millions can read it is just great!"</blockquote>
+<blockquote>"Petitioning the Prime Minister via the web allows for petitions
+to spread in ways not possible before."</blockquote>
 <p align="right">&mdash; Tom, UK</p>
 
 </div>
@@ -95,14 +96,14 @@ If you have signed a petition, you will be sent a
 response from the Government by email once the petition is closed.
 </p>
 
+<p>All petitions that are submitted to this website will be accepted, as long as
+they are in accordance with our <a href="/terms">terms and conditions</a>.
+The aim is to enable as many people as possible to make their views known.
+</p>
+
 <p>To ensure transparency, any petition that cannot be accepted will be listed,
 along with the reasons why. A list of <a href="/list/rejected">rejected petitions</a>
 is available on this website.</p>
-
-<p>All petitions that are submitted to this website will be accepted, as long as
-they meet the basic conditions set out in our <a href="/acceptance">acceptance policy</a>.
-The aim is to enable as many people as possible to make their views known.
-</p>
 
 <?  page_footer();
 

@@ -12,7 +12,7 @@
 <li><a href="/about">About e-petitions</a>
 <li><a href="/steps">Step by Step Guide</a></li>
 <li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
-<li>Terms and Conditions
+<li><a href="/terms">Terms and Conditions</a></li>
 <li><a href="/privacy">Privacy Policy</a></li>
 </ul>
 </div>

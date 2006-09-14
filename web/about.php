@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: about.php,v 1.6 2006-09-11 08:13:44 francis Exp $
+// $Id: about.php,v 1.7 2006-09-14 16:18:36 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -20,7 +20,7 @@ page_header(_('About No. 10 e-petitions'));
 
 <p>mySociety is a charitable project that runs many of the UK's best-known non-partisan political websites, like <a href="http://www.hearfromyourmp.com/">HearFromYourMP.com</a> and <a href="http://www.theyworkforyou.com/">TheyWorkForYou.com</a>.  mySociety is strictly neutral on party political issues, and the e-petition service is within its remit to build websites which give people simple, tangible benefits in the civic and community aspects of their lives. For more information about mySociety and its work, visit its website, <a href="http://www.mysociety.org/">mySociety.org</a>.</p>
 
-<p>The e-petition system is run the principle that people should have complete confidence that it is fair and transparent. There are basic conditions that this service must meet&mdash;for example we cannot host offensive, libelous or party political petitions. Our <a href="/acceptance">acceptance policy</a> explains in full the conditions that must be met. But the main aim is to make it possible for the widest number of people to make their views heard.</p>
+<p>The e-petition system is run the principle that people should have complete confidence that it is fair and transparent. There are basic conditions that this service must meet&mdash;for example we cannot host offensive, libelous or party political petitions. Our <a href="/terms">terms and conditions</a> explains in full the conditions that must be met. But the main aim is to make it possible for the widest number of people to make their views heard.</p>
 
 <p>No petition will be rejected unless it fails to meet these basic requirements. The system has been designed to make it impossible to delete or lose petitions.</p>
 
