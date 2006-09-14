@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.6 2006-09-14 16:18:36 matthew Exp $
+// $Id: faq.php,v 1.7 2006-09-14 17:38:56 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -93,7 +93,11 @@ To sign a petition, you will need to give your name, address and email on the fo
 
 <dd>
 <p>
-Nothing, unless you expressly ask to sign up for other services available on the Downing Street website (eg email updates). We will use your email address to confirm your signature and, unless you ask us not to, we will also send you a response to the issues raised in the petition. See our <a href="/privacy">privacy policy</a> for more information.
+Nothing, unless you expressly ask to sign up for other services available on the Downing
+Street website (e.g. email updates). We will use your email address to confirm your signature
+and, unless you ask us not to, we will also send you a maximum of two responses to the issues
+raised in the petition and a maximum of two emails from the creator of the petition.
+See our <a href="/privacy">privacy policy</a> for more information.
 </p>
 </dd>
 
@@ -101,7 +105,11 @@ Nothing, unless you expressly ask to sign up for other services available on the
 
 <dd>
 <p>
-mySociety is a charitable project that builds websites which give people simple, tangible benefits in the civic and community aspects of their lives. It is strictly neutral on party political issues, and is run by registered charity UKCOD (no. 1076346). mySociety's role was in designing and building the petitioning software to be as easy to use, as transparent and as trustworthy as possible.
+mySociety is a charitable project that builds websites which give people simple, tangible
+benefits in the civic and community aspects of their lives. It is strictly neutral on party
+political issues, and is run by registered charity UKCOD (no. 1076346). mySociety's role
+was in designing and building the petitioning software to be as easy to use, as transparent
+and as trustworthy as possible.
 </p>
 </dd>
 
