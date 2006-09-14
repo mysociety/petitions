@@ -1,0 +1,445 @@
+
+/* Added by Nomensa to remove right hand fixed width column 
+#content {
+    margin-right: 10px;
+    }
+    */
+    
+/*We have to put the following border-bottom declarations to 
+overwrite the nomensa.css style which is putting a dotted line at
+the bottom of the content div tag*/
+   
+#content #galleryContent {
+    margin: 0;
+    border-bottom: 0px #737373 dotted;  
+    
+}
+
+#content #galleryContent div {
+    margin: 0;
+    border-bottom: 0px #737373 dotted;
+}
+
+#content #galleryContent {
+    margin:0;
+    padding:0;
+    float:left; 
+    width:100%;
+    padding-bottom: 5px;
+    background-color: #f1efef;
+    /*margin: 0 0 10px -146px;
+    *margin: 0 0 -10px -146px;*/
+    font-size: 11px;
+}
+
+h1 {    
+    margin: 0 0 6px 0;
+}
+
+/* CONTENT H1 */
+#content #galleryContent h1 {
+    background-position: top left;
+    background-repeat: no-repeat;
+    color: #fff;
+    clear: left; 
+    background-color: #aaa; /* this is a fallback colour in case a class is not applied! */
+    border-width: 0 0 4px 0;
+}
+
+#content #galleryContent h1 span {
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    padding: 5px 5px 5px 17px;
+}
+#content #galleryContent h1>span {
+    width: auto;
+    display:block;
+}
+#content #galleryContent h1 span span {
+    background-image: none !important;
+    padding: 0;
+    width: auto;
+}
+
+#content #galleryContent /* \*/{    position: relative;}/* */
+#content #galleryContent p {
+    margin: 5px 5px 7px 17px; 
+    line-height: 1.3;
+}
+
+.news #content #galleryContent h1 {
+    background-color: #4a95c2;
+    background-image: url(../images/bg_nw_news-light.gif);
+}
+.news #content #galleryContent h1 span {
+    background-image: url(../images/bg_se_news-light.gif);
+}
+
+
+/*STYLES FOR GALLERY*/
+
+#galleryContent #galleryImages {
+    float: left;
+    margin:0;
+    padding: 10px 0px 27px 17px;
+    background-color: #f1efef;
+}
+    
+#galleryContent #galleryImages .textgallery {
+    float:left;
+    width: 298px;
+    padding: 0;
+    margin: 0;
+}   
+
+#galleryContent #galleryImages .rightpanel {
+    float: left;
+    width: 295px; /* changed the width to allow four images to display side by side instead of 3 */
+    margin: 0 0 0 5px; 
+}
+
+#galleryContent #galleryImages #imageWithLinks {
+    float: left;
+    width: 296px;
+    /*error in code */   
+    /*width: 298px;*/
+    /*background-color: #4a95c2;*/
+    border: 1px #000 solid; 
+    margin-bottom: 15px;
+    margin-top: 3px;
+}
+
+/* Edited by Nomensa - removed comments from margin-left and margin-right */
+#galleryContent #galleryImages #imageWithLinks img {
+    margin-left:-3px;
+    margin-right:-3px;
+    padding:0;  
+    border:0;
+}
+
+/* Hide from Internet Explorer, show to standards browsers only */
+html>body #galleryContent #galleryImages #imageWithLinks img {
+    margin-right: 0;
+    margin-left: 0;
+    }
+
+#galleryImages #imageWithLinks #miniMenu {
+    border-style: solid;
+    border-width: 0px;
+    border-top-width: 1px;
+    /*border-color: #89BAD8;    */
+    height: 28px;
+    padding:5px 0 2px 4px;
+}
+
+#galleryImages #imageWithLinks #miniMenu #miniMenuDownload {
+    float:left;
+    background-image: url(../images/icon_download.gif);
+    background-repeat: no-repeat;
+    background-position: center left;
+    padding: 2px 0 2px 22px;    
+    height: 18px;
+    }
+
+#galleryImages #imageWithLinks #miniMenu #miniMenuPrint {
+    float:left;
+    background-image: url(../images/icon_print.gif);
+    background-repeat: no-repeat;
+    background-position: center left;
+    margin-left: 10px;
+    padding: 2px 0 2px 22px; 
+    height: 18px;
+    }
+    
+ #galleryImages #imageWithLinks #miniMenu ul {
+    margin:0px;
+    padding:0px;
+    display: inline;
+}
+
+#galleryImages #imageWithLinks #miniMenu ul li {
+    margin:0px;
+    padding:0px;
+    display: inline;
+}
+
+#galleryImages #imageWithLinks #miniMenu #miniMenuDownload a .normaltext, 
+#galleryImages #imageWithLinks #miniMenu #miniMenuPrint a .normaltext { 
+    font-weight:normal;
+}
+
+#galleryImages #imageWithLinks #miniMenu a {
+    font-weight:bold;
+    font-size:10px; 
+    color:#fff;
+}
+
+#content #galleryContent #galleryImages .imagespanel {
+    height: 347px;
+    /*background-color:blue;*/
+}
+   
+/* Nomensa Edit - Removed styles for displaying the thumbnails and added the following styles to display thumbnails in a list */
+
+#content #galleryContent #galleryImages .imagespanel ul {
+    margin: 0;
+    padding: 0;
+    }
+
+#content #galleryContent #galleryImages .imagespanel img {
+    float: none;
+    }
+
+#content #galleryContent #galleryImages .imagespanel li {
+    background: none;
+    width: 60px;
+    height: 60px;
+    margin: 3px;
+    padding: 1px;
+    float: left;}
+    
+#content #galleryContent #galleryImages .imagespanel li img {
+    width: 58px;
+    height: 58px;
+    margin: 0;
+    padding: 0;
+    border: 1px #666 solid;
+    }
+    
+/* For Mozilla to display image placeholders with correct width and height when testing without images - can be removed */
+html>body #content #galleryContent #galleryImages .imagespanel li img {
+    display: block;
+    }
+    
+#content #galleryContent #galleryImages a:hover img {
+    margin: -1px;
+}
+
+#content #galleryContent #galleryImages .imagespanel a {
+   margin: 0;
+   padding: 1px;
+   display: block;
+   border: 1px #666 solid;
+   }
+   
+#content #galleryContent #galleryImages .imagespanel a:hover {
+    margin: 0;
+    padding: 1px;
+    }
+
+/* End Nomensa Added Styles */
+
+#galleryImages #imagesNavLeft {
+    padding:5px;
+    margin-bottom:5px;
+    background-color: #C8DFED;
+}
+
+#galleryImages #imagesNavLeft .nextimage {
+    background-image: url(../images/arrow_next.gif);
+    background-position: center right;
+    background-repeat: no-repeat;
+    padding: 0 12px 0 0px;
+    color: #000;
+    border: none;
+    margin-left:50px;
+}
+
+#galleryImages #imagesNavLeft .previousimage {
+    background-image: url(../images/arrow_previous.gif);
+    background-position: 0px 4px;
+    background-repeat: no-repeat;
+    padding: 0 0 0 12px;
+    color: #000;
+    border: none;   
+    margin-right:50px;
+}
+
+#galleryImages #imagesNavRight {
+    /*width: 298px;*/
+    width:295px;
+   /* margin-left:7px;
+    padding-left:6px;
+    margin-right:7px;
+    padding-right:6px;*/
+    padding-bottom:7px;  
+    /*background-image: url(../images/grey_pixel.gif);*/
+    background-position: bottom left;
+    background-repeat: repeat-x;
+    /*background-color:purple;*/
+    position: relative;
+}
+
+#galleryImages #imagesNavRight .previousimage {
+    background-image: url(../images/arrow_previous.gif);
+    background-position: 0px 4px;
+    background-repeat: no-repeat;
+    padding: 0 0 0 12px;
+    color: #000;
+    border: none;   
+    /*margin-right:45px;*/
+    /*background-color:green;*/
+    position:absolute;
+    left:8px;
+}
+
+#galleryImages #imagesNavRight .nextimage {
+    background-image: url(../images/arrow_next.gif);
+    background-position: center right;
+    background-repeat: no-repeat;
+    padding: 0 12px 0 0px; 
+    color: #000;
+    border: none;
+    /*background-color:fuchsia;*/
+    position:absolute;
+    right: 8px;
+}
+
+
+#galleryImages #imagesNavRight .centreText {
+    /*background-color:red;*/
+    position:absolute;
+    text-align:center;
+    left:120px;
+}
+
+#content #galleryContent #rightBottomPanelReception, #content #galleryContent #rightBottomPanelWebsite {
+    float:right;
+    width:170px;
+    padding-top:23px;   
+    padding-top:19px;
+    padding-right:20px;
+    /*error in code */
+    padding-right:0px;
+}
+
+#galleryTopMenu {
+    padding-left: 19px; 
+}
+
+.primeminister #galleryImages #imagesNavLeft {
+    background-color: #e6e6e6;
+}
+.government #galleryImages #imagesNavLeft {
+    background-color: #d8e7ca;
+}
+.news #galleryImages #imagesNavLeft {
+    background-color: #c8dfed;
+}
+.downingstreet #galleryImages #imagesNavLeft {
+    background-color: #e6d1e2;
+}
+.broadcasts #galleryImages #imagesNavLeft {
+    background-color: #fae2ca;
+}
+
+.primeminister #galleryImages #imageWithLinks #miniMenu {
+    background-color: #b7aeb1;
+}
+.government #galleryImages #imageWithLinks #miniMenu {
+    background-color: #80b04d;
+}
+.news #galleryImages #imageWithLinks #miniMenu {
+    background-color: #4a95c2;
+}
+.downingstreet #galleryImages #imageWithLinks #miniMenu {
+    background-color: #ab679d;
+}
+.broadcasts #galleryImages #imageWithLinks #miniMenu {
+    background-color: #ed9b4f;
+}
+
+.primeminister #galleryContent #galleryImages #imageWithLinks {
+    background-color: #b7aeb1;
+}
+.government #galleryContent #galleryImages #imageWithLinks {
+    background-color: #80b04d;
+}
+.news #galleryContent #galleryImages #imageWithLinks {
+    background-color: #4a95c2;
+}
+.downingstreet #galleryContent #galleryImages #imageWithLinks {
+    background-color: #ab679d;
+}
+.broadcasts #galleryContent #galleryImages #imageWithLinks {
+    background-color: #ed9b4f;
+}
+
+
+/*Thumbnail border*/
+
+
+.primeminister #content #galleryContent #galleryImages .imagespanel a {
+    background-color: #e6e6e6;
+}
+.government #content #galleryContent #galleryImages .imagespanel a {
+    background-color: #d8e7ca;
+}
+.news #content #galleryContent #galleryImages .imagespanel a {
+    background-color: #4a95c2;
+}
+.downingstreet #content #galleryContent #galleryImages .imagespanel a {
+    background-color: #e6d1e2;
+}
+.broadcasts #content #galleryContent #galleryImages .imagespanel a {
+    background-color: #fae2ca;
+}
+
+/*Thumbnail border hover*/
+
+/* Nomensa - Added a -1px margin to all thumbnail hovers to stop images jumping in IE and Mozilla */
+
+.primeminister #content #galleryContent #galleryImages .imagespanel a:hover {
+    border: 3px solid #b7aeb1;
+    margin: -1px;
+}
+.government #content #galleryContent #galleryImages .imagespanel a:hover {
+    border: 3px solid #80b04d;
+    margin: -1px;
+}
+.news #content #galleryContent #galleryImages .imagespanel a:hover {
+    border: 3px solid #4a95c2;
+    margin: -1px;
+}
+.downingstreet #content #galleryContent #galleryImages .imagespanel a:hover {
+    border: 3px solid #ab679d;;
+    margin: -1px;
+}
+.broadcasts #content #galleryContent #galleryImages .imagespanel a:hover {
+    border: 3px solid #ed9b4f;
+    margin: -1px;
+}
+
+/*Highlight the currently selected thumbnail*/ 
+.primeminister #content #galleryContent #galleryImages .imagespanel li.selected a {
+    padding: 0px;
+    border: 3px solid #b7aeb1;
+    margin: -1px;
+}
+.government #content #galleryContent #galleryImages .imagespanel li.selected a {
+    padding: 0px;
+    border: 3px solid #80b04d;
+    margin: -1px;
+}
+.news #content #galleryContent #galleryImages .imagespanel li.selected a {
+    padding: 0px;
+    border: 3px solid #4a95c2;
+    margin: -1px;
+}
+.downingstreet #content #galleryContent #galleryImages .imagespanel li.selected a {
+    padding: 0px;
+    border: 3px solid #ab679d;
+    margin: -1px;    
+}
+.broadcasts #content #galleryContent #galleryImages .imagespanel li.selected a {
+    padding: 0px;
+    border: 3px solid #ed9b4f;
+    margin: -1px;
+}
+
+
+/*END STYLES FOR GALLERY*/
+
+.clear { clear:both;}
+
+

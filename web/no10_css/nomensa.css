@@ -1,0 +1,1061 @@
+/* styles.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #fff;
+    color: #000;
+    font: 70% Verdana, Arial, sans-serif;
+}
+html>body {
+    font-size: 12px;
+}
+
+img {border: none; vertical-align: bottom;}
+
+.rm {
+    height: 0px;
+    position: absolute;
+}
+
+.rm a {
+    width: 10em;
+}
+
+.skip {
+    position: absolute;
+    left: -999em;
+}
+
+a.skip:active, a.skip:focus {
+    top: 0;
+    left: 420px;
+    border: 3px #4A95C2 solid; /* adjust colour appropriately */
+    background-color: #fff;
+}
+
+
+a {
+    text-decoration: none;
+    font-weight: bold;
+}
+#navigation a, #footer a { 
+    font-weight: normal;
+}
+
+a:hover, a:focus {
+    text-decoration: underline;
+}
+#header a:hover, #header a:focus {
+    text-decoration: none;
+}
+
+/* DIRECT GOV BAR */
+div.toolbarWhite {
+    width: 100%;
+    height: 32px;
+    background-color: #fff;
+    border-bottom: 2px solid #999;
+    margin: 0px;
+    padding: 0px;
+}
+
+div.toolbarLogo {
+    padding: 9px 0px 0px 27px;
+    float: left;
+}
+
+div.toolbarLinkText {
+    text-align: right;
+    margin: 0px 25px 0px 0px;
+    padding-top: 6px;
+}
+
+a.toolbarWhiteLink {
+    text-decoration: none;
+    color: #000;
+    text-decoration: underline;
+    padding-left: 9px;
+    padding-top: 6px;
+}
+
+a.toolbarWhiteLink:hover {
+    color: #000;
+}
+
+a.toolbarWhiteLink:visited {
+    color: #000;
+}
+
+/* HEADER */
+#header {
+    border-bottom: 1px #737373 solid;
+    padding: 0 4px 4px;
+    margin: 0;
+}
+
+#header .logo {
+    float: left;
+    padding: 0;
+    margin: 20px 4px 4px;
+}
+
+#navigation a {
+    float: none;
+    margin: 0;
+}
+/* == LAYOUT == */
+#main {
+    float: left;
+    margin: 0 -216px 0 0;
+    padding: 0;
+    width: 100%;
+}
+
+#wrap {
+    float: right;
+    margin: 0 0 0 0;
+    padding: 0;
+    }
+
+/* hide from mac ie \*/
+#wrap {
+    margin-left: 146px;
+    }
+/* */
+
+#content {
+    margin: 0 216px 16px 146px;
+}
+
+/* hide from mac ie \*/
+#content {
+    margin-left: 0;
+    }
+/* */  
+
+#ilinks { /* right side */
+    width: 203px;
+    margin: 0 4px 8px 8px;
+    float: right;
+    display: inline;
+    
+}
+#rel_links { /* left side */
+    width: 130px;
+    float: left;
+    margin: 0 8px 8px 8px;
+    display: inline; /* yes, utterly ridiculous - but it beats a 'double-margin' bug in IE */
+}
+
+/* NAVIGATION */
+#navigation {
+    margin:4px 0 0 146px; /* make room for the image and line up left side with content */
+    font-size: 90%;
+}
+#navigation h2 {
+    display: none;
+}
+#navigation a:hover, #navigation a:focus {text-decoration: none; }
+
+
+
+#navigation ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+#navigation li {
+    margin: 0;
+    padding: 0;
+}
+
+#navigation ul li a {
+    background-color: #000;
+    color: #fff;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+#navigation ul li li a {
+    font-weight: normal;
+    text-transform: none;
+}
+
+/* level 2 */
+#navigation ul li ul {
+    border: 1px #000 solid;
+    background-color: #fff;
+    padding-right: 17px;
+}
+
+#navigation li li a, #navigation li li strong {
+    background: url(http://www.number10.gov.uk/files/images/bullet_arrow-right_black.gif) no-repeat 0% 60%;
+    padding: 1px 9px;
+    color: #000;
+}
+
+#navigation li li strong {
+    background-image: url(http://www.number10.gov.uk/files/images/bullet_arrow-down_white.gif);
+    font-weight: normal;
+    color: #fff;
+}
+
+
+/* IE layout code \*/
+* html #navigation {
+    width: 100%;
+}
+* html #navigation li span {
+    display: none;
+}
+
+* html #navigation li {
+    padding-left: 17px;
+    width: 100%;
+    height: 17px;
+}
+* html #navigation li a {
+    display: block;
+    width: 20%;
+    height: 100%;
+    float: left;
+    border-right: 1px #fff solid;
+    padding: 4px 0 0 4px;
+}
+
+* html #navigation ul ul {
+    display: block;
+    float: left;
+    width: 80%;
+    height: 100%;
+    vertical-align: middle;
+}
+
+/* */
+* html #navigation li li {  
+    display: inline;
+    float: none;
+    padding-left: 0;
+    width: auto;
+    height: auto;
+    line-height: 17px;
+}
+
+* html #navigation li li a, * html  #navigation li li strong {
+    border-right: none;
+    display: inline;
+    float: none;
+    width: auto;
+    height: auto;
+    padding: 1px 9px;
+}
+
+
+/* end IE layout code */
+
+
+
+/* table and row \*/
+#navigation>ul {
+    display: table;
+    width: 100%;
+    border-spacing: 0 1px;
+}
+#navigation>ul>li {
+    display: table-row;
+}
+/* cells \*/
+#navigation>ul>li>span {
+    display: table-cell;
+    width: 17px;
+    height: 17px;
+}
+#navigation>ul>li>a {
+    display: table-cell;
+    width: 20%;
+    border-right: 1px #fff solid;
+    vertical-align: middle;
+    padding-left: 2px;
+}
+#navigation>ul>li>ul  {
+    display: table-cell;
+    vertical-align: top;
+}
+
+/* \*/
+#navigation>ul>li>ul>li {
+    display: block; 
+    float: left;
+}
+#navigation li li>a, #navigation li li>strong {
+    display: block;
+}
+/* */
+
+
+.primeminister #navigation ul li.primeminister a {
+    background-color: inherit;
+}
+* html .primeminister #navigation ul li.primeminister a { 
+    background-color: transparent;
+}
+
+
+/* colours and arrows: level 1 (li) */
+#navigation li.primeminister, #navigation li.primeminister span {
+    background: #846e74 url(http://www.number10.gov.uk/files/images/menu_arrow_primeminister.gif) no-repeat left;
+}
+#navigation li.government, #navigation li.government span {
+    background: #4e682a url(http://www.number10.gov.uk/files/images/menu_arrow_government.gif) no-repeat left;
+}
+#navigation li.news, #navigation li.news span {
+    background: #224676 url(http://www.number10.gov.uk/files/images/menu_arrow_news.gif) no-repeat left;
+}
+#navigation li.downingstreet, #navigation li.downingstreet span {
+    background: #6b3f61 url(http://www.number10.gov.uk/files/images/menu_arrow_downingstreet.gif) no-repeat left;
+}
+#navigation li.broadcasts, #navigation li.broadcasts span {
+    background: #cb5d28 url(http://www.number10.gov.uk/files/images/menu_arrow_broadcasts.gif) no-repeat left;
+}
+html>body #navigation li {
+    background-image: none !important;
+}
+ 
+/* specific BG colours: level 2 (ul) */
+#navigation li ul {
+    background-position: right;
+    background-repeat: repeat-y;
+}
+#navigation li.primeminister ul {
+    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_primeminister.gif);
+}
+#navigation li.government ul {
+    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_government.gif);
+}
+#navigation li.news ul {
+    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_news.gif);
+}
+#navigation li.downingstreet ul {
+    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_downingstreet.gif);
+}
+#navigation li.broadcasts ul {
+    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_broadcasts.gif);
+}
+
+
+/* specific colours: current item */
+#navigation li.primeminister li strong {background-color: #846e74;}
+#navigation li.government li strong {background-color: #4e682a;}
+#navigation li.news li strong {background-color: #224676;}
+#navigation li.downingstreet strong {background-color:#6b3f61;}
+#navigation li.broadcasts li strong {background-color:#cb5d28;}
+
+/* specific colours: hover */
+#navigation li.primeminister li a:hover {color: #846e74 }
+#navigation li.government li a:hover {color: #4e682a}
+#navigation li.news li a:hover {color: #224676 }
+#navigation li.downingstreet li a:hover {color:#6b3f61}
+#navigation li.broadcasts li a:hover {color:#cb5d28}
+
+
+
+
+/* HELP BAR */
+#helpbar {
+    border: 2px #999 solid;
+    border-width: 2px 0;
+    clear: both;
+    margin: 0 0 11px 0;
+}
+#helpbar div {
+    border-top: 1px #fff solid;
+    border-bottom: 1px #737373 solid;
+    background-color: #eef;
+    padding: 1px;
+    vertical-align: middle;
+}
+* html #helpbar div {
+    height: 1px;
+}
+#helpbar a {
+    font-weight: bold;
+}
+#helpbar a:link, #helpbar a:visited { color: #000;}
+#helpbar a:focus, #helpbar a:hover {text-decoration: underline;}
+
+#helpbar p {
+    margin: 4px 0;
+}
+* html #helpbar p {
+    margin: 4px 0 2px;
+}
+
+#helpbar p.help {
+    float: left;
+    padding: 0 16px;
+    margin-left: 10px;
+    background: url(http://www.number10.gov.uk/files/images/arrow.gif) no-repeat center left;
+}
+#helpbar .help a {
+    font-weight: bold;
+}
+#helpbar strong {
+    font-weight: normal;
+}
+
+#helpbar form {
+    float: right;
+    margin: 0;
+    width: 22em;
+    text-align: right;
+    padding-left: 10px;
+}
+/* \*/#helpbar form {width: auto;}/* */
+#helpbar form p {
+    border: 0;
+    margin: 0;
+}
+#helpbar input {
+    border: 2px inset;
+    vertical-align: middle;
+}
+* html #helpbar input {
+    margin: -2px 0;
+    padding: 0;
+}
+#helpbar #go {
+    border: none !important;
+    font-weight: bold;
+    background: url(http://www.number10.gov.uk/files/images/arrow.gif) no-repeat 0% 30%;
+    padding: 0 0 0 12px;
+
+    cursor: pointer;
+}
+#helpbar p.help, #helpbar form {
+    padding-top: 4px;
+}
+/* \*/
+#helpbar p.help, #helpbar form {
+    padding-top: 0;
+}
+/* */
+/* HELPBAR COLOURS */
+.primeminister #helpbar div {
+    background-color: #e6e6e6;
+}
+
+/* FOOTER */
+#footer {
+    border: 2px #999 solid;
+    border-width: 2px 0;
+    margin-top: 8px;
+    clear: both;
+}
+#footer div {
+    border-top: 1px #fff solid;
+    border-bottom: 1px #737373 solid;
+    background-color: #f1efef;
+    padding: 0 10px;
+}
+#footer p {
+    margin: 0;
+    padding: 0 0 3px;
+}
+#footer a:link, #footer a:visited { color: #000;}
+
+
+
+/* RIGHT SIDE */
+#ilinks h2 {
+    display: none;
+}
+
+#ilinks div {
+    width: 203px; /* plus 2 pixels of border */
+    margin: 0 0 4px 0;
+    padding: 0;
+}
+#ilinks div div {
+    margin: 0;
+    
+    width: auto;
+    border: 1px #000 solid;
+    border-width: 0 1px;
+}/* \*/
+* html #ilinks div div {
+    width: 100%;
+}
+/* header + footer */
+#ilinks div.header, #ilinks div.footer {
+    border-width: 0;
+    font-size: 1px;
+}
+
+#ilinks div.header {
+    height: 5px;
+    line-height: 5px;
+    border-width: 0 1px 0 0;
+    background: transparent url(http://www.number10.gov.uk/files/images/ilink_header.gif) no-repeat 0 0;
+}
+
+#ilinks #frmSummit div div {
+    margin: 0;  
+    width: auto;
+    border: 1px solid #224676;
+    border-width: 0 1px;
+}/* \*/
+
+#ilinks #frmSummit div.header {
+    height: 5px;
+    line-height: 5px;
+    border-width: 0 1px 0 0;
+    background: transparent url(http://www.number10.gov.uk/files/images/ilink_header_g8.gif) no-repeat 100% 100%;
+}
+#ilinks #frmSummit div.g8News div h3  {
+    /*padding-top: 5px;*/
+}
+#ilinks #frmSummit div.g8News div a   {
+    color: #22416f;
+}
+
+#ilinks div.footer {
+    height: 9px;
+    line-height: 9px;
+    background: transparent url(http://www.number10.gov.uk/files/images/ilink_footer.gif) no-repeat 100% 100%;
+    border-width: 0 0 0 1px;
+}
+#ilinks #frmSummit div.footer {
+    height: 9px;
+    line-height: 9px;
+    background: transparent url(http://www.number10.gov.uk/files/images/ilink_footer_g8.gif) no-repeat 100% 100%;
+    border-width: 0 0 0 1px;
+}
+#ilinks h3 img {
+    float: right;
+    margin: -4px -3px 0 0;
+}
+* html #ilinks h3 img {
+    margin-top: 0;
+    margin-bottom: -9px;
+/* \*/  position: relative;/* */
+}
+
+html>body #ilinks h3 img {
+    margin: 0 0 -4px 4px;
+}
+
+/* ILINKS (Right Hand Side) COLOURS */
+#ilinks .primeminister div {
+    border-color: #846e74;
+    background-color: #eeeaec;
+}
+#ilinks .primeminister div.header {
+    background-image: url(http://www.number10.gov.uk/files/images/ilink_header_primeminister.gif);
+}
+#ilinks .primeminister div.footer {
+    background-image: url(http://www.number10.gov.uk/files/images/ilink_footer_primeminister.gif);
+}
+
+#ilinks .g8News h3 {
+    border-color: #224676;
+    background-color: #4a95c2;
+    color: #fff;
+    height: 22px;
+    padding:5px 0 0 5px;
+    margin:0;   
+}
+
+#ilinks .g8News .g8newsformintro {
+    padding-bottom:7px;
+    background-color: #c8dfed;
+}
+
+#ilinks .g8News {
+    background-color:#224676;
+}
+
+#ilinks #frmSummit {
+    margin:0;
+    padding:0;
+    background-color:#4A95C2;
+}
+
+#ilinks #frmSummit .g8News .g8newsform {
+    background-color:#fff;
+    margin:0;
+    padding:0 0 0 5px;
+}
+#ilinks #frmSummit .g8News #g8newsformleft {
+    margin:0;
+    padding: 5px 0 0 5px;
+    float:left;
+    width:131px;
+    border:0;   
+    background-color:#fff;
+  /*non w3c compliant */
+    width:136px;
+    height:72px;
+}
+
+#ilinks #frmSummit .g8News #g8newsformleftError {
+    margin:0;
+    padding: 5px 0 0 5px;
+    float:left;
+    width:131px;
+    border:0;   
+    background-color:#fff;
+  /*non w3c compliant */
+    width:136px;
+    height:97px;
+    font-size:11px;
+}
+
+#ilinks #frmSummit .g8News #g8newsformright {
+    margin:0;
+    padding: 5px 0 0 0;
+    float:right;
+    width:65px;
+    border:0;
+    background-color:#fff;      
+    height:72px;
+}
+
+#ilinks #frmSummit .g8News #g8newsformrightError {
+    margin:0;
+    padding: 30px 0 0 0;
+    float:right;
+    width:65px;
+    border:0;
+    background-color:#fff;      
+    height:72px;    
+}
+
+#ilinks #frmSummit .g8News #g8newsformleftRegister {
+    margin-top:7px;
+    border:0;
+    text-align:right;
+    background-color:#fff;
+}
+
+#ilinks #frmSummit .g8News #g8newsformbottom {
+    clear:both;
+    border:0;
+    background-color:#fff;
+    display:block;
+    height:0;
+}
+
+/* ALL LINK COLOURS */
+.primeminister #content a, #ilinks .primeminister a, #rel_links .primeminister a {
+    color: #846e74;
+}
+
+/*  round arrow bullets for heading links */
+#ilinks h3 a {
+    display: block;
+    padding: 0 0 2px 17px;
+    background: url(http://www.number10.gov.uk/files/images/arrow.gif) no-repeat 0 2px;
+}
+
+/* no arrow for G8 News */
+#ilinks .g8News h3 a {
+    display: block;
+    padding: 0 0 0 17px;
+    background: none no-repeat 0 0px;
+}
+
+
+
+#ilinks h3 {
+    padding: 0 0 0 3px;
+    top: -4px;
+/* \*/  position: relative;/* */
+}
+
+#ilinks p {
+    clear: both;
+    margin: 0;
+    padding: 5px;
+    background-color: #fff;
+}
+
+* html #ilinks p, * html #ilinks ul {
+    width: 100%;
+}
+
+
+/* REL_LINKS - Left Hand Side */
+#rel_links div {
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    padding-bottom: 4px;
+    margin-bottom: 8px;
+}
+
+#rel_links p {
+    margin: 4px;
+}
+
+/* rel_links headings */
+#rel_links h1, #rel_links h2 {
+    background-position: top left;
+    background-repeat: no-repeat;
+    
+    color: #fff;
+    background-color: #aaa; /* fallback color */
+    padding: 3px;
+}
+#rel_links h1 a, #rel_links h2 a {
+    color: #fff !important;
+}
+
+
+
+#rel_links .submenu h2  {
+    padding: 0;
+}
+#rel_links .submenu h2 span {
+    display: block;
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    padding: 3px;
+}
+
+#rel_links h1 a, #rel_links h2 a {
+    display: block;
+    padding: 0 0 2px 16px;
+    background: url(http://www.number10.gov.uk/files/images/arrow.gif) no-repeat 0 2px;
+}
+
+
+
+/* Rel-Links (Left Hand Side) HEADINGS + BACKGROUND COLOURS 
+    h2:  top-left = rounded dark
+    div: btm-rite = rounded light
+
+submenu
+    h2:  top-left = rounded dark
+    h2 span: btm-rite = rounded dark
+    div: btm-rite = none, transparent.
+*/
+
+#rel_links .primeminister {
+   background-color: #eeeaec;
+   background-image: url(http://www.number10.gov.uk/files/images/bg_se_primeminister-medium.gif);
+}
+#rel_links .primeminister h2 {
+   background-color: #846e74;
+   background-image: url(http://www.number10.gov.uk/files/images/bg_nw_primeminister-dark.gif);
+}
+#rel_links .primeminister h2 span {
+   background-image: url(http://www.number10.gov.uk/files/images/bg_se_primeminister-dark.gif);
+} 
+
+#rel_links .offsite {
+    background-color: #ccc;
+    background-image: url(http://www.number10.gov.uk/files/images/bg_se_offsite-light.gif);
+}
+#rel_links .offsite h2 {
+    background-color: #000;
+    background-image: url(http://www.number10.gov.uk/files/images/bg_nw_offsite-dark.gif);
+}
+
+#rel_links .offsite h2 a {
+    color: #fff;
+    background:  url(http://www.number10.gov.uk/files/images/arrow_grey.gif) no-repeat 0 2px;
+}
+
+/* SUB MENUs */
+#rel_links div.submenu {
+    background-image: none;
+    background-color: #fff;
+}
+#rel_links .submenu ul {
+    margin: 0;
+    padding: 0;
+}
+#rel_links .submenu li {
+    min-height: 17px; /* height of the bullet */
+    padding-left: 19px;
+    background-position: 3px 2px;
+    background-repeat: no-repeat;
+}
+
+#rel_links .submenu li a, #rel_links .submenu li strong {
+    border-bottom: 1px #666 dotted;
+    padding: 2px 0;
+    display: inline;
+    width: 100%;; 
+}
+#rel_links .submenu li>a, #rel_links .submenu li>strong {
+    display: block;
+    width: auto;
+}
+
+#rel_links .primeminister.submenu li  {
+    background-image: url(http://www.number10.gov.uk/files/images/arrow_primeminister.gif);
+}
+
+h1, h2, h3 {
+    font-size: 100%;
+    margin: 0 0 6px 0;
+    padding: 0;
+}
+
+/* CONTENT H1 and H2 */
+#content h1, #content h2 {
+    background-position: top left;
+    background-repeat: no-repeat;
+    color: #fff;
+    clear: left; 
+    background-color: #aaa; /* this is a fallback colour in case a class is not applied! */
+}
+/* \*/
+.news #content h2 {
+    position:relative;
+}/* */
+* html #content h1, * html #content h2 {
+    width: 100%;
+}   
+#content h1 span, #content h2 span {
+    width: 100%;
+    background-position: bottom right;
+    background-repeat: no-repeat;
+    padding: 5px;
+}
+#content h1>span, #content h2>span {
+    width: auto;
+    display:block;
+}
+#content h1 span span, #content h2 span span {
+    background-image: none !important;
+    padding: 0;
+    width: auto;
+}
+/* \*/
+#content h2 span span.date  {
+    position: absolute; 
+    right: 5px;
+}/* */
+/* CONTENT H1 and H2 COLOURS */
+.primeminister #content h1, .primeminister #content h2 {
+   background-color: #b7aeb1;
+   background-image: url(http://www.number10.gov.uk/files/images/bg_nw_primeminister-light.gif);
+}
+.primeminister #content h1 span, .primeminister #content h2 span {
+   background-image: url(http://www.number10.gov.uk/files/images/bg_se_primeminister-light.gif);
+} 
+
+#content h3 a {
+    background-position: 0 2px;
+    background-repeat: no-repeat;
+    padding: 0 0 2px 17px;
+}
+* html #navigation li li a, * html #navigation li li strong {
+    height: 1px;
+}
+/* H3 content LINKS: coloured bullets; link text a different color from non-heading link text */
+.primeminister #content h3 a/* */{
+    background-image: url(http://www.number10.gov.uk/files/images/arrow_primeminister.gif);
+}
+
+span.clear {
+    display: block;
+    clear: both;
+    line-height: 1px;
+    font-size: 1px;
+    height: 1px;
+}
+.col_left, .col_right {
+    width: 49%;
+}
+/* */
+.col_left {
+    float: left;
+    clear: left;
+}
+.col_right {
+    float: right; 
+    clear: right;
+}
+/* */
+
+h1, h2 {margin: 0; padding: 0;}
+
+
+#content h1, #content h2 {
+    border: 0 #fff solid;
+    border-width: 0 0 4px 0;
+}
+#content h2 {
+    border-width: 8px 0 4px;
+}
+
+#content {
+    padding-bottom: 5px;
+    background-color: #f1efef;
+}
+#content /* \*/{    position: relative;}/* */
+#content p {
+    margin: 5px 5px 7px 5px; 
+    line-height: 1.3;
+}
+#content ul, #ilinks ul {
+    list-style: none;
+    margin: 5px;
+    padding: 8px 0;
+}
+#content ul li, #ilinks ul li {
+    background: url(http://www.number10.gov.uk/files/images/bullet_arrow-right_black.gif) no-repeat 0 4px;
+    margin: 0;
+    padding:0 0 0 10px;
+    /* Mac hider \*/position: relative;/* */
+}
+#ilinks ul {
+    margin: 0px !important;
+    padding: 8px 0 8px 10px;
+    background-color: #fff;
+}
+
+#content blockquote {
+    margin: 10px;
+}
+
+#content div {
+    margin: 8px 0;
+    border-bottom: 1px #737373 dotted;
+}
+#content .plain, #content.plain {
+    background-color: #fff;
+}
+#content div.plain {
+    margin: 0;
+    border: none;
+}
+
+
+#content img {
+        margin: 0 8px 0 0;
+    
+    border: 1px #666 solid;
+    float: left;
+    clear: both;
+    /* \*/position: relative;/* */
+}
+
+#content img.noborder {
+    border: none;
+    float: none;
+    margin: 2px auto;
+    text-align: center;
+    
+}
+
+#content div.imgleft {
+    background-color: #fff;
+    margin: 0;
+    padding: 8px 0;
+}
+
+
+#content div.imgleft p {
+    margin-left: 97px;
+}
+#content div.imgleft ul {
+    margin-left: 95px;
+}
+
+#content div.imgleft.bigimg p {
+    margin-left: 180px;
+}
+#content div.imgleft.bigimg ul {
+    margin-left: 180px;
+}
+/* \*/
+* html #content {
+    width: 100%;
+}
+* html #content div {
+    position: relative;
+}
+/* */
+
+#content div.caption {
+    width: 120px;
+    height: 150px;
+    float: left; 
+
+    border: none;
+    margin: 8px; 
+
+}
+#content .caption p {
+    margin: 0;
+    padding-top: 4px;
+    background-color: #d9d5d2;
+}
+
+#content .caption img {
+    border: 2px #fff solid;
+    float: none;
+    margin: 10px auto;
+    position: static;
+    display: block;
+    text-align: center;
+}
+
+#content .caption span {
+    display: block;
+
+    margin: 0 !important;
+    padding: 4px;
+    border: 2px #6b3f61 solid;
+    background-color: #fff;
+    position: relative;
+}
+
+#content .pagemenu {
+    clear: both;
+    border: 1px #737373 dotted;
+    border-width: 1px 0;
+    padding: 4px 0;
+}
+
+
+/* Styles added by XMLondon */
+
+#content img.emptyGif{
+    border-style:none;
+}
+
+table {
+    font: 1em Verdana, Arial, Helvetica, sans-serif;
+}
+
+/*
+#content .formtext {
+    background-color: #fff;
+}
+*/
+#content .formtext ul{
+    list-style: none;
+    margin: 5px;
+    padding: 8px 0;
+}
+
+#content .formtext li {
+    margin: 0;
+    padding:0 0 0 10px;
+}
+
+#content .formtext img {
+    border: none;
+    float: none;
+    margin: 2px auto;
+    text-align: center;
+}
+
+#content div.formtext table {
+    color: #000;
+}
+/* End of XMLondon Styles sheet */

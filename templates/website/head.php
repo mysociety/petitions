@@ -20,14 +20,14 @@
 <meta name="dc.title" content="<?=$title?>" />
 <title><?=$title?></title>
 <!-- <script type="text/javascript" language="JavaScript1.1" src="http://www.number10.gov.uk/include/js/nedstat.js"></script> -->
-<link href="http://www.number10.gov.uk/styles/basic_styles.css" rel="stylesheet" type="text/css" />
-<link href="http://www.number10.gov.uk/styles/gallerycontent.css" rel="stylesheet" />
+<link href="/no10_css/basic_styles.css" rel="stylesheet" type="text/css" />
+<link href="/no10_css/gallerycontent.css" rel="stylesheet" />
 <style type="text/css" media="all">
-					@import url(http://www.number10.gov.uk/styles/nomensa.css);
+					@import url(/no10_css/nomensa.css);
 					@import url(/pet.css);
 					#rel_links {margin-right: -146px;}
 				</style>
-<link rel="stylesheet" type="text/css" href="http://www.number10.gov.uk/styles/print.css" media="print" />
+<link rel="stylesheet" type="text/css" href="/no10_css/print.css" media="print" />
 <link rel="shorcut icon" href="favicon.ico" />
 </head>
 <body class="primeminister">

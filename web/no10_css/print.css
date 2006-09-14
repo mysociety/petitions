@@ -1,0 +1,7 @@
+/* print styles */
+#header, #ilinks, #rel_links, #footer, #direct_gov_bar, #helpbar p.help, #helpbar form {
+	display: none;
+}
+#content {
+	margin: 0;
+}

@@ -1,0 +1,54 @@
+/* basic styles - all browsers */
+.epmSubjectLabel
+{
+	display: block;
+    width: 280px;
+    float: left;
+}
+
+.epmFormLabel
+{
+	display: block;
+    width: 110px;
+    float: left;
+}
+
+.epmFormLabelWide
+{
+	display: block;
+    width: 350px;
+    float: left;
+}
+
+.epmFormLabelNarrow
+{
+	display: block;
+    width: 100px;
+    float: left;
+}
+
+.epmFormLabelError
+{
+	display: block;
+    width: 110px;
+    float: left;
+    color: red;
+    
+}
+.epmFontStyle
+{
+font-size:11px;
+}
+
+.epmFontStyleError
+{
+font-size:11px;
+color:red;
+font-weight: bold;
+}
+
+.epmSubjectLabelError
+{
+    color: red;   
+	font-weight: bold;
+}
