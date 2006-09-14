@@ -1,4 +1,4 @@
-Subject: Signing up to ask the Prime Minister to '<?=$values['content']?>'
+Subject: Signing up to ask the Prime Minister to <?=$values['content']?>
 
 <?=$values['user_name']?>,
 

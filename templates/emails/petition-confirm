@@ -7,8 +7,8 @@ website to display the petition at the bottom of this email in your name.
 
 Your petition reads:
 
-We the undersigned petition the Prime Minister to:
-'<?=$values['content']?>'
+We the undersigned petition the Prime Minister to
+<?=$values['content']?>
 
 Thank you for submitting your petition.
 
