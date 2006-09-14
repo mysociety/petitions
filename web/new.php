@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.29 2006-09-14 16:18:36 matthew Exp $
+// $Id: new.php,v 1.30 2006-09-14 16:22:07 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -447,7 +447,43 @@ here:</p>
 </p>
 
 <h3>Terms and Conditions</h3>
-<p>Terms and Conditions will go here...</p>
+<p>
+The information in a petition must be submitted in good faith. In
+order for the for the petition service to comply with the law and with
+the Civil Service Code, you must not include: </p>
+
+<ul>
+<li>Party political material. The Downing Street website is a
+Government site. Party political content is not appropriate, under the
+normal rules governing the Civil Service.  The Civil Service Code can
+be viewed at <a href="http://www.civilservice.gov.uk/civilservicecode">www.civilservice.gov.uk/civilservicecode</a>.</li>
+<li>false or defamatory statements;</li>
+<li>information protected by an injunction or court order (for
+example, the identities of children in custody disputes);</li>
+<li>material which is commercially sensitive, confidential or which
+may cause personal distress or loss;</li>
+<li>the names of individual officials of public bodies, unless they
+are part of the senior management of those organisations;</li>
+<li>the names of family members of elected representatives or
+officials of public bodies;</li>
+<li>the names of individuals, or information where they may be
+identified, in relation to criminal accusations;</li>
+<li>offensive language, such as obvious swear words or language that
+is intemperate, inflammatory, or provocative, or to which people
+reading it could reasonably take offence.</li>
+</ul>
+
+<p>Lastly, to prevent spam problems, we reserve the right to reject:</p>
+<ul>
+<li>statements that don't actually request any action;</li>
+<li>wording that is impossible to understand;</li>
+<li>statements that are simply advertisements with no petition aim.</li>
+</ul>
+
+<p>Petitioners may freely disagree with the Government or call for
+changes of policy. There will be no attempt to exclude critical views
+and decisions will not be made on a party political basis.</p>
+
 
 <?
     endform($data);
