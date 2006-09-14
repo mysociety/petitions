@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.17 2006-09-11 11:52:17 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.18 2006-09-14 17:43:26 matthew Exp $';
 
 use strict;
 
@@ -153,7 +153,7 @@ sub confirm_page ($$$) {
             $html = Petitions::Page::header($q, "Petition created")
                     . $q->p({ -class => 'noprint loudmessage' },
                         "Thank you for creating your petition")
-                    . $q->p({ -class => 'noprint loudmessage'
+                    . $q->p({ -class => 'noprint loudmessage',
                         -align => 'center' }, "
                         It has been entered on our system and will now go to
                         the Number 10 team for approval.")
