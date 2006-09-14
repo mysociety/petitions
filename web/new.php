@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.30 2006-09-14 16:22:07 matthew Exp $
+// $Id: new.php,v 1.31 2006-09-14 16:27:41 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -235,7 +235,7 @@ There are 5 stages to the petition process:
     <?
     textfield('ref', $data['ref'], 16, $errors);
     ?>
-<br /><small><?=htmlspecialchars(_('This gives your petition an easy web address. e.g. http://petitions.number10.gov.uk/badgers')) ?></small>
+<br /><small>This gives your petition an easy web address. e.g. http://petitions.pm.gov.uk/badgers</small>
 </p>
 
 <?
@@ -434,7 +434,7 @@ longer be valid.
 </p>
 
 <p>When you're happy with your petition, <strong>click "Create"</strong> to
-confirm that you wish www.number10.gov.uk to display the petition at the top
+confirm that you wish petitions.pm.gov.uk to display the petition at the top
 of this page in your name, and that you agree to the terms and conditions below.
 <br />If you have any special requests for the Number 10 web team, please include them
 here:</p>
@@ -484,6 +484,9 @@ reading it could reasonably take offence.</li>
 changes of policy. There will be no attempt to exclude critical views
 and decisions will not be made on a party political basis.</p>
 
+<p style="text-align: right;">
+<input type="submit" name="tocreate" value="Create">
+</p>
 
 <?
     endform($data);
