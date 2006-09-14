@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.16 2006-09-14 15:31:35 matthew Exp $
+// $Id: index.php,v 1.17 2006-09-14 15:40:45 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -33,7 +33,7 @@ this website, giving you the opportunity to reach a potentially wider audience
 and to deliver your petition directly to Downing Street.</p>
 
 <blockquote>"Being able to start a petition online where millions can read it is just great!"</blockquote>
-<p align="right">&mdash; David Jones, UK</p>
+<p align="right">&mdash; Tom, UK</p>
 
 </div>
 
