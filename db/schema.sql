@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.29 2006-09-13 18:12:37 matthew Exp $
+-- $Id: schema.sql,v 1.30 2006-09-14 16:59:29 chris Exp $
 --
 
 -- global_seq
@@ -85,8 +85,9 @@ create table petition (
     
     status text not null default 'unconfirmed' check (
         status in (
-        'unconfirmed',      -- email not yet confirmed
+        'unconfirmed',      -- email not yet confirmed nor confirmation sent
         'failedconfirm',    -- confirmation email delivery failed
+        'sentconfirm',      -- confirmation email sent
         'draft',            -- waiting for approval
         'rejectedonce',     -- rejected once
         'resubmitted',      -- resubmitted
