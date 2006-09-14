@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.7 2006-09-04 15:45:52 francis Exp $
+ * $Id: general-example,v 1.8 2006-09-14 16:34:53 matthew Exp $
  * 
  */
 
@@ -47,6 +47,7 @@ define('OPTION_ADMIN_URL', 'https://secure.---.com');
 // Domain name for emails to current website
 define('OPTION_EMAIL_DOMAIN', '---.com');
 define('OPTION_CONTACT_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
+define('OPTION_CONTACT_NAME', 'Name for From line');
 
 // Debug log level for PHP website
 define('OPTION_PHP_DEBUG_LEVEL', 0);

@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.35 2006-09-14 16:31:03 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.36 2006-09-14 16:34:53 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1388,7 +1388,7 @@ sub make_signer_email ($$) {
                 _parameters_ => \%h,
 
                 To => [[$signer->{email}, $signer->{name}]],
-                From => mySociety::Config::get('CONTACT_EMAIL'),
+                From => [[mySociety::Config::get('CONTACT_EMAIL'), mysociety::Config::get('CONTACT_NAME')]],
                 'Message-ID' => message_id()
             });
 }
@@ -1418,7 +1418,7 @@ sub make_petition_email ($) {
                 _parameters_ => \%h,
 
                 To => [[$petition->{email}, $petition->{name}]],
-                From => mySociety::Config::get('CONTACT_EMAIL'),
+                From => [[mySociety::Config::get('CONTACT_EMAIL'), mysociety::Config::get('CONTACT_NAME')]],
                 'Message-ID' => message_id()
             });
 }
@@ -2074,4 +2074,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.35 2006-09-14 16:31:03 matthew Exp $
+$Id: petemaild,v 1.36 2006-09-14 16:34:53 matthew Exp $
