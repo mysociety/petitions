@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.1 2006-07-27 12:57:16 matthew Exp $
+// $Id: steps.php,v 1.2 2006-09-28 14:32:37 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
@@ -38,7 +38,7 @@ be delivered to the Downing Street inbox.</p>
 <h3><span dir="ltr">Step 3: Petition approval</span></h3>
 
 <p>Officials at Downing Street will check your petition to make sure that it meets
-the basic requirements set out in our acceptable use policy (link) and the
+the basic requirements set out in our <a href="/terms">acceptable use policy</a> and the
 Civil Service code.</p>
 
 <p>If for any reason we cannot accept petition, we will write to you to explain
@@ -62,7 +62,7 @@ address) you chose when you created your petition, and anyone will be able to
 come to the website and sign it.</p>
 
 <p>They will be asked to give their name and address and an email address that we
-can verify. The system is designed to identify duplicate names and addresses,
+can verify. The system is designed to identify duplicate names and addresses, and
 will not allow someone to sign a petition more than once. Anyone signing a
 petition will be sent an email asking them to click a link to confirm that they
 have signed the petition. Once they have done this, their name will be added to
