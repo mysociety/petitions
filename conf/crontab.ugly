@@ -4,12 +4,12 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.1 2006-09-28 12:13:55 matthew Exp $
+# $Id: crontab.ugly,v 1.2 2006-09-28 12:19:01 matthew Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
 
 !!(* if ($hostname eq "bitter") { *)!!
 # Frequently, on one machine only as not concurrent. I think, haven't checked.
-*/2 * * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/ycml/bin/send-messages
+*/2 * * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/send-messages
 !!(* } *)!!
