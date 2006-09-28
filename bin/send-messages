@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.10 2006-09-13 22:59:46 matthew Exp $
+ * $Id: send-messages,v 1.11 2006-09-28 12:52:25 matthew Exp $
  *
  */
 
@@ -160,6 +160,10 @@ function send_pending_messages() {
             $data['url'] = pb_person_make_signon_url(null, $petition->creator_email(), 
                 "GET", $petition->url_announce(), $params);
         }
+
+        if ($msg['circumstance'] == 'rejected-once') {
+	    $data['url'] = OPTION_BASE_URL . '/' . $petition->ref() . '/' . token_make('e', $petition->id());
+	}
 
         // Case when it is a copy sent to creator
         if ($msg['sendtosigners'] == 't' && in_array($msg['circumstance'], array('general-announce') )) {
