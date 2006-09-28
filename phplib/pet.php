@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.11 2006-09-13 17:43:39 francis Exp $
+ * $Id: pet.php,v 1.12 2006-09-28 14:36:06 matthew Exp $
  * 
  */
 
@@ -67,7 +67,7 @@ $pet_time = strtotime($pet_timestamp);
 function pet_show_error($message) {
     header('HTTP/1.0 500 Internal Server Error');
     page_header(_("Sorry! Something's gone wrong."), array('override'=>true));
-    print _('<h2>Sorry!  Something\'s gone wrong.</h2>') .
+    print _('<h2><span class="ltr">Sorry!  Something\'s gone wrong.</span></h2>') .
         "\n<p>" . $message . '</p>';
     page_footer();
 }
