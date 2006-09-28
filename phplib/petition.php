@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.15 2006-09-28 12:35:08 matthew Exp $
+ * $Id: petition.php,v 1.16 2006-09-28 12:36:52 matthew Exp $
  * 
  */
 
@@ -92,7 +92,7 @@ class Petition {
         $this->data['sentence'] = $this->sentence();
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
-        } if (isset($this->data['rejection_second_categories'])) {
+        if (isset($this->data['rejection_second_categories'])) {
 	    $this->data['categories'] = prettify_categories($this->data['rejection_second_categories'], true);
 	    $this->data['reason'] = $this->data['rejection_second_reason'];
         } elseif (isset($this->data['rejection_first_categories'])) {
