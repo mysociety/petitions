@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.5 2006-08-14 12:26:04 matthew Exp $
+// $Id: fns.php,v 1.6 2006-09-28 11:55:22 matthew Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
@@ -31,8 +31,8 @@ function pet_send_message($petition_id, $sender, $recips, $circumstance, $templa
 
     if ($recips == 0)
         err("RECIPIENTS must be nonzero in pet_send_message");
-    elseif ($id & ~MSG_ALL)
-        err("Unknown bits present in RECIPIENTS $id");
+    elseif ($recips & ~MSG_ALL)
+        err("Unknown bits present in RECIPIENTS $recips");
 
     db_query("
             insert into message (
