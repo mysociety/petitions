@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.15 2006-09-26 19:02:45 matthew Exp $
+ * $Id: admin-pet.php,v 1.16 2006-09-28 12:35:08 matthew Exp $
  * 
  */
 
@@ -445,32 +445,9 @@ class ADMIN_PAGE_PET_MAIN {
     }
 */
 
-    /* Must keep this synchronised with constraint in schema. */
-    var $categories = array(
-        1 => 'Party political material',
-        2 => 'False or defamatory statements',
-        4 => 'Information protected by an injunction or court order',
-        8 => 'Material which is commercially sensitive, confidential or which may cause personal distress or loss',
-        16 => 'Names of individual officials of public bodies, unless part of the senior management of those organisations',
-        32 => 'Names of family members of officials of public bodies, or elected representatives',
-        64 => 'Names of individuals, or information where they may be identified, in relation to criminal accusations',
-        128 => 'Offensive language',
-	256 => 'Isn\'t clear what the petition is asking signers to endorse',
-	512 => 'Doesn\'t actually ask for an action',
-	1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
-    );
-
-    function prettify_categories($categories, $newlines) {
-        $out = array();
-        foreach ($this->categories as $k => $v)
-            if ($categories & $k) $out[] = $v;
-        if ($newlines)
-            return '    ' . join("\n    ", $out) . "\n";
-        return join(', ', $out);
-    }
-
     function display_categories() {
-        foreach ($this->categories as $n => $category) {
+        global $global_categories;
+        foreach ($global_categories as $n => $category) {
             print '<br><input type="checkbox" name="categories[]" value="' . $n;
             print '" id="cat' . $n . '"> <label for="cat' . $n . '">';
             print $category . '</label>';
@@ -498,7 +475,7 @@ class ADMIN_PAGE_PET_MAIN {
     function reject_petition($id, $categories, $reason) {
         $p = new Petition($id);
         $status = $p->status();
-        $cats_pretty = $this->prettify_categories($categories, false);
+        $cats_pretty = prettify_categories($categories, false);
         if ($status == 'draft') {
             db_getOne("
                     UPDATE petition

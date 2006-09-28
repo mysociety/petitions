@@ -6,12 +6,37 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.14 2006-09-13 15:14:32 matthew Exp $
+ * $Id: petition.php,v 1.15 2006-09-28 12:35:08 matthew Exp $
  * 
  */
 
 // Textual content
 $petition_prefix = 'We the undersigned petition the Prime Minister to';
+
+/* Must keep this synchronised with constraint in schema. */
+$global_categories = array(
+    1 => 'Party political material',
+    2 => 'False or defamatory statements',
+    4 => 'Information protected by an injunction or court order',
+    8 => 'Material which is commercially sensitive, confidential or which may cause personal distress or loss',
+    16 => 'Names of individual officials of public bodies, unless part of the senior management of those organisations',
+    32 => 'Names of family members of officials of public bodies, or elected representatives',
+    64 => 'Names of individuals, or information where they may be identified, in relation to criminal accusations',
+    128 => 'Offensive language',
+    256 => 'Isn\'t clear what the petition is asking signers to endorse',
+    512 => 'Doesn\'t actually ask for an action',
+    1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
+);
+
+function prettify_categories($categories, $newlines) {
+    global $global_categories;
+    $out = array();
+    foreach ($global_categories as $k => $v)
+        if ($categories & $k) $out[] = $v;
+    if ($newlines)
+        return '    ' . join("\n    ", $out) . "\n";
+    return join(', ', $out);
+}
 
 class Petition {
     // Associative array of parameters about the petition, taken from database
@@ -66,6 +91,14 @@ class Petition {
 
         $this->data['sentence'] = $this->sentence();
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
+
+        } if (isset($this->data['rejection_second_categories'])) {
+	    $this->data['categories'] = prettify_categories($this->data['rejection_second_categories'], true);
+	    $this->data['reason'] = $this->data['rejection_second_reason'];
+        } elseif (isset($this->data['rejection_first_categories'])) {
+	    $this->data['categories'] = prettify_categories($this->data['rejection_first_categories'], true);
+	    $this->data['reason'] = $this->data['rejection_first_reason'];
+	}
     }
 
     // Basic data
