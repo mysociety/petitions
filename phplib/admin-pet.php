@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.16 2006-09-28 12:35:08 matthew Exp $
+ * $Id: admin-pet.php,v 1.17 2006-09-28 15:42:42 matthew Exp $
  * 
  */
 
@@ -209,7 +209,7 @@ class ADMIN_PAGE_PET_MAIN {
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
                 message.id AS message_id
             FROM petition
-            LEFT JOIN message ON petition.id = message.petition_id
+            LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
             WHERE $status_query
             " .  ($order ? ' ORDER BY ' . $order : '') );
         $found = array();
