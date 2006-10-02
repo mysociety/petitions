@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.20 2006-10-02 15:56:07 matthew Exp $
+ * $Id: petition.php,v 1.21 2006-10-02 16:02:43 matthew Exp $
  * 
  */
 
@@ -187,11 +187,12 @@ class Petition {
         );
     }
 
+    # Only needs to look at rejection_second_categories as things
+    # rejected once are not displayed anywhere
     function rejected_show_nothing() {
 	# Defamatory, injunction, confidential, names
         $bitfield = 2 | 4 | 8 | 16 | 32 | 64;
-        if (($this->data['rejection_first_categories'] & $bitfield)
-            || ($this->data['rejection_second_categories'] & $bitfield))
+        if ($this->data['rejection_second_categories'] & $bitfield)
             return true;
         return false;
     }
