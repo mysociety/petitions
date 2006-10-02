@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.19 2006-09-28 15:42:42 matthew Exp $
+ * $Id: petition.php,v 1.20 2006-10-02 15:56:07 matthew Exp $
  * 
  */
 
@@ -188,7 +188,8 @@ class Petition {
     }
 
     function rejected_show_nothing() {
-        $bitfield = 2047; # XXX: Presumably not this for live!
+	# Defamatory, injunction, confidential, names
+        $bitfield = 2 | 4 | 8 | 16 | 32 | 64;
         if (($this->data['rejection_first_categories'] & $bitfield)
             || ($this->data['rejection_second_categories'] & $bitfield))
             return true;
