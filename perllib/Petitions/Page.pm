@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.19 2006-09-11 08:13:43 francis Exp $
+# $Id: Page.pm,v 1.20 2006-10-03 13:45:30 matthew Exp $
 #
 
 package Petitions::Page;
@@ -318,8 +318,32 @@ sub reject_box ($$) {
             or croak "bad ref '$ref' in reject_box";
     }
  
-    # XXX: Should show rejection reason(s) here...
-    return $q->p('This petition has been <strong>rejected</strong>.');
+    # Must keep this synchronised with constraint in schema, and list in phplib/petition.php
+    my %categories = (
+        1 => 'Party political material',
+        2 => 'False or defamatory statements',
+        4 => 'Information protected by an injunction or court order',
+        8 => 'Material which is commercially sensitive, confidential or which may cause personal distress or loss',
+        16 => 'Names of individual officials of public bodies, unless part of the senior management of those organisations',
+        32 => 'Names of family members of officials of public bodies, or elected representatives',
+        64 => 'Names of individuals, or information where they may be identified, in relation to criminal accusations',
+        128 => 'Offensive language',
+        256 => 'Isn\'t clear what the petition is asking signers to endorse',
+        512 => 'Doesn\'t actually ask for an action',
+        1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
+    );
+
+    my $reject_reason = $p->{rejection_second_reason};
+    my $reject_cats = $p->{rejection_second_categories};
+
+    my $out = $q->p('This petition has been <strong>rejected</strong>, for being in the following categories:');
+    $out .= '<ul>';
+    foreach my $k (sort keys %categories) {
+        $out .= $q->li($categories{$k}) if ($reject_cats & $k);
+    }
+    $out .= "</ul>\n";
+    $out .= $q->p('Additional information about this rejection: ' . $reject_reason);
+    return $out;
 }
 
 =item signatories_box Q PETITION
