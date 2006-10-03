@@ -7,7 +7,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: mark-finished,v 1.2 2006-09-13 17:43:38 francis Exp $
+ * $Id: mark-finished,v 1.3 2006-10-03 14:27:04 matthew Exp $
  *
  */
 
@@ -51,12 +51,15 @@ Usage: mark-finished [--verbose]
     }
 }
 
+# XXX: This should also move rejectedonce petitions into rejected state
+# after some specified timeout period
+
 verbose("finding newly finished petitions");
 /* Do a query before locking the table. */
 if (!db_getOne("
             select id from petition
             where '$pet_today' > deadline
-                and status != 'finished'
+                and status = 'live'
             for update")) {
     verbose("... no newly finished petitions");
     return;
@@ -65,7 +68,7 @@ if (!db_getOne("
 $q = db_query("
             select * from petition
             where '$pet_today' > deadline
-                and status != 'finished'
+                and status = 'live'
             for update");
 while ($petition = db_fetch_array($q)) {
     verbose("petition #${petition['id']} (${petition['ref']}) has finished");
