@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.10 2006-10-04 15:42:15 francis Exp $
+ * $Id: general-example,v 1.11 2006-10-04 17:01:55 francis Exp $
  * 
  */
 
@@ -24,6 +24,10 @@ define('OPTION_PET_DB_PASS', '');
 define('OPTION_PET_DB_HOST', null);
 define('OPTION_PET_DB_PORT', null);
 define('OPTION_PHP_MAINDB', 'PET');
+
+// Process id files for daemons
+define('OPTION_PETSIGNUPD_PIDFILE', '/var/run/petsignupd.pid');
+define('OPTION_PETEMAILD_PIDFILE', '/var/run/petemaild.pid');
 
 // Optionally, where petsignupd runs. This is used to batch signup requests
 // from front-end scripts to improve throughput. These host and port options
@@ -35,9 +39,6 @@ define('OPTION_PETSIGNUPD_PORT', 12345);
 // How many ref-sign.cgi processes to fork.
 define('OPTION_NUM_SIGN_PROCESSES', 20);    // higher than this for production
 
-// Process id files for daemons
-define('OPTION_PETSIGNUPD_PIDFILE', '/var/run/petsignupd.pid');
-define('OPTION_PETEMAILD_PIDFILE', '/var/run/petemaild.pid');
 // Time for which we collect signup requests to batch insert.
 define('OPTION_MAX_SIGNUP_TIME', 0.25);
 
