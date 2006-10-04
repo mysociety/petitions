@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.41 2006-10-04 16:37:30 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.42 2006-10-04 16:43:32 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1324,6 +1324,7 @@ sub do_ipc ($$$$$;$$) {
                 }
             } elsif (0 == $n) {
                 $didclose = 1;
+                last;
             }
         }
     }
@@ -2090,4 +2091,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.41 2006-10-04 16:37:30 chris Exp $
+$Id: petemaild,v 1.42 2006-10-04 16:43:32 chris Exp $
