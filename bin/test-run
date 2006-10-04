@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.3 2006-10-04 15:06:40 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.4 2006-10-04 15:15:28 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -75,7 +75,8 @@ sub name_n { my $n = shift; return "Cara Constituent $n"; }
 # Configure test harness class
 print "Set up web test harness...\n" if $verbose > 0;
 our $wth = new mySociety::WebTestHarness();
-$wth->browser_credentials(($base_url =~ m#^http://(.+)/?$#).":80", $auth_realm, $auth_user, $auth_password);
+$base_url =~ m#^http://(.+)/?$#;
+$wth->browser_credentials("$1:80", $auth_realm, $auth_user, $auth_password);
 $wth->log_watcher_setup($httpd_error_log);
 $wth->database_connect('PET_');
 $wth->database_drop_reload('../db/schema.sql');
