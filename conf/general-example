@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.11 2006-10-04 17:01:55 francis Exp $
+ * $Id: general-example,v 1.12 2006-10-04 17:49:12 francis Exp $
  * 
  */
 
@@ -29,10 +29,10 @@ define('OPTION_PHP_MAINDB', 'PET');
 define('OPTION_PETSIGNUPD_PIDFILE', '/var/run/petsignupd.pid');
 define('OPTION_PETEMAILD_PIDFILE', '/var/run/petemaild.pid');
 
-// Optionally, where petsignupd runs. This is used to batch signup requests
-// from front-end scripts to improve throughput. These host and port options
-// are used by the frontend to connect to petsignupd, and by petsignupd to know
-// where to listen.
+// Where petsignupd runs. This is used to batch signup requests from front-end
+// scripts to improve throughput. These host and port options are used by the
+// frontend to connect to petsignupd, and by petsignupd to know where to
+// listen.
 define('OPTION_PETSIGNUPD_HOST', '192.168.1.42');
 define('OPTION_PETSIGNUPD_PORT', 12345);
 
