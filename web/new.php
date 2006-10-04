@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.32 2006-09-28 16:06:17 matthew Exp $
+// $Id: new.php,v 1.33 2006-10-04 21:41:06 francis Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -142,7 +142,7 @@ function petition_form_submitted() {
  * Various HTML utilities for these forms
  */
 function startform() {
-    print '<form accept-charset="utf-8" method="post" action="/new">';
+    print '<form accept-charset="utf-8" method="post" action="/new" name="newpetition">';
 }
 
 function nextprevbuttons($prev, $prevdesc, $next, $nextdesc) {
@@ -221,6 +221,7 @@ There are 5 stages to the petition process:
     <?
     textfield('pet_content', $data['pet_content'], 80, $errors);
     ?>
+</p>
 <p>More details about your petition:<br />
     <?
     textarea('detail', $data['detail'], 40, 7, $errors);
@@ -417,7 +418,7 @@ longer be valid.
 </p>
 
 <p style="text-align: right;">
-<input type="submit" name="tostepmain" value="Change petition text">
+<input type="submit" name="tostepmain" value="Change petition text"/>
 </p>
 
 <p>Please also check your contact details:</p>
@@ -431,7 +432,7 @@ longer be valid.
 </ul>
 
 <p style="text-align: right;">
-<input type="submit" name="tostepyou" value="Change my contact details">
+<input type="submit" name="tostepyou" value="Change my contact details"/>
 </p>
 
 <p>When you're happy with your petition, <strong>click "Create"</strong> to
@@ -444,7 +445,7 @@ here:</p>
 </p>
 
 <p style="text-align: right;">
-<input type="submit" name="tocreate" value="Create">
+<input type="submit" name="tocreate" value="Create"/>
 </p>
 
 <h3>Terms and Conditions</h3>
@@ -486,7 +487,7 @@ changes of policy. There will be no attempt to exclude critical views
 and decisions will not be made on a party political basis.</p>
 
 <p style="text-align: right;">
-<input type="submit" name="tocreate" value="Create">
+<input type="submit" name="tocreate" value="Create"/>
 </p>
 
 <?

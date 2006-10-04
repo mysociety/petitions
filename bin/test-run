@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.5 2006-10-04 15:28:19 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.6 2006-10-04 21:41:05 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -66,8 +66,11 @@ our $auth_user = mySociety::Config::get('AUTH_USER');
 our $auth_password = mySociety::Config::get('AUTH_PASSWORD');
 our $auth_realm = "ePetitions staging site";
 our $httpd_error_log = mySociety::Config::get('HTTPD_ERROR_LOG');
-sub email_n { my $n = shift; return "ycmlharness+$n\@writetothem.owl"; }
-sub name_n { my $n = shift; return "Cara Constituent $n"; }
+our $email_domain = mySociety::Config::get('EMAIL_DOMAIN');
+our $contact_email = mySociety::Config::get('CONTACT_EMAIL');
+our $test_email_prefix = mySociety::Config::get('TEST_EMAIL_PREFIX');
+sub email_n { my $n = shift; return "$test_email_prefix+$n\@$email_domain"; }
+sub name_n { my $n = shift; return "Persephone Petitioner $n"; }
 
 #############################################################################
 # Main code
@@ -85,6 +88,7 @@ my $eveld_bin = "$FindBin::Bin/../../services/EvEl/bin/eveld";
 $eveld_bin = undef if ! -e $eveld_bin; # when running on servers rely on EvEl daemon, rather than calling EvEl binary directly XXX need more explicit way of distinguishing this case, than just checking evel isn't checked out in the same tree
 $wth->email_setup({ eveld_bin => $eveld_bin,
                     log_mailbox => "log_mailbox" });
+$wth->browser_set_validator("/usr/bin/validate");
 
 # Syntax check all .php files
 print "Syntax check all PHP files...\n" if $verbose > 0;
@@ -112,6 +116,19 @@ print "Everything completed successfully\n";
 #############################################################################
 # General functions
 
+# Change the date that all parts of ePetitions think is today.  Call with no
+# parameters to reset it to the actual today.
+sub set_pet_date {
+    my $new_date = shift;
+    if (defined($new_date)) {
+        dbh()->do('delete from debugdate; insert into debugdate (override_today) values (?);', {}, $new_date);
+    } else {
+        dbh()->do('delete from debugdate;');
+    }
+    dbh()->commit();
+}
+
+#
 # Call fyrqd for one pass
 #sub call_fyrqd {
 #    system("./fyrqd", "--debug", "--once", "--email", # $verbose > 1 ? qw(--verbose) : ()
@@ -121,8 +138,43 @@ print "Everything completed successfully\n";
 #############################################################################
 
 sub do_basic_test {
+    set_pet_date('1988-08-08');
+
     $wth->browser_get($base_url);
     $wth->browser_check_contents("Petitions");
+    $wth->browser_follow_link(text_regex => qr/Create a Petition/);
+    $wth->log_watcher_check();
+
+    $wth->browser_check_contents("Part 1 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => {
+                pet_content => 'take action on every petition on this site with more than 1000 signers',
+                detail => 'I think it is very important that the Prime Minister takes all petitions seriously. He should be compelled to do anything that more than 1000 people sign, as this would be good for democracy and not at all exploitable by small groups of people.',
+                rawdeadline => '31st December 1988',
+                ref => 'onethousand'
+                }, button => 'tostepyou') or die "Failed to submit step 1";
+    $wth->log_watcher_check();
+
+    $wth->browser_check_contents("Part 2 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => {
+                name => name_n(99),
+                organisation => "Society for the Advancement of Effective Petitioning",
+                address => "The Beseechment Building, Importuning Island",
+                postcode => "SW1A 2AA",
+                telephone => "01234 56789",
+                org_url => "http://www.petitionsrock.org.uk",
+                email => email_n(99),
+                email2 => email_n(99)
+                }, button => 'tosteppreview') or die "Failed to submit step 2";
+    $wth->log_watcher_check();
+
+    $wth->browser_check_contents("Part 3 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => { }, button => 'tocreate') or die "Failed to submit step 3";
+    $wth->log_watcher_check();
+
+    $wth->browser_check_contents("We have sent you an email to confirm");
 
 =comment
     $wth->browser_check_contents("This is a test site"); 

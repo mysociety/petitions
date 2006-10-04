@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.18 2006-09-14 16:18:36 matthew Exp $
+// $Id: index.php,v 1.19 2006-10-04 21:41:06 francis Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -21,9 +21,9 @@ page_header('Introduction to e-petitions');
 <div id="petition_actions">
 <ul>
 <li id="action_create"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
-><br />Create a Petition</a></li>
+/><br />Create a Petition</a></li>
 <li id="action_view"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
-><br />View Petitions</a></li>
+/><br />View Petitions</a></li>
 </ul>
 </div>
 
@@ -51,6 +51,9 @@ foreach ($recent as $petition) {
     print '<li><a href="/' . $petition['ref'] . '">';
     print htmlspecialchars($petition['content']) . '</a></li>';
 }
+if (!count($recent)) {
+    print '<li>None, you can <a href="/new">create a petition</a>.</li>';
+}
 ?>
 </ul>
 </div>
@@ -75,6 +78,9 @@ foreach ($recent as $petition) {
     print htmlspecialchars($petition['content']) . '</a> <small>(';
     print $petition['signers'] . ' signature';
     print ($petition['signers'] == 1 ? '' : 's') . ')</small></li>';
+}
+if (!count($recent)) {
+    print '<li>None, you can <a href="/new">create a petition</a>.</li>';
 }
 ?>
 </ul>
