@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.2 2006-06-16 08:51:16 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.3 2006-10-04 15:06:40 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -62,6 +62,9 @@ if ($help) {
 
 our $base_url = mySociety::Config::get('BASE_URL');
 our $admin_url = mySociety::Config::get('ADMIN_URL');
+our $auth_user = mySociety::Config::get('AUTH_USER');
+our $auth_password = mySociety::Config::get('AUTH_PASSWORD');
+our $auth_realm = "ePetitions staging site";
 our $httpd_error_log = mySociety::Config::get('HTTPD_ERROR_LOG');
 sub email_n { my $n = shift; return "ycmlharness+$n\@writetothem.owl"; }
 sub name_n { my $n = shift; return "Cara Constituent $n"; }
@@ -72,6 +75,7 @@ sub name_n { my $n = shift; return "Cara Constituent $n"; }
 # Configure test harness class
 print "Set up web test harness...\n" if $verbose > 0;
 our $wth = new mySociety::WebTestHarness();
+$wth->browser_credentials(($base_url =~ m#^http://(.+)/?$#).":80", $auth_realm, $auth_user, $auth_password);
 $wth->log_watcher_setup($httpd_error_log);
 $wth->database_connect('PET_');
 $wth->database_drop_reload('../db/schema.sql');

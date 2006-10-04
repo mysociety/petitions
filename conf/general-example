@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.8 2006-09-14 16:34:53 matthew Exp $
+ * $Id: general-example,v 1.9 2006-10-04 15:06:40 francis Exp $
  * 
  */
 
@@ -26,7 +26,9 @@ define('OPTION_PET_DB_PORT', null);
 define('OPTION_PHP_MAINDB', 'PET');
 
 // Optionally, where petsignupd runs. This is used to batch signup requests
-// from front-end scripts to improve throughput.
+// from front-end scripts to improve throughput. These host and port options
+// are used by the frontend to connect to petsignupd, and by petsignupd to know
+// where to listen.
 define('OPTION_PETSIGNUPD_HOST', '192.168.1.42');
 define('OPTION_PETSIGNUPD_PORT', 12345);
 
@@ -57,7 +59,9 @@ define('OPTION_PET_STAGING', 0);
 // Where web services used are
 define('OPTION_EVEL_URL', 'http://services.mysociety.org/evel');
 
-// Log file (used in test harness, and later in admin scripts)
+// Test harness parameters
 define('OPTION_HTTPD_ERROR_LOG', '/var/log/apache/error.log');
+define('OPTION_AUTH_USER', undef);
+define('OPTION_AUTH_PASSWORD', undef);
 
 
