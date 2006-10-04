@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.40 2006-10-04 16:08:46 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.41 2006-10-04 16:37:30 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1230,6 +1230,11 @@ sub queue ($) {
     return $self->{queue};
 }
 
+sub pid ($) {
+    my Source $self = shift;
+    return $self->{pid};
+}
+
 sub pre_select ($$$) {
     my Source $self = shift;
     my IO::Select $rds = shift;
@@ -1346,6 +1351,17 @@ sub do_ipc ($$$$$;$$) {
     }
 
     return $didclose;
+}
+
+sub DESTROY ($) {
+    # Shut down the child process cleanly.
+    my Source $self = shift;
+    my $p = new Source::Packet(Source::Packet::TYPE_QUIT, undef);
+    $self->s()->blocking(1);
+    my $w = $p->wire();
+    $self->s()->syswrite($w, length($w));
+    $self->s()->close();
+    waitpid($self->pid(), 0);
 }
 
 #
@@ -2074,4 +2090,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.40 2006-10-04 16:08:46 chris Exp $
+$Id: petemaild,v 1.41 2006-10-04 16:37:30 chris Exp $
