@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.4 2006-10-04 15:15:28 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.5 2006-10-04 15:28:19 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -81,7 +81,9 @@ $wth->log_watcher_setup($httpd_error_log);
 $wth->database_connect('PET_');
 $wth->database_drop_reload('../db/schema.sql');
 $wth->database_cycle_sequences(200);
-$wth->email_setup({ eveld_bin => "$FindBin::Bin/../../services/EvEl/bin/eveld",
+my $eveld_bin = "$FindBin::Bin/../../services/EvEl/bin/eveld";
+$eveld_bin = undef if ! -e $eveld_bin; # when running on servers rely on EvEl daemon, rather than calling EvEl binary directly XXX need more explicit way of distinguishing this case, than just checking evel isn't checked out in the same tree
+$wth->email_setup({ eveld_bin => $eveld_bin,
                     log_mailbox => "log_mailbox" });
 
 # Syntax check all .php files
