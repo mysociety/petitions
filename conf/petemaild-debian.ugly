@@ -1,0 +1,42 @@
+#!/bin/bash
+#
+# !!(*= $daemon_name *)!! Start the ePetitions email daemon
+
+NAME=!!(*= $daemon_name *)!!
+DAEMON=/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petemaild
+PIDFILE=/data/vhost/!!(*= $vhost *)!!/petemaild.pid
+DUSER=!!(*= $user *)!!
+
+trap "" 1
+
+case "$1" in
+  start)
+    echo -n "Starting ePetitions email daemon: $NAME"
+    start-stop-daemon --start --pidfile $PIDFILE --chuid $DUSER --exec $DAEMON > /dev/null
+    ;;
+
+  stop)
+    echo -n "Stopping ePetitions email daemon: $NAME"
+    start-stop-daemon --stop --pidfile $PIDFILE --oknodo
+    ;;
+
+  restart)
+    echo -n "Restarting ePetitions email daemon: $NAME"
+    start-stop-daemon --stop --pidfile $PIDFILE --oknodo
+    start-stop-daemon --start --pidfile $PIDFILE --chuid $DUSER --exec $DAEMON > /dev/null
+    ;;
+
+  *)
+    echo "Usage: /etc/init.d/$NAME {start|stop|restart}"
+    exit 1
+    ;;
+esac
+
+if [ $? -eq 0 ]; then
+	echo .
+	exit 0
+else
+	echo " failed"
+	exit 1
+fi
+
