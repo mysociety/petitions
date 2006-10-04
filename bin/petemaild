@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.39 2006-09-14 17:00:36 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.40 2006-10-04 16:08:46 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1996,6 +1996,13 @@ mySociety::Util::daemon() unless ($debug);
 
 $SIG{TERM} = $SIG{INT} = sub { $foad = 1; };
 
+if ($debug) {
+    Log::verbose($verbose ? 2 : 1);
+} else {
+    Log::verbose($verbose ? 1 : 0);
+    mySociety::Util::daemon();
+}
+
 my $pidfile;
 try {
     $pidfile = new mySociety::PIDFile($pidfilepath);
@@ -2004,13 +2011,6 @@ try {
     print_log('err', $E->text());
     exit(1);
 };
-
-if ($debug) {
-    Log::verbose($verbose ? 2 : 1);
-} else {
-    Log::verbose($verbose ? 1 : 0);
-    mySociety::Util::daemon();
-}
 
 my $Q = new Queue();
 my $S = new Source($Q);
@@ -2074,4 +2074,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.39 2006-09-14 17:00:36 chris Exp $
+$Id: petemaild,v 1.40 2006-10-04 16:08:46 chris Exp $
