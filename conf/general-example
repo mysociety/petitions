@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.9 2006-10-04 15:06:40 francis Exp $
+ * $Id: general-example,v 1.10 2006-10-04 15:42:15 francis Exp $
  * 
  */
 
@@ -35,6 +35,9 @@ define('OPTION_PETSIGNUPD_PORT', 12345);
 // How many ref-sign.cgi processes to fork.
 define('OPTION_NUM_SIGN_PROCESSES', 20);    // higher than this for production
 
+// Process id files for daemons
+define('OPTION_PETSIGNUPD_PIDFILE', '/var/run/petsignupd.pid');
+define('OPTION_PETEMAILD_PIDFILE', '/var/run/petemaild.pid');
 // Time for which we collect signup requests to batch insert.
 define('OPTION_MAX_SIGNUP_TIME', 0.25);
 
