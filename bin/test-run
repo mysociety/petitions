@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.6 2006-10-04 21:41:05 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.7 2006-10-04 22:33:41 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -175,6 +175,11 @@ sub do_basic_test {
     $wth->log_watcher_check();
 
     $wth->browser_check_contents("We have sent you an email to confirm");
+    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: '.email_n(99).  '%');
+    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(http://.*$)#m);
+    my $confirm_petition_link = $1;
+
+    print $confirm_petition_link;
 
 =comment
     $wth->browser_check_contents("This is a test site"); 
