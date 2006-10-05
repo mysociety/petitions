@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.23 2006-10-05 22:58:43 matthew Exp $
+# $Id: Page.pm,v 1.24 2006-10-05 23:02:22 matthew Exp $
 #
 
 package Petitions::Page;
@@ -324,6 +324,7 @@ sub reject_box ($$) {
         256 => 'Isn\'t clear what the petition is asking signers to endorse',
         512 => 'Doesn\'t actually ask for an action',
         1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
+        2048 => 'Identical to an existing petition',
     );
 
     my $reject_reason = $p->{rejection_second_reason};

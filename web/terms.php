@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.3 2006-10-05 22:58:44 matthew Exp $
+// $Id: terms.php,v 1.4 2006-10-05 23:02:22 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -71,7 +71,8 @@ reading it could reasonably take offence.</li>
 <ul>
 <li>statements that don't actually request any action;</li>
 <li>wording that is impossible to understand;</li>
-<li>statements that are simply advertisements with no petition aim.</li>
+<li>statements that are simply advertisements with no petition aim;</li>
+<li>petitions that are identical to existing petitions.</li>
 </ul>
 
 <p>Petitioners may freely disagree with the Government or call for

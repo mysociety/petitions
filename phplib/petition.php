@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.21 2006-10-02 16:02:43 matthew Exp $
+ * $Id: petition.php,v 1.22 2006-10-05 23:02:22 matthew Exp $
  * 
  */
 
@@ -26,6 +26,7 @@ $global_categories = array(
     256 => 'Isn\'t clear what the petition is asking signers to endorse',
     512 => 'Doesn\'t actually ask for an action',
     1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
+    2048 => 'Identical to an existing petition',
 );
 
 function prettify_categories($categories, $newlines) {
