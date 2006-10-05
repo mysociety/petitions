@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.12 2006-09-28 14:36:06 matthew Exp $
+ * $Id: pet.php,v 1.13 2006-10-05 22:58:43 matthew Exp $
  * 
  */
 
@@ -28,7 +28,7 @@ require_once 'fns.php';
  * horribly.*/
 ob_start();
 
-$locale_current = 'en-gb';
+$locale_current = ''; # To *not* use English suffixes in dates
 
 /* pet_handle_error NUMBER MESSAGE
  * Display a PHP error message to the user. */

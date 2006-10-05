@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.22 2006-10-04 21:41:05 francis Exp $
+# $Id: Page.pm,v 1.23 2006-10-05 22:58:43 matthew Exp $
 #
 
 package Petitions::Page;
@@ -85,13 +85,6 @@ sub header ($$%) {
 <body class="primeminister">
 <h3 align="center" style="color: #cc0000; background-color: #ffffff; ">@{[ $devwarning ]}</h3>
 <p class="rm"><a class="skip" href="#content">Skip to: Content</a><span class="skip"> |</span></p>
-<div class="toolbarWhite">
-<div class="toolbarLogo"><a href="http://www.direct.gov.uk" target="_blank"><img src="http://www.number10.gov.uk/files/images/directgov_logo_white.gif" width="384" height="14" border="0" alt="Link to Directgov - widest range of government information and services online" /></a><span class="skip">|</span></div>
-<div class="toolbarLinkText">
-<a href="http://www.direct.gov.uk" target="_blank" class="toolbarWhiteLink" title="Opens new browser window - Link to Directgov - widest range of government information and services online">Directgov</a><span class="skip">|</span>
-<a href="http://www.number10.gov.uk/output/Page21.asp" target="_blank" class="toolbarWhiteLink" title="Opens in new window - Number 10 Newsroom">Gov news</a><span class="skip">|</span>
-</div>
-</div>
 <div id="header">
 <a href="http://www.number10.gov.uk/output/page1.asp" class="logo">
 <img src="http://www.number10.gov.uk/files/images/crest.gif" width="125" height="78" alt="The crest for Number 10 Downing Street" title="" />
@@ -151,7 +144,7 @@ sub footer ($%) {
 <li><a href="/list">View petitions</a></li>
 <li><a href="/new">Create a petition</a></li>
 <li><a href="/about">About e-petitions</a></li>
-<li><a href="/steps">Step by Step Guide</a></li>
+<li><a href="/steps">Step-by-Step Guide</a></li>
 <li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
 <li>Terms and Conditions
 <li><a href="/privacy">Privacy Policy</a></li>
@@ -175,7 +168,7 @@ the coming weeks in response to feedback from our users.</p>
 </div>
 <div id="footer">
 <div><p>|
-        <a href="http://www.number10.gov.uk/output/Page49.asp">copyright</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page7035.asp">freedom of information</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page50.asp">contact the webteam</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page51.asp">website feedback</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page52.asp">privacy policy</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page53.asp">advanced search</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page54.asp">sitemap</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page4049.asp">accessibility</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page6508.asp">rss feed</a>&nbsp;|&nbsp;</p></div>
+	<a href="http://www.number10.gov.uk/output/Page49.asp">copyright</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page7035.asp">freedom of information</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page50.asp">feedback</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page52.asp">privacy policy</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page53.asp">search</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page54.asp">sitemap</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page4049.asp">accessibility</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page6508.asp">rss and podcasts</a>&nbsp;|&nbsp;<a href="/output/Page9899.asp">directgov</a>&nbsp;|&nbsp;</p></div>
 </div>
 </body>
 </html>

@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.2 2006-10-05 15:08:15 matthew Exp $
+// $Id: terms.php,v 1.3 2006-10-05 22:58:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -15,7 +15,7 @@ page_header('E-petitions Terms and Conditions');
 
 <h1><span dir="ltr">Terms and Conditions</span></h1>
 
-<p>We aim to accept as many petitions as possible. The purpose of the
+<p>The purpose of the
 e-petition service is to enable as many people as possible to make
 their views know. All petitions will be accepted and published on the
 Downing Street website, providing they meet the following criteria.</p>

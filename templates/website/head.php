@@ -33,13 +33,6 @@
 <body class="primeminister">
 <h3 align="center" style="color: #cc0000; background-color: #ffffff; "><?=$devwarning?></h3>
 <p class="rm"><a class="skip" href="#content">Skip to: Content</a><span class="skip"> |</span></p>
-<div class="toolbarWhite">
-<div class="toolbarLogo"><a href="http://www.direct.gov.uk" target="_blank"><img src="http://www.number10.gov.uk/files/images/directgov_logo_white.gif" width="384" height="14" border="0" alt="Link to Directgov - widest range of government information and services online" /></a><span class="skip">|</span></div>
-<div class="toolbarLinkText">
-<a href="http://www.direct.gov.uk" target="_blank" class="toolbarWhiteLink" title="Opens new browser window - Link to Directgov - widest range of government information and services online">Directgov</a><span class="skip">|</span>
-<a href="http://www.number10.gov.uk/output/Page21.asp" target="_blank" class="toolbarWhiteLink" title="Opens in new window - Number 10 Newsroom">Gov news</a><span class="skip">|</span>
-</div>
-</div>
 <div id="header">
 <a href="http://www.number10.gov.uk/output/page1.asp" class="logo">
 <img src="http://www.number10.gov.uk/files/images/crest.gif" width="125" height="78" alt="The crest for Number 10 Downing Street" title="" />

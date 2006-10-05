@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.25 2006-08-14 14:06:15 chris Exp $
+# $Id: Petitions.pm,v 1.26 2006-10-05 22:58:43 matthew Exp $
 #
 
 package Petitions::DB;
@@ -276,15 +276,12 @@ sub pretty_deadline ($;$) {
     croak("PETITION may not be undef") unless (defined($p));
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     my ($Y, $m, $d) = split(/-/, $p->{deadline});
-    my $day = mySociety::Util::ordinal($d);
-    $day =~ s#^(\d+)(.+)#sprintf('%s<sup>%s</sup>', $1, ent($2))#e
-        if ($html);
 
     my @months = qw(x January February March April May June July August September October November December);   # XXX lazy
     my $monthyear = "$months[$m] $Y";
     $monthyear = ent($monthyear) if ($html);
     
-    return "$day $monthyear";
+    return "$d $monthyear";
 }
 
 use constant MSG_ADMIN => 1;

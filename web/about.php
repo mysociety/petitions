@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: about.php,v 1.8 2006-10-05 15:08:15 matthew Exp $
+// $Id: about.php,v 1.9 2006-10-05 22:58:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -27,7 +27,7 @@ petition directly to the Prime Minister.</p>
 <p>The e-petition system is run the principle that people should have
 complete confidence that it is fair and transparent. There are basic
 requirements that this service must meet&mdash;for example we cannot
-host offensive, libelous or party political petitions. Our
+host offensive, libellous or party political petitions. Our
 <a href="/terms">terms and conditions</a> explains in full the
 requirements that must be met. But the main aim is to make it possible
 for the widest number of people to make their views heard.</p>
