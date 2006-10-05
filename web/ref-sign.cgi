@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.18 2006-09-14 17:43:26 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.19 2006-10-05 00:12:25 chris Exp $';
 
 use strict;
 
@@ -242,7 +242,7 @@ dbh()->disconnect();
 
 mySociety::Util::manage_child_processes({
                 web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
-                        accept_loop()]
+                        \&accept_loop]
             });
 
 exit(0);
