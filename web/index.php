@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.19 2006-10-04 21:41:06 francis Exp $
+// $Id: index.php,v 1.20 2006-10-05 16:23:47 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -38,7 +38,7 @@ to spread in ways not possible before."</blockquote>
 
 </div>
 
-<div style="clear: both; float: left; width: 45%;">
+<div id="most_recent">
 <h2><span class="ltr">Five most recent petitions</span></h2>
 <p>We the undersigned petition the Prime Minister to&hellip;</p>
 <ul>
@@ -58,7 +58,7 @@ if (!count($recent)) {
 </ul>
 </div>
 
-<div style="float: right; width: 45%;">
+<div id="most_popular">
 <h2><span class="ltr">Five most popular petitions</span></h2>
 <p>We the undersigned petition the Prime Minister to&hellip;</p>
 <ul>
