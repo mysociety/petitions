@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.12 2006-10-04 21:41:06 francis Exp $
+// $Id: page.php,v 1.13 2006-10-05 13:22:09 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -32,7 +32,7 @@ function page_header($title, $params = array()) {
     if ($pet_today != date('Y-m-d')) {
         $devwarning[] = _("Note: On this test site, the date is faked to be") . " $pet_today";
     }
-    $devwarning = join('<br/>', $devwarning);
+    $devwarning = join('<br />', $devwarning);
 
     include "../templates/website/head.php";
 }
