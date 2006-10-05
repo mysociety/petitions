@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.7 2006-09-14 17:38:56 matthew Exp $
+// $Id: faq.php,v 1.8 2006-10-05 15:08:15 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -24,7 +24,7 @@ page_header('E-petitions Questions and Answers');
 
 <dt>2.	What's the difference between an e-petition and a paper petition?</dt>
 <dd>
-<p>There is no difference apart from the way in which the signatures are collected. A petition can gather names and addresses in either or both forms, though once someone has signed a petition in one format, they cannot sign it in another.
+<p>There is no theoretical difference, only the way in which the signatures are collected and delivered. A petition can gather names and addresses in either or both forms, though once someone has signed a petition in one format, they cannot sign it in another.
 </p>
 </dd>
 
@@ -42,7 +42,7 @@ You can start a petition using our <a href="/new">e-petition form</a>. You will 
 meet standards that are set out in our
 <a href="/terms">terms and conditions</a> and in the Civil Service Code.</p>
 
-<p>Petitioners may freely disagree with the Government or call for changes of policy. There will be no attempt to exclude critical views and decisions will not be made on a party political basis.</p>
+<p>Petitioners may freely disagree with the Government or call for changes of policy. There will be no attempt to exclude critical views and decisions to accept or reject will not be made on a party political basis.</p>
 </dd>
 
 <dt>5.	What happens if my petition is rejected?</dt>
@@ -50,14 +50,14 @@ meet standards that are set out in our
 <dd>
 <p>If your petition does not meet these criteria, we will send it back to you along with an explanation of the reason(s) for rejection. We will give you the option of altering and resubmitting the petition.</p>
 
-<p>If you decide not to resubmit your petition, or if your second iteration is also rejected, we record list your petition and the reason(s) for not accepting it on this website.</p>
+<p>If you decide not to resubmit your petition, or if your second iteration is also rejected, we will list your petition and the reason(s) for not accepting it on this website.</p>
 </dd>
 
 <dt>6.	Can I still send in a paper petition?</dt>
 
 <dd>
 <p>
-Yes. Paper petitions can still be posted/delivered to Downing Street in the way that they always have been. If you would prefer to collect signatures on paper, you should send them to:
+Yes. Paper petitions can still be posted/delivered to Downing Street. If you would prefer to collect signatures on paper, you should send them to:
 </p>
 <p>
 10 Downing Street
@@ -97,7 +97,7 @@ Nothing, unless you expressly ask to sign up for other services available on the
 Street website (e.g. email updates). We will use your email address to confirm your signature
 and, unless you ask us not to, we will also send you a maximum of two responses to the issues
 raised in the petition and a maximum of two emails from the creator of the petition.
-See our <a href="/privacy">privacy policy</a> for more information.
+See our <a href="/privacy">privacy policy</a> for more information. The data themselves are held by mySociety and not by the Prime Minister's Office or any other government bodies or agencies.
 </p>
 </dd>
 

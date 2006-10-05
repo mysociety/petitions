@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.1 2006-09-14 16:22:07 matthew Exp $
+// $Id: terms.php,v 1.2 2006-10-05 15:08:15 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -18,7 +18,7 @@ page_header('E-petitions Terms and Conditions');
 <p>We aim to accept as many petitions as possible. The purpose of the
 e-petition service is to enable as many people as possible to make
 their views know. All petitions will be accepted and published on the
-Downing Street website providing they meet the following criteria.</p>
+Downing Street website, providing they meet the following criteria.</p>
 
 <p>Petitions have long been sent to the Prime Minister by post, or
 delivered to the Number 10 door in person. E-petitions are welcome in
@@ -34,9 +34,9 @@ some basic conditions.</p>
 <li>a clear and concise statement covering the subject of the
 petition. It should state what action the petitioner wishes the PM or
 the Government to take. The petition will be returned to you to edit
-if it is unclear what action is being asked for.</li>
+if it is unclear what action is being asked for;</li>
 <li>the petition author's contact address (in case we need to
-contact you about the petition. This address is for our use only, and
+contact you about the petition. This
 will not be placed on the website);</li>
 <li>the starting and closing date of the petition.</li>
 </ul>
@@ -67,7 +67,7 @@ is intemperate, inflammatory, or provocative, or to which people
 reading it could reasonably take offence.</li>
 </ul>
 
-<p>Lastly, to prevent spam problems, we reserve the right to reject:</p>
+<p>We reserve the right to reject:</p>
 <ul>
 <li>statements that don't actually request any action;</li>
 <li>wording that is impossible to understand;</li>
@@ -76,7 +76,7 @@ reading it could reasonably take offence.</li>
 
 <p>Petitioners may freely disagree with the Government or call for
 changes of policy. There will be no attempt to exclude critical views
-and decisions will not be made on a party political basis.</p>
+and decisions to accept or reject will not be made on a party political basis.</p>
 
 <p>Petitions that do not follow these guidelines cannot be accepted. In
 these cases, you will be informed in writing of the reason(s) your
@@ -108,7 +108,7 @@ information on the process, read our <a href="/steps">step-by-step guide</a>.
 </p>
 
 <p>
-You petition will be available on this website until the specified
+Your petition will be available on this website until the specified
 close date. If, however, during this time it becomes clear that your
 petition is not being run in accordance with the terms, we reserve the
 right to withdraw it. If this happens, we will contact you first to

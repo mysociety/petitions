@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.2 2006-09-28 14:32:37 matthew Exp $
+// $Id: steps.php,v 1.3 2006-10-05 15:08:15 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
@@ -21,18 +21,18 @@ function petition_form_intro() {
 <h3><span dir="ltr">Step 1: Create your petition</span></h3>
 
 <p>You will be asked to give your name, organisation (if you represent one),
-address and email address, title and text of your petition. You will also be
+address and email address, and the title and text of your petition. You will also be
 asked to give a short, one-word name for your petition. This will be used to
 give your petition a unique URL (website address) that you can use to publicise
 your petition.</p>
 
 <p>You will be able to specify a start and finish date for your petition, and we
-will host your petition for up to 12 months.</p>
+can host your petition for up to 12 months.</p>
 
 <h3><span dir="ltr">Step 2: Submit your petition</span></h3>
 
 <p>Once you have submitted your petition, you will receive an email asking
-you to click a link to confirm your petition. Your proposed petition will then
+you to click a link to confirm. Your proposed petition will then
 be delivered to the Downing Street inbox.</p>
 
 <h3><span dir="ltr">Step 3: Petition approval</span></h3>
@@ -45,7 +45,7 @@ Civil Service code.</p>
 why. You will be able to edit and resubmit your petition if you wish.</p>
 
 <p>Once your petition is approved, we will email you to confirm a date for it to
-appear on the website.</p>
+appear on the website, usually within three working days.</p>
 
 <p>If we cannot approve your amended petition, we will write to you again to
 explain our reason(s). </p>
@@ -57,8 +57,8 @@ acknowledged on this website.</p>
 
 <h3><span dir="ltr">Step 4: Petition live</span></h3>
 
-<p>Once your petition is live, you will be able to publicise the URL (website
-address) you chose when you created your petition, and anyone will be able to
+<p>Once your petition is live, you will be able to publicise the URL
+you chose when you created your petition, and anyone will be able to
 come to the website and sign it.</p>
 
 <p>They will be asked to give their name and address and an email address that we
