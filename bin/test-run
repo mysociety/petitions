@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.7 2006-10-04 22:33:41 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.8 2006-10-05 10:27:29 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -81,6 +81,7 @@ our $wth = new mySociety::WebTestHarness();
 $base_url =~ m#^http://(.+)/?$#;
 $wth->browser_credentials("$1:80", $auth_realm, $auth_user, $auth_password);
 $wth->log_watcher_setup($httpd_error_log);
+$wth->log_watcher_self_test($base_url . "/test.php?error=1", "deliberate_error_to_test_error_handling");
 $wth->database_connect('PET_');
 $wth->database_drop_reload('../db/schema.sql');
 $wth->database_cycle_sequences(200);
@@ -95,19 +96,12 @@ print "Syntax check all PHP files...\n" if $verbose > 0;
 $wth->php_check_syntax("../../pet/");
 $wth->php_check_syntax("../../pet/templates/emails/", qr//);
 
-# Check that we can detect PHP errors
-print "Confirm we can detect errors...\n" if $verbose > 0;
-$wth->log_watcher_check();
-$wth->browser_get($base_url . "/test.php?error=1" );
-my $errors = $wth->log_watcher_get_errors();
-die "Unable to detect errors from PHP" if ($errors !~ m/deliberate_error_to_test_error_handling/);
-
 print "Basic test...\n" if $verbose > 0;
 do_basic_test();
 
 # Check for any unhandled mails or errors
 #call_fyrqd();
-#print "Checking no emails left at end...\n" if $verbose > 1;
+print "Checking no emails left at end...\n" if $verbose > 1;
 $wth->email_check_none_left();
 print "Checking no log file errors at end...\n" if $verbose > 1;
 $wth->log_watcher_check();
@@ -143,7 +137,6 @@ sub do_basic_test {
     $wth->browser_get($base_url);
     $wth->browser_check_contents("Petitions");
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
-    $wth->log_watcher_check();
 
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
@@ -153,7 +146,6 @@ sub do_basic_test {
                 rawdeadline => '31st December 1988',
                 ref => 'onethousand'
                 }, button => 'tostepyou') or die "Failed to submit step 1";
-    $wth->log_watcher_check();
 
     $wth->browser_check_contents("Part 2 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
@@ -167,12 +159,10 @@ sub do_basic_test {
                 email => email_n(99),
                 email2 => email_n(99)
                 }, button => 'tosteppreview') or die "Failed to submit step 2";
-    $wth->log_watcher_check();
 
     $wth->browser_check_contents("Part 3 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => { }, button => 'tocreate') or die "Failed to submit step 3";
-    $wth->log_watcher_check();
 
     $wth->browser_check_contents("We have sent you an email to confirm");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: '.email_n(99).  '%');
@@ -196,7 +186,6 @@ sub do_basic_test {
     my $confirmation_url = $1;
     $wth->email_check_url($confirmation_url);
     print "Confirmation URL: " . $confirmation_url . "\n" if $verbose > 1;
-    $wth->log_watcher_check();
     $wth->browser_get($confirmation_url);
     $wth->browser_check_contents("You're the 1st person to sign up to get emails"); 
 
