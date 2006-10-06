@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.8 2006-10-05 10:27:29 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.9 2006-10-06 15:11:51 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -26,6 +26,7 @@ use Storable;
 use FindBin;
 use Getopt::Long;
 use IO::Handle;
+use POSIX;
 
 use mySociety::Config;
 mySociety::Config::set_file('../conf/general');
@@ -45,6 +46,7 @@ END
 
 # Parse command line
 our $verbose = 0; # currently 3 levels: 0, 1 and 2
+our $multispawn = 1; # can test launching multiple instances of cron jobs
 our $help;
 if (!GetOptions(
         'verbose=i' =>  \$verbose,
@@ -76,6 +78,21 @@ sub name_n { my $n = shift; return "Persephone Petitioner $n"; }
 # Main code
 
 # Configure test harness class
+print "Starting daemons...\n" if $verbose > 0;
+my $petemaild_pid = fork();
+die "failed to fork" if (!defined($petemaild_pid));
+if ($petemaild_pid == 0) {
+    exec("./petemaild", "--debug");
+    exit;
+}
+END {
+    kill(POSIX::SIGHUP, $petemaild_pid);
+    while (1) {
+        my $wait_pid = wait();
+        last if ($wait_pid == -1);
+    }
+};
+
 print "Set up web test harness...\n" if $verbose > 0;
 our $wth = new mySociety::WebTestHarness();
 $base_url =~ m#^http://(.+)/?$#;
@@ -122,12 +139,21 @@ sub set_pet_date {
     dbh()->commit();
 }
 
-#
 # Call fyrqd for one pass
 #sub call_fyrqd {
 #    system("./fyrqd", "--debug", "--once", "--email", # $verbose > 1 ? qw(--verbose) : ()
 #        ) and die "Failed to call fyrqd";
 #}
+
+# Call send messages cron job
+sub call_send_messages {
+     $wth->multi_spawn($multispawn, "php send-messages " . ($verbose > 1 ? qw(--verbose) : ''), $verbose);
+}
+
+# Call mark finished cron job
+sub call_mark_finished {
+     $wth->multi_spawn($multispawn, "php mark-finished " . ($verbose > 1 ? qw(--verbose) : ''), $verbose);
+}
 
 #############################################################################
 
@@ -165,6 +191,7 @@ sub do_basic_test {
             fields => { }, button => 'tocreate') or die "Failed to submit step 3";
 
     $wth->browser_check_contents("We have sent you an email to confirm");
+    call_send_messages();
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: '.email_n(99).  '%');
     die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(http://.*$)#m);
     my $confirm_petition_link = $1;
@@ -172,13 +199,6 @@ sub do_basic_test {
     print $confirm_petition_link;
 
 =comment
-    $wth->browser_check_contents("This is a test site"); 
-
-    # Sign up as constituent
-    $wth->browser_submit_form(form_name => 'frontpage_subscribe',
-        fields => { name => name_n(1), email => email_n(1), postcode => "ZZ9 9zz"},  
-        );
-
     # Confirm email
     my $confirmation_email = $wth->email_get_containing(
         '%To: '.email_n(1).'%%');
@@ -188,8 +208,6 @@ sub do_basic_test {
     print "Confirmation URL: " . $confirmation_url . "\n" if $verbose > 1;
     $wth->browser_get($confirmation_url);
     $wth->browser_check_contents("You're the 1st person to sign up to get emails"); 
-
-    #print $wth->browser_content();
 =cut
 }
 

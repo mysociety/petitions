@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.45 2006-10-06 09:25:34 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.46 2006-10-06 15:11:51 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2012,7 +2012,7 @@ my $help = 0;
 if (!GetOptions(
         'pidfile=s' =>  \$pidfilepath,
         debug =>        \$debug,
-        verbose =>      \$verbose,
+        'verbose=i' =>      \$verbose,
         help =>         \$help
     )) {
     print_log('err', "bad options; try --help for help");
@@ -2030,10 +2030,10 @@ mySociety::Util::daemon() unless ($debug);
 $SIG{TERM} = $SIG{INT} = sub { $foad = 1; };
 
 if ($debug) {
-    Log::verbose($verbose ? 2 : 1);
+    Log::verbose($verbose);
     Log::stderronly(1);
 } else {
-    Log::verbose($verbose ? 1 : 0);
+    Log::verbose($verbose);
     mySociety::Util::daemon();
 }
 
@@ -2091,9 +2091,9 @@ Display information about using the program.
 Don't detach from controlling terminal; log diagnostics to standard error as
 well as the system log.
 
-=item --verbose
+=item --verbose=n
 
-Log lots of debugging information.
+Specify amount of debug information to log, from 0 to 2.
 
 =item --pidfile PATH
 
@@ -2108,4 +2108,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.45 2006-10-06 09:25:34 francis Exp $
+$Id: petemaild,v 1.46 2006-10-06 15:11:51 francis Exp $
