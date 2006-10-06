@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.44 2006-10-06 09:18:29 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.45 2006-10-06 09:25:34 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1822,11 +1822,11 @@ sub unroutable ($) {
 
 # mx
 # Returns a reference to a list of the MXs for this domain, as Net::DNS::RR::MX
-# objects. It is an error to call this method unless the request is complete.
+# objects. Returns undef for unroutable domains. It is an error to call this
+# method unless the request is complete.
 sub mx ($) {
     my DomainResolver::Task $self = shift;
     croak "can't call ->mx() outside STATE_DONE" unless ($self->done());
-    croak "can't call ->mx() for unroutable domain $self->{domain}" unless (defined($self->{mx}));
     return $self->{mx};
 }
 
@@ -2108,4 +2108,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.44 2006-10-06 09:18:29 francis Exp $
+$Id: petemaild,v 1.45 2006-10-06 09:25:34 francis Exp $
