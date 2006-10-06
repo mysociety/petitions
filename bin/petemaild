@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.43 2006-10-06 08:49:58 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.44 2006-10-06 09:18:29 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -26,6 +26,7 @@ BEGIN {
 }
 
 use strict;
+use Carp qw(verbose);
 
 my $foad = 0;
 
@@ -52,13 +53,27 @@ sub verbose ($) {
     $verboselevel = shift;
 }
 
+my $stderronly = 0;
+sub stderronly ($) {
+    $stderronly = shift;
+}
+
+sub do_output ($$) {
+    my ($prio, $str) = @_;
+    if ($stderronly) {
+        STDERR->print("$prio: ", $str, "\n");
+    } else {
+        print_log($prio, $str);
+    }
+}
+
 sub print ($@) {
     my $prio = shift;
     if ($verboselevel < 2) {
         return if ($prio eq 'noise');
         return if ($verboselevel < 1 && $prio eq 'debug')
     }
-    print_log($prio, join("", @_));
+    do_output($prio, join("", @_));
 }
 
 sub printf ($$;@) {
@@ -68,7 +83,7 @@ sub printf ($$;@) {
         return if ($verboselevel < 1 && $prio eq 'debug')
     }
     my $fmt = shift;
-    print_log($prio, sprintf($fmt, @_));
+    do_output($prio, sprintf($fmt, @_));
 }
 
 #
@@ -2016,6 +2031,7 @@ $SIG{TERM} = $SIG{INT} = sub { $foad = 1; };
 
 if ($debug) {
     Log::verbose($verbose ? 2 : 1);
+    Log::stderronly(1);
 } else {
     Log::verbose($verbose ? 1 : 0);
     mySociety::Util::daemon();
@@ -2092,4 +2108,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.43 2006-10-06 08:49:58 francis Exp $
+$Id: petemaild,v 1.44 2006-10-06 09:18:29 francis Exp $
