@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.42 2006-10-04 16:43:32 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.43 2006-10-06 08:49:58 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1985,6 +1985,7 @@ package main;
 
 use Error qw(:try);
 use Getopt::Long;
+use Pod::Usage;
 
 use mySociety::PIDFile;
 use mySociety::Util qw(print_log);
@@ -2091,4 +2092,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.42 2006-10-04 16:43:32 chris Exp $
+$Id: petemaild,v 1.43 2006-10-06 08:49:58 francis Exp $
