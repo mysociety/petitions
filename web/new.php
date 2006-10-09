@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.34 2006-10-05 13:22:10 matthew Exp $
+// $Id: new.php,v 1.35 2006-10-09 17:17:06 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -146,7 +146,7 @@ function startform() {
 }
 
 function nextprevbuttons($prev, $prevdesc, $next, $nextdesc) {
-    print '<p style="text-align: right">';
+    print '<p align="right">';
     if (!is_null($next)) {
         if (is_null($nextdesc)) $nextdesc = _('Next');
         printf('<input type="submit" name="%s" value="%s" />',
@@ -187,8 +187,7 @@ function textarea($name, $val, $cols, $rows, $errors) {
 }
 
 function textfield($name, $val, $size, $errors, $after = '') {
-    printf('<input onfocus="fadein(this)" onblur="fadeout(this)" '
-            . 'type="text" name="%s" id="%s" size="%d" value="%s"%s />',
+    printf('<input type="text" name="%s" id="%s" size="%d" value="%s"%s />',
             htmlspecialchars($name), htmlspecialchars($name),
             $size,
             htmlspecialchars(is_null($val) ? '' : $val),
@@ -417,7 +416,7 @@ the petition. If you change the wording, then their signatures would no
 longer be valid.
 </p>
 
-<p style="text-align: right;">
+<p align="right">
 <input type="submit" name="tostepmain" value="Change petition text" />
 </p>
 
@@ -431,7 +430,7 @@ longer be valid.
 <li>Telephone: <strong><?=$data['telephone'] ?></strong></li>
 </ul>
 
-<p style="text-align: right;">
+<p align="right">
 <input type="submit" name="tostepyou" value="Change my contact details" />
 </p>
 
@@ -444,7 +443,7 @@ here:</p>
 <textarea name="comments" rows="7" cols="40"><? if (isset($data['comments'])) print htmlspecialchars($data['comments']) ?></textarea>
 </p>
 
-<p style="text-align: right;">
+<p align="right">
 <input type="submit" name="tocreate" value="Create" />
 </p>
 
@@ -486,7 +485,7 @@ reading it could reasonably take offence.</li>
 changes of policy. There will be no attempt to exclude critical views
 and decisions will not be made on a party political basis.</p>
 
-<p style="text-align: right;">
+<p align="right">
 <input type="submit" name="tocreate" value="Create" />
 </p>
 

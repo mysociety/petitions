@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.24 2006-10-05 23:02:22 matthew Exp $
+# $Id: Page.pm,v 1.25 2006-10-09 17:17:05 matthew Exp $
 #
 
 package Petitions::Page;
@@ -264,35 +264,30 @@ sub sign_box ($$) {
     delete($p->{salt});
 
     return
-        $q->start_form(-method => 'POST', -action => "/$p->{ref}/sign")
+        $q->start_form(-id => 'signForm', -method => 'POST', -action => "/$p->{ref}/sign")
         . qq(<input type="hidden" name="add_signatory" value="1" />)
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
 #        . $q->h2($q->span({-class => 'ltr'}, 'Sign up now'))
-        . $q->div({ -style => 'float: left; width: 50%; border: none; border-right: dotted 1px black;' }, 
+        . $q->div({ -id => 'signFormLeft' }, 
           $q->p("I, ",
                 $q->textfield(
-                    -name => 'name', -id => 'name', -size => 20,
-                    -onblur => 'fadeout(this)', -onfocus => 'fadein(this)'
+                    -name => 'name', -id => 'name', -size => 20
                 ),
                 " sign up to the petition."
             )
-        . $q->p(
-            'Your email:',
-                $q->textfield(-name => 'email', -size => 30),
-                $q->br(),
-            'Confirm email:',
-                $q->textfield(-name => 'email2', -size => 30),
+        . $q->p( '<label for="email">Your email:</label>',
+                $q->textfield(-name => 'email', -size => 30, -id => 'email'))
+	. $q->p( '<label for="email2">Confirm email:</label>',
+                $q->textfield(-name => 'email2', -size => 30, -id => 'email2'),
                 $q->br(),
             $q->small($q->strong('Will not be published.'), 'Just used to tell you when the petition is completed and let the Government get in touch.')
         ) )
-	. $q->div({-style => 'float: right; width: 45%; border: none;' },
-          $q->p(
-            'Your address:&nbsp;',
-                $q->textarea(-name => 'address', -cols => 30, -rows => 4),
-                $q->br(), $q->br(),
-            'Your postcode:',
-                $q->textfield(-name => 'postcode', -size => 10)
+	. $q->div({-id => 'signFormRight' },
+          $q->p( '<label for="address">Your address:</label>',
+                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4) ),
+	  $q->p( '<label for="postcode">Your postcode:</label>', 
+                $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ) )
         . $q->p( {-style => 'clear: both', -align => 'right'},
             $q->submit(-name => 'submit', -value => 'Sign')

@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.3 2006-10-05 15:08:15 matthew Exp $
+// $Id: steps.php,v 1.4 2006-10-09 17:17:06 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
@@ -82,7 +82,7 @@ to respond.
 petition via this website giving details of the Government’s response.
 
 <form accept-charset="utf-8" method="post" action="/new">
-<p style="text-align: right">
+<p align="right">
 <input type="submit" name="tostepmain" value="Create a petition"></p>
 </form>
 <? 

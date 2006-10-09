@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.11 2006-10-03 14:27:04 matthew Exp $
+// $Id: list.php,v 1.12 2006-10-09 17:17:06 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -145,7 +145,7 @@ if (!$rss) {
 
 $rss_items = array();
 if ($ntotal > 0) {
-    $c = 0;
+    $c = 1;
     if (!$rss) { ?>
 <table cellpadding="3" cellspacing="0" border="0">
 <tr><th align="left">We the undersigned petition the Prime Minister to&hellip;</th>
@@ -161,9 +161,13 @@ if ($ntotal > 0) {
         if ($rss) {
             $rss_items[] = $petition->rss_entry();
         } elseif ($petition->rejected_show_nothing()) {
-	    print '<tr><td colspan="4">Petition details cannot be shown</td></tr>';
+	    print '<tr';
+	    if ($c%2) print ' class="a"';
+	    print '><td colspan="4">Petition details cannot be shown</td></tr>';
 	} else {
-	    print '<tr><td><a href="/' . $petition->ref() . '">';
+	    print '<tr';
+	    if ($c%2) print ' class="a"';
+	    print '><td><a href="/' . $petition->ref() . '">';
 	    print $petition->h_content() . '</a></td>';
 	    print '<td>' . $petition->h_name() . '</td>';
 	    print '<td>' . $petition->h_pretty_deadline() . '</td>';

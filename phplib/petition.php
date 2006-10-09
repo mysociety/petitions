@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.22 2006-10-05 23:02:22 matthew Exp $
+ * $Id: petition.php,v 1.23 2006-10-09 17:17:05 matthew Exp $
  * 
  */
 
@@ -198,48 +198,4 @@ class Petition {
         return false;
     }
 }
-
-function petition_sign_box() {
-    global $q_h_address, $q_h_postcode;
-
-    $email = get_http_var('email');
-    $email2 = get_http_var('email2');
-    $name = get_http_var('name', true);
-
-?>
-<form accept-charset="utf-8" action="/<?=htmlspecialchars(get_http_var('ref')) ?>/sign" method="post">
-<input type="hidden" name="add_signatory" value="1">
-<input type="hidden" name="ref" value="<?=htmlspecialchars(get_http_var('ref')) ?>">
-<?  print '<h2>Sign up now</h2>';
-    $namebox = '<input onblur="fadeout(this)" onfocus="fadein(this)" size="20" type="text" name="name" id="name" value="' . htmlspecialchars($name) . '">';
-    print '<p><strong>';
-    printf(_('I, %s, sign up to the petition.'), $namebox);
-?>
-</strong><br>
-</p>
-
-<p><strong>Your email</strong>: <input type="text" size="30" name="email" value="<?=htmlspecialchars($email) ?>">
-<br><strong>Confirm email</strong>: <input type="text" size="30" name="email2" value="<?=htmlspecialchars($email2) ?>">
-<br><small>(we need this so we can tell you when the petition is completed and let the Government get in touch)</small> </p>
-
-<p><strong style="float: left">Your address:&nbsp;</strong>
-<textarea name="address" rows="4" cols="30"><?=$q_h_address ?></textarea>
-<br><br><strong>Your postcode:</strong>
-<input type="text" name="postcode" value="<?=$q_h_postcode ?>" size="10" />
-</p>
-
-<p><input type="submit" name="submit" value="Sign Petition"></p>
-</form>
-<? 
-}
-
-/* petition_is_valid_to_sign PETITION EMAIL
- * Return whether EMAIL may validly sign PETITION.
- * This function locks rows in petition and signer with select ... for
- * update / lock tables. */
-function petition_is_valid_to_sign($petition_id, $email) {
-    return db_getOne('select petition_is_valid_to_sign(?, ?)',
-                    array($petition_id, $email));
-}
-
 
