@@ -5,7 +5,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: pet.css,v 1.12 2006-10-09 17:17:06 matthew Exp $
+ * $Id: pet.css,v 1.13 2006-10-09 17:34:01 matthew Exp $
  *
  */
 
@@ -155,7 +155,7 @@ ol#breadcrumbs li.hilight {
     font-size: 150%;
 }
 
-div#signForm label {
+form#signForm label {
     float: left;
     width: 8em;
 }
