@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.17 2006-09-28 15:42:42 matthew Exp $
+ * $Id: admin-pet.php,v 1.18 2006-10-10 23:06:08 matthew Exp $
  * 
  */
 
@@ -238,7 +238,7 @@ class ADMIN_PAGE_PET_MAIN {
                     $row .= '<td>Rejected twice</td>';
                 }
             } elseif ($status == 'draft') {
-                $row .= '<td><form method="post"><input type="hidden" name="petition" value="' . $r['id'] .
+                $row .= '<td><form method="post"><input type="hidden" name="petition_id" value="' . $r['id'] .
                     '"><input type="submit" name="approve" value="Approve"> <input type="submit" name="reject" value="Reject"></form>';
                 if ($r['status'] == 'resubmitted') {
                     $row .= ' resubmitted';
@@ -249,7 +249,7 @@ class ADMIN_PAGE_PET_MAIN {
                 if ($r['message_id']) 
                     $row .= 'Response sent';
                 else 
-                    $row .= '<form method="post"><input type="hidden" name="petition" value="' . $r['id'] . 
+                    $row .= '<form method="post"><input type="hidden" name="petition_id" value="' . $r['id'] . 
                         '"><input type="submit" name="respond" value="Write response"></form>';
                 $row .= '</td>';
             }
@@ -458,7 +458,7 @@ class ADMIN_PAGE_PET_MAIN {
         $p = new Petition($id); ?>
 <p>You have chosen to reject the petition '<?=$p->ref() ?>'.</p>
 <form method="post"><input type="hidden" name="reject_form_submit" value="1">
-<input type="hidden" name="petition" value="<?=$id ?>">
+<input type="hidden" name="petition_id" value="<?=$id ?>">
 <p>Category or categories for rejection:
 <?      $this->display_categories(); ?>
 </p>
@@ -568,7 +568,7 @@ class ADMIN_PAGE_PET_MAIN {
 <p>You are responding to the petition '<?=$p->ref() ?>'. <b>Should say contents of petition here</b></p>
 <form accept-charset="utf-8" method="post">
 <input type="hidden" name="respond" value="1"><input type="hidden" name="submit" value="1">
-<input type="hidden" name="petition" value="<?=$id ?>">
+<input type="hidden" name="petition_id" value="<?=$id ?>">
 <p><label for="message_subject">Subject:</label> <input name="message_subject" id="message_subject" size="40" value="<?=$q_h_message_subject ?>"></p>
 <p>Response:
 <br><textarea name="message_body" rows="20" cols="72"><?=$q_h_message_body ?></textarea></p>
@@ -583,39 +583,39 @@ class ADMIN_PAGE_PET_MAIN {
 
     function display() {
         db_connect();
-        $petition = get_http_var('petition') + 0; # currently ID
         $petition_id = petition_admin_perform_actions();
+	if (!$petition_id)
+	    $petition_id = get_http_var('petition_id') + 0; # id
 
         if (get_http_var('approve')) {
-            $p = new Petition($petition);
-            db_getOne("UPDATE petition SET status='live',deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)) WHERE id=?", $petition);
+            $p = new Petition($petition_id);
+            db_getOne("UPDATE petition SET status='live',deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)) WHERE id=?", $petition_id);
             $p->log_event("Admin approved petition", null);
             db_commit();
             print '<p><em>Petition approved!</em></p>';
-            $petition = null;
         } elseif (get_http_var('reject')) {
-            $this->reject_form($petition);
-            $petition = null;
+            $this->reject_form($petition_id);
         } elseif (get_http_var('reject_form_submit')) {
             $categories = get_http_var('categories');
             if (is_array($categories)) $categories = array_sum($categories);
             else $categories = 0;
             $reason = get_http_var('reason');
             if ($categories && $reason) {
-                $this->reject_petition($petition, $categories, $reason);
+                $this->reject_petition($petition_id, $categories, $reason);
             } else {
-                $this->reject_form($petition);
+                $this->reject_form($petition_id);
             }
-            $petition = null;
         } elseif (get_http_var('respond')) {
-            $this->respond($petition);
-            $petition = null;
+            $this->respond($petition_id);
         }
 
         // Display page
         if ($petition_id) {
             $petition = db_getOne('SELECT ref FROM petition WHERE id = ?', $petition_id);
-        }
+        } else {
+	    $petition = get_http_var('petition');
+	}
+
         if ($petition) {
             $this->show_one_petition($petition);
         } else {

@@ -19,7 +19,7 @@
 <meta name="dc.subject" content="Tony Blair" />
 <meta name="dc.title" content="<?=$title?>" />
 <title><?=$title?></title>
-<!-- <script type="text/javascript" language="JavaScript1.1" src="http://www.number10.gov.uk/include/js/nedstat.js"></script> -->
+<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>
 <link href="/no10_css/basic_styles.css" rel="stylesheet" type="text/css" />
 <link href="/no10_css/gallerycontent.css" rel="stylesheet" />
 <style type="text/css" media="all">

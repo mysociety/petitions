@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.26 2006-10-10 15:35:20 matthew Exp $
+# $Id: Page.pm,v 1.27 2006-10-10 23:06:08 matthew Exp $
 #
 
 package Petitions::Page;
@@ -71,7 +71,7 @@ sub header ($$%) {
 <meta name="dc.subject" content="Tony Blair" />
 <meta name="dc.title" content="@{[ ent($title) ]}" />
 <title>@{[ ent($title) ]}</title>
-<!-- <script type="text/javascript" language="JavaScript1.1" src="http://www.number10.gov.uk/include/js/nedstat.js"></script> -->
+<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>
 <link href="http://www.number10.gov.uk/styles/basic_styles.css" rel="stylesheet" type="text/css" />
 <link href="http://www.number10.gov.uk/styles/gallerycontent.css" rel="stylesheet" />
 <style type="text/css" media="all">
@@ -170,6 +170,12 @@ the coming weeks in response to feedback from our users.</p>
 <div><p>|
 	<a href="http://www.number10.gov.uk/output/Page49.asp">copyright</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page7035.asp">freedom of information</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page50.asp">feedback</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page52.asp">privacy policy</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page53.asp">search</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page54.asp">sitemap</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page4049.asp">accessibility</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page6508.asp">rss and podcasts</a>&nbsp;|&nbsp;<a href="/output/Page9899.asp">directgov</a>&nbsp;|&nbsp;</p></div>
 </div>
+<script type="text/javascript">
+sitestat("http://uk.sitestat.com/primeministersoffice/downingstreet/s?Petitions");
+</script>
+<noscript>
+<img width="1" height="1" alt="" src="http://uk.sitestat.com/primeministersoffice/downingstreet/s?Petitions" />
+</noscript>
 </body>
 </html>
 EOF
