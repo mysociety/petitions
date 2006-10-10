@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.18 2006-10-10 23:06:08 matthew Exp $
+ * $Id: admin-pet.php,v 1.19 2006-10-10 23:11:46 matthew Exp $
  * 
  */
 
@@ -30,7 +30,7 @@ class ADMIN_PAGE_PET_SUMMARY {
         $petitions_rejected = db_getOne("SELECT COUNT(*) FROM petition WHERE status='rejected' or status='rejectedonce'");
         $petitions_resubmitted = db_getOne("select count(*) from petition where status='resubmitted'");
         $signatures = db_getOne('SELECT COUNT(*) FROM signer WHERE showname');
-        $signers = db_getOne('SELECT COUNT(DISTINCT email) FROM signer WHERE showname');
+        $signers = db_getOne("SELECT COUNT(DISTINCT email) FROM signer WHERE showname AND emailsent IN ('sent', 'confirmed'");
         
         print "Total petitions in system: $petitions<br>$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $petitions_resubmitted resubmitted<br>$signatures signatures, $signers signers";
         petition_admin_search_form();
@@ -205,7 +205,7 @@ class ADMIN_PAGE_PET_MAIN {
         $q = db_query("
             SELECT petition.*,
                 date_trunc('second',creationtime) AS creationtime, 
-                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id) AS signers,
+                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND emailsent in 'sent','confirmed') AS signers,
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
                 message.id AS message_id
             FROM petition
@@ -292,10 +292,11 @@ class ADMIN_PAGE_PET_MAIN {
         else
             $list_limit = 100;
 
-        $q = db_query('SELECT petition.*,
-                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id) AS signers
+        $q = db_query("SELECT petition.*,
+                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND
+		    emailsent in ('sent', 'confirmed')) AS signers
             FROM petition
-            WHERE ref ILIKE ?', $petition);
+            WHERE ref ILIKE ?", $petition);
         $pdata = db_fetch_array($q);
         if (!$pdata) {
             print sprintf("Petition '%s' not found", htmlspecialchars($petition));
