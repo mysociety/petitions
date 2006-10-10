@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.25 2006-10-09 17:17:05 matthew Exp $
+# $Id: Page.pm,v 1.26 2006-10-10 15:35:20 matthew Exp $
 #
 
 package Petitions::Page;
@@ -281,7 +281,7 @@ sub sign_box ($$) {
 	. $q->p( '<label for="email2">Confirm email:</label>',
                 $q->textfield(-name => 'email2', -size => 30, -id => 'email2'),
                 $q->br(),
-            $q->small($q->strong('Will not be published.'), 'Just used to tell you when the petition is completed and let the Government get in touch.')
+            $q->small($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
         ) )
 	. $q->div({-id => 'signFormRight' },
           $q->p( '<label for="address">Your address:</label>',
