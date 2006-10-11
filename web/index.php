@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.20 2006-10-05 16:23:47 matthew Exp $
+// $Id: index.php,v 1.21 2006-10-11 10:05:52 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -47,9 +47,13 @@ $recent = db_getAll("select ref, content from petition
     where status = 'live'
     order by creationtime desc limit 5");
 # XXX: Creation time is order of creation, not order of going live...
+$c = 1;
 foreach ($recent as $petition) {
-    print '<li><a href="/' . $petition['ref'] . '">';
+    print '<li';
+    if ($c%2) print ' class="a"';
+    print '><a href="/' . $petition['ref'] . '">';
     print htmlspecialchars($petition['content']) . '</a></li>';
+    $c++;
 }
 if (!count($recent)) {
     print '<li>None, you can <a href="/new">create a petition</a>.</li>';
@@ -73,11 +77,15 @@ $recent = db_getAll("
     where status = 'live'
     order by signers desc limit 5");
 # XXX: Creation time is order of creation, not order of going live...
+$c = 1;
 foreach ($recent as $petition) {
-    print '<li><a href="/' . $petition['ref'] . '">';
+    print '<li';
+    if ($c%2) print ' class="a"';
+    print '><a href="/' . $petition['ref'] . '">';
     print htmlspecialchars($petition['content']) . '</a> <small>(';
     print $petition['signers'] . ' signature';
     print ($petition['signers'] == 1 ? '' : 's') . ')</small></li>';
+    $c++;
 }
 if (!count($recent)) {
     print '<li>None, you can <a href="/new">create a petition</a>.</li>';
