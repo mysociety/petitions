@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.27 2006-10-10 23:06:08 matthew Exp $
+# $Id: Page.pm,v 1.28 2006-10-11 10:59:50 matthew Exp $
 #
 
 package Petitions::Page;
@@ -233,6 +233,12 @@ sub display_box ($$%) {
         $p = Petitions::DB::get($ref)
             or croak "bad ref '$ref' in display_box";
     }
+    my $org = '';
+    if ($p->{organisation}) {
+        $org = ent($p->{organisation});
+	$org = '<a href="' . ent($p->{org_url}) . '">' . $org . '</a>' if $p->{org_url};
+        $org = ' of ' . $org;
+    }
     return
         $q->div({ -class => 'petition_box' },
             $q->p({ -style => 'margin-top: 0' },
@@ -241,7 +247,7 @@ sub display_box ($$%) {
                 (exists($params{href}) ? '</a>' : '')
             ),
             $q->p({ -align => 'center' },
-                'Submitted by ', ent($p->{name}), ' &ndash; ',
+                'Submitted by ', ent($p->{name}), $org, ' &ndash; ',
 		$q->strong('Deadline to sign up by:'), Petitions::pretty_deadline($p, 1),
                 (defined($p->{signers})
                     ? (' &ndash; ', $q->strong('Signatures:'), $p->{signers})
@@ -354,7 +360,7 @@ sub signatories_box ($$) {
     }
 
     my $html =
-        $q->start_div(-id => 'signatories')
+        $q->start_div({-id => 'signatories'})
             . $q->h2($q->span({-class => 'ltr'}, '<a name="signers"></a>Current signatories'));
 
     if ($p->{signers} == 0) {

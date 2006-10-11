@@ -5,7 +5,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: pet.css,v 1.13 2006-10-09 17:34:01 matthew Exp $
+ * $Id: pet.css,v 1.14 2006-10-11 10:59:51 matthew Exp $
  *
  */
 
@@ -77,7 +77,9 @@ div#most_popular {
     width: 45%;
 }
 div#most_popular li, div#most_recent li {
-    margin-bottom: 0.5em;
+    background-position: 0 10px;
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
 }
 
 /* List page */
@@ -94,7 +96,7 @@ div#most_popular li, div#most_recent li {
     padding: 0.6em;
 }
 
-tr.a {
+tr.a, #content li.a {
     background-color: #ffffff;
     color: #000000;
 }
@@ -170,4 +172,9 @@ div#signFormRight {
     float: right;
     width: 45%;
     border: none;
+}
+
+div#signatories {
+   float: left;
+   width: 45%;
 }
