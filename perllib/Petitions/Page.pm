@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.29 2006-10-11 11:03:18 matthew Exp $
+# $Id: Page.pm,v 1.30 2006-10-11 11:47:24 matthew Exp $
 #
 
 package Petitions::Page;
@@ -243,7 +243,9 @@ sub display_box ($$%) {
     my $org = '';
     if ($p->{organisation}) {
         $org = ent($p->{organisation});
-	$org = '<a href="' . ent($p->{org_url}) . '">' . $org . '</a>' if $p->{org_url};
+	my $org_url = ent($p->{org_url});
+	$org_url = "http://$org_url" unless $org_url =~ /^http:\/\//;
+	$org = '<a href="' . $org_url . '">' . $org . '</a>' if $p->{org_url};
         $org = ' of ' . $org;
     }
     return
