@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.28 2006-10-11 10:59:50 matthew Exp $
+# $Id: Page.pm,v 1.29 2006-10-11 11:03:18 matthew Exp $
 #
 
 package Petitions::Page;
@@ -131,7 +131,7 @@ sub footer ($%) {
         croak "bad parameter '$_'" if (!exists($permitted_params{$_}));
     }
 
-    return <<EOF;
+    my $out = <<EOF;
 <img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
 </div>
 </div>
@@ -170,15 +170,22 @@ the coming weeks in response to feedback from our users.</p>
 <div><p>|
 	<a href="http://www.number10.gov.uk/output/Page49.asp">copyright</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page7035.asp">freedom of information</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page50.asp">feedback</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page52.asp">privacy policy</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page53.asp">search</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page54.asp">sitemap</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page4049.asp">accessibility</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page6508.asp">rss and podcasts</a>&nbsp;|&nbsp;<a href="/output/Page9899.asp">directgov</a>&nbsp;|&nbsp;</p></div>
 </div>
+EOF
+    if (mySociety::Config::get('PET_STAGING')) {
+        $out .= <<EOF;
 <script type="text/javascript">
 sitestat("http://uk.sitestat.com/primeministersoffice/downingstreet/s?Petitions");
 </script>
 <noscript>
 <img width="1" height="1" alt="" src="http://uk.sitestat.com/primeministersoffice/downingstreet/s?Petitions" />
 </noscript>
+EOF
+    }
+    $out .= <<EOF;
 </body>
 </html>
 EOF
+    return $out;
 }
 
 =item error_page Q MESSAGE
