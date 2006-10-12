@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: privacy.php,v 1.2 2006-09-14 17:38:56 matthew Exp $
+// $Id: privacy.php,v 1.3 2006-10-12 00:02:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -31,5 +31,5 @@ You may also receive a maximum of two messages from the creator of the petition.
 
 <?
 
-page_footer();
+page_footer('Privacy');
 

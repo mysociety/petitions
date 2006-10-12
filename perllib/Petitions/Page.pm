@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.30 2006-10-11 11:47:24 matthew Exp $
+# $Id: Page.pm,v 1.31 2006-10-12 00:02:43 matthew Exp $
 #
 
 package Petitions::Page;
@@ -50,6 +50,9 @@ sub header ($$%) {
     }
 
     # ugh
+    my $js = '';
+    $js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
+
     my $html = <<EOF;
 <?xml version="1.0"?>
 <!-- quirks mode -->
@@ -71,7 +74,7 @@ sub header ($$%) {
 <meta name="dc.subject" content="Tony Blair" />
 <meta name="dc.title" content="@{[ ent($title) ]}" />
 <title>@{[ ent($title) ]}</title>
-<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>
+$js
 <link href="http://www.number10.gov.uk/styles/basic_styles.css" rel="stylesheet" type="text/css" />
 <link href="http://www.number10.gov.uk/styles/gallerycontent.css" rel="stylesheet" />
 <style type="text/css" media="all">
@@ -120,15 +123,15 @@ EOF
     return $html;
 }
 
-=item footer Q [PARAMS]
+=item footer Q STAT_CODE
 
 =cut
-sub footer ($%) {
-    my ($q, %params) = @_;
-
-    my %permitted_params = map { $_ => 1 } qw();
-    foreach (keys %params) {
-        croak "bad parameter '$_'" if (!exists($permitted_params{$_}));
+sub footer ($$) {
+    my ($q, $stat_code) = @_;
+    if ($stat_code) {
+        $stat_code = "Petitions_$stat_code";
+    } else {
+        $stat_code = 'Petitions';
     }
 
     my $out = <<EOF;
@@ -146,7 +149,7 @@ sub footer ($%) {
 <li><a href="/about">About e-petitions</a></li>
 <li><a href="/steps">Step-by-Step Guide</a></li>
 <li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
-<li>Terms and Conditions
+<li><a href="/terms">Terms and Conditions</a></li>
 <li><a href="/privacy">Privacy Policy</a></li>
 </ul>
 </div>
@@ -162,7 +165,7 @@ that users are free to sign and create petitions, but changes are expected over
 the coming weeks in response to feedback from our users.</p>
 
 <!--<h2>Important Links</h2><div class="downingstreet"><div class="header">&nbsp;</div><div><h3><a href="http://www.number10.gov.uk/output/page41.asp"><img src="http://www.number10.gov.uk/files/images/take_a_tour_of_N10_purple.jpg" alt="" />
-                                        Take a tour of Number 10</a></h3><p>Have you seen our virtual tour of 10 Downing Street?</p></div><div class="footer">&nbsp;</div></div><div class="primeminister"><div class="header">Â| </div><div><h3><img width="80" alt="House of Parliament. Picture: Britain on View" height="60" border="0" src="http://www.number10.gov.uk/files/images/New Parliament 5 SMALL.jpg" /> <a href="http://www.number10.gov.uk/output/Page8809.asp">The Big Issues</a></h3><p>In-depth coverage of the main policy areas currently being addressed by the PM and the government</p></div><div class="footer"></div></div><img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
+					Take a tour of Number 10</a></h3><p>Have you seen our virtual tour of 10 Downing Street?</p></div><div class="footer">&nbsp;</div></div><div class="primeminister"><div class="header">Â </div><div><h3><img width="80" alt="House of Parliament. Picture: Britain on View" height="60" border="0" src="http://www.number10.gov.uk/files/images/New Parliament 5 SMALL.jpg" /> <a href="http://www.number10.gov.uk/output/Page8809.asp">The Big Issues</a></h3><p>In-depth coverage of the main policy areas currently being addressed by the PM and the government</p></div><div class="footer"></div></div><img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
 -->
 <img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
 </div>
@@ -171,13 +174,13 @@ the coming weeks in response to feedback from our users.</p>
 	<a href="http://www.number10.gov.uk/output/Page49.asp">copyright</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page7035.asp">freedom of information</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page50.asp">feedback</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page52.asp">privacy policy</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page53.asp">search</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page54.asp">sitemap</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page4049.asp">accessibility</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page6508.asp">rss and podcasts</a>&nbsp;|&nbsp;<a href="/output/Page9899.asp">directgov</a>&nbsp;|&nbsp;</p></div>
 </div>
 EOF
-    if (mySociety::Config::get('PET_STAGING')) {
+    if (!mySociety::Config::get('PET_STAGING')) {
         $out .= <<EOF;
 <script type="text/javascript">
-sitestat("http://uk.sitestat.com/primeministersoffice/downingstreet/s?Petitions");
+sitestat("http://uk.sitestat.com/primeministersoffice/downingstreet/s?$stat_code");
 </script>
 <noscript>
-<img width="1" height="1" alt="" src="http://uk.sitestat.com/primeministersoffice/downingstreet/s?Petitions" />
+<img width="1" height="1" alt="" src="http://uk.sitestat.com/primeministersoffice/downingstreet/s?$stat_code" />
 </noscript>
 EOF
     }
@@ -195,7 +198,7 @@ sub error_page ($$) {
     my ($q, $message);
     my $html = header($q, "Error")
             . $q->p($message)
-            . footer($q);
+            . footer($q, 'Error');
     print $q->header(-content_length => length($html)), $html;
 }
 
@@ -223,7 +226,7 @@ sub bad_ref_page ($$) {
             ])
         );    
     
-    $html .= footer($q);
+    $html .= footer($q, 'Bad_ref');
  
     print $q->header(-content_length => length($html)), $html;
 }

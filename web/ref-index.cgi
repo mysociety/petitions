@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.13 2006-10-11 11:47:24 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.14 2006-10-12 00:02:44 matthew Exp $';
 
 use strict;
 
@@ -32,6 +32,7 @@ my $foad = 0;
 $SIG{TERM} = sub { $foad = 1; };
 while (!$foad && (my $q = new mySociety::Web())) {
     my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
+    #my $qp_id = $q->ParamValidate(id => qr/^[0-9]+$/);
     my $ref = Petitions::DB::check_ref($qp_ref);
     if (!defined($ref)) {
         Petitions::Page::bad_ref_page($q, $qp_ref);
@@ -60,7 +61,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     $html .= $q->h2($q->span({-class => 'ltr'}, 'Sign a petition'));
 
     $html .= $q->p({ -id => 'finished' }, "This petition is now closed, as its deadline has passed.")
-        if (!$p->{open});
+        if ($p->{status} eq 'finished');
 
 # XXX: Link to government response somewhere in here...
 
@@ -77,16 +78,22 @@ while (!$foad && (my $q = new mySociety::Web())) {
                     
     }
 
-    $html .= Petitions::Page::display_box($q, $p);
-
-    $html .= Petitions::Page::sign_box($q, $p)
-        if ($p->{status} eq 'live');
+    # XXX For now, as ref might be libellous, pretend it doesn't exist
+    # Just remove this if when admin interface upgraded
+    if ($p->{status} eq 'rejected') {
+        Petitions::Page::bad_ref_page($q, $qp_ref);
+        next;
+    }
 
     if ($p->{status} ne 'rejected') {
+        $html .= Petitions::Page::display_box($q, $p);
+        $html .= Petitions::Page::sign_box($q, $p)
+            if ($p->{status} eq 'live');
         $html .= Petitions::Page::signatories_box($q, $p);
     } else {
         $html .= Petitions::Page::reject_box($q, $p);
     }
+
     my $detail = ent($p->{detail});
     $detail =~ s/\n\n+/<\/p> <p>/g;
     if ($detail) {
@@ -96,7 +103,8 @@ while (!$foad && (my $q = new mySociety::Web())) {
 <p>$detail</p></div>
 EOF
     }
-    $html .= Petitions::Page::footer($q);
+
+    $html .= Petitions::Page::footer($q, 'View_' . $p->{ref});
 
     utf8::encode($html);
 

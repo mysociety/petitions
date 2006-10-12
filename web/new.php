@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.35 2006-10-09 17:17:06 matthew Exp $
+// $Id: new.php,v 1.36 2006-10-12 00:02:44 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -37,7 +37,7 @@ page_header($page_title, array());
 <h1><span dir="ltr">E-Petitions</span></h1>
 <?
 print $contents;
-page_footer();
+page_footer('Create');
 
 /* check_edited_petition DATA
  * If a token is present in DATA, indicating that we are re-editing a rejected
@@ -305,7 +305,7 @@ function step_main_error_check($data) {
 
     $errors = array();
 
-    $disallowed_refs = array('contact', 'translate', 'posters', 'graphs');
+    $disallowed_refs = array('contact', 'translate', 'posters', 'graphs', 'privacy', 'reject');
     if (!$data['ref'])
         $errors['ref'] = _('Please enter a short name for your petition');
     elseif (strlen($data['ref']) < 6)

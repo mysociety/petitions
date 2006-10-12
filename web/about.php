@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: about.php,v 1.9 2006-10-05 22:58:44 matthew Exp $
+// $Id: about.php,v 1.10 2006-10-12 00:02:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -47,5 +47,5 @@ the Downing Street web team at
 or mySociety at
 <a href="mailto:team&#64;mysociety.org">team&#64;mysociety.org</a>.</p>
 
-<?  page_footer();
+<?  page_footer('About');
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.22 2006-10-11 10:59:51 matthew Exp $
+// $Id: index.php,v 1.23 2006-10-12 00:02:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -119,5 +119,5 @@ The aim is to enable as many people as possible to make their views known.
 along with the reasons why. A list of <a href="/list/rejected">rejected petitions</a>
 is available on this website.</p>
 
-<?  page_footer();
+<?  page_footer('Home');
 

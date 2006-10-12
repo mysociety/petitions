@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.13 2006-10-05 13:22:09 matthew Exp $
+// $Id: page.php,v 1.14 2006-10-12 00:02:43 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -37,12 +37,15 @@ function page_header($title, $params = array()) {
     include "../templates/website/head.php";
 }
 
-/* page_footer PARAMS
+/* page_footer STAT_CODE
  * Print bottom of HTML page. This closes the "content" <div>.  
- * If PARAMS['nonav'] is true then the footer navigation is not displayed. 
- * If PARAMS['nolocalsignup'] is true then no local signup form is showed.
  */
-function page_footer($params = array()) {
+function page_footer($stat_code = '') {
+    if ($stat_code) {
+        $stat_code = 'Petitions_' . $stat_code;
+    } else {
+        $stat_code = 'Petitions';
+    }
     include "../templates/website/foot.php";
     header('Content-Length: ' . ob_get_length());
 }
@@ -92,7 +95,7 @@ function page_check_ref($ref) {
 </form>
 <? */
     
-    page_footer();
+    page_footer('Bad_ref');
     exit();
 }
 

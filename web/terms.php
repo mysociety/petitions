@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.4 2006-10-05 23:02:22 matthew Exp $
+// $Id: terms.php,v 1.5 2006-10-12 00:02:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -119,5 +119,5 @@ petition as a last resort.
 
 <?
 
-page_footer();
+page_footer('TandCs');
 

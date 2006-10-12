@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.8 2006-10-05 15:08:15 matthew Exp $
+// $Id: faq.php,v 1.9 2006-10-12 00:02:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -123,5 +123,5 @@ We are offering this service to enable as many people as possible to make their 
 
 </dl>
 
-<?  page_footer();
+<?  page_footer('FAQ');
 

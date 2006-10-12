@@ -5,13 +5,13 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.4 2006-10-09 17:17:06 matthew Exp $
+// $Id: steps.php,v 1.5 2006-10-12 00:02:44 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
 page_header($page_title, array());
 petition_form_intro();
-page_footer();
+page_footer('Step-by-step_guide');
 
 function petition_form_intro() {
 ?>

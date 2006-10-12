@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.13 2006-10-05 22:58:43 matthew Exp $
+ * $Id: pet.php,v 1.14 2006-10-12 00:02:43 matthew Exp $
  * 
  */
 
@@ -40,7 +40,7 @@ function pet_handle_error($num, $message, $file, $line, $context) {
         ob_start(); // since page header writes content length, must be in ob_
         page_header(_("Sorry! Something's gone wrong."), array('override'=>true));
         print("<strong>$message</strong> in $file:$line");
-        page_footer();
+        page_footer('Error');
     } else {
         /* Nuke any existing page output to display the error message. */
         while (ob_get_level()) {
@@ -69,5 +69,5 @@ function pet_show_error($message) {
     page_header(_("Sorry! Something's gone wrong."), array('override'=>true));
     print _('<h2><span class="ltr">Sorry!  Something\'s gone wrong.</span></h2>') .
         "\n<p>" . $message . '</p>';
-    page_footer();
+    page_footer('Error');
 }

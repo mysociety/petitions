@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.19 2006-10-05 00:12:25 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.20 2006-10-12 00:02:44 matthew Exp $';
 
 use strict;
 
@@ -119,7 +119,7 @@ sub signup_page ($$) {
             . Petitions::Page::display_box($q, $p)
             . Petitions::Page::sign_box($q, $p);
     }
-    $html .= Petitions::Page::footer($q);
+    $html .= Petitions::Page::footer($q, 'Sign_' . $p->{ref});
 
     utf8::encode($html);
     print $q->header(-content_length => length($html)), $html;
@@ -139,7 +139,7 @@ sub confirm_page ($$$) {
                     Unfortunately, we couldn't understand the signup link that
                     you've used. If you typed the link in manually, please
                     re-check that you've got it absolutely right.")
-                . Petitions::Page::footer($q);
+                . Petitions::Page::footer($q, 'Bad_confirm_link');
     } elsif ($what eq 'e') {
         # Edit rejected petition for resubmission. Redirect to /new.
         print $q->redirect("/new?token=$token");
@@ -157,7 +157,7 @@ sub confirm_page ($$$) {
                         -align => 'center' }, "
                         It has been entered on our system and will now go to
                         the Number 10 team for approval.")
-                    . Petitions::Page::footer($q);
+                    . Petitions::Page::footer($q, 'Confirm_Petition');
         } else {
             # Redirect so that the token isn't left in the browser.
             print $q->redirect("/$ref?signed=1");
@@ -175,7 +175,7 @@ sub confirm_page ($$$) {
                     Unfortunately, we weren't able to confirm $desc,
                     because our site is extremely busy at the moment.
                     Please try again in a few minutes' time.")
-                . Petitions::Page::footer($q);
+                . Petitions::Page::footer($q, 'Confirm_something_busy');
     }
 
     utf8::encode($html);

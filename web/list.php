@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.12 2006-10-09 17:17:06 matthew Exp $
+// $Id: list.php,v 1.13 2006-10-12 00:02:44 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -151,7 +151,9 @@ if ($ntotal > 0) {
 <tr><th align="left">We the undersigned petition the Prime Minister to&hellip;</th>
 <th>Submitted&nbsp;by</th>
 <th>Deadline&nbsp;to&nbsp;sign&nbsp;by</th>
+<?      if ($q_type != 'rejected') { ?>
 <th>Signatures</th>
+<?      } ?>
 </tr>
 <?  }
     while ($row = db_fetch_array($qrows)) {
@@ -163,7 +165,7 @@ if ($ntotal > 0) {
         } elseif ($petition->rejected_show_nothing()) {
 	    print '<tr';
 	    if ($c%2) print ' class="a"';
-	    print '><td colspan="4">Petition details cannot be shown</td></tr>';
+	    print '><td colspan="4">Petition details cannot be shown &mdash; <a href="/reject?id=' . $petition->id(). '">more details</a></td></tr>';
 	} else {
 	    print '<tr';
 	    if ($c%2) print ' class="a"';
@@ -171,7 +173,8 @@ if ($ntotal > 0) {
 	    print $petition->h_content() . '</a></td>';
 	    print '<td>' . $petition->h_name() . '</td>';
 	    print '<td>' . $petition->h_pretty_deadline() . '</td>';
-	    print '<td>' . $petition->signers() . '</td>';
+	    if ($q_type != 'rejected')
+                print '<td>' . $petition->signers() . '</td>';
 	    print '</tr>';
             # $petition->h_display_box($arr);
 	}
@@ -193,6 +196,6 @@ else {
 <p align="right"><a href="/rss<?=$_SERVER['REQUEST_URI'] ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $heading ?>"> RSS</a>
 | <a href="http://news.bbc.co.uk/1/hi/help/3223484.stm">What is RSS?</a>
 <?
-    page_footer();
+    page_footer('List_' . $q_type);
 }
 ?>
