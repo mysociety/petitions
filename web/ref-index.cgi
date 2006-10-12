@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.16 2006-10-12 00:08:40 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.17 2006-10-12 00:09:25 matthew Exp $';
 
 use strict;
 
@@ -79,7 +79,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     }
 
     # XXX For now, as ref might be libellous, pretend it doesn't exist
-    $bitfield = 2 | 4 | 8 | 16 | 32 | 64;
+    my $bitfield = 2 | 4 | 8 | 16 | 32 | 64;
     if ($p->{status} eq 'rejected'
         && $p->{rejection_second_categories} & $bitfield) {
         Petitions::Page::bad_ref_page($q, $qp_ref);
