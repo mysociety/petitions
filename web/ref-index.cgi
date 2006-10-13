@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.18 2006-10-12 00:12:00 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.19 2006-10-13 17:30:47 matthew Exp $';
 
 use strict;
 
@@ -96,6 +96,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     }
 
     my $detail = ent($p->{detail});
+    $detail =~ s/\r//g;
     $detail =~ s/\n\n+/<\/p> <p>/g;
     if ($detail) {
         $html .= <<EOF;
