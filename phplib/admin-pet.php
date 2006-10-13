@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.23 2006-10-13 17:03:51 matthew Exp $
+ * $Id: admin-pet.php,v 1.24 2006-10-13 23:21:00 francis Exp $
  * 
  */
 
@@ -58,7 +58,7 @@ class ADMIN_PAGE_PET_SEARCH {
             $out = '';
             while ($r = db_fetch_array($q)) {
                 $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td>$r[ref]</td>";
-                $out .= '<td><form method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
+                $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
                 if ($r['emailsent'] == 'confirmed')
                         $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" value="Remove signer">';
                 elseif ($r['emailsent'] == 'sent')
@@ -143,7 +143,7 @@ function petition_admin_navigation($array = array()) {
 }
 
 function petition_admin_search_form($search='') { ?>
-<form method="get" action="./">
+<form name="petition_admin_search" method="get" action="./">
 <input type="hidden" name="page" value="petsearch">
 Search for name/email: <input type="text" name="search" value="<?=htmlspecialchars($search) ?>" size="40">
 <input type="submit" value="Search">
@@ -238,7 +238,7 @@ class ADMIN_PAGE_PET_MAIN {
                     $row .= '<td>Rejected twice</td>';
                 }
             } elseif ($status == 'draft') {
-                $row .= '<td><form method="post"><input type="hidden" name="petition_id" value="' . $r['id'] .
+                $row .= '<td><form name="petition_admin_approve" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] .
                     '"><input type="submit" name="approve" value="Approve"> <input type="submit" name="reject" value="Reject"></form>';
                 if ($r['status'] == 'resubmitted') {
                     $row .= ' resubmitted';
@@ -249,7 +249,7 @@ class ADMIN_PAGE_PET_MAIN {
                 if ($r['message_id']) 
                     $row .= 'Response sent';
                 else 
-                    $row .= '<form method="post"><input type="hidden" name="petition_id" value="' . $r['id'] . 
+                    $row .= '<form name="petition_admin_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
                         '"><input type="submit" name="respond" value="Write response"></form>';
                 $row .= '</td>';
             }
@@ -567,7 +567,7 @@ class ADMIN_PAGE_PET_MAIN {
                     join('</li><li>' , $errors) . '</li></ul></div>';
 # XXX Next line ?>
 <p>You are responding to the petition '<?=$p->ref() ?>'. <b>Should say contents of petition here</b></p>
-<form accept-charset="utf-8" method="post">
+<form name="petition_admin_respond" accept-charset="utf-8" method="post">
 <input type="hidden" name="respond" value="1"><input type="hidden" name="submit" value="1">
 <input type="hidden" name="petition_id" value="<?=$id ?>">
 <p><label for="message_subject">Subject:</label> <input name="message_subject" id="message_subject" size="40" value="<?=$q_h_message_subject ?>"></p>

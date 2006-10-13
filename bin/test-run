@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.10 2006-10-13 01:46:07 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.11 2006-10-13 23:20:59 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -61,14 +61,13 @@ if ($help) {
 }
 
 # Set up options
-
 our $base_url = mySociety::Config::get('BASE_URL');
 our $admin_url = mySociety::Config::get('ADMIN_URL');
 our $auth_user = mySociety::Config::get('AUTH_USER');
 our $auth_password = mySociety::Config::get('AUTH_PASSWORD');
-our $auth_realm = "ePetitions staging site";
 our $httpd_error_log = mySociety::Config::get('HTTPD_ERROR_LOG');
 our $email_domain = mySociety::Config::get('EMAIL_DOMAIN');
+our $web_domain = mySociety::Config::get('WEB_DOMAIN');
 our $contact_email = mySociety::Config::get('CONTACT_EMAIL');
 our $test_email_prefix = mySociety::Config::get('TEST_EMAIL_PREFIX');
 sub email_n { my $n = shift; return "$test_email_prefix+$n\@$email_domain"; }
@@ -81,7 +80,8 @@ sub name_n { my $n = shift; return "Persephone Petitioner $n"; }
 print "Set up web test harness...\n" if $verbose > 0;
 our $wth = new mySociety::WebTestHarness();
 $base_url =~ m#^http://(.+)/?$#;
-$wth->browser_credentials("$1:80", $auth_realm, $auth_user, $auth_password);
+$wth->browser_credentials("$1:80", "ePetitions staging site", $auth_user, $auth_password); 
+$wth->browser_credentials("$1:80", "$web_domain admin pages", $auth_user, $auth_password); 
 $wth->database_connect('PET_');
 $wth->database_drop_reload('../db/schema.sql');
 $wth->database_cycle_sequences(200);
@@ -172,10 +172,12 @@ sub call_mark_finished {
 sub do_basic_test {
     set_pet_date('1988-08-08');
 
+    # Check front page works
     $wth->browser_get($base_url);
     $wth->browser_check_contents("Petitions");
-    $wth->browser_follow_link(text_regex => qr/Create a Petition/);
 
+    # Create a new petition
+    $wth->browser_follow_link(text_regex => qr/Create a Petition/);
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => {
@@ -203,27 +205,30 @@ sub do_basic_test {
             fields => { }, button => 'tocreate') or die "Failed to submit step 3";
 
     $wth->browser_check_contents("We have sent you an email to confirm");
-    call_send_messages();
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(99).'" <'.email_n(99).'>%');
-    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(http://.*$)#m);
-    my $confirm_petition_link = $1;
 
+    # Confirm petition
+    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(99).'" <'.email_n(99).'>%');
+    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
+    my $confirm_petition_link = $1;
     print "Confirmation link: $confirm_petition_link\n" if $verbose > 1;
     $wth->browser_get($confirm_petition_link);
     $wth->browser_check_contents("Thank you for creating your petition");
     $wth->browser_check_contents("It has been entered on our system");
 
-=comment
-    # Confirm email
-    my $confirmation_email = $wth->email_get_containing(
-        '%To: '.email_n(1).'%%');
-    die "Pledge confirmation link not found\n" if ($confirmation_email !~ m#^\s+(http://.*$)#m);
-    my $confirmation_url = $1;
-    $wth->email_check_url($confirmation_url);
-    print "Confirmation URL: " . $confirmation_url . "\n" if $verbose > 1;
-    $wth->browser_get($confirmation_url);
-    $wth->browser_check_contents("You're the 1st person to sign up to get emails"); 
-=cut
+    # Get the email to the administrator
+    call_send_messages();
+    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
+    die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
+    my $admin_approve_link = $1;
+    print "Admin approve link: $admin_approve_link\n" if $verbose > 1;
+
+    # Follow link to admin page
+    $wth->browser_get($admin_approve_link);
+    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents("take action on every petition on this site with more than 1000 signers");
+    $wth->browser_submit_form(form_name => 'petition_admin_approve',
+            fields => { }, button => 'approve') or die "Failed to submit approve petition button";
+    $wth->browser_check_contents('Petition approved!');
 }
 
 #############################################################################
