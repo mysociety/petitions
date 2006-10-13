@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.24 2006-10-13 17:03:51 matthew Exp $
+ * $Id: petition.php,v 1.25 2006-10-13 17:50:08 matthew Exp $
  * 
  */
 
@@ -134,7 +134,12 @@ class Petition {
 
     // Basic data access for HTML display
     function detail() { return $this->data['detail']; }
-    function h_detail() { return htmlspecialchars($this->data['detail']); }
+    function h_detail() {
+        $detail = htmlspecialchars($this->data['detail']);
+	$detail = str_replace("\r", '', $detail);
+	$detail = preg_replace('#\n\n+#', '</p> <p>', $detail);
+        return "<p>$detail</p>";
+    }
     function h_name() { return htmlspecialchars($this->data['name']); }
     function h_pretty_deadline() { return prettify(htmlspecialchars($this->data['deadline'])); }
 

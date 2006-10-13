@@ -10,6 +10,9 @@ Your petition reads:
 We the undersigned petition the Prime Minister to
 <?=$values['content']?>
 
+<?=$values['detail']?>
+
+
 Thank you for submitting your petition.
 
 <?=$values['signature']?>
