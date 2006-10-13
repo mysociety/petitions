@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.15 2006-09-14 17:11:25 matthew Exp $
+# $Id: RPC.pm,v 1.16 2006-10-13 17:03:51 matthew Exp $
 #
 
 package Petitions::RPC;
@@ -118,15 +118,16 @@ sub sign_petition_db ($) {
                 insert into signer (
                     petition_id,
                     email, name, address, postcode,
+                    overseas,
                     showname,
                     signtime
                 ) values (
                     (select id from petition where ref = ?),
-                    ?, ?, ?, ?,
+                    ?, ?, ?, ?, ?,
                     true,
                     ms_current_timestamp()
                 )', {},
-                map { $r->{$_} } qw(ref email name address postcode));
+                map { $r->{$_} } qw(ref email name address postcode overseas));
     }
 }
 

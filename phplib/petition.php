@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.23 2006-10-09 17:17:05 matthew Exp $
+ * $Id: petition.php,v 1.24 2006-10-13 17:03:51 matthew Exp $
  * 
  */
 
@@ -69,8 +69,8 @@ class Petition {
             $this->data = db_fetch_array($q);
         } elseif (gettype($ref) == "array") {
             $this->data = $ref;
-	    if (isset($ref['pet_content']))
-	    	$this->data['content'] = $ref['pet_content'];
+            if (isset($ref['pet_content']))
+                    $this->data['content'] = $ref['pet_content'];
         } else {
             err("Unknown type '" . gettype($ref) . "' to Petition constructor");
         }
@@ -94,14 +94,14 @@ class Petition {
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
         if (array_key_exists('rejection_second_categories', $this->data)
-	    && $this->data['rejection_second_categories']) {
-	    $this->data['categories'] = prettify_categories($this->data['rejection_second_categories'], true);
-	    $this->data['reason'] = $this->data['rejection_second_reason'];
+            && $this->data['rejection_second_categories']) {
+            $this->data['categories'] = prettify_categories($this->data['rejection_second_categories'], true);
+            $this->data['reason'] = $this->data['rejection_second_reason'];
         } elseif (array_key_exists('rejection_first_categories', $this->data)
-	    && $this->data['rejection_first_categories']) {
-	    $this->data['categories'] = prettify_categories($this->data['rejection_first_categories'], true);
-	    $this->data['reason'] = $this->data['rejection_first_reason'];
-	}
+            && $this->data['rejection_first_categories']) {
+            $this->data['categories'] = prettify_categories($this->data['rejection_first_categories'], true);
+            $this->data['reason'] = $this->data['rejection_first_reason'];
+        }
     }
 
     // Basic data
@@ -153,10 +153,10 @@ class Petition {
             <p align="right">&mdash; <?=$this->h_name() ?></p>
             <p>
             <?=_('Deadline to sign up by:') ?> <strong><?=$this->h_pretty_deadline()?></strong></p>
-	    <? if ($this->h_detail()) {
-	    print '<p><strong>More details</strong><br />' . $this->h_detail();
-	    print '</p>';
-	    }
+            <? if ($this->h_detail()) {
+            print '<p><strong>More details</strong><br />' . $this->h_detail();
+            print '</p>';
+            }
 
             if ($this->signers() >= 0) { ?>
             <p><i>
@@ -191,7 +191,7 @@ class Petition {
     # Only needs to look at rejection_second_categories as things
     # rejected once are not displayed anywhere
     function rejected_show_nothing() {
-	# Defamatory, injunction, confidential, names
+        # Defamatory, injunction, confidential, names
         $bitfield = 2 | 4 | 8 | 16 | 32 | 64;
         if ($this->data['rejection_second_categories'] & $bitfield)
             return true;

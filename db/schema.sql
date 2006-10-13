@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.31 2006-10-05 23:02:18 matthew Exp $
+-- $Id: schema.sql,v 1.32 2006-10-13 17:03:51 matthew Exp $
 --
 
 -- global_seq
@@ -144,7 +144,8 @@ create table signer (
     email text not null,
     name text not null,
     address text not null,
-    postcode text not null,
+    postcode text,
+    overseas text,
 
     -- whether this signer is included in the petition or not
     showname boolean not null default false,
@@ -161,7 +162,13 @@ create table signer (
         'failed',           -- permanent failure
         'confirmed'         -- confirm link clicked
         )
+    ),
+
+    check (
+        (postcode is not null and overseas is null)
+        or (postcode is null and overseas is not null)
     )
+
 );
 
 create index signer_petition_id_idx on signer(petition_id);

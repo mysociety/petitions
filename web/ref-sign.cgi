@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.21 2006-10-13 13:04:23 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.22 2006-10-13 17:03:52 matthew Exp $';
 
 use strict;
 
@@ -55,6 +55,8 @@ sub signup_page ($$) {
     my $qp_email2 = $q->ParamValidate(email2 => \&i_check_email);
     my $qp_address = $q->param('address');
     my $qp_postcode = $q->ParamValidate(postcode => \&i_check_postcode);
+    my $qp_overseas = $q->param('overseas');
+    $qp_overseas = undef if $qp_overseas eq '-- Select --';
 
     my %errors;
     $errors{name} = 'Please enter your name'
@@ -66,8 +68,10 @@ sub signup_page ($$) {
     }
     $errors{address} = 'Please enter your address'
         if (!$qp_address);
-    $errors{postcode} = 'Please enter a valid postcode, such as OX1 3DR'
-        if (!$qp_postcode);
+    $errors{postcode} = 'Please enter a valid postcode, such as OX1 3DR, or choose an overseas territory'
+        if (!$qp_postcode && !$qp_overseas);
+    $errors{postcode} = 'Please enter a valid postcode OR choose an overseas territory'
+        if (defined($qp_postcode) && defined($qp_overseas));
 
     if (!keys(%errors)) {
         # Success. Add the signature, assuming that we can.
@@ -90,7 +94,8 @@ sub signup_page ($$) {
                             email => $qp_email,
                             name => $qp_name,
                             address => $qp_address,
-                            postcode => $qp_postcode
+                            postcode => $qp_postcode,
+                            overseas => $qp_overseas
                         })) {
                 $html .=
                     $q->h1({-class => 'ltr'}, "Now check your email!")

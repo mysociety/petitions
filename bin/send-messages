@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.12 2006-09-28 12:58:49 matthew Exp $
+ * $Id: send-messages,v 1.13 2006-10-13 17:03:50 matthew Exp $
  *
  */
 
@@ -90,9 +90,9 @@ function send_pending_messages() {
         $petition = new Petition(intval($msg['petition_id']));
         $data = $petition->data;
         $data['url'] = OPTION_ADMIN_URL . '?page=pet&o=draft';  /* ??? */
-	$data['comments_blurb'] = '';
-	if ($data['comments'])
-		$data['comments_blurb'] = "\nThe creator added the following comments for you:\n" . $data['comments'];
+        $data['comments_blurb'] = '';
+        if ($data['comments'])
+                $data['comments_blurb'] = "\nThe creator added the following comments for you:\n" . $data['comments'];
 
         verbose("message #${msg['id']} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
         
@@ -154,7 +154,7 @@ function send_pending_messages() {
          * success to the signer. For now just generate this here, but
          * later on we'll need to move it into message, so that we can send
          * reminders. */
-	/* XXX Not using creator messages yet */
+        /* XXX Not using creator messages yet */
         if ($msg['circumstance'] == 'announce-post') {
             $announce_url = $petition->url_announce();
             $params = array();
@@ -163,8 +163,8 @@ function send_pending_messages() {
         }
 
         if ($msg['circumstance'] == 'rejected-once') {
-	    $data['url'] = OPTION_BASE_URL . '/' . $petition->ref() . '/' . token_make('e', $petition->id());
-	}
+            $data['url'] = OPTION_BASE_URL . '/' . $petition->ref() . '/' . token_make('e', $petition->id());
+        }
 
         // Case when it is a copy sent to creator
         if ($msg['sendtosigners'] == 't' && in_array($msg['circumstance'], array('general-announce') )) {
@@ -287,7 +287,7 @@ function send_pending_messages() {
                 else
                     $h = _('a minute ago');
                 $url = pb_person_make_signon_url(null, $r['signer_email'], "GET", $petition->url_announce_archive(), array());
-		# TRANS: The first %s is one of the time strings above.
+                # TRANS: The first %s is one of the time strings above.
                 $emailbody = sprintf(_("[ You signed this petition after this message was sent to the other signers. They will have received copies of this message %s. You can read older messages from the petition creator that you missed here: %s ]"), $h, $url)
                              . "\n\n" . $emailbody;
                 

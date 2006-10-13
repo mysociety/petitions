@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.36 2006-10-12 00:02:44 matthew Exp $
+// $Id: new.php,v 1.37 2006-10-13 17:03:51 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -282,8 +282,8 @@ function petition_form_you($data = array(), $errors = array()) {
             else if ($name == 'telephone')
                 $size = 15;
             $after = '';
-	    if ($name == 'email2')
-	        $after = '(we need your email so we can get in touch with you when your petition completes, and so on)';
+            if ($name == 'email2')
+                $after = '(we need your email so we can get in touch with you when your petition completes, and so on)';
             textfield($name, $data[$name], $size, $errors, $after);
         }
 
@@ -388,7 +388,7 @@ function step_you_error_check($data) {
         'email' => 'email address',
     );
     foreach ($vars as $var => $p_var) {
-    	if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
+            if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
     }
     return $errors;
 }
@@ -513,7 +513,7 @@ function petition_create($data) {
                     deadline = ?, rawdeadline = ?,
                     name = ?, ref = ?, organisation = ?,
                     postcode = ?, telephone = ?, org_url = ?,
-		    comments = ?,
+                    comments = ?,
                     status = 'resubmitted',
                     laststatuschange = ms_current_timestamp()
                 where id = ? and status = 'rejectedonce'",
@@ -559,7 +559,7 @@ function petition_create($data) {
                         ?, ?, ?, 
                         ?, ?,
                         ?, ?, ?,
-			?, ms_current_timestamp(), 
+                        ?, ms_current_timestamp(), 
                         'unconfirmed', ms_current_timestamp()
                     )",
                     $data['id'], $data['detail'], $data['pet_content'],
@@ -567,7 +567,7 @@ function petition_create($data) {
                     $data['email'], $data['name'], $data['ref'],
                     $data['organisation'], $data['address'],
                     $data['postcode'], $data['telephone'], $data['org_url'],
-		    $data['comments']);
+                    $data['comments']);
             db_commit();
         }
 

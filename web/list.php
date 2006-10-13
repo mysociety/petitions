@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.13 2006-10-12 00:02:44 matthew Exp $
+// $Id: list.php,v 1.14 2006-10-13 17:03:51 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -101,10 +101,10 @@ if (!$rss) {
     foreach ($viewsarray as $s => $desc) {
         if ($b) $views .= ' &nbsp; ';
         if ($q_type == $s)
-	    $views .= '<span>' . $desc . '</span>';
+            $views .= '<span>' . $desc . '</span>';
         else
-	    $views .= "<a href=\"/list/$s\">$desc</a>";
-	$b = true;
+            $views .= "<a href=\"/list/$s\">$desc</a>";
+        $b = true;
     }
 
     $sort = ($q_sort) ? '&amp;sort=' . $q_sort : '';
@@ -128,11 +128,11 @@ if (!$rss) {
                      );
         # Removed as not useful (search is better for these): 'ref'=>'Short name',
         # 'title'=>'Title', 'name'=>'Creator'
-	$b = false;
+        $b = false;
         foreach ($arr as $s => $desc) {
             if ($b) $navlinks .= ' | ';
             if ($q_sort != $s) $navlinks .= "<a href=\"?sort=$s$off\">$desc</a>"; else $navlinks .= $desc;
-	    $b = true;
+            $b = true;
         }
         $navlinks .= '</p> <p align="center">';
         $navlinks .= $prev . ' | '._('Petitions'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
@@ -163,21 +163,21 @@ if ($ntotal > 0) {
         if ($rss) {
             $rss_items[] = $petition->rss_entry();
         } elseif ($petition->rejected_show_nothing()) {
-	    print '<tr';
-	    if ($c%2) print ' class="a"';
-	    print '><td colspan="4">Petition details cannot be shown &mdash; <a href="/reject?id=' . $petition->id(). '">more details</a></td></tr>';
-	} else {
-	    print '<tr';
-	    if ($c%2) print ' class="a"';
-	    print '><td><a href="/' . $petition->ref() . '">';
-	    print $petition->h_content() . '</a></td>';
-	    print '<td>' . $petition->h_name() . '</td>';
-	    print '<td>' . $petition->h_pretty_deadline() . '</td>';
-	    if ($q_type != 'rejected')
+            print '<tr';
+            if ($c%2) print ' class="a"';
+            print '><td colspan="4">Petition details cannot be shown &mdash; <a href="/reject?id=' . $petition->id(). '">more details</a></td></tr>';
+        } else {
+            print '<tr';
+            if ($c%2) print ' class="a"';
+            print '><td><a href="/' . $petition->ref() . '">';
+            print $petition->h_content() . '</a></td>';
+            print '<td>' . $petition->h_name() . '</td>';
+            print '<td>' . $petition->h_pretty_deadline() . '</td>';
+            if ($q_type != 'rejected')
                 print '<td>' . $petition->signers() . '</td>';
-	    print '</tr>';
+            print '</tr>';
             # $petition->h_display_box($arr);
-	}
+        }
         $c++;
     }
     if (!$rss)

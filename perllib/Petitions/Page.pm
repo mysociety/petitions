@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.32 2006-10-13 01:46:07 francis Exp $
+# $Id: Page.pm,v 1.33 2006-10-13 17:03:51 matthew Exp $
 #
 
 package Petitions::Page;
@@ -146,9 +146,9 @@ sub display_box ($$%) {
     my $org = '';
     if ($p->{organisation}) {
         $org = ent($p->{organisation});
-	my $org_url = ent($p->{org_url});
-	$org_url = "http://$org_url" unless $org_url =~ /^http:\/\//;
-	$org = '<a href="' . $org_url . '">' . $org . '</a>' if $p->{org_url};
+        my $org_url = ent($p->{org_url});
+        $org_url = "http://$org_url" unless $org_url =~ /^http:\/\//;
+        $org = '<a href="' . $org_url . '">' . $org . '</a>' if $p->{org_url};
         $org = ' of ' . $org;
     }
     return
@@ -160,7 +160,7 @@ sub display_box ($$%) {
             ),
             $q->p({ -align => 'center' },
                 'Submitted by ', ent($p->{name}), $org, ' &ndash; ',
-		$q->strong('Deadline to sign up by:'), Petitions::pretty_deadline($p, 1),
+                $q->strong('Deadline to sign up by:'), Petitions::pretty_deadline($p, 1),
                 (defined($p->{signers})
                     ? (' &ndash; ', $q->strong('Signatures:'), $p->{signers})
                     : ())
@@ -202,17 +202,38 @@ sub sign_box ($$) {
             )
         . $q->p( '<label for="email">Your email:</label>',
                 $q->textfield(-name => 'email', -size => 30, -id => 'email'))
-	. $q->p( '<label for="email2">Confirm email:</label>',
+        . $q->p( '<label for="email2">Confirm email:</label>',
                 $q->textfield(-name => 'email2', -size => 30, -id => 'email2'),
                 $q->br(),
             $q->small($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
         ) )
-	. $q->div({-id => 'signFormRight' },
+        . $q->div({-id => 'signFormRight' },
           $q->p( '<label for="address">Your address:</label>',
                 $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4) ),
-	  $q->p( '<label for="postcode">Your postcode:</label>', 
+          $q->p( '<label for="postcode">Your postcode:</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
-        ) )
+        ),
+        $q->p( '<label class="wide" for="overseas">Or, if you\'re in an
+overseas territory or Crown dependency and don\'t have a postcode,
+please select it from the list:</label>', 
+            $q->popup_menu(-name=>'overseas', -values=>[
+                '-- Select --',
+                'Ascension Island',
+                'Bermuda',
+                'British Antarctic Territory',
+                'Cayman Islands',
+                'Channel Islands',
+                'Falkland Islands',
+                'Gibraltar',
+                'Isle of Man',
+                'Montserrat',
+                'St Helena',
+                'South Georgia and the South Sandwich Islands',
+                'Tristan da Cunha',
+                'Turks and Caicos Islands',
+                ])
+        )
+        )
         . $q->p( {-style => 'clear: both', -align => 'right'},
             $q->submit(-name => 'submit', -value => 'Sign')
         )

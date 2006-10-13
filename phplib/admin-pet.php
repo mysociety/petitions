@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.22 2006-10-11 09:39:23 matthew Exp $
+ * $Id: admin-pet.php,v 1.23 2006-10-13 17:03:51 matthew Exp $
  * 
  */
 
@@ -294,7 +294,7 @@ class ADMIN_PAGE_PET_MAIN {
 
         $q = db_query("SELECT petition.*,
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND
-		    emailsent in ('sent', 'confirmed')) AS signers
+                    emailsent in ('sent', 'confirmed')) AS signers
             FROM petition
             WHERE ref ILIKE ?", $petition);
         $pdata = db_fetch_array($q);
@@ -585,8 +585,8 @@ class ADMIN_PAGE_PET_MAIN {
     function display() {
         db_connect();
         $petition_id = petition_admin_perform_actions();
-	if (!$petition_id)
-	    $petition_id = get_http_var('petition_id') + 0; # id
+        if (!$petition_id)
+            $petition_id = get_http_var('petition_id') + 0; # id
 
         if (get_http_var('approve')) {
             $p = new Petition($petition_id);
@@ -614,8 +614,8 @@ class ADMIN_PAGE_PET_MAIN {
         if ($petition_id) {
             $petition = db_getOne('SELECT ref FROM petition WHERE id = ?', $petition_id);
         } else {
-	    $petition = get_http_var('petition');
-	}
+            $petition = get_http_var('petition');
+        }
 
         if ($petition) {
             $this->show_one_petition($petition);
