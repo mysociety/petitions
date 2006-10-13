@@ -2,6 +2,8 @@
 #
 # !!(*= $daemon_name *)!! Start the ePetitions email daemon
 
+!!(* if ($hostname eq "bitter") { *)!!
+
 NAME=!!(*= $daemon_name *)!!
 DAEMON=/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petemaild
 PIDFILE=/data/vhost/!!(*= $vhost *)!!/petemaild.pid
@@ -40,3 +42,4 @@ else
 	exit 1
 fi
 
+!!(* } *)!!
