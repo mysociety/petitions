@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.5 2006-10-12 00:02:44 matthew Exp $
+// $Id: steps.php,v 1.6 2006-10-13 10:26:41 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
@@ -52,7 +52,7 @@ explain our reason(s). </p>
 
 <p>Any petitions that are rejected or not resubmitted will be published on this
 website, along with the reason(s) why it was rejected. Any content that is
-offensive or illegal will be left out. Every petition that is received will be
+offensive or illegal or clearly spam will be left out. Every petition that is received will be
 acknowledged on this website.</p>
 
 <h3><span dir="ltr">Step 4: Petition live</span></h3>

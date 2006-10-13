@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: privacy.php,v 1.3 2006-10-12 00:02:44 matthew Exp $
+// $Id: privacy.php,v 1.4 2006-10-13 10:26:41 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -21,7 +21,7 @@ In addition to the <a href="http://www.number10.gov.uk/output/Page52.asp">normal
 
 <p>If you create an e-petition on the Downing Street website, you will be required to provide us with basic personal information so that we can contact you about your petition. The information will only be used for this purpose, although we may need to pass your details to the relevant Government department to enable them to respond to the issues you raise.</p>
 
-<p>If you sign an e-petition on the Downing Street website, you will be required to provide us with basic personal information to enable us to verify that "signatures" collected are genuine.  Unless you ask us not to, your name (but no other details) will be published on the petition on the website.</p>
+<p>If you sign an e-petition on the Downing Street website, you will be required to provide us with basic personal information to enable us to verify that "signatures" collected are genuine.  Your name (but no other details) will be published on the petition on the website.</p>
 
 <p>We will only use the information you provide us for this purpose, and, unless you ask us
 not to, to write to you a maximum of two times about the issues raised in the petition.

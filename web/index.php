@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.23 2006-10-12 00:02:44 matthew Exp $
+// $Id: index.php,v 1.24 2006-10-13 10:26:41 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -29,7 +29,7 @@ page_header('Introduction to e-petitions');
 
 <p>Petitions have long been sent to the Prime Minister by post or delivered to
 the Number 10 door in person. You can now both create and sign petitions on
-this website, giving you the opportunity to reach a potentially wider audience
+this website too, giving you the opportunity to reach a potentially wider audience
 and to deliver your petition directly to Downing Street.</p>
 
 <blockquote>"Petitioning the Prime Minister via the web allows for petitions
