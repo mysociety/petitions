@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.31 2006-10-12 00:02:43 matthew Exp $
+# $Id: Page.pm,v 1.32 2006-10-13 01:46:07 francis Exp $
 #
 
 package Petitions::Page;
@@ -17,6 +17,7 @@ use Carp;
 use Digest::HMAC_SHA1 qw(hmac_sha1);
 use MIME::Base64;
 use RABX;
+use File::Slurp qw(read_file);
 
 use mySociety::DBHandle qw(dbh);
 use mySociety::Util qw(random_bytes);
@@ -49,78 +50,22 @@ sub header ($$%) {
         $devwarning = join($q->br(), @d);
     }
 
-    # ugh
+    # html header shared with PHP
+    my $out = read_file("../templates/website/head.html");
+    if (!$out) {
+        warn "Couldn't find ../templates/website/head.html";
+        return "";
+    }
+    my $ent_url = ent($q->url());
+    my $ent_title = ent($title);
     my $js = '';
     $js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
+    $out =~ s/PARAM_DC_IDENTIFIER/$ent_url/g;
+    $out =~ s/PARAM_TITLE/$ent_title/g;
+    $out =~ s/PARAM_DEV_WARNING/$devwarning/g;
+    $out =~ s/PARAM_STAT_JS/$js/g;
 
-    my $html = <<EOF;
-<?xml version="1.0"?>
-<!-- quirks mode -->
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8;" />
-<meta name="keywords" content="number 10, petition, petitions, downing street, prime minister, pm" />
-<meta name="description" content="Petitions to the Prime Minister, 10 Downing Street" />
-<meta name="DCTERMS.created" scheme="DCTERMS.W3CDTF" content="2005-08-17" />
-<meta name="eGMS.accessibility" scheme="WCAG" content="Double-A" />
-<meta name="dc.creator" content="10 Downing Street, Web Team, webmaster\@pmo.gov.uk" />
-<meta name="dc.language" scheme="ISO 639-2/T" content="eng" />
-<meta name="dc.publisher" content="Prime Minister's Office, 10 Downing Street, London, SW1A 2AA" />
-<meta name="dc.identifier" content="@{[ ent($q->url()) ]}" />
-<meta name="dc.subject" content="10 Downing Street" />
-<meta name="dc.subject" content="Petitions" />
-<meta name="dc.subject" content="Prime Minister" />
-<meta name="dc.subject" content="Tony Blair" />
-<meta name="dc.title" content="@{[ ent($title) ]}" />
-<title>@{[ ent($title) ]}</title>
-$js
-<link href="http://www.number10.gov.uk/styles/basic_styles.css" rel="stylesheet" type="text/css" />
-<link href="http://www.number10.gov.uk/styles/gallerycontent.css" rel="stylesheet" />
-<style type="text/css" media="all">
-                                        \@import url(http://www.number10.gov.uk/styles/nomensa.css);
-                                        \@import url(/pet.css);
-                                        #rel_links {margin-right: -146px;}
-                                </style>
-<link rel="stylesheet" type="text/css" href="http://www.number10.gov.uk/styles/print.css" media="print" />
-<link rel="shorcut icon" href="favicon.ico" />
-</head>
-<body class="primeminister">
-<h3 align="center" style="color: #cc0000; background-color: #ffffff; ">@{[ $devwarning ]}</h3>
-<p class="rm"><a class="skip" href="#content">Skip to: Content</a><span class="skip"> |</span></p>
-<div id="header">
-<a href="http://www.number10.gov.uk/output/page1.asp" class="logo">
-<img src="http://www.number10.gov.uk/files/images/crest.gif" width="125" height="78" alt="The crest for Number 10 Downing Street" title="" />
-</a>
-<div id="navigation">
-<h2>Main menu</h2><ul><li class="primeminister"><span>&nbsp;</span><a href="http://www.number10.gov.uk/output/Page2.asp">prime minister</a><ul><li><a href="http://www.number10.gov.uk/output/Page3.asp">contact</a></li><li><a href="http://www.number10.gov.uk/output/Page8809.asp">the big issues</a></li><li><a href="http://www.number10.gov.uk/output/Page4.asp">biography</a></li><li><a href="http://www.number10.gov.uk/output/Page5.asp">speeches</a></li><li><a href="http://www.number10.gov.uk/output/Page12.asp">PM's office</a></li></ul></li><li class="government"><span>&nbsp;</span><a href="http://www.number10.gov.uk/output/Page18.asp">government</a><ul><li><a href="http://www.number10.gov.uk/output/Page19.asp">cabinet</a></li><li><a href="http://www.number10.gov.uk/output/Page29.asp">guide to legislation</a></li><li><a href="http://www.number10.gov.uk/output/Page30.asp">guide to government</a></li><li><a href="http://www.number10.gov.uk/output/Page31.asp">in your area</a></li><li><a href="http://www.number10.gov.uk/output/Page32.asp">links</a></li></ul></li><li class="news"><span>&nbsp;</span><a href="http://www.number10.gov.uk/output/Page20.asp">newsroom</a><ul><li><a href="http://www.number10.gov.uk/output/Page21.asp">latest news</a></li><li><a href="http://www.number10.gov.uk/output/Page34.asp">media centre</a></li><li><a href="http://www.number10.gov.uk/output/Page36.asp">email updates</a></li></ul></li><li class="downingstreet"><span>&nbsp;</span><a href="http://www.number10.gov.uk/output/Page22.asp">downing street</a><ul><li><a href="http://www.number10.gov.uk/output/Page39.asp">welcome</a></li><li><a href="http://www.number10.gov.uk/output/Page175.asp">history of the building</a></li><li><a href="http://www.number10.gov.uk/output/Page123.asp">PMs in history</a></li><li><a href="http://www.number10.gov.uk/output/Page41.asp">tour</a></li></ul></li><li class="broadcasts"><span>&nbsp;</span><a href="http://www.number10.gov.uk/output/Page24.asp">broadcasts</a><ul><li><a href="http://www.number10.gov.uk/output/Page306.asp">PM's Question Time</a></li><li><a href="http://www.number10.gov.uk/output/Page308.asp">PM's statements</a></li><li><a href="http://www.number10.gov.uk/output/Page3054.asp">films</a></li></ul></li></ul></div>
-<span class="clear">&nbsp;</span>
-</div>
-<div id="helpbar">
-<div>
-<p class="help"><a href="http://www.number10.gov.uk/output/page6371.asp">Help</a></p>
-<form name="kbs" method="get" action="http://search.number-10.gov.uk/kbroker/number10/number10/search.lsim">
-<script type="text/javascript" language="JavaScript" src="http://www.number10.gov.uk/include/js/helper.js"></script>
-<label for="qt">Search</label>
-<input type="text" name="qt" id="qt" maxlength="1000" value="Enter search terms" onfocus="clearInstructions(this)" />&nbsp;<input name="go" id="go" type="submit" value="Go" />
-<input type="hidden" name="sr" value="0" />
-<input type="hidden" name="nh" value="10" />
-<input type="hidden" name="cs" value="iso-8859-1" />
-<input type="hidden" name="sc" value="number10" />
-<input type="hidden" name="sm" value="0" />
-<input type="hidden" name="mt" value="1" />
-<input type="hidden" name="to" value="0" />
-<input type="hidden" name="ha" value="368" />
-</form>
-<p>You are here: <a href="http://www.number10.gov.uk/output/Page1.asp">home</a>&nbsp;>&nbsp;<a href="/">petitions</a></p>
-</div>
-</div>
-<div id="main">
-<div id="wrap">
-<div id="content">
-EOF
-
-    return $html;
+    return $out;
 }
 
 =item footer Q STAT_CODE
@@ -133,61 +78,16 @@ sub footer ($$) {
     } else {
         $stat_code = 'Petitions';
     }
-
-    my $out = <<EOF;
-<img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
-</div>
-</div>
-<div id="rel_links">
-
-<div class="primeminister submenu">
-<h2><span class="ltr">E-Petitions</span></h2>
-<ul>
-<li><a href="/">Home</a></li>
-<li><a href="/list">View petitions</a></li>
-<li><a href="/new">Create a petition</a></li>
-<li><a href="/about">About e-petitions</a></li>
-<li><a href="/steps">Step-by-Step Guide</a></li>
-<li><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
-<li><a href="/terms">Terms and Conditions</a></li>
-<li><a href="/privacy">Privacy Policy</a></li>
-</ul>
-</div>
-
-</div>
-</div>
-<div id="ilinks">
-
-<h3>BETA TEST</h3>
-
-<p>The petitions system is currently in a public beta test. This means
-that users are free to sign and create petitions, but changes are expected over
-the coming weeks in response to feedback from our users.</p>
-
-<!--<h2>Important Links</h2><div class="downingstreet"><div class="header">&nbsp;</div><div><h3><a href="http://www.number10.gov.uk/output/page41.asp"><img src="http://www.number10.gov.uk/files/images/take_a_tour_of_N10_purple.jpg" alt="" />
-					Take a tour of Number 10</a></h3><p>Have you seen our virtual tour of 10 Downing Street?</p></div><div class="footer">&nbsp;</div></div><div class="primeminister"><div class="header"> </div><div><h3><img width="80" alt="House of Parliament. Picture: Britain on View" height="60" border="0" src="http://www.number10.gov.uk/files/images/New Parliament 5 SMALL.jpg" /> <a href="http://www.number10.gov.uk/output/Page8809.asp">The Big Issues</a></h3><p>In-depth coverage of the main policy areas currently being addressed by the PM and the government</p></div><div class="footer"></div></div><img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
--->
-<img src="http://www.number10.gov.uk/files/images/clear.gif" width="1" height="1" alt="" class="emptyGif" />
-</div>
-<div id="footer">
-<div><p>|
-	<a href="http://www.number10.gov.uk/output/Page49.asp">copyright</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page7035.asp">freedom of information</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page50.asp">feedback</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page52.asp">privacy policy</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page53.asp">search</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page54.asp">sitemap</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page4049.asp">accessibility</a>&nbsp;|&nbsp;<a href="http://www.number10.gov.uk/output/Page6508.asp">rss and podcasts</a>&nbsp;|&nbsp;<a href="/output/Page9899.asp">directgov</a>&nbsp;|&nbsp;</p></div>
-</div>
-EOF
+    
+    # html footer, shared with PHP
+    my $site_stats = "";
     if (!mySociety::Config::get('PET_STAGING')) {
-        $out .= <<EOF;
-<script type="text/javascript">
-sitestat("http://uk.sitestat.com/primeministersoffice/downingstreet/s?$stat_code");
-</script>
-<noscript>
-<img width="1" height="1" alt="" src="http://uk.sitestat.com/primeministersoffice/downingstreet/s?$stat_code" />
-</noscript>
-EOF
+        $site_stats = read_file("../templates/website/site-stats.html");# || die "couldn't open site-stats.html: $!";
+        $site_stats =~ s/PARAM_STAT_CODE/$stat_code/g;
     }
-    $out .= <<EOF;
-</body>
-</html>
-EOF
+    my $out = read_file("../templates/website/foot.html");# || die("couldn't open foot.html: $!");
+    $out =~ s/PARAM_SITE_STATS/$site_stats/g;
+
     return $out;
 }
 

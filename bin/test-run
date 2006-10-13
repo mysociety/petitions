@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.9 2006-10-06 15:11:51 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.10 2006-10-13 01:46:07 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -78,35 +78,47 @@ sub name_n { my $n = shift; return "Persephone Petitioner $n"; }
 # Main code
 
 # Configure test harness class
-print "Starting daemons...\n" if $verbose > 0;
-my $petemaild_pid = fork();
-die "failed to fork" if (!defined($petemaild_pid));
-if ($petemaild_pid == 0) {
-    exec("./petemaild", "--debug");
-    exit;
-}
-END {
-    kill(POSIX::SIGHUP, $petemaild_pid);
-    while (1) {
-        my $wait_pid = wait();
-        last if ($wait_pid == -1);
-    }
-};
-
 print "Set up web test harness...\n" if $verbose > 0;
 our $wth = new mySociety::WebTestHarness();
 $base_url =~ m#^http://(.+)/?$#;
 $wth->browser_credentials("$1:80", $auth_realm, $auth_user, $auth_password);
-$wth->log_watcher_setup($httpd_error_log);
-$wth->log_watcher_self_test($base_url . "/test.php?error=1", "deliberate_error_to_test_error_handling");
 $wth->database_connect('PET_');
 $wth->database_drop_reload('../db/schema.sql');
 $wth->database_cycle_sequences(200);
+$wth->log_watcher_setup($httpd_error_log);
+$wth->log_watcher_self_test($base_url . "/test.php?error=1", "deliberate_error_to_test_error_handling");
 my $eveld_bin = "$FindBin::Bin/../../services/EvEl/bin/eveld";
 $eveld_bin = undef if ! -e $eveld_bin; # when running on servers rely on EvEl daemon, rather than calling EvEl binary directly XXX need more explicit way of distinguishing this case, than just checking evel isn't checked out in the same tree
 $wth->email_setup({ eveld_bin => $eveld_bin,
                     log_mailbox => "log_mailbox" });
 $wth->browser_set_validator("/usr/bin/validate");
+
+# Start email and signup daemons
+my $petemaild_pid;
+my $petsignupd_pid;
+END {
+    # When script exits, get the email and signup daemons to gracefully shutdown
+    kill(POSIX::SIGHUP, $petemaild_pid) if $petemaild_pid;
+    kill(POSIX::SIGHUP, $petsignupd_pid) if $petsignupd_pid;
+    # Wait for all children to have exited
+    while (1) {
+        my $wait_pid = wait();
+        last if ($wait_pid == -1);
+    }
+};
+print "Starting daemons...\n" if $verbose > 0;
+$petemaild_pid = fork();
+die "failed to fork" if (!defined($petemaild_pid));
+if ($petemaild_pid == 0) {
+    exec("./petemaild", "--debug", "--verbose=0");
+    exit;
+}
+$petsignupd_pid = fork();
+die "failed to fork" if (!defined($petsignupd_pid));
+if ($petsignupd_pid == 0) {
+    exec("./petsignupd", "--debug");
+    exit;
+}
 
 # Syntax check all .php files
 print "Syntax check all PHP files...\n" if $verbose > 0;
@@ -192,11 +204,14 @@ sub do_basic_test {
 
     $wth->browser_check_contents("We have sent you an email to confirm");
     call_send_messages();
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: '.email_n(99).  '%');
+    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(99).'" <'.email_n(99).'>%');
     die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(http://.*$)#m);
     my $confirm_petition_link = $1;
 
-    print $confirm_petition_link;
+    print "Confirmation link: $confirm_petition_link\n" if $verbose > 1;
+    $wth->browser_get($confirm_petition_link);
+    $wth->browser_check_contents("Thank you for creating your petition");
+    $wth->browser_check_contents("It has been entered on our system");
 
 =comment
     # Confirm email
