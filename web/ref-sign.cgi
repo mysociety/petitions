@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.20 2006-10-12 00:02:44 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.21 2006-10-13 13:04:23 francis Exp $';
 
 use strict;
 
@@ -240,8 +240,11 @@ sub accept_loop () {
 my $secret = Petitions::DB::secret();
 dbh()->disconnect();
 
+# We launch child processes here, so we can have more ref-sign.cgi processes
+# without having to alter the global FastCGI server number config parameter
+# NB: This doesn't run well in a cgi environment, only in fastcgi
 mySociety::Util::manage_child_processes({
-                web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
+               web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
                         \&accept_loop]
             });
 
