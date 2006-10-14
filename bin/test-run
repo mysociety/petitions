@@ -15,7 +15,16 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.11 2006-10-13 23:20:59 francis Exp $';
+# Things to add:
+#    - Reject petition, for various reasons
+#    - Resubmit rejected petition
+#    - Sign petition lots of times
+#    - Wait until petition deadline passes, check it moves into finished state
+#    - Stuff to do with writing/sending the government response
+#    - Check rejected petitions in the relevant categories can/can't be seen on the site?
+#    - Approve a signer through the admin interface
+
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.12 2006-10-14 12:49:07 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -172,18 +181,21 @@ sub call_mark_finished {
 sub do_basic_test {
     set_pet_date('1988-08-08');
 
+    my $petition_text = "take action on every petition on this site with more than 1000 signers";
+
     # Check front page works
     $wth->browser_get($base_url);
     $wth->browser_check_contents("Petitions");
+    $wth->browser_check_no_contents("0 signatures");
 
     # Create a new petition
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => {
-                pet_content => 'take action on every petition on this site with more than 1000 signers',
-                detail => 'I think it is very important that the Prime Minister takes all petitions seriously. He should be compelled to do anything that more than 1000 people sign, as this would be good for democracy and not at all exploitable by small groups of people.',
-                rawdeadline => '31st December 1988',
+                pet_content => $petition_text,
+                detail => 'I think it is very important that the Prime Minister takes all petitions seriously. He should be compelled to do anything that more than 1000 people sign, as this would be good for democracy and not at all exploitable by small groups of people.\n\nMy favourite thing about this petition is that it has two paragraphs of text in the description. That rocks!',
+                rawdeadline => 'Dec 31st',
                 ref => 'onethousand'
                 }, button => 'tostepyou') or die "Failed to submit step 1";
 
@@ -192,7 +204,7 @@ sub do_basic_test {
             fields => {
                 name => name_n(99),
                 organisation => "Society for the Advancement of Effective Petitioning",
-                address => "The Beseechment Building, Importuning Island",
+                address => "The Beseechment Building\nImportuning Island",
                 postcode => "SW1A 2AA",
                 telephone => "01234 56789",
                 org_url => "http://www.petitionsrock.org.uk",
@@ -225,10 +237,44 @@ sub do_basic_test {
     # Follow link to admin page
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
-    $wth->browser_check_contents("take action on every petition on this site with more than 1000 signers");
+    $wth->browser_check_contents($petition_text);
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'approve') or die "Failed to submit approve petition button";
     $wth->browser_check_contents('Petition approved!');
+
+    # Check that petition is on the front page, and has its own page
+    $wth->browser_get($base_url);
+    $wth->browser_check_contents($petition_text);
+    $wth->browser_check_contents("0 signatures");
+    $wth->browser_follow_link(text_regex => qr/$petition_text/);
+    $wth->browser_check_contents($petition_text);
+    $wth->browser_check_contents("31 December 1988");
+
+    # Sign the petition
+    $wth->browser_submit_form(form_name => 'signForm',
+            fields => {
+                name => name_n(1488),
+                email => email_n(1488),
+                email2 => email_n(1488),
+                address => "1488 Signature Street\n\nSealville",
+                postcode => "EH99 1SP",
+                }, button => 'submit') or die "Failed to submit sign petition";
+    $wth->browser_check_contents("We've sent you an email");
+
+    # Confirm signature
+    my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1488).'" <'.email_n(1488).'>%Please click on the link below to confirm your signature%');
+    die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*$)#m);
+    my $confirm_signature_link = $1;
+    print "Confirmation link: $confirm_signature_link\n" if $verbose > 1;
+    $wth->browser_get($confirm_signature_link);
+    $wth->browser_check_contents("Thank you, you're now signed up to this petition!");
+
+    # Check it says it is signed on the front page
+    $wth->browser_get($base_url);
+    $wth->browser_check_contents($petition_text);
+    $wth->browser_check_contents("1 signature");
+    
+    #call_mark_finished();
 }
 
 #############################################################################

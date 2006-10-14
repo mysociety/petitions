@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.35 2006-10-14 10:16:25 chris Exp $
+# $Id: Page.pm,v 1.36 2006-10-14 12:49:07 francis Exp $
 #
 
 package Petitions::Page;
@@ -188,7 +188,7 @@ sub sign_box ($$) {
     delete($p->{salt});
 
     return
-        $q->start_form(-id => 'signForm', -method => 'POST', -action => "/$p->{ref}/sign")
+        $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => "/$p->{ref}/sign")
         . qq(<input type="hidden" name="add_signatory" value="1" />)
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
@@ -217,7 +217,7 @@ sub sign_box ($$) {
         $q->p( '<label class="wide" for="overseas">Or, if you\'re
 in an overseas territory or Crown dependency and don\'t have a postcode,
 please select it from the list:</label>', 
-            $q->popup_menu(-name=>'overseas', -values=>[
+            $q->popup_menu(-name=>'overseas', -id=>'overseas', -values=>[
                 '-- Select --',
                 'Ascension Island',
                 'Bermuda',
