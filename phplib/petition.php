@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.26 2006-10-13 23:32:58 francis Exp $
+ * $Id: petition.php,v 1.27 2006-10-14 10:51:30 matthew Exp $
  * 
  */
 
@@ -137,8 +137,8 @@ class Petition {
     function h_detail() {
         $detail = htmlspecialchars($this->data['detail']);
         $detail = str_replace("\r", '', $detail);
-        $detail = preg_replace('#\n\n+#', '<br /><br />', $detail);
-        return "$detail";
+        $detail = preg_replace('#\n\n+#', '</p> <p>', $detail);
+        return "<p>$detail</p>";
     }
     function h_name() { return htmlspecialchars($this->data['name']); }
     function h_pretty_deadline() { return prettify(htmlspecialchars($this->data['deadline'])); }
@@ -159,8 +159,7 @@ class Petition {
             <p>
             <?=_('Deadline to sign up by:') ?> <strong><?=$this->h_pretty_deadline()?></strong></p>
             <? if ($this->h_detail()) {
-            print '<p><strong>More details</strong><br />' . $this->h_detail();
-            print '</p>';
+            print '<p><strong>More details:</strong></p>' . $this->h_detail();
             }
 
             if ($this->signers() >= 0) { ?>
