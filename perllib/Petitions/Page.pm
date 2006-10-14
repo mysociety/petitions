@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.34 2006-10-13 17:27:16 matthew Exp $
+# $Id: Page.pm,v 1.35 2006-10-14 10:16:25 chris Exp $
 #
 
 package Petitions::Page;
@@ -208,7 +208,7 @@ sub sign_box ($$) {
             $q->small($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
         ) )
         . $q->div({-id => 'signFormRight' },
-          $q->p( 'You must be a British subject to sign the petition.'),
+          $q->p( 'You must be a British citizen to sign the petition.'),
           $q->p( '<label for="address">Your address:</label>',
                 $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4) ),
           $q->p( '<label for="postcode">Your postcode:</label>', 
