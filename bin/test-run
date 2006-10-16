@@ -24,7 +24,7 @@
 #    - Remove signer
 #    - Various RSS feeds
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.15 2006-10-16 16:46:25 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.16 2006-10-16 16:54:30 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -166,12 +166,6 @@ sub set_pet_date {
     dbh()->commit();
 }
 
-# Call fyrqd for one pass
-#sub call_fyrqd {
-#    system("./fyrqd", "--debug", "--once", "--email", # $verbose > 1 ? qw(--verbose) : ()
-#        ) and die "Failed to call fyrqd";
-#}
-
 # Call send messages cron job
 sub call_send_messages {
      $wth->multi_spawn($multispawn, "php send-messages " . ($verbose > 1 ? qw(--verbose) : ''), $verbose);
@@ -249,7 +243,7 @@ sub do_basic_test {
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'approve') or die "Failed to submit approve petition button";
     call_send_messages();
-    #my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
+    my $petition_approved_email = $wth->email_get_containing('%Subject: Your petition to the Prime Minister has been approved%To: '.email_n(99).'%');
     $wth->browser_check_contents('Petition approved!');
 
     # Check that petition is on the front page, and has its own page
