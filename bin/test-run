@@ -24,7 +24,7 @@
 #    - Remove signer
 #    - Various RSS feeds
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.14 2006-10-16 16:35:33 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.15 2006-10-16 16:46:25 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -244,8 +244,12 @@ sub do_basic_test {
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
     $wth->browser_check_contents($petition_text);
+    $wth->email_check_none_left();
+    call_send_messages();
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'approve') or die "Failed to submit approve petition button";
+    call_send_messages();
+    #my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
     $wth->browser_check_contents('Petition approved!');
 
     # Check that petition is on the front page, and has its own page
