@@ -18,12 +18,13 @@
 # Things to add:
 #    - Reject petition, for various reasons
 #    - Resubmit rejected petition
-#    - Wait until petition deadline passes, check it moves into finished state
 #    - Stuff to do with writing/sending the government response
 #    - Check rejected petitions in the relevant categories can/can't be seen on the site?
-#    - Approve a signer through the admin interface
+#    - Confirm a signer through the admin interface
+#    - Remove signer
+#    - Various RSS feeds
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.13 2006-10-15 08:13:00 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.14 2006-10-16 16:35:33 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -287,8 +288,29 @@ sub do_basic_test {
 
         $wth->browser_get($uri);
     }
-    
-    #call_mark_finished();
+
+    # Go forward in time to day that deadline expires at end of, and
+    # make sure that nothing happens.
+    set_pet_date('1988-12-31');
+    call_mark_finished();
+    $wth->browser_get($base_url);
+    $wth->browser_check_contents($petition_text);
+    $wth->email_check_none_left();
+
+    # And one more day, check pledge is marked as finished
+    set_pet_date('1989-01-01');
+    call_mark_finished();
+    # XXX probably should be a "your pledge has finished" mail here
+    $wth->browser_get($base_url);
+    $wth->browser_check_no_contents($petition_text);
+    $wth->browser_check_contents("None");
+    $wth->browser_follow_link(text_regex => qr/View petitions/);
+    $wth->browser_check_no_contents($petition_text);
+    $wth->browser_follow_link(text_regex => qr/Closed petitions/);
+    $wth->browser_check_contents($petition_text);
+    $wth->browser_follow_link(text_regex => qr/$petition_text/);
+    $wth->browser_check_contents("This petition is now closed");
+
 }
 
 #############################################################################
