@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.24 2006-10-13 23:21:00 francis Exp $
+ * $Id: admin-pet.php,v 1.25 2006-10-16 16:33:11 matthew Exp $
  * 
  */
 
@@ -593,6 +593,7 @@ class ADMIN_PAGE_PET_MAIN {
             db_getOne("UPDATE petition SET status='live',deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)) WHERE id=?", $petition_id);
             $p->log_event("Admin approved petition", null);
             db_commit();
+	    pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'approved', 'petition-approved');
             print '<p><em>Petition approved!</em></p>';
         } elseif (get_http_var('reject')) {
             $this->reject_form($petition_id);

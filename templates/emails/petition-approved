@@ -1,0 +1,20 @@
+Subject: Your petition to the Prime Minister has been approved
+
+Dear <?=$values['name']?>,
+
+Your petition has been approved by the Number 10 web team,
+and is now available on the Number 10 website at the following
+address:
+    <?=$values['url']?>
+
+Your petition reads:
+
+We the undersigned petition the Prime Minister to
+<?=$values['content']?>
+
+<?=$values['detail']?>
+
+Thanks for submitting your petition.
+
+<?=$values['signature']?>
+
