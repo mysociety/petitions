@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.26 2006-10-16 16:46:25 francis Exp $
+ * $Id: admin-pet.php,v 1.27 2006-10-18 09:38:35 francis Exp $
  * 
  */
 
@@ -60,9 +60,9 @@ class ADMIN_PAGE_PET_SEARCH {
                 $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td>$r[ref]</td>";
                 $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
                 if ($r['emailsent'] == 'confirmed')
-                        $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" value="Remove signer">';
+                        $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" name="remove" value="Remove signer">';
                 elseif ($r['emailsent'] == 'sent')
-                        $out .= '<input type="hidden" name="confirm_signer_id" value="' . $r['id'] . '"><input type="submit" value="Confirm signer">';
+                        $out .= '<input type="hidden" name="confirm_signer_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm signer">';
                 $out .= "</form></td></tr>";
             }
             if ($out) {
@@ -465,7 +465,7 @@ class ADMIN_PAGE_PET_MAIN {
 </p>
 <p>Reason for rejection (this will be emailed to the creator and available on the website):
 <br><textarea name="reason" rows="10" cols="70"></textarea></p>
-<input type="submit" value="Reject petition">
+<input type="submit" name="reject" value="Reject petition">
 </form>
 <?  }
 
@@ -573,7 +573,7 @@ class ADMIN_PAGE_PET_MAIN {
 <p><label for="message_subject">Subject:</label> <input name="message_subject" id="message_subject" size="40" value="<?=$q_h_message_subject ?>"></p>
 <p>Response:
 <br><textarea name="message_body" rows="20" cols="72"><?=$q_h_message_body ?></textarea></p>
-<input type="submit" value="Respond to petition">
+<input type="submit" name="respond" value="Respond to petition">
 </form>
 <?
         }
