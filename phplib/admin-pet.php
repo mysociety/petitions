@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.28 2006-10-18 10:12:19 matthew Exp $
+ * $Id: admin-pet.php,v 1.29 2006-10-18 11:10:20 francis Exp $
  * 
  */
 
@@ -424,7 +424,9 @@ class ADMIN_PAGE_PET_MAIN {
                 print "<br><strong>email subject:</strong> " . htmlspecialchars($r['emailsubject']);
             if ($r['emailbody']) {
                 print '<br><strong>email body:</strong>
-                <div class="message">.'.comments_text_to_html($r['emailbody'])."</div>";
+                <div class="message">.'.
+                nl2br(ms_make_clickable(htmlspecialchars($r['emailbody']), array('contract'=>true)))
+                ."</div>";
             }
 
         }
@@ -548,14 +550,16 @@ class ADMIN_PAGE_PET_MAIN {
             $p->log_event("Admin responded to petition", null);
             /* User mail must be submitted with \n line endings. */
             $q_message_body = str_replace("\r\n", "\n", $q_message_body);
+            /* Add footer with link */
+            $q_message_body .= "\n\nPetition info: " . OPTION_BASE_URL . $p->url_main();
             /* Got all the data we need. Just drop the announcement into the database
              * and let the send-messages script pass it to the signers. */
             db_query("insert into message
                     (id, petition_id, circumstance, circumstance_count, fromaddress,
-                    sendtocreator, sendtosigners, sendtolatesigners,
+                    sendtocreator, sendtosigners, sendtolatesigners, sendtoadmin,
                     emailsubject, emailbody)
                 values
-                    (?, ?, 'government-response', 0, 'number10', true, true, true, ?, ?)",
+                    (?, ?, 'government-response', 0, 'number10', true, true, true, true, ?, ?)",
             array(
                 $q_message_id, $p->id(),
                 $q_message_subject, $q_message_body));
@@ -567,7 +571,7 @@ class ADMIN_PAGE_PET_MAIN {
                     join('</li><li>' , $errors) . '</li></ul></div>';
 # XXX Next line ?>
 <p>You are responding to the petition '<?=$p->ref() ?>'. <b>Should say contents of petition here</b></p>
-<form name="petition_admin_respond" accept-charset="utf-8" method="post">
+<form name="petition_admin_respond" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
 <input type="hidden" name="respond" value="1"><input type="hidden" name="submit" value="1">
 <input type="hidden" name="petition_id" value="<?=$id ?>">
 <p><label for="message_subject">Subject:</label> <input name="message_subject" id="message_subject" size="40" value="<?=$q_h_message_subject ?>"></p>

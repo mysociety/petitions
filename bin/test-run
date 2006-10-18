@@ -24,7 +24,7 @@
 #    - Remove signer
 #    - Various RSS feeds
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.16 2006-10-16 16:54:30 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.17 2006-10-18 11:10:19 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -308,6 +308,26 @@ sub do_basic_test {
     $wth->browser_check_contents($petition_text);
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents("This petition is now closed");
+
+    # Send a response to all the signers
+    $wth->browser_get($admin_url);
+    $wth->browser_follow_link(text_regex => qr/Petitions and Signers/);
+    $wth->browser_follow_link(text_regex => qr/Finished/);
+    $wth->browser_submit_form(form_name => 'petition_admin_respond',
+                fields => { }, button => 'respond') or die "Failed to submit write response button";
+    $wth->browser_submit_form(form_name => 'petition_admin_respond',
+                fields => {
+                    message_body => "Thank you for your petition. We are going to do exactly what you say, because obviously we would never get contradictory petitions from different people. Yours faithfully, the PM.",
+                    }, button => 'respond') or die "Failed to submit response form";
+    $wth->browser_check_contents("Your response has been recorded and will be sent out shortly");
+    call_send_messages();
+
+    # Check everyone gets the response; signers, creator and admin
+    foreach my $signer_no (1488..1490) {
+        $wth->email_get_containing('%Subject: Government response%To: '.email_n($signer_no).'%Thank you for your petition%');
+    }
+    $wth->email_get_containing('%Subject: Government response%To: '.email_n(99).'%Thank you for your petition%');
+    $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
 }
 
