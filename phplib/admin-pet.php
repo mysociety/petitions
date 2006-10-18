@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.27 2006-10-18 09:38:35 francis Exp $
+ * $Id: admin-pet.php,v 1.28 2006-10-18 10:12:19 matthew Exp $
  * 
  */
 
@@ -465,7 +465,7 @@ class ADMIN_PAGE_PET_MAIN {
 </p>
 <p>Reason for rejection (this will be emailed to the creator and available on the website):
 <br><textarea name="reason" rows="10" cols="70"></textarea></p>
-<input type="submit" name="reject" value="Reject petition">
+<input type="submit" name="reject_submit" value="Reject petition">
 </form>
 <?  }
 
