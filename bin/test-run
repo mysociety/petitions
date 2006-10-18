@@ -24,7 +24,7 @@
 #    - Remove signer
 #    - Various RSS feeds
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.17 2006-10-18 11:10:19 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.18 2006-10-18 14:30:06 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -313,6 +313,7 @@ sub do_basic_test {
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and Signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
+    $wth->browser_check_no_contents('Response sent');
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
                 fields => { }, button => 'respond') or die "Failed to submit write response button";
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
@@ -329,6 +330,12 @@ sub do_basic_test {
     $wth->email_get_containing('%Subject: Government response%To: '.email_n(99).'%Thank you for your petition%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
+    # Check that can't send another response
+    $wth->browser_get($admin_url);
+    $wth->browser_follow_link(text_regex => qr/Petitions and Signers/);
+    $wth->browser_follow_link(text_regex => qr/Finished/);
+    $wth->browser_check_contents('Response sent');
+    $wth->browser_check_no_contents('petition_admin_respond');
 }
 
 #############################################################################
