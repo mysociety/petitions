@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.29 2006-10-18 11:10:20 francis Exp $
+ * $Id: admin-pet.php,v 1.30 2006-10-21 22:36:13 francis Exp $
  * 
  */
 
@@ -460,7 +460,7 @@ class ADMIN_PAGE_PET_MAIN {
     function reject_form($id) {
         $p = new Petition($id); ?>
 <p>You have chosen to reject the petition '<?=$p->ref() ?>'.</p>
-<form method="post"><input type="hidden" name="reject_form_submit" value="1">
+<form method="post" name="rejection_details_form" action="<?=$this->self_link?>"><input type="hidden" name="reject_form_submit" value="1">
 <input type="hidden" name="petition_id" value="<?=$id ?>">
 <p>Category or categories for rejection:
 <?      $this->display_categories(); ?>

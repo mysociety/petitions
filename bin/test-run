@@ -21,8 +21,10 @@
 #    - Check rejected petitions in the relevant categories can/can't be seen on the site?
 #    - Remove signer
 #    - Various RSS feeds
+#    - Test: "You have four weeks in which to do this, after which your
+#       petition will appear in the list of rejected petitions."
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.19 2006-10-21 02:08:55 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.20 2006-10-21 22:36:13 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -142,9 +144,12 @@ $wth->php_check_syntax("../../pet/templates/emails/", qr//);
 
 print "Basic test...\n" if $verbose > 0;
 do_basic_test();
+print "Rejection test...\n" if $verbose > 0;
+do_rejection_test();
 
 # Check for any unhandled mails or errors
-#call_fyrqd();
+call_send_messages();
+call_mark_finished();
 print "Checking no emails left at end...\n" if $verbose > 1;
 $wth->email_check_none_left();
 print "Checking no log file errors at end...\n" if $verbose > 1;
@@ -178,6 +183,7 @@ sub call_mark_finished {
 
 #############################################################################
 
+# Create petition, sign it, wait until completion, send government response
 sub do_basic_test {
     set_pet_date('1988-08-08');
 
@@ -353,6 +359,81 @@ sub do_basic_test {
     $wth->browser_follow_link(text_regex => qr/Finished/);
     $wth->browser_check_contents('Response sent');
     $wth->browser_check_no_contents('petition_admin_respond');
+}
+
+# Make a petition, and reject it
+sub do_rejection_test {
+    set_pet_date('1989-03-01');
+
+    my $petition_text = "impeach President Bush";
+
+    # Create a new petition
+    $wth->browser_get($base_url);
+    $wth->browser_follow_link(text_regex => qr/Create a Petition/);
+    $wth->browser_check_contents("Part 1 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => {
+                pet_content => $petition_text,
+                detail => "Isn't it obvious! I have no understanding of the powers of a Prime Minister! I'm going to dumbly ask him to do something that he can't do!",
+                rawdeadline => '1 week',
+                ref => 'rejecttest'
+                }, button => 'tostepyou') or die "Failed to submit step 1";
+
+    $wth->browser_check_contents("Part 2 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => {
+                name => name_n(44),
+                organisation => "Crazy Pressure Group",
+                address => "Removal From Office Rd.",
+                postcode => "SW1A 2AB",
+                telephone => "09876 5432",
+                org_url => "http://www.impeachbush.org",
+                email => email_n(44),
+                email2 => email_n(44)
+                }, button => 'tosteppreview') or die "Failed to submit step 2";
+
+    $wth->browser_check_contents("Part 3 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => { }, button => 'tocreate') or die "Failed to submit step 3";
+
+    $wth->browser_check_contents("We have sent you an email to confirm");
+
+    # Confirm petition
+    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(44).'" <'.email_n(44).'>%');
+    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
+    my $confirm_petition_link = $1;
+    print "Confirmation link: $confirm_petition_link\n" if $verbose > 1;
+    $wth->browser_get($confirm_petition_link);
+    $wth->browser_check_contents("Thank you for creating your petition");
+    $wth->browser_check_contents("It has been entered on our system");
+
+    # Get the email to the administrator
+    call_send_messages();
+    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
+    die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
+    my $admin_approve_link = $1;
+    print "Admin approve link: $admin_approve_link\n" if $verbose > 1;
+
+    # Follow link to admin page
+    $wth->browser_get($admin_approve_link);
+    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents($petition_text);
+    $wth->email_check_none_left();
+    call_send_messages();
+    $wth->browser_submit_form(form_name => 'petition_admin_approve',
+            fields => { }, button => 'reject') or die "Failed to submit reject petition button";
+    $wth->browser_check_contents("You have chosen to reject the petition 'rejecttest'");
+    $wth->browser_submit_form(form_name => 'rejection_details_form',
+            fields => { reason => 'Sorry, this is something the US Congress can do, but not the Prime Minster of the UK! You might want to change your petition to ask the Prime Minister to write a public letter to the Congress leader to ask him to impeach Bush, or something like that.',
+                'categories[]' => ['4096', 13], # the 13th checkbox has value 4096, and means "PM doesn't have power"
+            }, button => 'reject_submit') or die "Failed to submit reject details form";
+    call_send_messages();
+    my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%Outside the remit or powers%');
+    die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*(https?://.*$)#m);
+    my $rejection_email_link = $1;
+    print "Rejection resubmit link: $rejection_email_link\n" if $verbose > 1;
+   
+    # XXX resubmit? maybe do in basic test, not sure
 }
 
 #############################################################################
