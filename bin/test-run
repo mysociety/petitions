@@ -18,13 +18,11 @@
 # Things to add:
 #    - Reject petition, for various reasons
 #    - Resubmit rejected petition
-#    - Stuff to do with writing/sending the government response
 #    - Check rejected petitions in the relevant categories can/can't be seen on the site?
-#    - Confirm a signer through the admin interface
 #    - Remove signer
 #    - Various RSS feeds
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.18 2006-10-18 14:30:06 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.19 2006-10-21 02:08:55 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -112,6 +110,7 @@ $wth->browser_set_validator("/usr/bin/validate");
 my $petemaild_pid;
 my $petsignupd_pid;
 END {
+    my $exit_code = $?;
     # When script exits, get the email and signup daemons to gracefully shutdown
     kill(POSIX::SIGHUP, $petemaild_pid) if $petemaild_pid;
     kill(POSIX::SIGHUP, $petsignupd_pid) if $petsignupd_pid;
@@ -120,6 +119,7 @@ END {
         my $wait_pid = wait();
         last if ($wait_pid == -1);
     }
+    exit($exit_code);
 };
 print "Starting daemons...\n" if $verbose > 0;
 $petemaild_pid = fork();
@@ -270,13 +270,30 @@ sub do_basic_test {
                     }, button => 'submit') or die "Failed to submit sign petition";
         $wth->browser_check_contents("We've sent you an email");
 
-        # Confirm signature
+        # Find confirmation email
         my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
         die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*$)#m);
         my $confirm_signature_link = $1;
-        print "Confirmation link: $confirm_signature_link\n" if $verbose > 1;
-        $wth->browser_get($confirm_signature_link);
-        $wth->browser_check_contents("Thank you, you're now signed up to this petition!");
+        if ($signer_no == 1490) {
+            # Confirm signature by administraor
+            $wth->browser_get($admin_approve_link);
+            $wth->browser_check_contents("Petitions and Signers");
+            $wth->browser_check_no_contents($petition_text);
+            $wth->browser_follow_link(text_regex => qr/Live/);
+            $wth->browser_check_contents($petition_text);
+            $wth->browser_follow_link(text_regex => qr/admin/);
+            $wth->browser_check_contents($petition_text);
+            $wth->browser_submit_form(form_name => 'removesignerform1',
+                fields => { }, button => 'confirm_signer') or die "Failed to submit admin confirm signer button";
+            $wth->browser_check_contents("That signer has been confirmed");
+            $wth->browser_check_contents("Signers \\(3\\)");
+            $wth->browser_check_no_contents("confirm_signer");
+        } else {
+            # Confirm signature by user clicking link
+            print "Confirmation link: $confirm_signature_link\n" if $verbose > 1;
+            $wth->browser_get($confirm_signature_link);
+            $wth->browser_check_contents("Thank you, you're now signed up to this petition!");
+        }
 
         # Check it says it is signed on the front page
         $wth->browser_get($base_url);
