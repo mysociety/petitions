@@ -1,0 +1,19 @@
+Subject: Your petition has been finally rejected
+
+Hi,
+
+I'm sorry to inform you that your petition has been finally 
+rejected. This is because you did not edit and resubmit your 
+petition in the four weeks you were given to do so.
+
+Your petition will now appear in the list of rejected petitions.
+
+Your petition reads:
+
+We the undersigned petition the Prime Minister to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+<?=$values['signature']?>
+
