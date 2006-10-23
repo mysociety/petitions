@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.37 2006-10-13 17:03:51 matthew Exp $
+// $Id: new.php,v 1.38 2006-10-23 17:54:02 francis Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -532,8 +532,8 @@ function petition_create($data) {
         global $page_title;
         $page_title = _("Thank you for resubmitting your petition");
 ?>
-    <p class="noprint loudmessage">We have resubmitted your petition for
-    approval. You'll be notified shortly with the results.</p>
+    <p class="noprint loudmessage">We have resubmitted your petition for approval. 
+    You'll be notified shortly with the results.</p>
 <?
     } else {
         if (is_null(db_getOne('select id from petition where ref = ?', $data['ref']))) {
