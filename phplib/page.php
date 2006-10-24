@@ -5,14 +5,16 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.16 2006-10-24 11:24:26 francis Exp $
+// $Id: page.php,v 1.17 2006-10-24 11:38:55 francis Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
  * start of the "content" <div>.  If PARAMS['nonav'] is true then the top 
  * title and navigation are not displayed, or if PARAMS['noprint'] is true
  * then they are not there if the page is printed. TITLE must be in HTML,
- * with codes already escape */
+ * with codes already escape. PARAMS['rss'] contains a hash from RSS feed 
+ * titles to URLs.
+ */
 function page_header($title, $params = array()) {
     // The http-equiv in the HTML below doesn't always seem to override HTTP
     // header, so we say that we are UTF-8 in the HTTP header as well (Case
@@ -34,6 +36,14 @@ function page_header($title, $params = array()) {
     }
     $devwarning = join('<br />', $devwarning);
 
+    // Add in RSS autodetection links
+    $rss_links = '';
+    if (array_key_exists('rss', $params)) {
+        foreach ($params['rss'] as $rss_title => $rss_url) {
+            $rss_links .= '<link rel="alternate" type="application/rss+xml" title="' . $rss_title . '" href="'.$rss_url.'">' . "\n";
+        }
+    }
+
     // Display header
     $stat_js = '';
     if (!OPTION_PET_STAGING) {
@@ -46,6 +56,7 @@ function page_header($title, $params = array()) {
     $contents = str_replace("PARAM_TITLE", $title, $contents);
     $contents = str_replace("PARAM_DEV_WARNING", $devwarning, $contents);
     $contents = str_replace("PARAM_STAT_JS", $stat_js, $contents);
+    $contents = str_replace("PARAM_RSS_LINKS", $rss_links, $contents);
     print $contents;
 }
 

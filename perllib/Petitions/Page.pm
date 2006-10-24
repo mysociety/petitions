@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.38 2006-10-24 10:47:53 francis Exp $
+# $Id: Page.pm,v 1.39 2006-10-24 11:38:55 francis Exp $
 #
 
 package Petitions::Page;
@@ -64,6 +64,7 @@ sub header ($$%) {
     $out =~ s/PARAM_TITLE/$ent_title/g;
     $out =~ s/PARAM_DEV_WARNING/$devwarning/g;
     $out =~ s/PARAM_STAT_JS/$js/g;
+    $out =~ s/PARAM_RSS_LINKS//g;
 
     return $out;
 }
