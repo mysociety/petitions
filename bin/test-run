@@ -18,7 +18,7 @@
 # Things to add:
 #    - Make petition, reject, amend, accept
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.31 2006-10-24 17:50:06 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.32 2006-10-24 17:59:00 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -560,7 +560,7 @@ sub do_rejection_test {
     $admin_approve_email = $wth->email_get_containing('%Subject: Resubmitted petition to the Prime Minister%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     $admin_approve_link = $1;
-    comment("Admin approve link: $admin_approve_link\n");
+    comment("Admin approve link: $admin_approve_link");
 
     comment("Follow link to admin page");
     $wth->browser_get($admin_approve_link);

@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.15 2006-10-16 16:46:25 francis Exp $
+ * $Id: send-messages,v 1.16 2006-10-24 17:59:00 francis Exp $
  *
  */
 
@@ -218,6 +218,7 @@ function send_pending_messages() {
                         from message_signer_recipient
                         where message_id = message.id
                             and signer_id = signer.id) is null
+                    and signer.emailsent = \'confirmed\'
                 order by whencreated desc');
         /* XXX ugly. For a raw email we will transmit the (possibly large)
          * body of the mail over the wire once for each row. Should do a
