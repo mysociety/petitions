@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.26 2006-10-04 17:48:41 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.27 2006-10-24 17:02:03 francis Exp $';
 
 use strict;
 
@@ -49,10 +49,55 @@ use Time::HiRes qw(time alarm);
 
 use mySociety::DBHandle qw(dbh);
 use mySociety::PIDFile;
-use mySociety::Util qw(print_log printf_log);
 
 use Petitions;
 use Petitions::RPC;
+
+package Log;
+
+my $verboselevel = 0;
+sub verbose ($) {
+    $verboselevel = shift;
+}
+
+my $stderronly = 0;
+sub stderronly ($) {
+    $stderronly = shift;
+}
+
+use mySociety::Util qw(print_log printf_log);
+
+sub do_output ($$) {
+    my ($prio, $str) = @_;
+    if ($stderronly) {
+        STDERR->print("petsignupd: $prio: ", $str, "\n");
+    } else {
+        print_log($prio, $str);
+    }
+}
+
+sub print ($@) {
+    my $prio = shift;
+    if ($verboselevel < 2) {
+        return if ($prio eq 'noise');
+        return if ($verboselevel < 1 && $prio eq 'debug');
+        return if ($verboselevel < 0 && $prio eq 'info');
+    }
+    do_output($prio, join("", @_));
+}
+
+sub printf ($$;@) {
+    my $prio = shift;
+    if ($verboselevel < 2) {
+        return if ($prio eq 'noise');
+        return if ($verboselevel < 1 && $prio eq 'debug');
+        return if ($verboselevel < 0 && $prio eq 'info');
+    }
+    my $fmt = shift;
+    do_output($prio, sprintf($fmt, @_));
+}
+
+package main;
 
 # do_pending
 # Actually perform the queue of requests against the database.
@@ -72,7 +117,7 @@ sub do_pending () {
     dbh()->commit();
 
     my $t1 = time();
-    printf_log('debug', 'writing to db took %fs', $t1 - $t0);
+    Log::printf('debug', 'writing to db took %fs', $t1 - $t0);
 
     $s->blocking(1);
     my $maxtime = 0;
@@ -81,16 +126,16 @@ sub do_pending () {
         my $packet = Petitions::RPC::make_ack_packet($r->{cookie});
         my ($port, $ip) = sockaddr_in($r->{client});
         if (!$s->send($packet, 0, $r->{client})) {
-            print_log('err', "sending ack to @{[ inet_ntoa($ip) ]}:$port: $!");
+            Log::print('err', "sending ack to @{[ inet_ntoa($ip) ]}:$port: $!");
         } else {
             $maxtime = time() - $r->{time} if (time() - $r->{time} > $maxtime);
-            printf_log('debug', 'send ack to %s:%d cookie %s',
+            Log::printf('debug', 'send ack to %s:%d cookie %s',
                         inet_ntoa($ip), $port, unpack('h*', $r->{cookie}));
         }
     }
     $s->blocking(0);
 
-    printf_log('debug', 'sending acks took %fs; max %fs since request received',
+    Log::printf('debug', 'sending acks took %fs; max %fs since request received',
                 time() - $t1, $maxtime);
 }
 
@@ -98,13 +143,15 @@ sub do_pending () {
 my $max_signup_time = mySociety::Config::get('MAX_SIGNUP_TIME', 0.1);
 my $pidfilepath = mySociety::Config::get('PETSIGNUPD_PIDFILE', '/var/run/petsignupd.pid');
 my $debug = 0;
+my $verbose = 0;
 my $help = 0;
 if (!GetOptions(
         'pidfile=s' =>  \$pidfilepath,
         debug =>        \$debug,
+        'verbose=i' =>      \$verbose,
         help =>         \$help
     )) {
-    print_log('err', "bad options; try --help for help");
+    Log::print('err', "bad options; try --help for help");
     exit(1);
 }
 
@@ -116,16 +163,24 @@ if ($help) {
 mySociety::Util::log_to_stderr(0) if (!$debug);
 mySociety::Util::daemon() unless ($debug);
 
+if ($debug) {
+    Log::verbose($verbose);
+    Log::stderronly(1);
+} else {
+    Log::verbose($verbose);
+    mySociety::Util::daemon();
+}
+
 my $pidfile;
 try {
     $pidfile = new mySociety::PIDFile($pidfilepath);
 } catch mySociety::PIDFile::Error with {
     my $E = shift;
-    print_log('err', $E->text());
+    Log::print('err', $E->text());
     exit(1);
 };
 
-print_log('info', "starting up");
+Log::print('info', "starting up");
 
 $s = new IO::Socket::INET(
                     LocalAddr => '0.0.0.0',
@@ -180,13 +235,13 @@ while (!$foad) {
             } else {
                 # Invalid packet of some sort. Log and continue.
                 my ($port, $ip) = sockaddr_in($sender);
-                printf_log('err', 'bad packet from %s:%d',
+                Log::printf('err', 'bad packet from %s:%d',
                             inet_ntoa($ip), $port);
             }
         }
         
         if (!$!{EAGAIN}) {
-            printf_log('err', 'recvfrom: %s', $!);
+            Log::printf('err', 'recvfrom: %s', $!);
         }
     }
 
@@ -194,18 +249,18 @@ while (!$foad) {
     # acknowledgements to the clients.
     if ($alarm_fired && keys(%pending)) {
         my $n = scalar(keys(%pending));
-        printf_log('debug', 'alarm fired; have %d signatures to make', $n);
+        Log::printf('debug', 'alarm fired; have %d signatures to make', $n);
         try {
             do_pending();
             $alarm_fired = 0;
         } catch mySociety::DBHandle::Error with {
             my $E = shift;
-            printf_log('err', 'committing %d requests failed; DB error: %s',
+            Log::printf('err', 'committing %d requests failed; DB error: %s',
                         scalar(keys(%pending)), $E->text());
         };
         %pending = ( );
         my $t1 = time();
-        printf_log('debug', 'time from first request %fs; %f sigs/s',
+        Log::printf('debug', 'time from first request %fs; %f sigs/s',
                     $t1 - $t0, $n / ($t1 - $t0));
     }
 }
@@ -215,7 +270,7 @@ if (keys(%pending)) {
         do_pending();
     } catch mySociety::DBHandle::Error with {
         my $E = shift;
-        printf_log('err', 'committing %d requests failed (at shutdown); DB error: %s',
+        Log::printf('err', 'committing %d requests failed (at shutdown); DB error: %s',
                     scalar(keys(%pending)), $E->text());
     };
 }
@@ -251,6 +306,10 @@ Display information about using the program.
 Don't detach from controlling terminal; log diagnostics to standard error as
 well as the system log.
 
+=item --verbose=n
+
+Specify amount of debug information to log, from -1 to 2.
+
 =item --pidfile PATH
 
 Use PATH as the location of the PID file. By default, uses the value defined in
@@ -264,5 +323,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.26 2006-10-04 17:48:41 francis Exp $
+$Id: petsignupd,v 1.27 2006-10-24 17:02:03 francis Exp $
 

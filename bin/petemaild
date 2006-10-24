@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.50 2006-10-13 17:03:50 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.51 2006-10-24 17:02:03 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -61,7 +61,7 @@ sub stderronly ($) {
 sub do_output ($$) {
     my ($prio, $str) = @_;
     if ($stderronly) {
-        STDERR->print("$prio: ", $str, "\n");
+        STDERR->print("petemaild: $prio: ", $str, "\n");
     } else {
         print_log($prio, $str);
     }
@@ -71,7 +71,8 @@ sub print ($@) {
     my $prio = shift;
     if ($verboselevel < 2) {
         return if ($prio eq 'noise');
-        return if ($verboselevel < 1 && $prio eq 'debug')
+        return if ($verboselevel < 1 && $prio eq 'debug');
+        return if ($verboselevel < 0 && $prio eq 'info');
     }
     do_output($prio, join("", @_));
 }
@@ -80,7 +81,8 @@ sub printf ($$;@) {
     my $prio = shift;
     if ($verboselevel < 2) {
         return if ($prio eq 'noise');
-        return if ($verboselevel < 1 && $prio eq 'debug')
+        return if ($verboselevel < 1 && $prio eq 'debug');
+        return if ($verboselevel < 0 && $prio eq 'info');
     }
     my $fmt = shift;
     do_output($prio, sprintf($fmt, @_));
@@ -2127,7 +2129,7 @@ well as the system log.
 
 =item --verbose=n
 
-Specify amount of debug information to log, from 0 to 2.
+Specify amount of debug information to log, from -1 to 2.
 
 =item --pidfile PATH
 
@@ -2142,4 +2144,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.50 2006-10-13 17:03:50 matthew Exp $
+$Id: petemaild,v 1.51 2006-10-24 17:02:03 francis Exp $
