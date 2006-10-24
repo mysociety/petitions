@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.19 2006-10-13 17:30:47 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.20 2006-10-24 10:30:26 matthew Exp $';
 
 use strict;
 
@@ -106,8 +106,8 @@ while (!$foad && (my $q = new mySociety::Web())) {
 EOF
     }
 
-    my $stat = 'View_' . $p->{ref};
-    $stat .= '_signed' if ($qp_signed);
+    my $stat = 'View.' . $p->{ref};
+    $stat .= '.signed' if ($qp_signed);
     $html .= Petitions::Page::footer($q, $stat);
 
     utf8::encode($html);

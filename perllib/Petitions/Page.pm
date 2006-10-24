@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.36 2006-10-14 12:49:07 francis Exp $
+# $Id: Page.pm,v 1.37 2006-10-24 10:30:26 matthew Exp $
 #
 
 package Petitions::Page;
@@ -74,7 +74,7 @@ sub header ($$%) {
 sub footer ($$) {
     my ($q, $stat_code) = @_;
     if ($stat_code) {
-        $stat_code = "Petitions_$stat_code";
+        $stat_code = "Petitions.$stat_code";
     } else {
         $stat_code = 'Petitions';
     }

@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.22 2006-10-13 17:03:52 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.23 2006-10-24 10:30:26 matthew Exp $';
 
 use strict;
 
@@ -124,7 +124,7 @@ sub signup_page ($$) {
             . Petitions::Page::display_box($q, $p)
             . Petitions::Page::sign_box($q, $p);
     }
-    $html .= Petitions::Page::footer($q, 'Sign_' . $p->{ref});
+    $html .= Petitions::Page::footer($q, 'Sign.' . $p->{ref});
 
     utf8::encode($html);
     print $q->header(-content_length => length($html)), $html;
