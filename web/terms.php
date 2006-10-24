@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.5 2006-10-12 00:02:44 matthew Exp $
+// $Id: terms.php,v 1.6 2006-10-24 11:11:56 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -69,6 +69,7 @@ reading it could reasonably take offence.</li>
 
 <p>We reserve the right to reject:</p>
 <ul>
+<li>petitions outside the remit or powers of the Prime Minister and Government;</li>
 <li>statements that don't actually request any action;</li>
 <li>wording that is impossible to understand;</li>
 <li>statements that are simply advertisements with no petition aim;</li>
