@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.39 2006-10-24 11:38:55 francis Exp $
+# $Id: Page.pm,v 1.40 2006-10-24 13:43:47 matthew Exp $
 #
 
 package Petitions::Page;
@@ -242,6 +242,19 @@ please select it from the list:</label>',
         . $q->end_form();
 }
 
+=item response_box Q PETITION
+
+=cut
+
+sub response_box ($$) {
+    my ($q, $p) = @_;
+    my $out = $q->div({-id => 'response'},
+        $q->h2($q->span({-class => 'ltr'}, 'Government Response')),
+	$p->{response} # Presumably will need formatting! XXX
+    );
+    return $out;
+}
+
 =item reject_box Q PETITION
 
 =cut
@@ -262,7 +275,7 @@ sub reject_box ($$) {
         16 => 'Names of individual officials of public bodies, unless part of the senior management of those organisations',
         32 => 'Names of family members of officials of public bodies, or elected representatives',
         64 => 'Names of individuals, or information where they may be identified, in relation to criminal accusations',
-        128 => 'Offensive language',
+        128 => 'Offensive language, such as obvious swear words or language that is intemperate, inflammatory, or provocative, or to which people reading it could reasonably take offence',
         256 => 'Isn\'t clear what the petition is asking signers to endorse',
         512 => 'Doesn\'t actually ask for an action',
         1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
@@ -274,13 +287,16 @@ sub reject_box ($$) {
     my $reject_reason = $p->{rejection_second_reason};
     my $reject_cats = $p->{rejection_second_categories} + 0; # Need it as an integer
 
-    my $out = $q->p('This petition has been <strong>rejected</strong>, for being in the following categories:');
+    my $out = $q->start_div({-id => 'signatories'})
+            . $q->h2($q->span({-class => 'ltr'}, 'Petition Rejected'));
+    $out .= $q->p('This petition has been <strong>rejected</strong>, for being in the following categories:');
     $out .= '<ul>';
     foreach my $k (sort keys %categories) {
         $out .= $q->li($categories{$k}) if ($reject_cats & $k);
     }
     $out .= "</ul>\n";
     $out .= $q->p('Additional information about this rejection:<br />' . $reject_reason);
+    $out .= $q->end_div();
     return $out;
 }
 

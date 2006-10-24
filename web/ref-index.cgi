@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.22 2006-10-24 13:35:00 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.23 2006-10-24 13:43:48 matthew Exp $';
 
 use strict;
 
@@ -52,7 +52,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     my $qp_signed = $q->param('signed');
 
-    my $p = Petitions::DB::get($ref);
+    my $p = Petitions::DB::get($ref, 0, 1);
     my $title = Petitions::sentence($p, 1);
     my $html =
         Petitions::Page::header($q, $title);
@@ -62,8 +62,6 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     $html .= $q->p({ -id => 'finished' }, "This petition is now closed, as its deadline has passed.")
         if ($p->{status} eq 'finished');
-
-# XXX: Link to government response somewhere in here...
 
     if ($qp_signed) {
         $html .=
@@ -89,6 +87,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     $html .= Petitions::Page::display_box($q, $p);
     $html .= Petitions::Page::sign_box($q, $p)
         if ($p->{status} eq 'live');
+    $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
     if ($p->{status} ne 'rejected') {
         $html .= Petitions::Page::signatories_box($q, $p);
     } else {

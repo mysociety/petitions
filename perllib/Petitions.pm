@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.26 2006-10-05 22:58:43 matthew Exp $
+# $Id: Petitions.pm,v 1.27 2006-10-24 13:43:47 matthew Exp $
 #
 
 package Petitions::DB;
@@ -82,29 +82,33 @@ sub check_ref ($) {
     }
 }
 
-=item get REF [NOCOUNT]
+=item get REF [NOCOUNT] [GOVTRESPONSE]
 
-=item get ID [NOCOUNT]
+=item get ID [NOCOUNT] [GOVTRESPONSE]
 
 Return a hash of database fields to values for the petition with the given REF
 or ID, or undef if there is no such petition. Also make up a signers field
 giving the number of people who've signed the petition so far, unless NOCOUNT
-is set.
+is set, and try and return the Government response if GOVTRESPONSE is set.
 
 =cut
-sub get ($;$) {
+sub get ($;$$) {
     my $ref = shift;
     return undef unless ($ref);
     my $nocount = shift;
+    my $govtresponse = shift;
     my $s = "
-            select *,
+            select petition.*,
                 ms_current_date() <= deadline as open";
+    $s .= ", message.id AS message_id, message.emailbody as response" if ($govtresponse);
     $s .= ", (select count(id) from signer
                     where showname and signer.petition_id = petition.id
                         and signer.emailsent = 'confirmed')
                     as signers" unless ($nocount);
     $s .= "
             from petition";
+    $s .= " left join message on petition.id = message.petition_id and circumstance = 'government-response'"
+        if ($govtresponse);
     my $p;
     $p ||= dbh()->selectrow_hashref("$s where id = ?", {}, $ref)
             if ($ref =~ /^[1-9]\d*$/);
