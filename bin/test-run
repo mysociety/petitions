@@ -18,8 +18,9 @@
 # Things to add:
 #    - Make petition, reject, amend, accept
 #    - Remove signer
+#    - Sign up to closed petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.25 2006-10-24 14:37:40 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.26 2006-10-24 14:56:03 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -282,6 +283,7 @@ sub do_basic_test {
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents($petition_text);
     $wth->browser_check_contents("31 December 1988");
+    $wth->browser_check_contents('signForm');
 
     # Loop through several signers
     my $c = 0;
@@ -354,6 +356,8 @@ sub do_basic_test {
     $wth->browser_check_contents($petition_text);
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents("This petition is now closed");
+    $wth->browser_check_no_contents('with government response');
+    $wth->browser_check_no_contents('signForm');
 
     # Send a response to all the signers
     $wth->browser_get($admin_url);
