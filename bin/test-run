@@ -18,7 +18,7 @@
 # Things to add:
 #    - Make petition, reject, amend, accept
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.30 2006-10-24 17:43:44 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.31 2006-10-24 17:50:06 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -139,14 +139,16 @@ END {
 print "Starting daemons...\n" if $verbose > 0;
 $petemaild_pid = fork();
 die "failed to fork" if (!defined($petemaild_pid));
+my $daemon_verbose = -1;
+$daemon_verbose = 0 if ($verbose > 1);
 if ($petemaild_pid == 0) {
-    exec("./petemaild", "--debug", "--verbose=0");
+    exec("./petemaild", "--debug", "--verbose=$daemon_verbose");
     exit;
 }
 $petsignupd_pid = fork();
 die "failed to fork" if (!defined($petsignupd_pid));
 if ($petsignupd_pid == 0) {
-    exec("./petsignupd", "--debug");
+    exec("./petsignupd", "--debug", "--verbose=$daemon_verbose");
     exit;
 }
 
