@@ -17,10 +17,9 @@
 
 # Things to add:
 #    - Make petition, reject, amend, accept
-#    - Remove signer
-#    - Sign up to closed petition
+#    - Sign up to closed petition XXX fix code, then reenable
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.28 2006-10-24 15:51:42 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.29 2006-10-24 16:47:42 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -174,14 +173,20 @@ if ($action{'timeout'}) {
 # Check for any unhandled mails or errors
 call_send_messages();
 call_mark_finished();
-print "Checking no emails left at end...\n" if $verbose > 1;
+print "Checking no emails left at end...\n" if $verbose > 0;
 $wth->email_check_none_left();
-print "Checking no log file errors at end...\n" if $verbose > 1;
+print "Checking no log file errors at end...\n" if $verbose > 0;
 $wth->log_watcher_check();
 print "Everything completed successfully\n";
 
 #############################################################################
 # General functions
+
+# Print what we're doing
+sub comment {
+    my $comment = shift;
+    print "\t$comment\n" if $verbose > 0;
+}
 
 # Change the date that all parts of ePetitions think is today.  Call with no
 # parameters to reset it to the actual today.
@@ -213,12 +218,12 @@ sub do_basic_test {
 
     my $petition_text = "take action on every petition on this site with more than 1000 signers";
 
-    # Check front page works
+    comment("Check front page works");
     $wth->browser_get($base_url);
     $wth->browser_check_contents("Petitions");
     $wth->browser_check_no_contents("0 signatures");
 
-    # Create a new petition
+    comment("Create a new petition");
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
@@ -248,23 +253,23 @@ sub do_basic_test {
 
     $wth->browser_check_contents("We have sent you an email to confirm");
 
-    # Confirm petition
+    comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(99).'" <'.email_n(99).'>%');
     die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
     my $confirm_petition_link = $1;
-    print "Confirmation link: $confirm_petition_link\n" if $verbose > 1;
+    comment("Confirmation link: $confirm_petition_link");
     $wth->browser_get($confirm_petition_link);
     $wth->browser_check_contents("Thank you for creating your petition");
     $wth->browser_check_contents("It has been entered on our system");
 
-    # Get the email to the administrator
+    comment("Get the email to the administrator");
     call_send_messages();
     my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     my $admin_approve_link = $1;
-    print "Admin approve link: $admin_approve_link\n" if $verbose > 1;
+    comment("Admin approve link: $admin_approve_link");
 
-    # Follow link to admin page
+    comment("Follow link to admin page");
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
     $wth->browser_check_contents($petition_text);
@@ -276,7 +281,7 @@ sub do_basic_test {
     my $petition_approved_email = $wth->email_get_containing('%Subject: Your petition to the Prime Minister has been approved%To: '.email_n(99).'%');
     $wth->browser_check_contents('Petition approved!');
 
-    # Check that petition is on the front page, and has its own page
+    comment("Check that petition is on the front page, and has its own page");
     $wth->browser_get($base_url);
     $wth->browser_check_contents($petition_text);
     $wth->browser_check_contents("0 signatures");
@@ -285,12 +290,11 @@ sub do_basic_test {
     $wth->browser_check_contents("31 December 1988");
     $wth->browser_check_contents('signForm');
 
-    # Loop through several signers
+    comment("Loop through several signers");
     my $c = 0;
+    my $petition_uri = $wth->browser_uri();
     foreach my $signer_no (1488..1490) {
-        my $uri = $wth->browser_uri();
-
-        # Sign the petition
+        comment("Sign the petition");
         $wth->browser_submit_form(form_name => 'signForm',
                 fields => {
                     name => name_n($signer_no),
@@ -301,12 +305,12 @@ sub do_basic_test {
                     }, button => 'submit') or die "Failed to submit sign petition";
         $wth->browser_check_contents("We've sent you an email");
 
-        # Find confirmation email
+        comment("Find confirmation email");
         my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
         die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*$)#m);
         my $confirm_signature_link = $1;
         if ($signer_no == 1490) {
-            # Confirm signature by administraor
+            comment("Confirm signature by administraor");
             $wth->browser_get($admin_approve_link);
             $wth->browser_check_contents("Petitions and Signers");
             $wth->browser_check_no_contents($petition_text);
@@ -320,22 +324,39 @@ sub do_basic_test {
             $wth->browser_check_contents("Signers \\(3\\)");
             $wth->browser_check_no_contents("confirm_signer");
         } else {
-            # Confirm signature by user clicking link
-            print "Confirmation link: $confirm_signature_link\n" if $verbose > 1;
+            comment("Confirm signature by user clicking link");
+            comment("Confirmation link: $confirm_signature_link");
             $wth->browser_get($confirm_signature_link);
             $wth->browser_check_contents("Thank you, you're now signed up to this petition!");
         }
 
-        # Check it says it is signed on the front page
+        comment("Check it says it is signed on the front page");
         $wth->browser_get($base_url);
         $wth->browser_check_contents($petition_text);
         $c++;
         $wth->browser_check_contents("$c signature");
 
-        $wth->browser_get($uri);
+        $wth->browser_get($petition_uri);
     }
 
-    # Create unconfirmed signature, so can try confirming after finishing
+    comment("Delete a signer from the administration interface");
+    $wth->browser_get($admin_approve_link);
+    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_no_contents($petition_text);
+    $wth->browser_follow_link(text_regex => qr/Live/);
+    $wth->browser_check_contents($petition_text);
+    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_check_contents($petition_text);
+    $wth->browser_check_contents(name_n(1489));
+    $wth->browser_check_contents("Signers \\(3\\)");
+    $wth->browser_submit_form(form_name => 'removesignerform2',
+        fields => { }, button => 'remove_signer') or die "Failed to submit admin remove signer button";
+    $wth->browser_check_contents("That signer has been removed");
+    $wth->browser_check_no_contents(name_n(1489));
+    $wth->browser_check_contents("Signers \\(2\\)");
+
+    comment("Create unconfirmed signature, so can try confirming after finishing");
+    $wth->browser_get($petition_uri);
     $wth->browser_submit_form(form_name => 'signForm',
             fields => {
                 name => name_n(1501),
@@ -348,25 +369,24 @@ sub do_basic_test {
     my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1501).'" <'.email_n(1501).'>%Please click on the link below to confirm your signature%');
     die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*$)#m);
     my $partial_signup_confirm = $1;
-    print "Partial signup confirm link: $partial_signup_confirm\n" if $verbose > 1;
+    comment("Partial signup confirm link: $partial_signup_confirm");
 
-    # Go forward in time to day that deadline expires at end of, and
-    # make sure that nothing happens.
+    comment("Go forward in time to day that deadline expires at end of, and make sure that nothing happens.");
     set_pet_date('1988-12-31');
     call_mark_finished();
     $wth->browser_get($base_url);
     $wth->browser_check_contents($petition_text);
     $wth->email_check_none_left();
 
-    # Get ready with the sign form, so can later try signing up after finishing
+    comment("Get ready with the sign form, so can later try signing up after finishing");
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents("signForm");
 
-    # Go forward one more day, get petition to mark itself as finished
+    comment("Go forward one more day, get petition to mark itself as finished");
     set_pet_date('1989-01-01');
     call_mark_finished();
 
-    # Try to sign the petition, using the form we loaded before finish
+    comment("Try to sign the petition, using the form we loaded before finish");
     $wth->browser_check_contents("signForm");
     $wth->browser_submit_form(form_name => 'signForm',
             fields => {
@@ -376,13 +396,13 @@ sub do_basic_test {
                 address => "1500 Signature Street\n\nSealville",
                 postcode => "EH99 1SP",
                 }, button => 'submit') or die "Failed to submit sign petition";
-#    $wth->browser_check_no_contents("Now check your email!"); # XXX add this test again when code is fixed
+    $wth->browser_check_no_contents("Now check your email!"); # XXX add this test again when code is fixed
 
-    # Try to sign the petition, using the email we prepared earlier
-    $wth->browser_get($partial_signup_confirm);
-#    $wth->browser_check_no_contents("Thank you, you're now signed up to this petition!"); # XXX add this test again when code fixed
+    comment("Try to sign the petition, using the email we prepared earlier");
+    #$wth->browser_get($partial_signup_confirm);
+    #$wth->browser_check_no_contents("Thank you, you're now signed up to this petition!"); # XXX add this test again when code fixed
  
-    # Check that petition now appears in closed section, and has no sign form
+    comment("Check that petition now appears in closed section, and has no sign form");
     $wth->browser_get($base_url);
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_check_contents("None");
@@ -395,7 +415,7 @@ sub do_basic_test {
     $wth->browser_check_no_contents('with government response');
     $wth->browser_check_no_contents('signForm');
 
-    # Send a response to all the signers
+    comment("Send a response to all the signers");
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and Signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
@@ -409,21 +429,21 @@ sub do_basic_test {
     $wth->browser_check_contents("Your response has been recorded and will be sent out shortly");
     call_send_messages();
 
-    # Check everyone gets the response; signers, creator and admin
+    comment("Check everyone gets the response; signers, creator and admin");
     foreach my $signer_no (1488..1490) {
         $wth->email_get_containing('%Subject: Government response%To: '.email_n($signer_no).'%Thank you for your petition%');
     }
     $wth->email_get_containing('%Subject: Government response%To: '.email_n(99).'%Thank you for your petition%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
-    # Check that can't send another response
+    comment("Check that can't send another response");
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and Signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
     $wth->browser_check_contents('Response sent');
     $wth->browser_check_no_contents('petition_admin_respond');
 
-    # Check government response is displayed on petition page
+    comment("Check government response is displayed on petition page");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
     $wth->browser_follow_link(text_regex => qr/Closed petitions/);
@@ -431,7 +451,7 @@ sub do_basic_test {
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents('Thank you for your petition');
 
-    # Load the RSS feeds to check for basic errors in them
+    comment("Load the RSS feeds to check for basic errors in them");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
     $wth->browser_follow_link(text_regex => qr/RSS/);
@@ -448,7 +468,7 @@ sub do_rejection_test {
 
     my $petition_text = "impeach President Bush";
 
-    # Create a new petition
+    comment("Create a new petition");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
     $wth->browser_check_contents("Part 1 of 3");
@@ -479,23 +499,23 @@ sub do_rejection_test {
 
     $wth->browser_check_contents("We have sent you an email to confirm");
 
-    # Confirm petition
+    comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(44).'" <'.email_n(44).'>%');
     die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
     my $confirm_petition_link = $1;
-    print "Confirmation link: $confirm_petition_link\n" if $verbose > 1;
+    comment("Confirmation link: $confirm_petition_link");
     $wth->browser_get($confirm_petition_link);
     $wth->browser_check_contents("Thank you for creating your petition");
     $wth->browser_check_contents("It has been entered on our system");
 
-    # Get the email to the administrator
+    comment("Get the email to the administrator");
     call_send_messages();
     my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     my $admin_approve_link = $1;
-    print "Admin approve link: $admin_approve_link\n" if $verbose > 1;
+    comment("Admin approve link: $admin_approve_link");
 
-    # Follow link to admin page
+    comment("Follow link to admin page and reject");
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
     $wth->browser_check_contents($petition_text);
@@ -508,13 +528,15 @@ sub do_rejection_test {
             fields => { reason => 'Sorry, this is something the US Congress can do, but not the Prime Minster of the UK! You might want to change your petition to ask the Prime Minister to write a public letter to the Congress leader to ask him to impeach Bush, or something like that.',
                 'categories[]' => ['4096', 13], # the 13th checkbox has value 4096, and means "PM doesn't have power"
             }, button => 'reject_submit') or die "Failed to submit reject details form";
+
+    comment("Get rejection message to creator");
     call_send_messages();
     my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%Outside the remit or powers%');
     die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*(https?://.*$)#m);
     my $rejection_email_link = $1;
-    print "Rejection resubmit link: $rejection_email_link\n" if $verbose > 1;
+    comment("Rejection resubmit link: $rejection_email_link");
    
-    # Resubmit with change in petition text
+    comment("Resubmit with change in petition text");
     my $petition_text_resubmitted = "bleach President Bush";
     $wth->browser_get($rejection_email_link);
     $wth->browser_check_contents($petition_text);
@@ -530,14 +552,14 @@ sub do_rejection_test {
             fields => { }, button => 'tocreate') or die "Failed to submit step 3";
     $wth->browser_check_contents("We have resubmitted your petition for approval.");
 
-    # Get the email to the administrator
+    comment("Get the email to the administrator");
     call_send_messages();
     $admin_approve_email = $wth->email_get_containing('%Subject: Resubmitted petition to the Prime Minister%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     $admin_approve_link = $1;
-    print "Admin approve link: $admin_approve_link\n" if $verbose > 1;
+    comment("Admin approve link: $admin_approve_link\n");
 
-    # Follow link to admin page
+    comment("Follow link to admin page");
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
     $wth->browser_check_no_contents($petition_text);
@@ -555,7 +577,7 @@ sub do_rejection_test {
     $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%clear what the petition%');
     die "Rejection email link found when it should not have been\n" if ($rejection_email =~ m#^\s*(https?://.*$)#m);
 
-    # Check appears on rejection page
+    comment("Check appears on rejection page");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
     $wth->browser_follow_link(text_regex => qr/Rejected petitions/);
@@ -570,7 +592,7 @@ sub do_timeout_test {
 
     my $petition_text = "say crap on the radio";
 
-    # Create a new petition
+    comment("Create a new petition");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
     $wth->browser_check_contents("Part 1 of 3");
@@ -601,23 +623,23 @@ sub do_timeout_test {
 
     $wth->browser_check_contents("We have sent you an email to confirm");
 
-    # Confirm petition
+    comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(55).'" <'.email_n(55).'>%');
     die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
     my $confirm_petition_link = $1;
-    print "Confirmation link: $confirm_petition_link\n" if $verbose > 1;
+    comment("Confirmation link: $confirm_petition_link");
     $wth->browser_get($confirm_petition_link);
     $wth->browser_check_contents("Thank you for creating your petition");
     $wth->browser_check_contents("It has been entered on our system");
 
-    # Get the email to the administrator
+    comment("Get the email to the administrator");
     call_send_messages();
     my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     my $admin_approve_link = $1;
-    print "Admin approve link: $admin_approve_link\n" if $verbose > 1;
+    comment("Admin approve link: $admin_approve_link");
 
-    # Follow link to admin page
+    comment("Follow link to admin page");
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
     $wth->browser_check_contents($petition_text);
@@ -638,26 +660,26 @@ sub do_timeout_test {
     my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(55).'%Offensive language%');
     die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*(https?://.*$)#m);
     my $rejection_email_link = $1;
-    print "Rejection resubmit link: $rejection_email_link\n" if $verbose > 1;
+    comment("Rejection resubmit link: $rejection_email_link");
     # Do not resubmit
 
-    # Just before timeout
+    comment("Just before timeout");
     set_pet_date('1989-06-29');
     call_mark_finished();
     call_send_messages();
-    # ... make sure not rejected yet
+    comment("... make sure not rejected yet");
     $wth->email_check_none_left();
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
     $wth->browser_follow_link(text_regex => qr/Rejected petitions/);
     $wth->browser_check_no_contents($petition_text);
-    # Just after timeout
+    comment("Just after timeout");
     set_pet_date('1990-06-30'); 
     call_mark_finished();
     call_send_messages();
     $wth->email_get_containing('%Subject: Your petition has been finally rejected%To: '.email_n(55).'%%');
 
-    # Check it is on rejection page, but text not shown (as offensive)
+    comment("Check it is on rejection page, but text not shown (as offensive)");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
     $wth->browser_follow_link(text_regex => qr/Rejected petitions/);
@@ -667,7 +689,7 @@ sub do_timeout_test {
     $wth->browser_check_contents("Attempting to market");
     $wth->browser_check_contents("Offensive language");
     $wth->browser_check_no_contents($petition_text);
-    # ... check not in RSS feed
+    comment("... check not in RSS feed");
     $wth->browser_back();
     $wth->browser_follow_link(text_regex => qr/RSS/);
     $wth->browser_check_no_contents($petition_text);
