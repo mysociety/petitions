@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.38 2006-10-23 17:54:02 francis Exp $
+// $Id: new.php,v 1.39 2006-10-24 09:31:57 francis Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -523,9 +523,8 @@ function petition_create($data) {
                 $data['postcode'], $data['telephone'], $data['org_url'],
                 $data['comments'], $id);
 
-        /* If we did the update, also send the admins an email about it. */
-        if ($n > 0)
-            pet_send_message($id, MSG_ADMIN, MSG_ADMIN, 'petition-resubmitted', 'admin-resubmitted-petition');
+        /* Send the admins an email about it. */
+        pet_send_message($id, MSG_ADMIN, MSG_ADMIN, 'petition-resubmitted', 'admin-resubmitted-petition');
 
         db_commit();
 
