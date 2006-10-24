@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.39 2006-10-24 09:31:57 francis Exp $
+// $Id: new.php,v 1.40 2006-10-24 09:36:28 chris Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -507,7 +507,7 @@ function petition_create($data) {
         /* Resubmitted petition. */
         list($what, $id) = token_check($data['token']);
 
-        $n = db_query("
+        $n = db_do("
                 update petition set
                     detail = ?, content = ?,
                     deadline = ?, rawdeadline = ?,
