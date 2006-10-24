@@ -17,9 +17,8 @@
 
 # Things to add:
 #    - Make petition, reject, amend, accept
-#    - Sign up to closed petition XXX fix code, then reenable
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.29 2006-10-24 16:47:42 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.30 2006-10-24 17:43:44 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -396,11 +395,13 @@ sub do_basic_test {
                 address => "1500 Signature Street\n\nSealville",
                 postcode => "EH99 1SP",
                 }, button => 'submit') or die "Failed to submit sign petition";
-    $wth->browser_check_no_contents("Now check your email!"); # XXX add this test again when code is fixed
+    $wth->browser_check_no_contents("Now check your email!"); 
+    $wth->browser_check_contents("Sorry, but that petition is now closed."); 
 
-    comment("Try to sign the petition, using the email we prepared earlier");
+    # Policy is currently that this is OK, so we just leave the unconfirmed signature around (as that is a useful test)
+    #comment("Try to sign the petition, using the email we prepared earlier");
     #$wth->browser_get($partial_signup_confirm);
-    #$wth->browser_check_no_contents("Thank you, you're now signed up to this petition!"); # XXX add this test again when code fixed
+    #$wth->browser_check_no_contents("Thank you, you're now signed up to this petition!"); 
  
     comment("Check that petition now appears in closed section, and has no sign form");
     $wth->browser_get($base_url);

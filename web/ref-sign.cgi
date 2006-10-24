@@ -7,13 +7,14 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.24 2006-10-24 16:12:58 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.25 2006-10-24 17:43:44 francis Exp $';
 
 use strict;
 
 use Digest::HMAC_SHA1 qw(hmac_sha1);
 use MIME::Base64;
 use utf8;
+use POSIX;
 
 use mySociety::Config;
 BEGIN {
@@ -49,8 +50,13 @@ sub signup_page ($$) {
 
     # Check the deadline of the petition.
     my $today = POSIX::strftime('%Y-%m-%d', localtime(time()));
+    # ... the whole point of ref-sign.cgi is to not use the database - so only
+    # look up debug date from the database if we are on a staging site, not on
+    # the real site. Otherwise, use local date (line above).
+    $today = Petitions::DB::today() if (mySociety::Config::get('PET_STAGING')); # XXX not sure staging is best check for this
+    #warn "today is $today";
     if ($today gt $p->{deadline}) {
-        Petitions::Page::error_page($q, "Sorry, but that petition is now closed.");
+        Petitions::Page::error_page($q, sprintf("Sorry, but that petition is now closed. %s gt %s.", $today, $p->{deadline}));
         return;
     }
     

@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.43 2006-10-24 15:51:42 francis Exp $
+# $Id: Page.pm,v 1.44 2006-10-24 17:43:44 francis Exp $
 #
 
 package Petitions::Page;
@@ -96,7 +96,7 @@ sub footer ($$) {
 
 =cut
 sub error_page ($$) {
-    my ($q, $message);
+    my ($q, $message) = @_;
     my $html = header($q, "Error")
             . $q->p($message)
             . footer($q, 'Error');
