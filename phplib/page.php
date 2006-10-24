@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.17 2006-10-24 11:38:55 francis Exp $
+// $Id: page.php,v 1.18 2006-10-24 12:06:40 francis Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -40,7 +40,7 @@ function page_header($title, $params = array()) {
     $rss_links = '';
     if (array_key_exists('rss', $params)) {
         foreach ($params['rss'] as $rss_title => $rss_url) {
-            $rss_links .= '<link rel="alternate" type="application/rss+xml" title="' . $rss_title . '" href="'.$rss_url.'">' . "\n";
+            $rss_links .= '<link rel="alternate" type="application/rss+xml" title="' . $rss_title . '" href="'.$rss_url.'" />' . "\n";
         }
     }
 
