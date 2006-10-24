@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.40 2006-10-24 13:43:47 matthew Exp $
+# $Id: Page.pm,v 1.41 2006-10-24 13:48:59 matthew Exp $
 #
 
 package Petitions::Page;
@@ -287,16 +287,13 @@ sub reject_box ($$) {
     my $reject_reason = $p->{rejection_second_reason};
     my $reject_cats = $p->{rejection_second_categories} + 0; # Need it as an integer
 
-    my $out = $q->start_div({-id => 'signatories'})
-            . $q->h2($q->span({-class => 'ltr'}, 'Petition Rejected'));
-    $out .= $q->p('This petition has been <strong>rejected</strong>, for being in the following categories:');
+    my $out = $q->p('This petition has been <strong>rejected</strong>, for being in the following categories:');
     $out .= '<ul>';
     foreach my $k (sort keys %categories) {
         $out .= $q->li($categories{$k}) if ($reject_cats & $k);
     }
     $out .= "</ul>\n";
     $out .= $q->p('Additional information about this rejection:<br />' . $reject_reason);
-    $out .= $q->end_div();
     return $out;
 }
 
