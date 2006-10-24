@@ -19,7 +19,7 @@
 #    - Make petition, reject, amend, accept
 #    - Remove signer
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.24 2006-10-24 13:34:59 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.25 2006-10-24 14:37:40 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -382,6 +382,14 @@ sub do_basic_test {
     $wth->browser_follow_link(text_regex => qr/Finished/);
     $wth->browser_check_contents('Response sent');
     $wth->browser_check_no_contents('petition_admin_respond');
+
+    # Check government response is displayed on petition page
+    $wth->browser_get($base_url);
+    $wth->browser_follow_link(text_regex => qr/View petitions/);
+    $wth->browser_follow_link(text_regex => qr/Closed petitions/);
+    $wth->browser_check_contents('with government response');
+    $wth->browser_follow_link(text_regex => qr/$petition_text/);
+    $wth->browser_check_contents('Thank you for your petition');
 
     # Load the RSS feeds to check for basic errors in them
     $wth->browser_get($base_url);
