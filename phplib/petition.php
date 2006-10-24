@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.32 2006-10-24 13:35:00 francis Exp $
+ * $Id: petition.php,v 1.33 2006-10-24 13:45:43 francis Exp $
  * 
  */
 
@@ -37,7 +37,7 @@ function prettify_categories($categories, $newlines) {
     foreach ($global_categories as $k => $v)
         if ($categories & $k) $out[] = $v;
     if ($newlines)
-        return '    ' . join("\n    ", $out) . "\n";
+        return "\n\n   * " . join("\n\n   * ", $out) . "\n\n";
     return join(', ', $out);
 }
 
