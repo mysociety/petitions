@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.28 2006-10-21 18:13:38 francis Exp $
+ * $Id: petition.php,v 1.29 2006-10-24 10:47:53 francis Exp $
  * 
  */
 
@@ -28,6 +28,7 @@ $global_categories = array(
     1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
     2048 => 'Identical to an existing petition',
     4096 => 'Outside the remit or powers of the Prime Minister and Government',
+    // XXX also change in perllib/Petitions/Page.pm
 );
 
 function prettify_categories($categories, $newlines) {

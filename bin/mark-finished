@@ -7,7 +7,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: mark-finished,v 1.4 2006-10-23 17:23:36 francis Exp $
+ * $Id: mark-finished,v 1.5 2006-10-24 10:47:52 francis Exp $
  *
  */
 
@@ -79,15 +79,15 @@ function find_newly_finished_petitions() {
 }
 
 function find_timed_out_rejected_petitions() {
-    global $pet_today;
+    global $pet_timestamp;
 
-    // 29 days is 4 weeks, plus a day to allow all of the last day
+    // 29 days is 4 weeks, plus a day to allow a margin for the creator
 
     verbose("finding timed out rejected petitions");
     /* Do a query before locking the table. */
     if (!db_getOne("
                 select id from petition
-                where '$pet_today' > laststatuschange + interval '29 days'
+                where '$pet_timestamp' > laststatuschange + interval '29 days'
                     and status = 'rejectedonce'
                 for update")) {
         verbose("... no timed out rejected petitions");
@@ -96,13 +96,16 @@ function find_timed_out_rejected_petitions() {
         
     $q = db_query("
                 select * from petition
-                where '$pet_today' > laststatuschange + interval '29 days'
+                where '$pet_timestamp' > laststatuschange + interval '29 days'
                     and status = 'rejectedonce'
                 for update");
     while ($petition = db_fetch_array($q)) {
         verbose("petition #${petition['id']} (${petition['ref']}) has timed out from rejectedonce to rejected");
-        db_query("update petition set status='rejected' where id=?", $petition['id']);
-        pet_send_message($petition['id'], MSG_ADMIN, MSG_CREATOR, 'rejected-timeout', 'admin-rejected-timeout');
+        db_query("update petition set status='rejected',  
+            rejection_second_categories = rejection_first_categories,
+            rejection_second_reason = rejection_first_reason
+            where id=?", $petition['id']);
+        pet_send_message(intval($petition['id']), MSG_ADMIN, MSG_CREATOR, 'rejected-timeout', 'admin-rejected-timeout');
     }
     db_commit();
     verbose("finished timed out rejected petitions");
