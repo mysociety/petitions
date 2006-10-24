@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.18 2006-10-24 12:06:40 francis Exp $
+// $Id: page.php,v 1.19 2006-10-24 15:51:43 francis Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -84,8 +84,8 @@ function page_footer($stat_code = '') {
 }
 
 /* page_check_ref REFERENCE
- * Given a pledge REFERENCE, check whether it uniquely identifies a pledge. If
- * it does, return. Otherwise, fuzzily find possibly matching pledges and
+ * Given a petition REFERENCE, check whether it uniquely identifies a petition. If
+ * it does, return. Otherwise, fuzzily find possibly matching petitions and
  * show the user a set of possible pages. */
 function page_check_ref($ref) {
     if (!is_null(db_getOne("select ref from petition where status in ('live','rejected','finished') and ref = ?", $ref)))
@@ -97,7 +97,7 @@ function page_check_ref($ref) {
     page_header(_("We couldn't find that petition"));
 #    $s = db_query('select pledge_id from pledge_find_fuzzily(?) limit 5', $ref);
 #    if (db_num_rows($s) == 0) {
-    printf("<p>We couldn't find any pledge with a reference like \"%s\". Try the following: </p>", htmlspecialchars($ref) );
+    printf("<p>We couldn't find any petition with a reference like \"%s\". Try the following: </p>", htmlspecialchars($ref) );
 #    } else {
 #        printf(p(_("We couldn't find the pledge with reference \"%s\". Did you mean one of these pledges?")), htmlspecialchars($ref) );
 #        print '<dl>';
@@ -119,7 +119,7 @@ function page_check_ref($ref) {
 
     print '<ul>
         <li>' . _('If you typed in the location, check it carefully and try typing it again.') . '</li>
-        <li>' . _('Look for the pledge on <a href="/list">the list of all petitions</a>.') . '</li></ul>';
+        <li>' . _('Look for the petition on <a href="/list">the list of all petitions</a>.') . '</li></ul>';
 #        <li>' . _('Search for the petition you want by entering words below.') . '</ul>';
 /*    ?>
 <form accept-charset="utf-8" action="/search" method="get" class="pledge">

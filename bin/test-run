@@ -20,7 +20,7 @@
 #    - Remove signer
 #    - Sign up to closed petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.27 2006-10-24 15:47:44 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.28 2006-10-24 15:51:42 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -362,7 +362,7 @@ sub do_basic_test {
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents("signForm");
 
-    # Go forward one more day, get pledge to mark itself as finished
+    # Go forward one more day, get petition to mark itself as finished
     set_pet_date('1989-01-01');
     call_mark_finished();
 

@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.31 2006-10-24 11:05:17 matthew Exp $
+ * $Id: admin-pet.php,v 1.32 2006-10-24 15:51:43 francis Exp $
  * 
  */
 
@@ -303,7 +303,7 @@ class ADMIN_PAGE_PET_MAIN {
             return;
         }
         $petition_obj = new Petition($pdata);
-#        $pledge_obj->render_box(array('showdetails' => true));
+#        $petition_obj->render_box(array('showdetails' => true));
 
         print "<h2>Petition '<a href=\"" . OPTION_BASE_URL . '/' .
             $petition_obj->ref() . "\">" . $pdata['ref'] . "</a>'";

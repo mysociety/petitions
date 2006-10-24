@@ -1,11 +1,11 @@
 <?
 // index.php:
-// Main code for PledgeBank website.
+// Main page for ePetitions website.
 //
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.24 2006-10-13 10:26:41 matthew Exp $
+// $Id: index.php,v 1.25 2006-10-24 15:51:43 francis Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";

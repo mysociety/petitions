@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.42 2006-10-24 14:28:30 matthew Exp $
+# $Id: Page.pm,v 1.43 2006-10-24 15:51:42 francis Exp $
 #
 
 package Petitions::Page;
@@ -123,7 +123,7 @@ sub bad_ref_page ($$) {
         $q->ul(
             $q->li([
             q(If you typed in the location, check it carefully and try typing it again.),
-            q(Look for the pledge on <a href="/list">the list of all petitions</a>.)
+            q(Look for the petition on <a href="/list">the list of all petitions</a>.)
             ])
         );    
     
