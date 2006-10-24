@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.23 2006-10-24 10:30:26 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.24 2006-10-24 16:12:58 chris Exp $';
 
 use strict;
 
@@ -46,6 +46,13 @@ use Time::HiRes qw(sleep time);
 sub signup_page ($$) {
     my mySociety::Web $q = shift;
     my $p = shift;
+
+    # Check the deadline of the petition.
+    my $today = POSIX::strftime('%Y-%m-%d', localtime(time()));
+    if ($today gt $p->{deadline}) {
+        Petitions::Page::error_page($q, "Sorry, but that petition is now closed.");
+        return;
+    }
     
     my $html =
         Petitions::Page::header($q, 'Signature addition');
@@ -68,16 +75,15 @@ sub signup_page ($$) {
     }
     $errors{address} = 'Please enter your address'
         if (!$qp_address);
-    $errors{postcode} = 'Please enter a valid postcode, such as OX1 3DR, or choose an overseas territory'
+    $errors{postcode}
+        = 'Please enter a valid postcode, such as OX1 3DR, or choose an overseas territory'
         if (!$qp_postcode && !$qp_overseas);
     $errors{postcode} = 'Please enter a valid postcode OR choose an overseas territory'
         if (defined($qp_postcode) && defined($qp_overseas));
 
     if (!keys(%errors)) {
         # Success. Add the signature, assuming that we can.
-#        my $s = Petitions::DB::is_valid_to_sign($p->{id}, $qp_email);
-#        dbh()->commit();    # finish transaction
-#       # XXX ref-index will have checked that the petition is valid to sign
+        # XXX ref-index will have checked that the petition is valid to sign
         # before sending us here, but ser isn't timestamped so we should
         # re-check here. But mustn't use the database, obviously.
         my $s = 'ok';
