@@ -20,7 +20,7 @@
 #    - Remove signer
 #    - Sign up to closed petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.26 2006-10-24 14:56:03 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.27 2006-10-24 15:47:44 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -335,6 +335,21 @@ sub do_basic_test {
         $wth->browser_get($uri);
     }
 
+    # Create unconfirmed signature, so can try confirming after finishing
+    $wth->browser_submit_form(form_name => 'signForm',
+            fields => {
+                name => name_n(1501),
+                email => email_n(1501),
+                email2 => email_n(1501),
+                address => "1501 Signature Street\n\nSealville",
+                postcode => "EH99 1SP",
+                }, button => 'submit') or die "Failed to submit sign petition";
+    $wth->browser_check_contents("We've sent you an email");
+    my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1501).'" <'.email_n(1501).'>%Please click on the link below to confirm your signature%');
+    die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*$)#m);
+    my $partial_signup_confirm = $1;
+    print "Partial signup confirm link: $partial_signup_confirm\n" if $verbose > 1;
+
     # Go forward in time to day that deadline expires at end of, and
     # make sure that nothing happens.
     set_pet_date('1988-12-31');
@@ -343,10 +358,31 @@ sub do_basic_test {
     $wth->browser_check_contents($petition_text);
     $wth->email_check_none_left();
 
-    # And one more day, check pledge is marked as finished
+    # Get ready with the sign form, so can later try signing up after finishing
+    $wth->browser_follow_link(text_regex => qr/$petition_text/);
+    $wth->browser_check_contents("signForm");
+
+    # Go forward one more day, get pledge to mark itself as finished
     set_pet_date('1989-01-01');
     call_mark_finished();
-    # XXX probably should be a "your pledge has finished" mail here
+
+    # Try to sign the petition, using the form we loaded before finish
+    $wth->browser_check_contents("signForm");
+    $wth->browser_submit_form(form_name => 'signForm',
+            fields => {
+                name => name_n(1500),
+                email => email_n(1500),
+                email2 => email_n(1500),
+                address => "1500 Signature Street\n\nSealville",
+                postcode => "EH99 1SP",
+                }, button => 'submit') or die "Failed to submit sign petition";
+#    $wth->browser_check_no_contents("Now check your email!"); # XXX add this test again when code is fixed
+
+    # Try to sign the petition, using the email we prepared earlier
+    $wth->browser_get($partial_signup_confirm);
+#    $wth->browser_check_no_contents("Thank you, you're now signed up to this petition!"); # XXX add this test again when code fixed
+ 
+    # Check that petition now appears in closed section, and has no sign form
     $wth->browser_get($base_url);
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_check_contents("None");
