@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.24 2006-10-24 13:48:59 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.25 2006-10-24 14:28:31 matthew Exp $';
 
 use strict;
 
@@ -94,7 +94,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
         $html .= $q->start_div({-id => 'signatories'})
             . $q->h2($q->span({-class => 'ltr'}, 'Petition Rejected'));
         $html .= Petitions::Page::reject_box($q, $p);
-	$html .= $q->end_div();
+        $html .= $q->end_div();
     }
 
     my $detail = ent($p->{detail});

@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.41 2006-10-24 13:48:59 matthew Exp $
+# $Id: Page.pm,v 1.42 2006-10-24 14:28:30 matthew Exp $
 #
 
 package Petitions::Page;
@@ -250,7 +250,7 @@ sub response_box ($$) {
     my ($q, $p) = @_;
     my $out = $q->div({-id => 'response'},
         $q->h2($q->span({-class => 'ltr'}, 'Government Response')),
-	$p->{response} # Presumably will need formatting! XXX
+        $p->{response} # Presumably will need formatting! XXX
     );
     return $out;
 }

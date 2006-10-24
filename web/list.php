@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.18 2006-10-24 11:11:56 matthew Exp $
+// $Id: list.php,v 1.19 2006-10-24 14:28:31 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -60,8 +60,10 @@ $qrows = db_query("
         SELECT petition.*, '$pet_today' <= petition.deadline AS open,
             (SELECT count(*) FROM signer
                 WHERE showname and signer.petition_id = petition.id
-                    and signer.emailsent = 'confirmed') AS signers
+                    and signer.emailsent = 'confirmed') AS signers,
+                message.id as message_id
             FROM petition
+            left join message on petition.id = message.petition_id and circumstance = 'government-response'
             WHERE status = ?".
             ($open ? " AND deadline $open '$pet_today' " : ""). 
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
@@ -161,7 +163,7 @@ if ($ntotal > 0) {
         #$arr = array('class'=>"petition-".$c%2, 'href' => $petition->url_main() );
         #if ($q_type == 'succeeded_closed' || $q_type == 'failed') $arr['closed'] = true;
         if ($rss) {
-	    if (!$petition->rejected_show_nothing())
+            if (!$petition->rejected_show_nothing())
                 $rss_items[] = $petition->rss_entry();
         } elseif ($petition->rejected_show_nothing()) {
             print '<tr';
@@ -171,8 +173,11 @@ if ($ntotal > 0) {
             print '<tr';
             if ($c%2) print ' class="a"';
             print '><td><a href="/' . $petition->ref() . '">';
-            print $petition->h_content() . '</a></td>';
-            print '<td>' . $petition->h_name() . '</td>';
+            print $petition->h_content() . '</a>';
+            if ($q_type == 'closed' && $petition->data['message_id']) {
+                print '<br />(with government response)';
+            }
+            print '</td><td>' . $petition->h_name() . '</td>';
             print '<td>' . $petition->h_pretty_deadline() . '</td>';
             if ($q_type != 'rejected')
                 print '<td>' . $petition->signers() . '</td>';
