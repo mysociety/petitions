@@ -18,11 +18,8 @@
 # Things to add:
 #    - Make petition, reject, amend, accept
 #    - Remove signer
-#    - Check rejected petitions in the relevant categories can/can't be seen on the site
-#    - Make one of the rejections give multiple reasons
-#    - Check failed RSS feeds doesn't have wrong rejected ones in it
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.23 2006-10-24 11:03:52 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.24 2006-10-24 13:34:59 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -581,9 +578,13 @@ sub do_timeout_test {
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'reject') or die "Failed to submit reject petition button";
     $wth->browser_check_contents("You have chosen to reject the petition 'timeouttest'");
+    $wth->browser_form_name('rejection_details_form');
+    $wth->browser_field('categories[]', '128', 8); # the 8th checkbox has value 128, and means "offensive language"
+    $wth->browser_field('categories[]', '1024', 11); # the 11th checkbox has value 1024, and means "attempting to market a product"
     $wth->browser_submit_form(form_name => 'rejection_details_form',
-            fields => { reason => 'You can\'t say that on our website either.',
-                'categories[]' => ['128', 8], # the 8th checkbox has value 128, and means "offensive language"
+            fields => { reason => 'You can\'t say that on our website either. Beside, you\'re just trying to sell your song.',
+#                'categories[]' => ['128', 8], 
+#                'categories[]' => ['1024', 11], 
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
     my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(55).'%Offensive language%');
@@ -608,13 +609,20 @@ sub do_timeout_test {
     call_send_messages();
     $wth->email_get_containing('%Subject: Your petition has been finally rejected%To: '.email_n(55).'%%');
 
-    # Make on rejection page
+    # Check it is on rejection page, but text not shown (as offensive)
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
     $wth->browser_follow_link(text_regex => qr/Rejected petitions/);
-    $wth->browser_check_contents($petition_text);
-    $wth->browser_follow_link(text_regex => qr/$petition_text/);
-    $wth->browser_check_contents("This petition has been <strong>rejected</strong>");
+    $wth->browser_check_contents("Petition details cannot be shown");
+    $wth->browser_check_no_contents($petition_text);
+    $wth->browser_follow_link(text_regex => qr/more details/);
+    $wth->browser_check_contents("Attempting to market");
+    $wth->browser_check_contents("Offensive language");
+    $wth->browser_check_no_contents($petition_text);
+    # ... check not in RSS feed
+    $wth->browser_back();
+    $wth->browser_follow_link(text_regex => qr/RSS/);
+    $wth->browser_check_no_contents($petition_text);
 }
    
 #############################################################################
