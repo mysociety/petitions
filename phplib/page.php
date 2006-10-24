@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.15 2006-10-24 11:05:17 matthew Exp $
+// $Id: page.php,v 1.16 2006-10-24 11:24:26 francis Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -34,7 +34,19 @@ function page_header($title, $params = array()) {
     }
     $devwarning = join('<br />', $devwarning);
 
-    include "../templates/website/head.php";
+    // Display header
+    $stat_js = '';
+    if (!OPTION_PET_STAGING) {
+        $stat_js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>';
+    }
+
+    global $devwarning;
+    $contents = file_get_contents("../templates/website/head.html");
+    $contents = str_replace("PARAM_DC_IDENTIFIER", $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], $contents);
+    $contents = str_replace("PARAM_TITLE", $title, $contents);
+    $contents = str_replace("PARAM_DEV_WARNING", $devwarning, $contents);
+    $contents = str_replace("PARAM_STAT_JS", $stat_js, $contents);
+    print $contents;
 }
 
 /* page_footer STAT_CODE
@@ -46,7 +58,17 @@ function page_footer($stat_code = '') {
     } else {
         $stat_code = 'Petitions';
     }
-    include "../templates/website/foot.php";
+
+    $site_stats = '';
+    if (!OPTION_PET_STAGING) {
+        $site_stats = file_get_contents('../templates/website/site-stats.html');
+        $site_stats = str_replace("PARAM_STAT_CODE", $stat_code, $site_stats);
+    }
+
+    $contents = file_get_contents("../templates/website/foot.html");
+    $contents = str_replace("PARAM_SITE_STATS", $site_stats, $contents);
+    print $contents;
+
     header('Content-Length: ' . ob_get_length());
 }
 
