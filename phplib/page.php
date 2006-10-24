@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.14 2006-10-12 00:02:43 matthew Exp $
+// $Id: page.php,v 1.15 2006-10-24 11:05:17 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -103,7 +103,7 @@ function page_check_ref($ref) {
  * Display header for RSS versions of page  
  */
 function rss_header($title, $description, $params) {
-    $main_page = str_replace('rss/', '', $_SERVER['REQUEST_URI']);
+    $main_page = OPTION_BASE_URL . str_replace('rss/', '', $_SERVER['REQUEST_URI']);
     header('Content-Type: application/xml; charset=utf-8');
     print '<?xml version="1.0" encoding="UTF-8"?>';
 ?>

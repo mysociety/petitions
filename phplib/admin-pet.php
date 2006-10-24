@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.30 2006-10-21 22:36:13 francis Exp $
+ * $Id: admin-pet.php,v 1.31 2006-10-24 11:05:17 matthew Exp $
  * 
  */
 
@@ -551,7 +551,7 @@ class ADMIN_PAGE_PET_MAIN {
             /* User mail must be submitted with \n line endings. */
             $q_message_body = str_replace("\r\n", "\n", $q_message_body);
             /* Add footer with link */
-            $q_message_body .= "\n\nPetition info: " . OPTION_BASE_URL . $p->url_main();
+            $q_message_body .= "\n\nPetition info: " . $p->url_main();
             /* Got all the data we need. Just drop the announcement into the database
              * and let the send-messages script pass it to the signers. */
             db_query("insert into message
