@@ -18,7 +18,7 @@
 # Things to add:
 #    - Make petition, reject, amend, accept
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.32 2006-10-24 17:59:00 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.33 2006-10-26 09:29:46 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -69,7 +69,7 @@ if ($help) {
     exit(0);
 }
 our %action;
-my %allowed_actions = ( basic => 1, rejection => 1, timeout => 1 );
+my %allowed_actions = ( main => 1, rejection => 1, timeout => 1 );
 foreach (@ARGV) {
     if ($allowed_actions{$_}) {
         $action{$_} = 1;
@@ -158,9 +158,9 @@ $wth->php_check_syntax("../../pet/");
 $wth->php_check_syntax("../../pet/templates/emails/", qr//);
 
 # Run tests specified
-if ($action{'basic'}) {
-    print "Basic test...\n" if $verbose > 0;
-    do_basic_test();
+if ($action{'main'}) {
+    print "Main test...\n" if $verbose > 0;
+    do_main_test();
 }
 if ($action{'rejection'}) {
     print "Rejection test...\n" if $verbose > 0;
@@ -214,7 +214,7 @@ sub call_mark_finished {
 #############################################################################
 
 # Create petition, sign it, wait until completion, send government response
-sub do_basic_test {
+sub do_main_test {
     set_pet_date('1988-08-08');
 
     my $petition_text = "take action on every petition on this site with more than 1000 signers";
@@ -270,7 +270,7 @@ sub do_basic_test {
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
 
-    comment("Follow link to admin page");
+    comment("Follow link to admin page and approve");
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
     $wth->browser_check_contents($petition_text);
@@ -562,7 +562,7 @@ sub do_rejection_test {
     $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
 
-    comment("Follow link to admin page");
+    comment("Follow link to admin page and reject again");
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
     $wth->browser_check_no_contents($petition_text);
@@ -642,7 +642,7 @@ sub do_timeout_test {
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
 
-    comment("Follow link to admin page");
+    comment("Follow link to admin page and reject");
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
     $wth->browser_check_contents($petition_text);
