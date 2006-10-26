@@ -1,3 +1,1 @@
-- Send email to administrator with link to admin interface upon petition creation
-- Whole initial rejection/resubmission structure
 - Make email confirmation screens not have header/footer
