@@ -1,19 +1,27 @@
-Subject: Your petition has been finally rejected
+Subject: Your chance to revise your petition has expired
 
-Hi,
+Hello,
 
-I'm sorry to inform you that your petition has been finally 
-rejected. This is because you did not edit and resubmit your 
-petition in the four weeks you were given to do so.
+    This is an automatic email to let you know that the petition
+you submitted 4 weeks ago has now been published on the rejected
+petitions page, <http://petitions.pm.gov.uk/list/rejected>. This
+is because you chose not to edit and resubmit your petition in
+the time since we asked you to change your original submission.
 
-Your petition will now appear in the list of rejected petitions.
-
-Your petition reads:
+As a reminder, your petition reads:
 
 We the undersigned petition the Prime Minister to:
 '<?=$values['content']?>'
 
 <?=$values['detail']?>
+
+As we wrote before, the explanation for rejecting your petition was:
+
+"<?=$values['reason']?>"
+
+For transparency, the parts of your petition that can be published
+legally and in accordance with the civil service code can be seen
+at <?=$values['url']?>
 
 <?=$values['signature']?>
 
