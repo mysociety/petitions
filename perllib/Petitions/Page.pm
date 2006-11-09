@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.45 2006-11-09 18:51:09 matthew Exp $
+# $Id: Page.pm,v 1.46 2006-11-09 18:57:02 matthew Exp $
 #
 
 package Petitions::Page;
@@ -230,7 +230,7 @@ please select it from the list:</label>',
                 'Isle of Man',
                 'Montserrat',
                 'St Helena',
-                'South Georgia and the South Sandwich Islands',
+                'S. Georgia and the S. Sandwich Islands',
                 'Tristan da Cunha',
                 'Turks and Caicos Islands',
                 ])
