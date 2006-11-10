@@ -7,11 +7,11 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.25 2006-10-24 14:28:31 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.26 2006-11-10 14:03:56 matthew Exp $';
 
 use strict;
 
-use Compress::Zlib;
+# use Compress::Zlib;
 use HTTP::Date qw();
 use utf8;
 
@@ -115,24 +115,26 @@ EOF
     utf8::encode($html);
 
     # Perhaps send gzipped content.
-    my $ce = undef;
-    my $ae = $q->http('Accept-Encoding');
-    if ($ae) {
-        my %encodings  = map { s/;.*$//; $_ => 1 } split(/,\s*/, $ae);
-        if ($encodings{'*'}
-            || $encodings{'gzip'}
-            || $encodings{'x-gzip'}) {
-            $html = Compress::Zlib::memGzip($html);
-            $ce = 'gzip';
-        }
-    }
+    # XXX: Something goes wrong in some combination of gzip, squid,
+    # another proxy, IE, who knows. Anyway, don't use gzip
+    # my $ce = undef;
+    # my $ae = $q->http('Accept-Encoding');
+    # if ($ae) {
+    #     my %encodings  = map { s/;.*$//; $_ => 1 } split(/,\s*/, $ae);
+    #     if ($encodings{'*'}
+    #         || $encodings{'gzip'}
+    #         || $encodings{'x-gzip'}) {
+    #         $html = Compress::Zlib::memGzip($html);
+    #         $ce = 'gzip';
+    #     }
+    # }
 
     print $q->header(
                 -content_length => length($html),
                 -last_modified => HTTP::Date::time2str($lastmodified),
-                ($ce
-                    ? (-content_encoding => $ce)
-                    : () ),
+                #($ce
+                #    ? (-content_encoding => $ce)
+                #    : () ),
                 -cache_control => 'max-age=1',
                 -expires => '+1s'),
                 $html;
