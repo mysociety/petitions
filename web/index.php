@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.26 2006-11-09 16:55:40 matthew Exp $
+// $Id: index.php,v 1.27 2006-11-10 12:14:47 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -47,7 +47,7 @@ $c = 1;
 foreach ($recent as $petition) {
     print '<li';
     if ($c%2) print ' class="a"';
-    print '><a href="/' . $petition['ref'] . '">';
+    print '><a href="/' . $petition['ref'] . '/">';
     print htmlspecialchars($petition['content']) . '</a></li>';
     $c++;
 }
@@ -77,7 +77,7 @@ $c = 1;
 foreach ($recent as $petition) {
     print '<li';
     if ($c%2) print ' class="a"';
-    print '><a href="/' . $petition['ref'] . '">';
+    print '><a href="/' . $petition['ref'] . '/">';
     print htmlspecialchars($petition['content']) . '</a> <small>(';
     print $petition['signers'] . ' signature';
     print ($petition['signers'] == 1 ? '' : 's') . ')</small></li>';
