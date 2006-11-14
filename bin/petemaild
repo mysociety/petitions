@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.52 2006-11-14 11:52:30 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.53 2006-11-14 13:48:22 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1712,7 +1712,15 @@ sub post_select ($$) {
                 # Response to query for MX records for the domain.
                 # 
 
-                if ($result->header()->rcode() eq 'NXDOMAIN') {
+                my $q = ($result->question())[0]->qname();
+                
+                if ($result->header()->rcode() eq 'SERVFAIL') {
+                    # Transient error attempting to resolve the domain.
+                    $self->{mx} = undef;
+                    $self->log('warning', "temporary failure resolving MX record for '$q'");
+                    $self->state(STATE_BAD);
+                    return;
+                } elsif ($result->header()->rcode() eq 'NXDOMAIN') {
                     # There is no such domain, so the mail would be unroutable.
                     $self->{mx} = undef;
                     $self->log('debug', 'no such domain (unroutable)');
@@ -1791,10 +1799,19 @@ sub post_select ($$) {
                 # Response to query for A records for mail exchangers.
                 #
 
+                my $q = ($result->question())[0]->qname();
+
+                if ($result->header()->rcode() eq 'SERVFAIL') {
+                    # Transient error attempting to resolve the domain.
+                    $self->{mx} = undef;
+                    $self->log('warning', "temporary failure resolving A record for '$q'");
+                    $self->state(STATE_BAD);
+                    return;
+                }
+
                 # It's possible that one of these domains could be a CNAME
                 # which doesn't point to any A records, so check for this
                 # case.
-                my $q = ($result->question())[0]->qname();
                 my @a = grep { $_->type eq 'A' } $result->answer();
 
                 if (@a) {
@@ -2144,4 +2161,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.52 2006-11-14 11:52:30 matthew Exp $
+$Id: petemaild,v 1.53 2006-11-14 13:48:22 chris Exp $
