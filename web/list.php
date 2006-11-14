@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.19 2006-10-24 14:28:31 matthew Exp $
+// $Id: list.php,v 1.20 2006-11-14 18:21:16 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -152,8 +152,8 @@ if ($ntotal > 0) {
 <table cellpadding="3" cellspacing="0" border="0">
 <tr><th align="left">We the undersigned petition the Prime Minister to&hellip;</th>
 <th>Submitted&nbsp;by</th>
-<th>Deadline&nbsp;to&nbsp;sign&nbsp;by</th>
 <?      if ($q_type != 'rejected') { ?>
+<th>Deadline&nbsp;to&nbsp;sign&nbsp;by</th>
 <th>Signatures</th>
 <?      } ?>
 </tr>
@@ -163,24 +163,30 @@ if ($ntotal > 0) {
         #$arr = array('class'=>"petition-".$c%2, 'href' => $petition->url_main() );
         #if ($q_type == 'succeeded_closed' || $q_type == 'failed') $arr['closed'] = true;
         if ($rss) {
-            if (!$petition->rejected_show_nothing())
-                $rss_items[] = $petition->rss_entry();
-        } elseif ($petition->rejected_show_nothing()) {
-            print '<tr';
-            if ($c%2) print ' class="a"';
-            print '><td colspan="4">Petition details cannot be shown &mdash; <a href="/reject?id=' . $petition->id(). '">more details</a></td></tr>';
+            $rss_items[] = $petition->rss_entry();
         } else {
             print '<tr';
             if ($c%2) print ' class="a"';
-            print '><td><a href="/' . $petition->ref() . '">';
-            print $petition->h_content() . '</a>';
+            print '><td>';
+            if (!$petition->rejected_show_part('content'))
+                print 'Petition details cannot be shown &mdash; ';
+            print '<a href="/';
+            print $petition->rejected_show_part('ref') ? $petition->ref() : 'reject?id=' . $petition->id();
+            print '">';
+            if ($petition->rejected_show_part('content')) {
+                print $petition->h_content();
+            } else {
+                print 'more details';
+            }
+            print '</a>';
             if ($q_type == 'closed' && $petition->data['message_id']) {
                 print '<br />(with government response)';
             }
             print '</td><td>' . $petition->h_name() . '</td>';
-            print '<td>' . $petition->h_pretty_deadline() . '</td>';
-            if ($q_type != 'rejected')
+            if ($q_type != 'rejected') {
+                print '<td>' . $petition->h_pretty_deadline() . '</td>';
                 print '<td>' . $petition->signers() . '</td>';
+            }
             print '</tr>';
             # $petition->h_display_box($arr);
         }

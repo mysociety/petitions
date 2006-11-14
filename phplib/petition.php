@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.33 2006-10-24 13:45:43 francis Exp $
+ * $Id: petition.php,v 1.34 2006-11-14 18:21:15 matthew Exp $
  * 
  */
 
@@ -81,6 +81,8 @@ class Petition {
 
     // Internal function to calculate some values from data
     function _calc() {
+        if (!array_key_exists('rejection_hidden_parts', $this->data))
+            $this->data['rejection_hidden_parts'] = 0;
         if (!array_key_exists('signers', $this->data)) $this->data['signers'] = -1;
         if (!array_key_exists('open', $this->data)) $this->data['open'] = 't';
         $this->data['open'] = ($this->data['open'] == 't');
@@ -125,26 +127,43 @@ class Petition {
     function sentence($params = array()) { 
         global $petition_prefix;
         $sentence = $petition_prefix . " " . $this->data['content'];
+        if (!$this->rejected_show_part('content'))
+            $sentence = 'This petition cannot be shown';
         if (array_key_exists('html', $params)) {
             $sentence = htmlspecialchars($sentence);
         }
         return $sentence;
     }
     function h_content() {
+        if (!$this->rejected_show_part('content'))
+            return 'Cannot be shown';
         return htmlspecialchars($this->data['content']);
     }
 
     // Basic data access for HTML display
-    function detail() { return $this->data['detail']; }
+    function detail() {
+        if ($this->rejected_show_part('detail'))
+            return $this->data['detail'];
+        return 'More details cannot be shown';
+    }
+
+    # This function is only used when creating a petition
+    # So don't need to worry about censoring parts
     function h_detail() {
         $detail = htmlspecialchars($this->data['detail']);
         $detail = str_replace("\r", '', $detail);
         $detail = preg_replace('#\n\n+#', '</p> <p>', $detail);
         return "<p>$detail</p>";
     }
-    function h_name() { return htmlspecialchars($this->data['name']); }
+    function h_name() {
+        if ($this->rejected_show_part('name'))
+            return htmlspecialchars($this->data['name']);
+        return 'Name cannot be shown';
+    }
     function h_pretty_deadline() { return prettify(htmlspecialchars($this->data['deadline'])); }
 
+    # This function is only used when creating a petition
+    # So don't need to worry about censoring parts
     function h_display_box($params = array()) {
 ?>
         <div class="petition_box">
@@ -175,7 +194,14 @@ class Petition {
     }
 
     // URLs
-    function url_main() { return OPTION_BASE_URL . '/' . $this->h_ref; }
+    function url_main() {
+        $url = OPTION_BASE_URL . '/';
+        if ($this->rejected_show_part('ref'))
+            $url .= $this->h_ref . '/';
+        else
+            $url .= 'reject?id=' . $this->id();
+        return $url;
+    }
 
     // Write history to log file 
     function log_event($message, $editor) {
@@ -194,14 +220,13 @@ class Petition {
         );
     }
 
-    # Only needs to look at rejection_second_categories as things
-    # rejected once are not displayed anywhere
-    function rejected_show_nothing() {
-        # Defamatory, injunction, confidential, names
-        $bitfield = 2 | 4 | 8 | 16 | 32 | 64 | 128; # XXX also change in web/ref-index.cgi
-        if ($this->data['rejection_second_categories'] & $bitfield)
-            return true;
-        return false;
+    # Can we show PART ?
+    function rejected_show_part($part) {
+        $map = array('ref'=>1, 'content'=>2, 'detail'=>4,
+            'name'=>8, 'organisation'=>16, 'org_url'=>32);
+        if ($this->data['rejection_hidden_parts'] & $map[$part])
+            return false;
+        return true;
     }
 }
 

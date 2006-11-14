@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.32 2006-10-24 15:51:43 francis Exp $
+ * $Id: admin-pet.php,v 1.33 2006-11-14 18:21:15 matthew Exp $
  * 
  */
 
@@ -462,12 +462,38 @@ class ADMIN_PAGE_PET_MAIN {
 <p>You have chosen to reject the petition '<?=$p->ref() ?>'.</p>
 <form method="post" name="rejection_details_form" action="<?=$this->self_link?>"><input type="hidden" name="reject_form_submit" value="1">
 <input type="hidden" name="petition_id" value="<?=$id ?>">
-<p>Category or categories for rejection:
+<p>Category or categories for rejection: <small>
 <?      $this->display_categories(); ?>
-</p>
+</small></p>
 <p>Reason for rejection (this will be emailed to the creator and available on the website):
-<br><textarea name="reason" rows="10" cols="70"></textarea></p>
-<input type="submit" name="reject_submit" value="Reject petition">
+<br><textarea name="reject_reason" rows="10" cols="70"></textarea></p>
+
+<p>Please now select the parts of this petition that <strong>cannot</strong> be shown on the website for legal reasons:</p>
+<table>
+<?
+        $bits = array(
+            1 => array('ref', 'petition URL'),
+            2 => array('content', 'main sentence'),
+            4 => array('detail', 'extra detail'),
+            8 => array('name', 'creator\'s name'),
+            16 => array('organisation', 'creator\'s organisation'),
+            32 => array('org_url', 'organisation\'s URL')
+        );
+        foreach ($bits as $bit => $arr) {
+            list($part,$pretty) = $arr;
+            $value = htmlspecialchars($p->data[$part]);
+            print <<<EOF
+<tr>
+<td><input type="checkbox" name="reject_hide[$part]" value="$bit"></td>
+<td>The $pretty: $value</td>
+</tr>
+EOF;
+        }
+?>
+</table>
+
+<p><input type="submit" name="reject_submit" value="Reject petition"></p>
+
 </form>
 <?  }
 
@@ -479,13 +505,17 @@ class ADMIN_PAGE_PET_MAIN {
         $p = new Petition($id);
         $status = $p->status();
         $cats_pretty = prettify_categories($categories, false);
+        $hide = get_http_var('reject_hide');
+        if (is_array($hide)) $hide = array_sum($hide);
+        else $hide = 0;
         if ($status == 'draft') {
             db_getOne("
                     UPDATE petition
                     SET status = 'rejectedonce',
                         rejection_first_categories = ?,
-                        rejection_first_reason = ?
-                    WHERE id=?", $categories, $reason, $id);
+                        rejection_first_reason = ?,
+                        rejection_hidden_parts = ?
+                    WHERE id=?", $categories, $reason, $hide, $id);
             $p->log_event("Admin rejected petition for the first time. Category $cats_pretty, reason $reason", null);
             $template = 'admin-rejected-once';
             $circumstance = 'rejected-once';
@@ -494,8 +524,9 @@ class ADMIN_PAGE_PET_MAIN {
                     UPDATE petition
                     SET status = 'rejected',
                         rejection_second_categories = ?,
-                        rejection_second_reason = ?
-                    WHERE id = ?", $categories, $reason, $id);
+                        rejection_second_reason = ?,
+                        rejection_hidden_parts = ?
+                    WHERE id = ?", $categories, $reason, $hide, $id);
             $p->log_event("Admin rejected petition for the second time. Category $cats_pretty, reason $reason", null);
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
@@ -605,7 +636,7 @@ class ADMIN_PAGE_PET_MAIN {
             $categories = get_http_var('categories');
             if (is_array($categories)) $categories = array_sum($categories);
             else $categories = 0;
-            $reason = get_http_var('reason');
+            $reason = get_http_var('reject_reason');
             if ($categories && $reason) {
                 $this->reject_petition($petition_id, $categories, $reason);
             } else {

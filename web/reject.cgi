@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.3 2006-10-24 10:30:26 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.4 2006-11-14 18:21:16 matthew Exp $';
 
 use strict;
 
@@ -20,6 +20,7 @@ BEGIN {
     mySociety::Config::set_file("../conf/general");
 }
 # use mySociety::DBHandle qw(dbh);
+use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
 
 use Petitions;
@@ -45,11 +46,19 @@ while (!$foad && (my $q = new mySociety::Web())) {
     #my $lastmodified = dbh()->selectrow_array('select extract(epoch from petition_last_change_time((select id from petition where ref = ?)))', {}, $ref);
     #next if ($q->Maybe304($lastmodified));
 
-    my $html = Petitions::Page::header($q, 'Rejected petition');
+    my $title = Petitions::sentence($p, 1);
+    my $html =
+        Petitions::Page::header($q, $title);
     $html .= $q->h1($q->span({-class => 'ltr'}, 'E-Petitions'));
     $html .= $q->h2($q->span({-class => 'ltr'}, 'Rejected petition'));
+    $html .= Petitions::Page::display_box($q, $p);
+    $html .= $q->start_div({-id => 'signatories'})
+        . $q->h2($q->span({-class => 'ltr'}, 'Petition Rejected'));
     $html .= Petitions::Page::reject_box($q, $p);
-    $html .= Petitions::Page::footer($q, 'View.Rejected_' . $qp_id);
+    $html .= $q->end_div();
+    $html .= Petitions::detail($p);
+    my $stat = 'View.' . $p->{ref};
+    $html .= Petitions::Page::footer($q, $stat);
     utf8::encode($html);
     print $q->header(
                 -content_length => length($html),
@@ -59,3 +68,4 @@ while (!$foad && (my $q = new mySociety::Web())) {
         ), $html;
     $W->exit_if_changed();
 }
+

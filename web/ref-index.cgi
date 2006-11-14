@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.27 2006-11-14 12:39:01 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.28 2006-11-14 18:21:16 matthew Exp $';
 
 use strict;
 
@@ -32,7 +32,7 @@ my $foad = 0;
 $SIG{TERM} = sub { $foad = 1; };
 while (!$foad && (my $q = new mySociety::Web())) {
     my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
-    #my $qp_id = $q->ParamValidate(id => qr/^[0-9]+$/);
+    my $qp_id = $q->ParamValidate(id => qr/^[0-9]+$/);
     my $ref = Petitions::DB::check_ref($qp_ref);
     if (!defined($ref)) {
         Petitions::Page::bad_ref_page($q, $qp_ref);
@@ -69,17 +69,15 @@ while (!$foad && (my $q = new mySociety::Web())) {
                     "Thank you, you're now signed up to this petition! If you'd like to
                     tell your friends about it, its permanent web address is:",
                     $q->br(),
-                    $q->strong($q->a({ -href => "/$ref" },
-                        ent(mySociety::Config::get('BASE_URL') . "/$ref"
+                    $q->strong($q->a({ -href => "/$ref/" },
+                        ent(mySociety::Config::get('BASE_URL') . "/$ref/"
                     ))));
                     # XXX: *** Send to friend ***
                     
     }
 
-    # XXX For now, as ref might be libellous, pretend it doesn't exist
-    my $bitfield = 2 | 4 | 8 | 16 | 32 | 64 | 128; # XXX also change in phplib/petition.php
-    if ($p->{status} eq 'rejected'
-        && $p->{rejection_second_categories} & $bitfield) {
+    # If the ref has been marked as not to be shown, do not give a hint at its existance
+    if ($p->{status} eq 'rejected' && !Petitions::show_part($p, 'ref')) {
         Petitions::Page::bad_ref_page($q, $qp_ref);
         next;
     }
@@ -96,18 +94,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
         $html .= Petitions::Page::reject_box($q, $p);
         $html .= $q->end_div();
     }
-
-    my $detail = ent($p->{detail});
-    $detail =~ s/\r//g;
-    $detail =~ s/\n\n+/<\/p> <p>/g;
-    if ($detail) {
-        $html .= <<EOF;
-<div style="float: right; width:45%">
-<h2><span dir="ltr">More details from petition creator</span></h2>
-<p>$detail</p></div>
-EOF
-    }
-
+    $html .= Petitions::detail($p);
     my $stat = 'View.' . $p->{ref};
     $stat .= '.signed' if ($qp_signed);
     $html .= Petitions::Page::footer($q, $stat);

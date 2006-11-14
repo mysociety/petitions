@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.27 2006-10-24 13:43:47 matthew Exp $
+# $Id: Petitions.pm,v 1.28 2006-11-14 18:21:15 matthew Exp $
 #
 
 package Petitions::DB;
@@ -268,8 +268,41 @@ sub sentence ($;$) {
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     croak("Field 'content' missing from PETITION") unless (exists($p->{content}));
     my $sentence = sprintf('%s %s', $petition_prefix, $p->{content});
+    $sentence = 'This petition cannot be shown' unless Petitions::show_part($p, 'content');
     $sentence = ent($sentence) if ($html);
     return $sentence;
+}
+
+=item detail PETITION
+
+=cut
+sub detail ($) {
+    my ($p) = @_;
+    croak("PETITION may not be undef") unless (defined($p));
+    croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
+    croak("Field 'detail' missing from PETITION") unless (exists($p->{detail}));
+    my $detail = Petitions::show_part($p, 'detail') ? ent($p->{detail}) : 'More details cannot be shown';
+    $detail =~ s/\r//g;
+    $detail =~ s/\n\n+/<\/p> <p>/g;
+    if ($detail) {
+        $detail = <<EOF;
+<div style="float: right; width:45%">
+<h2><span dir="ltr">More details from petition creator</span></h2>
+<p>$detail</p></div>
+EOF
+    }
+    return $detail;
+}
+
+=item show_part PETITION PART
+
+=cut
+sub show_part ($$) {
+    my ($p, $part) = @_;
+    my %map = ('ref'=>1, 'content'=>2, 'detail'=>4,
+        'name'=>8, 'organisation'=>16, 'org_url'=>32);
+    return 0 if $p->{'rejection_hidden_parts'} & $map{$part};
+    return 1;
 }
 
 =item pretty_deadline PETITION [HTML]

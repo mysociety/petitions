@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.33 2006-10-21 18:13:39 francis Exp $
+-- $Id: schema.sql,v 1.34 2006-11-14 18:21:15 matthew Exp $
 --
 
 -- global_seq
@@ -98,7 +98,7 @@ create table petition (
     ),
 
     -- the _categories fields are bitmasks of possible reasons in
-    -- admin-pet.php; the constraints here must be kept up to date
+    -- petition.php; the constraints here must be kept up to date
     -- with that list of reasons.
     rejection_first_categories integer not null default 0
         check (rejection_first_categories >= 0
@@ -108,6 +108,9 @@ create table petition (
         check (rejection_second_categories >= 0
                 and rejection_second_categories < 8192),
     rejection_second_reason text,
+    rejection_hidden_parts integer not null default 0
+        check (rejection_hidden_parts >= 0
+                and rejection_hidden_parts < 64),
 
     laststatuschange timestamp not null
 

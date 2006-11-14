@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.48 2006-11-10 12:40:26 matthew Exp $
+# $Id: Page.pm,v 1.49 2006-11-14 18:21:15 matthew Exp $
 #
 
 package Petitions::Page;
@@ -144,13 +144,27 @@ sub display_box ($$%) {
         $p = Petitions::DB::get($ref)
             or croak "bad ref '$ref' in display_box";
     }
-    my $org = '';
-    if ($p->{organisation}) {
-        $org = ent($p->{organisation});
-        my $org_url = ent($p->{org_url});
-        $org_url = "http://$org_url" unless $org_url =~ /^http:\/\//;
-        $org = '<a href="' . $org_url . '">' . $org . '</a>' if $p->{org_url};
+    my $org = Petitions::show_part($p, 'organisation') ? ent($p->{organisation}) : '';
+    my $org_url = Petitions::show_part($p, 'org_url') ? ent($p->{org_url}) : '';
+    if ($org) {
+        if ($org_url) {
+            $org_url = "http://$org_url" unless $org_url =~ /^http:\/\//;
+            $org = '<a href="' . $org_url . '">' . $org . '</a>';
+        }
         $org = ' of ' . $org;
+    } elsif ($org_url) {
+        $org_url = "http://$org_url" unless $org_url =~ /^http:\/\//;
+        $org = '<a href="' . $org_url . '">' . $org_url . '</a>';
+        $org = ', ' . $org;
+    }
+    my $name = Petitions::show_part($p, 'name') ? ent($p->{name}) : '&lt;Name cannot be shown&gt;';
+    my $meta = 'Submitted by ' . $name . $org;
+    if ($p->{status} ne 'rejected') {
+        $meta .= ' &ndash; ' . 
+                $q->strong('Deadline to sign up by:') . Petitions::pretty_deadline($p, 1) .
+                (defined($p->{signers})
+                    ? ' &ndash; ' . $q->strong('Signatures:') . '&nbsp;' . $p->{signers}
+                    : '');
     }
     return
         $q->div({ -class => 'petition_box' },
@@ -159,13 +173,7 @@ sub display_box ($$%) {
                 Petitions::sentence($p, 1),
                 (exists($params{href}) ? '</a>' : '')
             ),
-            $q->p({ -align => 'center' },
-                'Submitted by ', ent($p->{name}), $org, ' &ndash; ',
-                $q->strong('Deadline to sign up by:'), Petitions::pretty_deadline($p, 1),
-                (defined($p->{signers})
-                    ? (' &ndash; ', $q->strong('Signatures:') . '&nbsp;' . $p->{signers})
-                    : ())
-            )
+            $q->p({ -align => 'center' }, $meta)
         );
 
 }
