@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.26 2006-11-10 14:03:56 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.27 2006-11-14 12:39:01 matthew Exp $';
 
 use strict;
 
@@ -86,7 +86,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     $html .= Petitions::Page::display_box($q, $p);
     $html .= Petitions::Page::sign_box($q, $p)
-        if ($p->{status} eq 'live');
+        if ($p->{status} eq 'live' && !$qp_signed);
     $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
     if ($p->{status} ne 'rejected') {
         $html .= Petitions::Page::signatories_box($q, $p);
