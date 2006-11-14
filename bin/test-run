@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.36 2006-11-13 22:54:09 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.37 2006-11-14 12:13:48 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -689,7 +689,7 @@ sub do_timeout_test {
     set_pet_date('1990-06-30'); 
     call_mark_finished();
     call_send_messages();
-    $wth->email_get_containing('%Subject: Your petition has been finally rejected%To: '.email_n(55).'%%');
+    $wth->email_get_containing('%Subject: Your chance to revise your petition has expired%To: '.email_n(55).'%%');
 
     comment("Check it is on rejection page, but text not shown (as offensive)");
     $wth->browser_get($base_url);
@@ -835,6 +835,6 @@ sub do_resubmit_test {
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_check_no_contents("resubmittest");
     $wth->browser_check_contents('signForm');
-    $wth->browser_check_contents("<strong>Signatures:</strong> 0");
+    $wth->browser_check_contents("<strong>Signatures:</strong>&nbsp;0");
 }
 
