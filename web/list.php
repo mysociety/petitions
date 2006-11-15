@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.22 2006-11-15 17:31:14 matthew Exp $
+// $Id: list.php,v 1.23 2006-11-15 17:53:45 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -38,7 +38,7 @@ if ($q_type == 'closed') {
     $open = '>=';
     $status = 'live';
 }
-if ($q_sort == "default") $q_sort = "creationtime";
+if ($q_sort == "default") $q_sort = 'laststatuschange';
 if ($q_sort == "creationtime") $q_sort = "laststatuschange";
 
 $sql_params = array($status);
@@ -53,7 +53,7 @@ if ($ntotal < $q_offset) {
 }
 
 $sort_phrase = $q_sort;
-if ($q_sort == 'creationtime' || $q_sort == 'created' || $q_sort == 'whensucceeded') {
+if ($q_sort == 'laststatuschange' || $q_sort == 'created' || $q_sort == 'whensucceeded') {
     $sort_phrase .= " DESC";
 }
 $sql_params[] = PAGE_SIZE;
@@ -126,7 +126,7 @@ if (!$rss) {
     if ($ntotal > 0) {
         $navlinks .= '<p align="center" style="font-size: 89%">' . _('Sort by'). ': ';
         $arr = array(
-                     'creationtime'=>_('Start date'), 
+                     'laststatuschange'=>_('Start date'), 
                      'deadline'=>_('Deadline'), 
                      );
         # Removed as not useful (search is better for these): 'ref'=>'Short name',
