@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.40 2006-10-24 09:36:28 chris Exp $
+// $Id: new.php,v 1.41 2006-11-15 23:50:20 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -95,6 +95,7 @@ function petition_form_submitted() {
 
     # Step 1 fixes
     if (!array_key_exists('rawdeadline', $data)) $data['rawdeadline'] = '';
+    if (preg_match('#^\s*\d+\s*$#', $data['rawdeadline'])) $data['rawdeadline'] .= ' months';
     $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
     $data['deadline'] = $data['deadline_details']['iso'];
 
