@@ -1,18 +1,28 @@
-Subject: New petition to the Prime Minister
+Subject: New petition submitted
 
-A new petition has been posted with the title:
+Petition reference: <?=$values['ref']?> (<?=$values['id']?>)
+
+Submitted: <?=$values['creationtime']?>
+
+<?=$values['creator_name']?>
+<?=$values['creator_email']?>
+<?=$values['address']?>
+
+-----
 
 We the undersigned petition the Prime Minister to:
 '<?=$values['content']?>'
-<?=$values['comments_blurb']?>
 
-Please click on the link below to visit the admin page to approve
-or reject this petition:
+-----
+
+The petition's details read:
+<?=$values['detail']?>
+
+-----
+
+<?=$values['comments_blurb']?>
 
 <?=$values['url']?>
 
 <?=$values['signature']?>
 
-The petition's details read:
-
-<?=$values['detail']?>
