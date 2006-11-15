@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.54 2006-11-14 13:53:45 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.55 2006-11-15 17:20:14 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1363,8 +1363,9 @@ sub do_ipc ($$$$$;$$) {
                 } else {
                     die "writing to IPC socket: $!";
                 }
+            } else {
+                $$wrbuf = substr($$wrbuf, $n);
             }
-            $$wrbuf = substr($$wrbuf, $n);
         }
     }
 
@@ -1822,7 +1823,10 @@ sub post_select ($$) {
                 } else {
                     # There are no A records for that domain.
                     $self->log('warning', "MX $q has no address; dropping it");
-                    @{$self->{mx}} = grep { $_ ne $q } @{$self->{mx}};
+                    @{$self->{mx}} = grep { $_->exchange() ne $q } @{$self->{mx}};
+                    $self->log('warning', "now \$self->{mx} = [qw(" . join(' ', @{$self->{mx}}) . ")]");
+                    delete $self->{a}->{$q};
+#                    @{$self->{a}} = grep { $_ ne $q } @{$self->{a}};
 
                     # If that dropped our last possible host, then the domain
                     # is unroutable; mark it as such.
@@ -2162,4 +2166,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.54 2006-11-14 13:53:45 chris Exp $
+$Id: petemaild,v 1.55 2006-11-15 17:20:14 matthew Exp $
