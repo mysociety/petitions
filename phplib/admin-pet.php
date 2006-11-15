@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.34 2006-11-15 13:00:42 matthew Exp $
+ * $Id: admin-pet.php,v 1.35 2006-11-15 17:18:03 matthew Exp $
  * 
  */
 
@@ -514,7 +514,8 @@ EOF;
                     SET status = 'rejectedonce',
                         rejection_first_categories = ?,
                         rejection_first_reason = ?,
-                        rejection_hidden_parts = ?
+                        rejection_hidden_parts = ?,
+			laststatuschange = ms_current_timestamp()
                     WHERE id=?", $categories, $reason, $hide, $id);
             $p->log_event("Admin rejected petition for the first time. Category $cats_pretty, reason $reason", null);
             $template = 'admin-rejected-once';
@@ -525,7 +526,8 @@ EOF;
                     SET status = 'rejected',
                         rejection_second_categories = ?,
                         rejection_second_reason = ?,
-                        rejection_hidden_parts = ?
+                        rejection_hidden_parts = ?,
+			laststatuschange = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
             $p->log_event("Admin rejected petition for the second time. Category $cats_pretty, reason $reason", null);
             $template = 'admin-rejected-again';
@@ -625,7 +627,10 @@ EOF;
 
         if (get_http_var('approve')) {
             $p = new Petition($petition_id);
-            db_getOne("UPDATE petition SET status='live',deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)) WHERE id=?", $petition_id);
+            db_getOne("UPDATE petition
+	    	SET status='live', deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)),
+		laststatuschange = ms_current_timestamp()
+		WHERE id=?", $petition_id);
             $p->log_event("Admin approved petition", null);
             pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'approved', 'petition-approved');
             db_commit();

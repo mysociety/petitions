@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.20 2006-11-14 18:21:16 matthew Exp $
+// $Id: list.php,v 1.21 2006-11-15 17:18:03 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -39,6 +39,7 @@ if ($q_type == 'closed') {
     $status = 'live';
 }
 if ($q_sort == "default") $q_sort = "creationtime";
+if ($q_sort == "creationtime") $q_sort = "laststatuschange";
 
 $sql_params = array($status);
 $query = "SELECT count(petition.id) FROM petition
