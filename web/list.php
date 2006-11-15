@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.21 2006-11-15 17:18:03 matthew Exp $
+// $Id: list.php,v 1.22 2006-11-15 17:31:14 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -17,7 +17,7 @@ define('PAGE_SIZE', 50);
 
 $err = importparams(
             array('offset', '/^(0|[1-9]\d*)$/', '', 0),
-            array('sort', '/^(content|deadline|name|ref|creationtime)\/?$/', '', 'default'),
+            array('sort', '/^(content|deadline|name|ref|creationtime|laststatuschange)\/?$/', '', 'default'),
             array('type', '/^[a-z_]*$/', '', 'open')
         );
 if ($err) {
