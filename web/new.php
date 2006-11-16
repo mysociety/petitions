@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.41 2006-11-15 23:50:20 matthew Exp $
+// $Id: new.php,v 1.42 2006-11-16 10:30:06 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -222,7 +222,7 @@ There are 5 stages to the petition process:
     textfield('pet_content', $data['pet_content'], 80, $errors);
     ?>
 </p>
-<p>More details about your petition:<br />
+<p>More details about your petition (1000 characters maximum):<br />
     <?
     textarea('detail', $data['detail'], 40, 7, $errors);
     ?>
@@ -344,10 +344,11 @@ function step_main_error_check($data) {
     
 #    if (!$data['detail'])
 #        $errors['detail'] = _('Please enter more details');
-#    elseif (strlen($data['title']) > 100)
-#        $errors['title'] = _('Please make the title a bit shorter (at most 100 characters).');
     if (!$data['pet_content'])
         $errors['pet_content'] = _('Please enter the text of your petition');
+
+    if (strlen($data['detail']) > 1000)
+        $errors['detail'] = _('Please make your more details a bit shorter (at most 1000 characters).');
 
     $pet_today_arr = explode('-', $pet_today);
     $deadline_limit_years = 1; # in years
