@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.20 2006-11-16 14:54:33 matthew Exp $
+// $Id: page.php,v 1.21 2006-11-16 17:52:43 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -65,7 +65,7 @@ function page_header($title, $params = array()) {
  */
 function page_footer($stat_code = '') {
     if ($stat_code) {
-        $stat_code = 'Petitions_' . $stat_code;
+        $stat_code = 'Petitions.' . $stat_code;
     } else {
         $stat_code = 'Petitions';
     }
