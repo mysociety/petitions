@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.30 2006-11-16 11:19:30 matthew Exp $
+# $Id: Petitions.pm,v 1.31 2006-11-16 11:34:18 matthew Exp $
 #
 
 package Petitions::DB;
@@ -144,7 +144,8 @@ use mySociety::Util qw(random_bytes);
 
 sub encode_base64ish ($) {
     my $b64 = encode_base64($_[0]);
-    $b64 =~ s#\+#\$#g;
+    $b64 =~ s#\+#_#g;
+    $b64 =~ s#/#-#g;
     $b64 =~ s#=+$##;
     return $b64;
 }
@@ -154,8 +155,8 @@ sub decode_base64ish ($) {
     while (length($b64) % 4) {
         $b64 .= '=';
     }
-    $b64 =~ s#_|\$#+#g;
-    $b64 =~ s#-|'#/#g;
+    $b64 =~ s#_#+#g;
+    $b64 =~ s#-#/#g;
     return decode_base64($b64);
 }
 
