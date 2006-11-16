@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.55 2006-11-15 17:20:14 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.56 2006-11-16 23:22:41 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -469,7 +469,7 @@ sub ehlo ($) {
         $self->log('warning', "unable to get name for local address @{[ inet_ntoa($addr) ]}");
         $name = sprintf('[%s]', inet_ntoa($addr));
     }
-    $self->send("EHLO $name");
+    $self->send("HELO $name");
     $self->state(STATE_HELO);
 }
 
@@ -617,7 +617,7 @@ sub parse_smtp_response ($$$) {
         } else {
             # Something went wrong.
             # QUEUE: note failure to begin transaction with server.
-            $self->log('warning', "bad EHLO response \"$ltext\"");
+            $self->log('warning', "bad HELO response \"$ltext\"");
             $self->quit();
         }
     } elsif ($state == STATE_MAIL_FROM) {
@@ -666,6 +666,9 @@ sub parse_smtp_response ($$$) {
         if ($code =~ /^3/) {
             # Ready to continue. Send the message text.
             my $msg = $self->{message}->text();
+            if ($self->{message}->recipient() =~ /\@aol\./) {
+                $msg =~ s/((http(s?):\/\/)([a-zA-Z\d\_\.\+\,\;\?\%\~\-\/\#\='\*\$\!\(\)\&]+)([a-zA-Z\d\_\?\%\~\-\/\#\='\*\$\!\(\)\&]))/<a href="$1">$1<\/a>/g;
+            }
             my $len = length($msg);
             $msg =~ s/^\./../gs;
             $msg =~ s/\n/\r\n/gs;
@@ -2166,4 +2169,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.55 2006-11-15 17:20:14 matthew Exp $
+$Id: petemaild,v 1.56 2006-11-16 23:22:41 matthew Exp $
