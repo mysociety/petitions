@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.25 2006-10-24 17:43:44 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.26 2006-11-16 12:19:07 matthew Exp $';
 
 use strict;
 
@@ -213,7 +213,7 @@ sub accept_loop () {
         }
 
         # Confirm page.
-        my $qp_token = $q->ParamValidate(token => qr/^[A-Za-z0-9_-]+$/);
+        my $qp_token = $q->ParamValidate(token => qr/^[A-Za-z0-9_\$'\/-]+$/);
         if (defined($qp_token)) {
             confirm_page($q, $qp_ref, $qp_token);
             next;
@@ -223,7 +223,7 @@ sub accept_loop () {
         # petition page if this is a GET.
         if ($q->request_method() ne 'POST') {
             warn "bad method";
-            print $q->redirect("/$qp_ref");
+            print $q->redirect("/$qp_ref/");
             next;
         }
 
