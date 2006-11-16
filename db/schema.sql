@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.34 2006-11-14 18:21:15 matthew Exp $
+-- $Id: schema.sql,v 1.35 2006-11-16 10:36:16 matthew Exp $
 --
 
 -- global_seq
@@ -102,11 +102,11 @@ create table petition (
     -- with that list of reasons.
     rejection_first_categories integer not null default 0
         check (rejection_first_categories >= 0
-                and rejection_first_categories < 8192),
+                and rejection_first_categories < 16384),
     rejection_first_reason text,
     rejection_second_categories integer not null default 0
         check (rejection_second_categories >= 0
-                and rejection_second_categories < 8192),
+                and rejection_second_categories < 16384),
     rejection_second_reason text,
     rejection_hidden_parts integer not null default 0
         check (rejection_hidden_parts >= 0

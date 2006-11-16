@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.49 2006-11-14 18:21:15 matthew Exp $
+# $Id: Page.pm,v 1.50 2006-11-16 10:36:16 matthew Exp $
 #
 
 package Petitions::Page;
@@ -289,6 +289,7 @@ sub reject_box ($$) {
         1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
         2048 => 'Identical to an existing petition',
         4096 => 'Outside the remit or powers of the Prime Minister and Government',
+	8192 => 'False name or address information',
         # XXX also change in phplib/page.php
     );
 
