@@ -5,20 +5,16 @@ Petition reference: <?=$values['ref']?> (<?=$values['id']?>)
 Submitted: <?=$values['creationtime']?>
 
 <?=$values['creator_name']?>
-<?=$values['creator_email']?>
-<?=$values['address']?>
 
------
+<?=$values['creator_email']?>
+
+<?=$values['address']?>
 
 We the undersigned petition the Prime Minister to:
 '<?=$values['content']?>'
 
------
-
 The petition's details read:
 <?=$values['detail']?>
-
------
 
 <?=$values['comments_blurb']?>
 
