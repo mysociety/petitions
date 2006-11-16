@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.28 2006-11-15 17:18:03 matthew Exp $
+// $Id: index.php,v 1.29 2006-11-16 14:54:34 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -42,7 +42,6 @@ and to deliver your petition directly to Downing Street.</p>
 $recent = db_getAll("select ref, content from petition
     where status = 'live'
     order by laststatuschange desc limit 5");
-# XXX: Creation time is order of creation, not order of going live...
 $c = 1;
 foreach ($recent as $petition) {
     print '<li';
@@ -72,7 +71,6 @@ $recent = db_getAll("
     from petition
     where status = 'live'
     order by signers desc limit 5");
-# XXX: Creation time is order of creation, not order of going live...
 $c = 1;
 foreach ($recent as $petition) {
     print '<li';

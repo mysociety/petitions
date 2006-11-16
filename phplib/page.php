@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.19 2006-10-24 15:51:43 francis Exp $
+// $Id: page.php,v 1.20 2006-11-16 14:54:33 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -147,7 +147,7 @@ function rss_header($title, $description, $params) {
 >
 
 <channel rdf:about="<?=$main_page?>">
-<title><?=$title?> - Number 10 E-Petitions</title>
+<title>Number 10 E-Petitions - <?=$title?></title>
 <link><?=$main_page?></link>
 <description><?=$description?></description>
 

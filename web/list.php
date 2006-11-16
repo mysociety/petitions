@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.23 2006-11-15 17:53:45 matthew Exp $
+// $Id: list.php,v 1.24 2006-11-16 14:54:34 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -17,7 +17,7 @@ define('PAGE_SIZE', 50);
 
 $err = importparams(
             array('offset', '/^(0|[1-9]\d*)$/', '', 0),
-            array('sort', '/^(content|deadline|name|ref|creationtime|laststatuschange)\/?$/', '', 'default'),
+            array('sort', '/^(content|deadline|name|signers|ref|creationtime|laststatuschange)\/?$/', '', 'default'),
             array('type', '/^[a-z_]*$/', '', 'open')
         );
 if ($err) {
@@ -27,7 +27,7 @@ if ($err) {
 $rss = get_http_var('rss') ? true : false;
 
 // Strip any trailing '/'.
-$original_sort = preg_replace("#/$#", "", $q_sort);
+$q_sort = preg_replace("#/$#", "", $q_sort);
 if ($q_type == 'closed') {
     $open = '<';
     $status = 'finished';
@@ -53,7 +53,7 @@ if ($ntotal < $q_offset) {
 }
 
 $sort_phrase = $q_sort;
-if ($q_sort == 'laststatuschange' || $q_sort == 'created' || $q_sort == 'whensucceeded') {
+if ($q_sort == 'laststatuschange' || $q_sort == 'signers') {
     $sort_phrase .= " DESC";
 }
 $sql_params[] = PAGE_SIZE;
@@ -97,30 +97,31 @@ if (!$rss) {
 <?
 #    print "<h2>$heading</h2>";
 
+    $qs_sort = ($q_sort && $q_sort != 'laststatuschange') ? 'sort=' . $q_sort : '';
+    $qs_off = ($q_offset) ? 'offset=' . $q_offset : '';
+
     $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
         'rejected' => 'Rejected petitions');
-    $views = "";
+    $views = '';
     $b = false;
     foreach ($viewsarray as $s => $desc) {
         if ($b) $views .= ' &nbsp; ';
         if ($q_type == $s)
             $views .= '<span>' . $desc . '</span>';
         else
-            $views .= "<a href=\"/list/$s\">$desc</a>";
+            $views .= "<a href=\"/list/$s" . ($qs_sort ? "?$qs_sort" : '') . "\">$desc</a>";
         $b = true;
     }
 
-    $sort = ($q_sort) ? '&amp;sort=' . $q_sort : '';
-    $off = ($q_offset) ? '&amp;offset=' . $q_offset : '';
     $prev = '<span class="greyed">Previous page</span>'; $next = '<span class="greyed">Next page</span>';
     if ($q_offset > 0) {
         $n = $q_offset - PAGE_SIZE;
         if ($n < 0) $n = 0;
-        $prev = "<a href=\"?offset=$n$sort\">Previous page</a>";
+        $prev = "<a href=\"?offset=$n" . ($qs_sort ? "&amp;$qs_sort" : '') . '">Previous page</a>';
     }
     if ($q_offset + PAGE_SIZE < $ntotal) {
         $n = $q_offset + PAGE_SIZE;
-        $next = "<a href=\"?offset=$n$sort\">Next page</a>";
+        $next = "<a href=\"?offset=$n" . ($qs_sort ? "&amp;$qs_sort" : '') . '">Next page</a>';
     }
     $navlinks = '<p id="petition_view_tabs">' . $views . "</p>\n";
     if ($ntotal > 0) {
@@ -128,13 +129,20 @@ if (!$rss) {
         $arr = array(
                      'laststatuschange'=>_('Start date'), 
                      'deadline'=>_('Deadline'), 
-                     );
+	);
+	if ($status != 'rejected') {
+		$arr['signers'] = _('Signatures');
+	}
         # Removed as not useful (search is better for these): 'ref'=>'Short name',
         # 'title'=>'Title', 'name'=>'Creator'
         $b = false;
         foreach ($arr as $s => $desc) {
             if ($b) $navlinks .= ' | ';
-            if ($q_sort != $s) $navlinks .= "<a href=\"?sort=$s$off\">$desc</a>"; else $navlinks .= $desc;
+	    $qs = array();
+	    if ($s != 'laststatuschange') $qs[] = "sort=$s";
+	    if ($qs_off) $qs[] = $qs_off;
+	    $qs = join('&amp;', $qs);
+            if ($q_sort != $s) $navlinks .= "<a href=\"?$qs\">$desc</a>"; else $navlinks .= $desc;
             $b = true;
         }
         $navlinks .= '</p> <p align="center">';
