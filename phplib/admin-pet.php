@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.36 2006-11-16 09:33:03 matthew Exp $
+ * $Id: admin-pet.php,v 1.37 2006-11-16 09:36:21 matthew Exp $
  * 
  */
 
@@ -313,7 +313,7 @@ class ADMIN_PAGE_PET_MAIN {
         print '<br>Organisation: ';
         print $pdata['organisation'] ? htmlspecialchars($pdata['organisation']) : 'None given';
 	if ($pdata['org_url'])
-            print ', <a href="' . htmlspecialchars($pdata['org_url']) . '">' . $htmlspecialchars($pdata['org_url']) . '</a>';
+            print ', <a href="' . htmlspecialchars($pdata['org_url']) . '">' . htmlspecialchars($pdata['org_url']) . '</a>';
         print "<br>Created: " . prettify($pdata['creationtime']);
         print "<br>Deadline: <b>" . prettify($pdata['deadline']) . "</b> (" . htmlspecialchars($pdata['rawdeadline']) . ')';
         print '<br>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
