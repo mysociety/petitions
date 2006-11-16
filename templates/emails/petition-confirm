@@ -3,7 +3,7 @@ Subject: Confirm your new petition to the Prime Minister - '<?=$values['content'
 Please click on the link below to confirm that you wish the Number 10
 website to display the petition at the bottom of this email in your name.
 
-<?=$values['url']?>
+<<?=$values['url']?>>
 
 Your petition reads:
 
