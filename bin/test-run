@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.40 2006-11-16 09:48:35 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.41 2006-11-16 12:29:36 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -261,7 +261,7 @@ sub do_main_test {
 
     comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(99).'" <'.email_n(99).'>%');
-    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
+    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*<(https?://.*)>$#m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
     $wth->browser_get($confirm_petition_link);
@@ -313,7 +313,7 @@ sub do_main_test {
 
         comment("Find confirmation email");
         my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
-        die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*$)#m);
+        die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*<(https?://.*)>$#m);
         my $confirm_signature_link = $1;
         if ($signer_no == 1490) {
             comment("Confirm signature by administraor");
@@ -373,7 +373,7 @@ sub do_main_test {
                 }, button => 'submit') or die "Failed to submit sign petition";
     $wth->browser_check_contents("We've sent you an email");
     my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1501).'" <'.email_n(1501).'>%Please click on the link below to confirm your signature%');
-    die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*$)#m);
+    die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*<(https?://.*)>$#m);
     my $partial_signup_confirm = $1;
     comment("Partial signup confirm link: $partial_signup_confirm");
 
@@ -511,7 +511,7 @@ sub do_rejection_test {
 
     comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(44).'" <'.email_n(44).'>%');
-    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
+    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*<(https?://.*)>$#m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
     $wth->browser_get($confirm_petition_link);
@@ -542,7 +542,7 @@ sub do_rejection_test {
     comment("Get rejection message to creator");
     call_send_messages();
     my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%Outside the remit or powers%');
-    die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*(https?://.*$)#m);
+    die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*<(https?://.*)>$#m);
     my $rejection_email_link = $1;
     comment("Rejection resubmit link: $rejection_email_link");
    
@@ -585,7 +585,7 @@ sub do_rejection_test {
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
     $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%clear what the petition%');
-    die "Rejection email link found when it should not have been\n" if ($rejection_email =~ m#^\s*(https?://.*$)#m);
+    die "Rejection email link found when it should not have been\n" if ($rejection_email =~ m#^\s*<(https?://.*)>$#m);
 
     comment("Check appears on rejection page");
     $wth->browser_get($base_url);
@@ -637,7 +637,7 @@ sub do_timeout_test {
 
     comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(55).'" <'.email_n(55).'>%');
-    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
+    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*<(https?://.*)>$#m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
     $wth->browser_get($confirm_petition_link);
@@ -671,7 +671,7 @@ sub do_timeout_test {
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
     my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(55).'%Offensive language%');
-    die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*(https?://.*$)#m);
+    die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*<(https?://.*)>$#m);
     my $rejection_email_link = $1;
     comment("Rejection resubmit link: $rejection_email_link");
     # Do not resubmit
@@ -753,7 +753,7 @@ sub do_resubmit_test {
 
     comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(504).'" <'.email_n(504).'>%');
-    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*(https?://.*$)#m);
+    die "Confirm petition email link not found\n" if ($confirm_email !~ m#^\s*<(https?://.*)>$#m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
     $wth->browser_get($confirm_petition_link);
@@ -784,7 +784,7 @@ sub do_resubmit_test {
     comment("Get rejection message to creator");
     call_send_messages();
     my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(504).'%Outside the remit or powers%');
-    die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*(https?://.*$)#m);
+    die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*<(https?://.*)>$#m);
     my $rejection_email_link = $1;
     comment("Rejection resubmit link: $rejection_email_link");
    
