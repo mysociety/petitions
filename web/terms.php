@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.6 2006-10-24 11:11:56 matthew Exp $
+// $Id: terms.php,v 1.7 2006-11-16 13:08:44 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -48,9 +48,13 @@ the Civil Service Code, you must not include: </p>
 
 <ul>
 <li>Party political material. The Downing Street website is a
-Government site. Party political content is not appropriate, under the
-normal rules governing the Civil Service.  The Civil Service Code can
-be viewed at <a href="http://www.civilservice.gov.uk/civilservicecode">www.civilservice.gov.uk/civilservicecode</a>.</li>
+Government site. Party political content cannot be published, under the
+<a href="http://www.civilservice.gov.uk/civilservicecode">normal rules governing the Civil Service</a>.
+Please note, this does not mean it is not permissible to petition on
+controversial issues. For example, this party political petition
+would not be permitted: "We petition the PM to change his party's policy on education",
+but this non-party political version would be:
+"We petition the PM to change the government's policy on education".</li>
 <li>false or defamatory statements;</li>
 <li>information protected by an injunction or court order (for
 example, the identities of children in custody disputes);</li>
