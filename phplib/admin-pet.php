@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.35 2006-11-15 17:18:03 matthew Exp $
+ * $Id: admin-pet.php,v 1.36 2006-11-16 09:33:03 matthew Exp $
  * 
  */
 
@@ -306,91 +306,103 @@ class ADMIN_PAGE_PET_MAIN {
 #        $petition_obj->render_box(array('showdetails' => true));
 
         print "<h2>Petition '<a href=\"" . OPTION_BASE_URL . '/' .
-            $petition_obj->ref() . "\">" . $pdata['ref'] . "</a>'";
+            $petition_obj->ref() . '/">' . $pdata['ref'] . "</a>'";
         print "</h2>";
 
         print "<p>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
         print '<br>Organisation: ';
-        if ($pdata['org_url']) print '<a href="' . htmlspecialchars($pdata['org_url']) . '">';
         print $pdata['organisation'] ? htmlspecialchars($pdata['organisation']) : 'None given';
-        if ($pdata['org_url']) print '</a>';
+	if ($pdata['org_url'])
+            print ', <a href="' . htmlspecialchars($pdata['org_url']) . '">' . $htmlspecialchars($pdata['org_url']) . '</a>';
         print "<br>Created: " . prettify($pdata['creationtime']);
         print "<br>Deadline: <b>" . prettify($pdata['deadline']) . "</b> (" . htmlspecialchars($pdata['rawdeadline']) . ')';
         print '<br>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
         print '<br>Title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
-        print '<p>Details of petition: ' . htmlspecialchars($pdata['detail']);
+        print '<br>Details of petition: ';
+	print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
+	print '</p>';
 
-        // Signers
-        print "<h2>Signers (".$pdata['signers'].")</h2>";
-        $query = "SELECT signer.name as signname, signer.email as signemail,
+	if ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted') {
+            print '
+<form name="petition_admin_approve" method="post" action="'.$this->self_link.'">
+<p align="center">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<input type="submit" name="approve" value="Approve">
+<input type="submit" name="reject" value="Reject">
+</p>
+</form>';
+	} else {
+            // Signers
+            print "<h2>Signers (".$pdata['signers'].")</h2>";
+            $query = "SELECT signer.name as signname, signer.email as signemail,
                          date_trunc('second',signtime) AS signtime,
                          signer.id AS signid, emailsent
-                   FROM signer
-                   WHERE showname AND petition_id=? AND emailsent in ('sent', 'confirmed')";
-        if ($sort=='t') $query .= ' ORDER BY signtime DESC';
-        else $query .= ' ORDER BY signname DESC';
-        if ($list_limit) 
-            $query .= " LIMIT $list_limit";
-        $q = db_query($query, $pdata['id']);
-        $out = array();
-        $c = 0;
-        while ($r = db_fetch_array($q)) {
-            $c++;
-            $r = array_map('htmlspecialchars', $r);
-            $e = array();
-            if ($r['signname'])
-                array_push($e, $r['signname']);
-            if ($r['signemail'])
-                array_push($e, $r['signemail']);
-            $e = join("<br>", $e);
-            $out[$e] = '<td>'.$e.'</td>';
-            $out[$e] .= '<td>'.prettify($r['signtime']).'</td>';
+                       FROM signer
+                       WHERE showname AND petition_id=? AND emailsent in ('sent', 'confirmed')";
+            if ($sort=='t') $query .= ' ORDER BY signtime DESC';
+            else $query .= ' ORDER BY signname DESC';
+            if ($list_limit) 
+                $query .= " LIMIT $list_limit";
+            $q = db_query($query, $pdata['id']);
+            $out = array();
+            $c = 0;
+            while ($r = db_fetch_array($q)) {
+                $c++;
+                $r = array_map('htmlspecialchars', $r);
+                $e = array();
+                if ($r['signname'])
+                    array_push($e, $r['signname']);
+                if ($r['signemail'])
+                    array_push($e, $r['signemail']);
+                $e = join("<br>", $e);
+                $out[$e] = '<td>'.$e.'</td>';
+                $out[$e] .= '<td>'.prettify($r['signtime']).'</td>';
 
-            $out[$e] .= '<td>';
-            $out[$e] .= '<form name="removesignerform'.$c.'" method="post" action="'.$this->self_link.'">';
-            if ($r['emailsent'] == 'confirmed')
+                $out[$e] .= '<td>';
+                $out[$e] .= '<form name="removesignerform'.$c.'" method="post" action="'.$this->self_link.'">';
+                if ($r['emailsent'] == 'confirmed')
                     $out[$e] .= '<input type="hidden" name="remove_signer_id" value="' . $r['signid'] . '"><input type="submit" name="remove_signer" value="Remove signer">';
-            elseif ($r['emailsent'] == 'sent')
+                elseif ($r['emailsent'] == 'sent')
                     $out[$e] .= '<input type="hidden" name="confirm_signer_id" value="' . $r['signid'] . '"><input type="submit" name="confirm_signer" value="Confirm signer">';
-            $out[$e] .= '</form></td>';
-        }
-        if ($sort == 'e') {
-            function sort_by_domain($a, $b) {
-                $aa = stristr($a, '@');
-                $bb = stristr($b, '@');
-                if ($aa==$bb) return 0;
-                return ($aa>$bb) ? 1 : -1;
+                $out[$e] .= '</form></td>';
             }
-            uksort($out, 'sort_by_domain');
-        }
-        if (count($out)) {
-            print '<table border="1" cellpadding="3" cellspacing="0"><tr>';
-            $cols = array('e'=>'Signer', 't'=>'Time');
-            foreach ($cols as $s => $col) {
-                print '<th>';
-                if ($sort != $s) print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;s='.$s.'">';
-                print $col;
-                if ($sort != $s) print '</a>';
-                print '</th>';
+            if ($sort == 'e') {
+                function sort_by_domain($a, $b) {
+                    $aa = stristr($a, '@');
+                    $bb = stristr($b, '@');
+                    if ($aa==$bb) return 0;
+                    return ($aa>$bb) ? 1 : -1;
+                }
+                uksort($out, 'sort_by_domain');
             }
-            print '<th>Action</th>';
-            print '</tr>';
-            $a = 0;
-            foreach ($out as $row) {
-                print '<tr'.($a++%2==0?' class="v"':'').'>';
-                print $row;
+            if (count($out)) {
+                print '<table border="1" cellpadding="3" cellspacing="0"><tr>';
+                $cols = array('e'=>'Signer', 't'=>'Time');
+                foreach ($cols as $s => $col) {
+                    print '<th>';
+                    if ($sort != $s) print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;s='.$s.'">';
+                    print $col;
+                    if ($sort != $s) print '</a>';
+                    print '</th>';
+                }
+                print '<th>Action</th>';
                 print '</tr>';
+                $a = 0;
+                foreach ($out as $row) {
+                    print '<tr'.($a++%2==0?' class="v"':'').'>';
+                    print $row;
+                    print '</tr>';
+                }
+                print '</table>';
+                if ($list_limit && $c >= $list_limit) {
+                    print "<p>... only $list_limit signers shown, "; 
+                    print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';
+                    print ' (do not press if you are Tom, it will crash your computer :)</p>';
+                }
+            } else {
+                print '<p>Nobody has signed up to this petition.</p>';
             }
-            print '</table>';
-            if ($list_limit && $c >= $list_limit) {
-                print "<p>... only $list_limit signers shown, "; 
-                print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';
-                print ' (do not press if you are Tom, it will crash your computer :)</p>';
-            }
-        } else {
-            print '<p>Nobody has signed up to this petition.</p>';
-        }
-        print '<p>';
+	}
         
         // Messages
         print '<h2>Messages</h2>';

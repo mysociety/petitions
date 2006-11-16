@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.38 2006-11-14 18:21:14 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.39 2006-11-16 09:33:03 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -270,7 +270,7 @@ sub do_main_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
+    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition submitted%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -520,7 +520,7 @@ sub do_rejection_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
+    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition submitted%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -646,7 +646,7 @@ sub do_timeout_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
+    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition submitted%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -762,7 +762,7 @@ sub do_resubmit_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition to the Prime Minister%To: '.$contact_email.'%');
+    my $admin_approve_email = $wth->email_get_containing('%Subject: New petition submitted%To: '.$contact_email.'%');
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m#^\s*(http://.*$)#m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
