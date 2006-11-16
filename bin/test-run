@@ -15,7 +15,7 @@
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.39 2006-11-16 09:33:03 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.40 2006-11-16 09:48:35 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -318,6 +318,7 @@ sub do_main_test {
         if ($signer_no == 1490) {
             comment("Confirm signature by administraor");
             $wth->browser_get($admin_approve_link);
+            $wth->browser_follow_link(text_regex => qr/Draft/);
             $wth->browser_check_contents("Petitions and Signers");
             $wth->browser_check_no_contents($petition_text);
             $wth->browser_follow_link(text_regex => qr/Live/);
@@ -348,7 +349,6 @@ sub do_main_test {
     comment("Delete a signer from the administration interface");
     $wth->browser_get($admin_approve_link);
     $wth->browser_check_contents("Petitions and Signers");
-    $wth->browser_check_no_contents($petition_text);
     $wth->browser_follow_link(text_regex => qr/Live/);
     $wth->browser_check_contents($petition_text);
     $wth->browser_follow_link(text_regex => qr/admin/);
