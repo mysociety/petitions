@@ -18,8 +18,10 @@
 # Add expat testing
 # Add search
 # Add search RSS
+# Partially rejected petitions
+# Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.44 2006-11-17 19:46:33 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.45 2006-11-17 20:41:32 francis Exp $';
 
 use strict;
 require 5.8.0;

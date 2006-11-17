@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.42 2006-11-17 17:41:11 matthew Exp $
+ * $Id: admin-pet.php,v 1.43 2006-11-17 20:41:33 francis Exp $
  * 
  */
 
@@ -57,7 +57,7 @@ class ADMIN_PAGE_PET_SEARCH {
             ", array($search, $search));
             $out = '';
             while ($r = db_fetch_array($q)) {
-                $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td>$r[ref]</td>";
+                $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td><a href=\"".OPTION_BASE_URL."/$r[ref]\">$r[ref]</a></td>";
                 $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
                 if ($r['emailsent'] == 'confirmed')
                         $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" name="remove" value="Remove signer">';
