@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.1 2006-11-17 15:54:09 francis Exp $
+// $Id: search.php,v 1.2 2006-11-17 16:28:09 francis Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -72,13 +72,12 @@ function search($search) {
     $petition_select = "SELECT petition.*, '$pet_today' <= petition.deadline AS open,
                         (SELECT count(*) FROM signer
                             WHERE showname and signer.petition_id = petition.id
-                                and signer.emailsent = 'confirmed') AS signers,
-                            message.id as message_id ";
+                                and signer.emailsent = 'confirmed') AS signers ";
 
     // Exact petition reference match
 /*    if (!$rss) {
         $q = db_query("$petition_select FROM petition
-                    WHERE (status = 'open' OR status = 'closed') AND ref ILIKE ?", $search);
+                    WHERE (status = 'live' OR status = 'finished') AND ref ILIKE ?", $search);
         if (db_num_rows($q)) {
             $success = 1;
             $r = db_fetch_array($q);
@@ -92,15 +91,15 @@ function search($search) {
     }
 */
 
-    // Searching for text in petitions - stored in strings $open, $closed printed later
+    // Searching for text in petitions - stored in strings $live, $finished printed later
     $q = db_query($petition_select . ' FROM petition
-                WHERE (status = \'open\' OR status = \'closed\')
+                WHERE (status = \'live\' OR status = \'finished\')
                     AND (content ILIKE \'%\' || ? || \'%\' OR 
                          detail ILIKE \'%\' || ? || \'%\' OR 
                          ref ILIKE \'%\' || ? || \'%\')
                 ORDER BY deadline DESC', array($search, $search, $search));
                     #AND lower(ref) <> ?
-    $closed = ''; $open = '';
+    $finished = ''; $live = '';
     if (db_num_rows($q)) {
         $success = 1;
         while ($r = db_fetch_array($q)) {
@@ -111,21 +110,21 @@ function search($search) {
         
             $text = '<li';
             #if ($c%2) $text .= ' class="a"';
-            $text .= '><a href="/' . $petition['ref'] . '/">';
-            $text .= htmlspecialchars($petition['content']) . '</a> <small>(';
-            $text .= $petition['signers'] . ' signature';
-            $text .= ($petition['signers'] == 1 ? '' : 's') . ')</small></li>';
+            $text .= '><a href="/' . $r['ref'] . '/">';
+            $text .= htmlspecialchars($r['content']) . '</a> <small>(';
+            $text .= $r['signers'] . ' signature';
+            $text .= ($r['signers'] == 1 ? '' : 's') . ')</small></li>';
             $text .= '</li>';
-            $c++; 
+            #$c++; 
 
-            if ($r['status']=='open') {
-                $open .= $text;
-            } elseif ($r['status']=='closed') {
-                $closed .= $text;
+            if ($r['status']=='live') {
+                $live .= $text;
+            } elseif ($r['status']=='finished') {
+                $finished .= $text;
             } else {
                 err('unexpected status type found');
             }
-            if ($rss && $r['status'] == 'open') {
+            if ($rss && $r['status'] == 'live') {
                 $rss_items[] = $petition->rss_entry();
             }
         }
@@ -135,16 +134,16 @@ function search($search) {
     if ($rss)
         return;
 
-    // Open petitions
-    if ($open) {
+    // Live petitions
+    if ($live) {
         print sprintf("<p>"._('Results for <strong>open petitions</strong> matching <strong>%s</strong>:')."</p>", htmlspecialchars($search) );
-        print '<ul>' . $open . '</ul>';
+        print '<ul>' . $live . '</ul>';
     }
 
-    // Closed petitions
-    if ($closed) {
+    // Finished petitions
+    if ($finished) {
         print sprintf("<p>"._('Results for <strong>closed petitions</strong> matching <strong>%s</strong>:')."</p>", htmlspecialchars($search) );
-        print '<ul>' . $closed . '</ul>';
+        print '<ul>' . $finished . '</ul>';
     }
 
     // Signers and creators (NOT person table, as we only search for publically visible names)
