@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.51 2006-11-17 06:34:14 francis Exp $
+# $Id: Page.pm,v 1.52 2006-11-17 14:40:00 matthew Exp $
 #
 
 package Petitions::Page;
@@ -220,14 +220,15 @@ sub sign_box ($$) {
           $q->p( 'You must be a British citizen to sign the petition.'),
           $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
                 $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4) ),
-          $q->p( '<label for="postcode">Your postcode:</label>', 
+          $q->p( '<label for="postcode">UK postcode:</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),
-        $q->p( '<label class="wide" for="overseas">Or, if you don\'t
-have a postcode, and you\'re in an overseas territory, a Crown dependency or in
-the Armed Forces, please select from this list:</label>', 
+        $q->p( '<label class="wide" for="overseas">Or, if you\'re an
+	expatriate, you\'re in an overseas territory, a Crown dependency or in
+the Armed Forces without a postcode, please select from this list:</label>', 
             $q->popup_menu(-name=>'overseas', -id=>'overseas', -values=>[
                 '-- Select --',
+                'Expatriate',
                 'Armed Forces',
                 'Ascension Island',
                 'Bermuda',
