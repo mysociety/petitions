@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.52 2006-11-17 14:40:00 matthew Exp $
+# $Id: Page.pm,v 1.53 2006-11-17 16:10:14 matthew Exp $
 #
 
 package Petitions::Page;
@@ -191,10 +191,21 @@ sub sign_box ($$) {
             or croak "bad ref '$ref' in sign_box";
     }
 
-    $p->{salt} = random_bytes(4);
-    my $buf = RABX::serialise($p);
+    my $safe_p = {
+        deadline => $p->{deadline},
+        'ref' => $p->{ref},
+	organisation => $p->{organisation},
+	org_url => $p->{org_url},
+	name => $p->{name},
+	status => $p->{status},
+	signers => $p->{signers},
+	content => $p->{content},
+	rejection_hidden_parts => $p->{rejection_hidden_parts},
+    };
+    $safe_p->{salt} = random_bytes(4);
+    my $buf = RABX::serialise($safe_p);
     my $ser = encode_base64($buf . hmac_sha1($buf, Petitions::DB::secret()), '');
-    delete($p->{salt});
+    delete($safe_p->{salt});
 
     return
         $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => "/$p->{ref}/sign")
