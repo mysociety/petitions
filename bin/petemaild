@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.65 2006-11-17 13:17:48 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.66 2006-11-17 13:56:49 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1622,12 +1622,21 @@ sub database_child_process ($) {
         }
 
         # See if there are any new signers...
+
+        # Only query for petition info once around the loop.
+        my %petition_cache;
+            # XXX maybe invert order of doing new-signer and new-petition
+            # queries and use the latter to populate the cache?
+
         $st_s->execute($fullscan ? 0 : $max_signer_id);
         $nmessages = 0;
         while (my $s = $st_s->fetchrow_hashref()) {
             # Grab petition info if we don't have it.
-            $p = Petitions::DB::get($s->{petition_id})
-                if (!defined($p) || $p->{id} != $s->{petition_id});
+            if (!defined($p) || $p->{id} != $s->{petition_id}) {
+                $petition_cache{$s->{petition_id}}
+                    ||= Petitions::DB::get($s->{petition_id});
+                $p = $petition_cache{$s->{petition_id}};
+            }
 
             # XXX decide what we're doing about return-path. Possibly we should
             # VERP it.
@@ -2250,4 +2259,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.65 2006-11-17 13:17:48 chris Exp $
+$Id: petemaild,v 1.66 2006-11-17 13:56:49 chris Exp $
