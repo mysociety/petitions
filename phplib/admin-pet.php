@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.37 2006-11-16 09:36:21 matthew Exp $
+ * $Id: admin-pet.php,v 1.38 2006-11-17 05:22:11 francis Exp $
  * 
  */
 
@@ -83,7 +83,7 @@ function petition_admin_perform_actions() {
             $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
             db_query('UPDATE signer set showname = false where id = ?', $signer_id);
             $p = new Petition($petition_id);
-            $p->log_event('Admin hid signer ' . $signer_id, null);
+            $p->log_event('Admin hid signer ' . $signer_id, http_auth_user());
             db_commit();
             print '<p><em>That signer has been removed.</em></p>';
         }
@@ -94,7 +94,7 @@ function petition_admin_perform_actions() {
             $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
             db_query("UPDATE signer set emailsent = 'confirmed' where id = ?", $signer_id);
             $p = new Petition($petition_id);
-            $p->log_event('Admin confirmed signer ' . $signer_id, null);
+            $p->log_event('Admin confirmed signer ' . $signer_id, http_auth_user());
             db_commit();
             print '<p><em>That signer has been confirmed.</em></p>';
         }
@@ -529,7 +529,7 @@ EOF;
                         rejection_hidden_parts = ?,
 			laststatuschange = ms_current_timestamp()
                     WHERE id=?", $categories, $reason, $hide, $id);
-            $p->log_event("Admin rejected petition for the first time. Category $cats_pretty, reason $reason", null);
+            $p->log_event("Admin rejected petition for the first time. Categories: $cats_pretty. Reasons: $reason", http_auth_user());
             $template = 'admin-rejected-once';
             $circumstance = 'rejected-once';
         } elseif ($status == 'resubmitted') {
@@ -541,11 +541,11 @@ EOF;
                         rejection_hidden_parts = ?,
 			laststatuschange = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
-            $p->log_event("Admin rejected petition for the second time. Category $cats_pretty, reason $reason", null);
+            $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason", http_auth_user());
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
         } else {
-            $p->log_event("Bad rejection", null);
+            $p->log_event("Bad rejection", http_auth_user());
             db_commit();
             err("Should only be able to reject petitions in draft or resubmitted state");
         }
@@ -561,7 +561,7 @@ EOF;
 
         $status = $p->status();
         if ($status != 'finished') {
-            $p->log_event("Bad response state", null);
+            $p->log_event("Bad response state", http_auth_user());
             db_commit();
             err("Should only be able to respond to petitions in finished state");
             return;
@@ -592,7 +592,7 @@ EOF;
         }
 
         if ($q_submit && !sizeof($errors)) {
-            $p->log_event("Admin responded to petition", null);
+            $p->log_event("Admin responded to petition", http_auth_user());
             /* User mail must be submitted with \n line endings. */
             $q_message_body = str_replace("\r\n", "\n", $q_message_body);
             /* Add footer with link */
