@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.56 2006-11-16 23:22:41 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.57 2006-11-17 10:52:48 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -63,12 +63,23 @@ sub do_output ($$) {
     if ($stderronly) {
         STDERR->print("petemaild: $prio: ", $str, "\n");
     } else {
-        print_log($prio, $str);
+        print_log($prio ne 'noise' ? 'debug' : $prio, $str);
     }
 }
 
+# signal handler to permit changing of verbose level on-the-fly.
+my $changeverboselevel = 0;
+$SIG{USR1} = sub { ++$changeverboselevel; };
+
 sub print ($@) {
     my $prio = shift;
+
+    if ($changeverboselevel) {
+        $verboselevel = ($verboselevel + $changeverboselevel) % 3;
+        do_output('info', "verbose level now $verboselevel");
+        $changeverboselevel = 0;
+    }
+    
     if ($verboselevel < 2) {
         return if ($prio eq 'noise');
         return if ($verboselevel < 1 && $prio eq 'debug');
@@ -79,13 +90,7 @@ sub print ($@) {
 
 sub printf ($$;@) {
     my $prio = shift;
-    if ($verboselevel < 2) {
-        return if ($prio eq 'noise');
-        return if ($verboselevel < 1 && $prio eq 'debug');
-        return if ($verboselevel < 0 && $prio eq 'info');
-    }
-    my $fmt = shift;
-    do_output($prio, sprintf($fmt, @_));
+    Log::print($prio, sprintf(@_));
 }
 
 #
@@ -2169,4 +2174,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.56 2006-11-16 23:22:41 matthew Exp $
+$Id: petemaild,v 1.57 2006-11-17 10:52:48 chris Exp $
