@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.63 2006-11-17 12:32:02 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.64 2006-11-17 13:17:00 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1134,11 +1134,11 @@ sub post_select ($$$) {
             # anything which causes us to abandon messages before attempting
             # delivery does result in the host being marked bad. Maybe review
             # this decision later.
-            $bad = "some messages went without a delivery attempt in " . $smtp->id()
+            $bad = "some messages went without a delivery attempt in S" . $smtp->id()
                 if ($smtp->notattempted() > 0);
         } elsif ($smtp->state() == Sender::STATE_BAD) {
             # Any transport error is regarded as making the host "bad".
-            $bad = "a transport error occured (@{[ $smtp->error() ]} in " . $smtp->id();
+            $bad = "a transport error occured (@{[ $smtp->error() ]}) in S" . $smtp->id();
         } else {
             push(@ss, $smtp);
         }
@@ -2250,4 +2250,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.63 2006-11-17 12:32:02 chris Exp $
+$Id: petemaild,v 1.64 2006-11-17 13:17:00 chris Exp $
