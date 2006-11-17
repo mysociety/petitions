@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.57 2006-11-17 10:52:48 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.58 2006-11-17 10:54:40 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -90,7 +90,8 @@ sub print ($@) {
 
 sub printf ($$;@) {
     my $prio = shift;
-    Log::print($prio, sprintf(@_));
+    my $fmt = shift;
+    Log::print($prio, sprintf($fmt, @_));
 }
 
 #
@@ -2174,4 +2175,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.57 2006-11-17 10:52:48 chris Exp $
+$Id: petemaild,v 1.58 2006-11-17 10:54:40 chris Exp $
