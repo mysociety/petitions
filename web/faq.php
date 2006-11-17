@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.9 2006-10-12 00:02:44 matthew Exp $
+// $Id: faq.php,v 1.10 2006-11-17 12:06:24 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -119,6 +119,17 @@ and as trustworthy as possible.
 <p>
 We are offering this service to enable as many people as possible to make their views known to the Government. The service will enable smaller groups who may not have the funds to set up a website to still collect signatures online. It also will enable us to respond directly to those who have signed the petition online via email.
 </p>
+</dd>
+
+<dt>13. Can I make my own petitions site?</dt>
+
+<dd>Yes, the software behind this petitions site is open source, and
+available to you under the Affero GPL software license. You can
+<a
+href="https://secure.mysociety.org/cvstrac/dir?d=mysociety">download the source code</a>
+(look under 'pet') and help us develop it. You're welcome to use
+it in your own projects, although you must also make available
+the source code to any such projects.
 </dd>
 
 </dl>
