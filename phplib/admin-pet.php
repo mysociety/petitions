@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.40 2006-11-17 05:53:30 francis Exp $
+ * $Id: admin-pet.php,v 1.41 2006-11-17 05:55:53 francis Exp $
  * 
  */
 
@@ -447,7 +447,7 @@ class ADMIN_PAGE_PET_MAIN {
         }
 
         // Admin actions
-        print '<h2>Administrator actions</h2>';
+        print '<h2>Administrator events</h2>';
         $q = db_query('select * from petition_log 
                 where petition_id = ? order by order_id', $pdata['id']);
 
@@ -464,10 +464,10 @@ class ADMIN_PAGE_PET_MAIN {
             
             print "</tr>\n";
         }
-        print "</table>";
         if ($n == 0) {
-            print "<tr><td colspan=\"3\">No messages yet.</td></tr>";
+            print "<tr><td colspan=\"3\">No events yet.</td></tr>";
         }
+        print "</table>";
 
 #        print '<h2>Actions</h2>';
 #        print '<form name="sendannounceform" method="post" action="'.$this->self_link.'"><input type="hidden" name="send_announce_token_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="send_announce_token" value="Send announce URL to creator"></form>';
