@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.50 2006-11-16 10:36:16 matthew Exp $
+# $Id: Page.pm,v 1.51 2006-11-17 06:34:14 francis Exp $
 #
 
 package Petitions::Page;
@@ -223,11 +223,12 @@ sub sign_box ($$) {
           $q->p( '<label for="postcode">Your postcode:</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),
-        $q->p( '<label class="wide" for="overseas">Or, if you\'re
-in an overseas territory or Crown dependency and don\'t have a postcode,
-please select it from the list:</label>', 
+        $q->p( '<label class="wide" for="overseas">Or, if you don\'t
+have a postcode, and you\'re in an overseas territory, a Crown dependency or in
+the Armed Forces, please select from this list:</label>', 
             $q->popup_menu(-name=>'overseas', -id=>'overseas', -values=>[
                 '-- Select --',
+                'Armed Forces',
                 'Ascension Island',
                 'Bermuda',
                 'British Antarctic Territory',
