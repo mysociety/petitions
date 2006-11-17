@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.68 2006-11-17 15:11:46 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.69 2006-11-17 15:32:13 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -583,6 +583,7 @@ sub get_message_to_send ($) {
     $self->{message} = shift(@{$self->{messages}});
     if (defined($self->{message})) {
         $self->log('debug', "processing message ", $self->{message}->id());
+        return 1;
     } else {
         $self->log('debug', "no more messages to send");
         return 0;
@@ -1113,8 +1114,8 @@ Log::print('debug', "     ... but cannot find any valid host");
 
     # Create new sessions for each host.
     foreach my $host (keys %newsessions) {
-        Log::print('info', "creating sender for $host to send @{[ scalar(@{$newsessions{$host}}) ]} messages");
         my $s = new Sender($host, $newsessions{$host});
+        Log::print('info', "created sender S@{[ $s->id() ]} for $host to send @{[ scalar(@{$newsessions{$host}}) ]} messages");
         push(@{$self->{ss}}, $s);
     }
 }
@@ -2262,4 +2263,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.68 2006-11-17 15:11:46 chris Exp $
+$Id: petemaild,v 1.69 2006-11-17 15:32:13 chris Exp $
