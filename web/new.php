@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.43 2006-11-17 16:27:05 matthew Exp $
+// $Id: new.php,v 1.44 2006-11-17 16:32:07 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -299,7 +299,7 @@ function petition_form_you($data = array(), $errors = array()) {
             textarea($name, $data[$name], 30, 4, $errors);
         elseif ($name == 'overseas') { ?>
 
-<label for="overseas">Or, if you're an
+<p><label for="overseas">Or, if you're an
 expatriate, you're in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>
 <select name="overseas" id="overseas">
@@ -309,7 +309,7 @@ the Armed Forces without a postcode, please select from this list:</label>
                     print ' selected="selected"';
                 print ">$opt</option>";
             } ?>
-</select>
+</select></p>
         <?
         } else {
             $size = 20;
@@ -326,7 +326,8 @@ the Armed Forces without a postcode, please select from this list:</label>
         if ($name == 'org_url' || $name == 'organisation')
             print " (optional)";
 
-        print '</p>';
+        if (is_string($desc))
+            print '</p>';
     }
 
     nextprevbuttons('tostepmain', null, 'tosteppreview', null);
