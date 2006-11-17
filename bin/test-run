@@ -14,8 +14,9 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 #
+# TODO: Add expat testing
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.42 2006-11-17 05:22:41 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.43 2006-11-17 16:27:04 matthew Exp $';
 
 use strict;
 require 5.8.0;

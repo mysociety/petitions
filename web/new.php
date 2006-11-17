@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.42 2006-11-16 10:30:06 matthew Exp $
+// $Id: new.php,v 1.43 2006-11-17 16:27:05 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -113,6 +113,8 @@ function petition_form_submitted() {
     # Step 2 fixes
     if (array_key_exists('name', $data) && $data['name']==_('<Enter your name>')) 
         $data['name'] = '';
+    if (array_key_exists('overseas', $data) && $data['overseas']=='-- Select --') 
+        $data['overseas'] = '';
 
     # Step 2, your details
     if (get_http_var('tostepyou')) {
@@ -258,7 +260,25 @@ function petition_form_you($data = array(), $errors = array()) {
             'name'  =>          _('Your name'),
             'organisation' =>   _('Organisation'),
             'address' =>        _('Address'),
-            'postcode' =>       _('Postcode'),
+            'postcode' =>       _('UK postcode'),
+            'overseas' =>         array(
+                '-- Select --',
+                'Expatriate',
+                'Armed Forces',
+                'Ascension Island',
+                'Bermuda',
+                'British Antarctic Territory',
+                'Cayman Islands',
+                'Channel Islands',
+                'Falkland Islands',
+                'Gibraltar',
+                'Isle of Man',
+                'Montserrat',
+                'St Helena',
+                'S. Georgia and the S. Sandwich Islands',
+                'Tristan da Cunha',
+                'Turks and Caicos Islands',
+            ),
             'telephone' =>      _('Telephone number'),
             'org_url' =>        _('URL of campaign/organisation')
         );
@@ -269,14 +289,29 @@ function petition_form_you($data = array(), $errors = array()) {
     }
 
     foreach ($fields as $name => $desc) {
-        printf('<p><strong>%s:</strong>', htmlspecialchars($desc));
+        if (is_string($desc))
+            printf('<p><strong>%s:</strong> ', htmlspecialchars($desc));
 
         if (!array_key_exists($name, $data))
             $data[$name] = '';
         
         if ($name == 'address')
             textarea($name, $data[$name], 30, 4, $errors);
-        else {
+        elseif ($name == 'overseas') { ?>
+
+<label for="overseas">Or, if you're an
+expatriate, you're in an overseas territory, a Crown dependency or in
+the Armed Forces without a postcode, please select from this list:</label>
+<select name="overseas" id="overseas">
+<?          foreach ($desc as $opt) {
+                print '<option';
+                if ($opt == $data['overseas'])
+                    print ' selected="selected"';
+                print ">$opt</option>";
+            } ?>
+</select>
+        <?
+        } else {
             $size = 20;
             if ($name == 'postcode')
                 $size = 10;
@@ -379,13 +414,19 @@ function step_you_error_check($data) {
     if (!validate_email($data['email'])) $errors['email'] = _('Please enter a valid email address');
     if (isset($data['email']) && isset($data['email2']) && $data['email'] != $data['email2'])
         $errors['email2'] = 'Please make sure your email addresses match';
-    if (!validate_postcode($data['postcode'])) $errors['postcode'] = _('Please enter a valid postcode');
+    if ($data['postcode'] && !validate_postcode($data['postcode']))
+        $errors['postcode'] = _('Please enter a valid postcode');
     if (!preg_match('#\d#', $data['telephone']))
         $errors['telephone'] = 'Please enter a valid telephone number';
+
+    if (!$data['postcode'] && !$data['overseas'])
+        $errors['postcode'] = 'Please enter a valid postcode or choose an option from the drop-down menu';
+    if ($data['postcode'] && $data['overseas'])
+        $errors['postcode'] = 'Please enter a valid postcode OR choose an option from the drop-down menu';
+
     $vars = array(
         'name' => 'name',
         'address' => 'postal address',
-        'postcode' => 'postcode',
         'telephone' => 'phone number',
         'email' => 'email address',
     );
@@ -428,7 +469,11 @@ longer be valid.
 <li>Organisation: <strong><?=$data['organisation'] ?></strong></li>
 <li>URL: <strong><?=$data['org_url'] ?></strong></li>
 <li>Address: <strong><?=$data['address'] ?></strong></li>
+<? if ($data['postcode']) { ?>
 <li>Postcode: <strong><?=$data['postcode'] ?></strong></li>
+<? } elseif ($data['overseas']) { ?>
+<li><strong><?=$data['overseas'] ?></strong></li>
+<? } ?>
 <li>Telephone: <strong><?=$data['telephone'] ?></strong></li>
 </ul>
 
@@ -505,6 +550,10 @@ function petition_create($data) {
     $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
     $data['deadline'] = $data['deadline_details']['iso'];
 
+    # One of postcode and overseas must be null, but normally passed around as empty strings
+    if ($data['postcode']) $data['overseas'] = null;
+    else $data['postcode'] = null;
+
     if (array_key_exists('token', $data)) {
         /* Resubmitted petition. */
         list($what, $id) = token_check($data['token']);
@@ -514,7 +563,7 @@ function petition_create($data) {
                     detail = ?, content = ?,
                     deadline = ?, rawdeadline = ?,
                     name = ?, ref = ?, organisation = ?,
-                    postcode = ?, telephone = ?, org_url = ?,
+                    postcode = ?, overseas = ?, telephone = ?, org_url = ?,
                     comments = ?,
                     status = 'resubmitted',
                     laststatuschange = ms_current_timestamp()
@@ -522,7 +571,7 @@ function petition_create($data) {
                 $data['detail'], $data['pet_content'],
                 $data['deadline'], $data['rawdeadline'],
                 $data['name'], $data['ref'], $data['organisation'],
-                $data['postcode'], $data['telephone'], $data['org_url'],
+                $data['postcode'], $data['overseas'], $data['telephone'], $data['org_url'],
                 $data['comments'], $id);
 
         /* Send the admins an email about it. */
@@ -551,7 +600,7 @@ function petition_create($data) {
                         deadline, rawdeadline,
                         email, name, ref, 
                         organisation, address,
-                        postcode, telephone, org_url,
+                        postcode, overseas, telephone, org_url,
                         comments, creationtime, 
                         status, laststatuschange
                     ) values (
@@ -559,7 +608,7 @@ function petition_create($data) {
                         ?, ?,
                         ?, ?, ?, 
                         ?, ?,
-                        ?, ?, ?,
+                        ?, ?, ?, ?,
                         ?, ms_current_timestamp(), 
                         'unconfirmed', ms_current_timestamp()
                     )",
@@ -567,7 +616,7 @@ function petition_create($data) {
                     $data['deadline'], $data['rawdeadline'],
                     $data['email'], $data['name'], $data['ref'],
                     $data['organisation'], $data['address'],
-                    $data['postcode'], $data['telephone'], $data['org_url'],
+                    $data['postcode'], $data['overseas'], $data['telephone'], $data['org_url'],
                     $data['comments']);
             db_commit();
         }

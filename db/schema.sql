@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.35 2006-11-16 10:36:16 matthew Exp $
+-- $Id: schema.sql,v 1.36 2006-11-17 16:27:04 matthew Exp $
 --
 
 -- global_seq
@@ -76,7 +76,8 @@ create table petition (
     name text not null,
     organisation text not null,
     address text not null,
-    postcode text not null,
+    postcode text,
+    overseas text,
     telephone text not null,
     org_url text not null,
 
@@ -124,7 +125,12 @@ create table petition (
     check ((rejection_second_categories = 0
                 and rejection_second_reason is null)
             or (rejection_second_categories <> 0
-                and rejection_second_reason is not null))
+                and rejection_second_reason is not null)),
+    check (
+        (postcode is not null and overseas is null)
+        or (postcode is null and overseas is not null)
+    )
+
 );
 
 create unique index petition_ref_idx on petition(ref);
