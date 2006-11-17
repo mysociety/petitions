@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.66 2006-11-17 13:56:49 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.67 2006-11-17 15:10:18 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -341,11 +341,14 @@ sub new ($$$) {
 sub log ($$@) {
     my Sender $self = shift;
     my $prio = shift;
-    unshift(@_, "S", $self->id(), ": ");
-    # add information about where we're connecting and what message we're delivering
-    unshift(@_, $self->{target});
-    unshift(@_, "deliv M", $self->{message}->id()) if ($self->{message});
-    unshift(@_, ": ");
+    my $tag;
+    if ($self->{message}) {
+        $tag = sprintf('S%s(%s, M%s): ', $self->id(), $self->target(), $self->{message}->id());
+    } else {
+        $tag = sprintf('S%s(%s): ', $self->id(), $self->target());
+    }
+    
+    unshift(@_, $tag);
     Log::print($prio, @_);
 }
 
@@ -2259,4 +2262,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.66 2006-11-17 13:56:49 chris Exp $
+$Id: petemaild,v 1.67 2006-11-17 15:10:18 chris Exp $
