@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.39 2006-11-17 05:51:22 francis Exp $
+ * $Id: admin-pet.php,v 1.40 2006-11-17 05:53:30 francis Exp $
  * 
  */
 
@@ -444,6 +444,29 @@ class ADMIN_PAGE_PET_MAIN {
         }
         if ($n == 0) {
             print "No messages yet.";
+        }
+
+        // Admin actions
+        print '<h2>Administrator actions</h2>';
+        $q = db_query('select * from petition_log 
+                where petition_id = ? order by order_id', $pdata['id']);
+
+        print '<table border="1" cellpadding="3" cellspacing="0">';
+        $n = 0;
+        print "<tr><th>Date/time</th><th>Event</th><th>Administrator</th></tr>\n";
+        while ($r = db_fetch_array($q)) {
+            print "<tr>";
+            $n++;
+
+            print "<td>". prettify(substr($r['whenlogged'], 0, 19)) . "</td>";
+            print "<td>". $r['message'] . "</td>";
+            print "<td>". ($r['editor'] ? $r['editor'] : "unknown"). "</td>";
+            
+            print "</tr>\n";
+        }
+        print "</table>";
+        if ($n == 0) {
+            print "<tr><td colspan=\"3\">No messages yet.</td></tr>";
         }
 
 #        print '<h2>Actions</h2>';
