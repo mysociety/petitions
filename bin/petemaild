@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.60 2006-11-17 11:35:40 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.61 2006-11-17 12:05:50 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -836,18 +836,26 @@ package Queue;
 use Carp;
 use IO::Select;
 
-use fields qw(messages finished badhosts r ss lastcheckedqueue);
+use fields qw(messages finished badhosts baddomains r ss lastcheckedqueue);
 
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
+
 # How many simultaneous SMTP connections we make to any given host.
 use constant MAX_HOST_SESSIONS => 5;
+
 # How many messages we attempt to deliver in a single session.
 use constant MAX_PER_SESSION => 20;
+
 # Minimum interval between discovering a host is "bad" and checking again.
 use constant MIN_HOST_BAD_INTERVAL => 15;
 # Maximum interval.
 use constant MAX_HOST_BAD_INTERVAL => 1800;
+
+# Minimum interval between failure to resolve a domain and trying it again.
+use constant MIN_DOMAIN_BAD_INTERVAL => 30;
+# Maximum.
+use constnat MAX_DOMAIN_BAD_INTERVAL => 600;
 
 # new
 # Construct a new queue object.
@@ -864,6 +872,9 @@ sub new ($) {
     
     # records of times when we've seen problems with hosts
     $self->{badhosts} = { };
+
+    # records of times when we've been unable to resolve domains
+    $self->{baddomains} = { };
     
     # DNS client.
     $self->{r} = new DomainResolver(100);
@@ -904,38 +915,58 @@ sub attempt_interval ($) {
     }
 }
 
-# host_bad ADDRESS
-# Should we assume that the host at ADDRESS is bad, or should it be tried
-# again?
-sub host_bad ($$) {
+# thing_bad WHAT THING DB MIN MAX
+#
+sub thing_bad ($$$$$$) {
     my Queue $self = shift;
-    my $addr = shift;
-    if (!exists($self->{badhosts}->{$addr})) {
+    my ($what, $thing, $db, $minint, $maxint) = @_;
+    if (!exists($db->{$thing})) {
         return 0;
     } else {
-        my $l = $self->{badhosts}->{$addr};
-Log::print('debug', "host $addr marked as bad ", join(", ", map { int(time() - $_) } @$l), " s ago");
-        # Only one bad observation, so try again as long as a short interval
-        # has elapsed.
+        my $l = $db->{$thing};
+Log::print('noise', "$what $thing marked as bad ", join(', ', map { int(time() - $_) } @$l), " s ago");
+        # Only one observation, so try again as soon as a short interval
+        # has passed.
         if (1 == @$l) {
-            if (time() > $l->[0] + MIN_HOST_BAD_INTERVAL) {
+            if (time() > $l->[0] + $minint) {
                 return 0;
             } else {
                 return 1;
             }
         }
 
-        # Otherwise check after half as long as the host has been bad already,
-        # or after MAX_HOST_BAD_INTERVAL, whichever is sooner.
+        # Otherwise check after half as long as the thing has been bad already,
+        # or after $maxint, whichever is sooner.
         my $lastcheck = $l->[@$l - 1];
         my $interval = ($lastcheck - $l->[0]) / 2;
-        $interval = MAX_HOST_BAD_INTERVAL if ($interval > MAX_HOST_BAD_INTERVAL);
+        $interval = $maxint if ($interval > $maxint);
         if ($lastcheck + $interval > time()) {
             return 1;
         } else {
             return 0;
         }
     }
+}
+
+# host_bad ADDRESS
+# Should we assume that the host at ADDRESS is bad, or should it be tried
+# again?
+sub host_bad ($$) {
+    my Queue $self = shift;
+    my $addr = shift;
+    return thing_bad('host', $addr, $self->{badhosts},
+                        MIN_HOST_BAD_INTERVAL, MAX_HOST_BAD_INTERVAL);
+}
+
+# domain_bad DOMAIN
+# Should we assume that resolution of the DOMAIN is failing, or should it be
+# tried again?
+sub domain_bad ($$) {
+        # this is exactly th
+    my Queue $self = shift;
+    my $domain = shift;
+    return thing_bad('domain' $domain, $self->{baddomains},
+                        MIN_DOMAIN_BAD_INTERVAL, MAX_DOMAIN_BAD_INTERVAL);
 }
 
 # pre_select RDS WRS
@@ -967,9 +998,12 @@ sub pre_select ($$$) {
     Log::print('debug', "iterating over queue");
     foreach my $msg (values(%{$self->{messages}})) {
 Log::print('noise', "considering ", $msg->id());
-        # Skip if this message has already been delivered.
+        # If this message has already been delivered, or has failed
+        # permanently, retire it from the queue.
         if ($msg->state() != Queue::Message::STATE_PENDING) {
             delete($self->{messages}->{$msg->id()});
+Log::print('noise', "  -> already delivered/failed, retiring");
+            # if it isn't pending, it's been dealt with
             push(@{$self->{finished}}, $msg);
             next;
         }
@@ -977,6 +1011,12 @@ Log::print('noise', " ... not already delivered");
         # Skip if a sender is already handling this message.
         next if (defined($msg->owner()));
 Log::print('noise', " ... not presently being delivered");
+
+        if ($self->domain_bad($domain)) {
+Log::print('noise', "  -> but domain $domain is not resolving, holding off");
+            next;
+        }
+
         # See if we have resolved the domain.
         my $domain = $msg->domain();
         my $r = $self->r()->get($domain);
@@ -985,10 +1025,17 @@ Log::print('noise', "  -> domain $domain not resolved, adding to resolver queue"
             $self->r()->add($domain);
             next;
         }
+        # If domain resolution failed, mark the domain as failing and hold off.
+        if ($r->failed()) {
+Log::print('noise', "  -> resolution of $domain failed, holding off");
+            push(@{$self->{baddomains}->{$domain}}, time());
+            next;
+        }
 Log::print('noise', " ... domain $domain has been resolved");
         # If the domain is unroutable, then the message should be failed.
-        if (!defined($r->mx())) {
+        if ($r->unroutable()) {
             $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
+Log::print('noise', "  -> and is unroutable; failing message");
             next;
         }
 Log::print('noise', " ... and is routable");
@@ -1636,6 +1683,11 @@ use fields qw(id starttime r domain state sockets mx a);
 # the results of that resolution, continue to resolve the individual A records
 # (unless the MXs all point to IP addresses, in which case we regard it as
 # complete).
+#
+# We may see either temporary (SERVFAIL) or permanent (NXDOMAIN) errors from
+# DNS queries. If we see NXDOMAIN for the domain both as MX and A record then
+# the domain is unroutable and we can fail email addressed to it; other
+# resolution failures must be treated as temporary.
 
             # resolving MX records
 use constant STATE_MX   => 0;
@@ -1990,13 +2042,19 @@ EOF
 }
 
 # add DOMAIN
-# Add DOMAIN to the queue of domains to resolve.
+# Add DOMAIN to the queue of domains to resolve. This is a no-op if DOMAIN is
+# already in the queue, or if we have a cached valid record for DOMAIN.
 sub add ($$) {
     my DomainResolver $self = shift;
     my $domain = shift;
+    my $r = $self->results()->{$domain};
+    if ($r && $r->failed()) {
+        delete($self->results()->{$domain});
+        $r = undef;
+    }
     push(@{$self->{queue}}, $domain)
         unless (exists($self->state()->{$domain})
-                || exists($self->results()->{$domain}));
+                || $r);
 }
 
 # getqueue
@@ -2009,14 +2067,15 @@ sub getqueue ($) {
 # get DOMAIN
 # Return information about the mailservers for DOMAIN. If they have not yet
 # been resolved or if the cached result is not valid, return undef; otherwise
-# return the task object generated.
+# return the task object generated. It is possible for the returned object to
+# indicate that domain resolution failed, in which case it may be retried.
 sub get ($$) {
     my DomainResolver $self = shift;
     my $domain = shift;
     if (!exists($self->results()->{$domain})) {
         return undef;   # add to queue?
-    } elsif ($self->results()->{$domain}->failed()
-                || !$self->results()->{$domain}->valid()) {
+    } elsif (!$self->results()->{$domain}->failed()
+                && !$self->results()->{$domain}->valid()) {
         delete($self->results()->{$domain});
         return undef;
     } else {
@@ -2187,4 +2246,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.60 2006-11-17 11:35:40 matthew Exp $
+$Id: petemaild,v 1.61 2006-11-17 12:05:50 chris Exp $
