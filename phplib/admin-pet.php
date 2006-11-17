@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.41 2006-11-17 05:55:53 francis Exp $
+ * $Id: admin-pet.php,v 1.42 2006-11-17 17:41:11 matthew Exp $
  * 
  */
 
@@ -312,17 +312,17 @@ class ADMIN_PAGE_PET_MAIN {
         print "<p>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
         print '<br>Organisation: ';
         print $pdata['organisation'] ? htmlspecialchars($pdata['organisation']) : 'None given';
-	if ($pdata['org_url'])
+        if ($pdata['org_url'])
             print ', <a href="' . htmlspecialchars($pdata['org_url']) . '">' . htmlspecialchars($pdata['org_url']) . '</a>';
         print "<br>Created: " . prettify($pdata['creationtime']);
         print "<br>Deadline: <b>" . prettify($pdata['deadline']) . "</b> (" . htmlspecialchars($pdata['rawdeadline']) . ')';
         print '<br>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
         print '<br>Title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
         print '<br>Details of petition: ';
-	print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
-	print '</p>';
+        print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
+        print '</p>';
 
-	if ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted') {
+        if ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted') {
             print '
 <form name="petition_admin_approve" method="post" action="'.$this->self_link.'">
 <p align="center">
@@ -331,7 +331,7 @@ class ADMIN_PAGE_PET_MAIN {
 <input type="submit" name="reject" value="Reject">
 </p>
 </form>';
-	} else {
+        } else {
             // Signers
             print "<h2>Signers (".$pdata['signers'].")</h2>";
             $query = "SELECT signer.name as signname, signer.email as signemail,
@@ -402,7 +402,7 @@ class ADMIN_PAGE_PET_MAIN {
             } else {
                 print '<p>Nobody has signed up to this petition.</p>';
             }
-	}
+        }
         
         // Messages
         print '<h2>Messages</h2>';
@@ -550,7 +550,7 @@ EOF;
                         rejection_first_categories = ?,
                         rejection_first_reason = ?,
                         rejection_hidden_parts = ?,
-			laststatuschange = ms_current_timestamp()
+                        laststatuschange = ms_current_timestamp()
                     WHERE id=?", $categories, $reason, $hide, $id);
             $p->log_event("Admin rejected petition for the first time. Categories: $cats_pretty. Reasons: $reason", http_auth_user());
             $template = 'admin-rejected-once';
@@ -562,7 +562,7 @@ EOF;
                         rejection_second_categories = ?,
                         rejection_second_reason = ?,
                         rejection_hidden_parts = ?,
-			laststatuschange = ms_current_timestamp()
+                        laststatuschange = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason", http_auth_user());
             $template = 'admin-rejected-again';
@@ -663,9 +663,10 @@ EOF;
         if (get_http_var('approve')) {
             $p = new Petition($petition_id);
             db_getOne("UPDATE petition
-	    	SET status='live', deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)),
-		laststatuschange = ms_current_timestamp()
-		WHERE id=?", $petition_id);
+                SET status='live', deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)),
+                rejection_hidden_parts = 0,
+                laststatuschange = ms_current_timestamp()
+                WHERE id=?", $petition_id);
             $p->log_event("Admin approved petition", http_auth_user());
             pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'approved', 'petition-approved');
             db_commit();
