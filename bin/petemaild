@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.61 2006-11-17 12:05:50 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.62 2006-11-17 12:14:06 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -855,7 +855,7 @@ use constant MAX_HOST_BAD_INTERVAL => 1800;
 # Minimum interval between failure to resolve a domain and trying it again.
 use constant MIN_DOMAIN_BAD_INTERVAL => 30;
 # Maximum.
-use constnat MAX_DOMAIN_BAD_INTERVAL => 600;
+use constant MAX_DOMAIN_BAD_INTERVAL => 600;
 
 # new
 # Construct a new queue object.
@@ -954,7 +954,7 @@ Log::print('noise', "$what $thing marked as bad ", join(', ', map { int(time() -
 sub host_bad ($$) {
     my Queue $self = shift;
     my $addr = shift;
-    return thing_bad('host', $addr, $self->{badhosts},
+    return $self->thing_bad('host', $addr, $self->{badhosts},
                         MIN_HOST_BAD_INTERVAL, MAX_HOST_BAD_INTERVAL);
 }
 
@@ -965,7 +965,7 @@ sub domain_bad ($$) {
         # this is exactly th
     my Queue $self = shift;
     my $domain = shift;
-    return thing_bad('domain' $domain, $self->{baddomains},
+    return $self->thing_bad('domain', $domain, $self->{baddomains},
                         MIN_DOMAIN_BAD_INTERVAL, MAX_DOMAIN_BAD_INTERVAL);
 }
 
@@ -1012,13 +1012,13 @@ Log::print('noise', " ... not already delivered");
         next if (defined($msg->owner()));
 Log::print('noise', " ... not presently being delivered");
 
+        my $domain = $msg->domain();
         if ($self->domain_bad($domain)) {
 Log::print('noise', "  -> but domain $domain is not resolving, holding off");
             next;
         }
 
         # See if we have resolved the domain.
-        my $domain = $msg->domain();
         my $r = $self->r()->get($domain);
         if (!$r) {
 Log::print('noise', "  -> domain $domain not resolved, adding to resolver queue");
@@ -2246,4 +2246,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.61 2006-11-17 12:05:50 chris Exp $
+$Id: petemaild,v 1.62 2006-11-17 12:14:06 chris Exp $
