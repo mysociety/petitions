@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.8 2006-11-17 16:34:57 matthew Exp $
+// $Id: fns.php,v 1.9 2006-11-17 16:39:24 matthew Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
@@ -130,7 +130,7 @@ function pet_search_form() {
 <h2><span class="ltr">Search E-Petitions</span></h2>
 <form name="kbs" method="get" action="search.php">
 <label for="q">Search </label>
-<input type="text" name="q" id="q" maxlength="1000" value="<?=htmlspecialchars(get_http_var('q'))?>" />&nbsp;<input name="go" id="go" type="submit" value="Go" />
+<input type="text" name="q" id="q" maxlength="1000" value="<?=htmlspecialchars(get_http_var('q'))?>" />&nbsp;<input name="gosearch" id="gosearch" type="submit" value="Go" />
 </form>
 <?
 }
