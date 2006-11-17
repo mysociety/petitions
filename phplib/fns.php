@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.6 2006-09-28 11:55:22 matthew Exp $
+// $Id: fns.php,v 1.7 2006-11-17 15:54:09 francis Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
@@ -125,4 +125,13 @@ function pet_send_email_internal($to, $spec) {
     return $success;
 }
 
+function pet_search_form() {
+?>
+<h2><span class="ltr">Search E-Petitions</span></h2>
+<form name="kbs" method="get" action="search.php">
+<label for="q">Search </label>
+<input type="text" name="q" id="q" maxlength="1000" value="<?=htmlspecialchars(get_http_var('q'))?>"" />&nbsp;<input name="go" id="go" type="submit" value="Go" />
+</form>
+<?
+}
 
