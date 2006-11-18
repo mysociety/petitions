@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.71 2006-11-18 01:07:46 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.72 2006-11-18 15:31:54 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1156,7 +1156,12 @@ sub post_select ($$$) {
     }
     $self->{ss} = \@ss;
 
-    Log::printf('noise', 'currently have %d smtp sessions, %d mails on queue', scalar(@ss), scalar(keys(%{$self->{messages}})));
+    # Record some current state info to the log, and also put it in the process
+    # title so it is visible to administrators.
+    Log::printf('noise', 'currently have %d SMTP sessions, %d mails on queue',
+                    scalar(@ss), scalar(keys(%{$self->{messages}})));
+    $0 = sprintf('petemaild (main process; %d SMTP sessions, %d mails on queue)',
+                    scalar(@ss), scalar(keys(%{$self->{messages}})));
 }
 
 # get_finished
@@ -1540,6 +1545,8 @@ sub make_petition_email ($) {
 #
 sub database_child_process ($) {
     my IO::Socket $s = shift;
+
+    $0 = "petemaild (database child process)";
 
     # Queue of messages to send.
     my @queue = ( );
@@ -2265,4 +2272,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.71 2006-11-18 01:07:46 chris Exp $
+$Id: petemaild,v 1.72 2006-11-18 15:31:54 chris Exp $
