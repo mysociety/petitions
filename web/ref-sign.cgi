@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.26 2006-11-16 12:19:07 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.27 2006-11-18 00:00:59 matthew Exp $';
 
 use strict;
 
@@ -33,10 +33,6 @@ my $W = new mySociety::WatchUpdate();
 
 sub i_check_email ($$) {
     return mySociety::Util::is_valid_email($_[1]);
-}
-
-sub i_check_postcode ($$) {
-    return mySociety::Util::is_valid_postcode($_[1]);
 }
 
 use Data::Dumper;
@@ -67,7 +63,9 @@ sub signup_page ($$) {
     my $qp_email = $q->ParamValidate(email => \&i_check_email);
     my $qp_email2 = $q->ParamValidate(email2 => \&i_check_email);
     my $qp_address = $q->param('address');
-    my $qp_postcode = $q->ParamValidate(postcode => \&i_check_postcode);
+    my $qp_postcode = $q->param('postcode');
+    $qp_postcode =~ s/[^a-z0-9]//ig;
+    $qp_postcode = undef unless mySociety::Util::is_valid_postcode($qp_postcode);
     my $qp_overseas = $q->param('overseas');
     $qp_overseas = undef if $qp_overseas eq '-- Select --';
 
