@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.70 2006-11-18 01:03:17 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.71 2006-11-18 01:07:46 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -437,8 +437,10 @@ sub get_smtp_response ($) {
     # SMTP responses look like:
     #   "CODE-TEXT\r\n"*
     #   "CODE TEXT\r\n"
-    if ($$recvbuf =~ /^(([2-5][0-5]\d) .+?\r\n)/
-        || $$recvbuf =~ /^(([2-5][0-5]\d)-.*?\r\n(\2-.+?\r\n)*(\2 .+?\r\n))/) {
+    # -- but permit the TEXT to be empty. Also permit the last line to be
+    # "CODE\r\n" as recommended by RFC 2821.
+    if ($$recvbuf =~ /^(([2-5][0-5]\d)( .*?|)\r\n)/
+        || $$recvbuf =~ /^(([2-5][0-5]\d)-.*?\r\n(\2-.*?\r\n)*(\2( .*?|)\r\n))/) {
         # valid single or multiline response
         my $code = $2;
         my $message = $1;
@@ -2263,4 +2265,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.70 2006-11-18 01:03:17 chris Exp $
+$Id: petemaild,v 1.71 2006-11-18 01:07:46 chris Exp $
