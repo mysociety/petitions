@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.73 2006-11-19 11:25:29 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.74 2006-11-19 11:31:02 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -46,7 +46,7 @@ sub value () {
 
 package Log;
 
-use mySociety::Util qw(print_log);
+use mySociety::Util qw(open_log print_log);
 
 my $verboselevel = 0;
 
@@ -70,6 +70,11 @@ sub do_output ($$) {
     if ($stderronly) {
         STDERR->print("petemaild: $prio: ", $str, "\n");
     } else {
+        our $have_opened_log;
+        if (!defined($have_opened_log) || $$ != $have_opened_log) {
+            open_log('petemaild');
+            $have_opened_log = $$;
+        }
         print_log($prio eq 'noise' ? 'debug' : $prio, $str);
     }
 }
@@ -2283,4 +2288,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.73 2006-11-19 11:25:29 chris Exp $
+$Id: petemaild,v 1.74 2006-11-19 11:31:02 chris Exp $
