@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.72 2006-11-18 15:31:54 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.73 2006-11-19 11:25:29 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1542,7 +1542,7 @@ sub make_petition_email ($) {
 }
 
 # database_child_process SOCKET
-#
+# Child process to periodically query database.
 sub database_child_process ($) {
     my IO::Socket $s = shift;
 
@@ -1555,14 +1555,13 @@ sub database_child_process ($) {
                     select *
                     from signer where emailsent = 'pending'
                         and id > ?
-                    order by petition_id --, random()
-                    limit 100");
+                    order by petition_id");
+        # XXX what's the point of the "order by petition_id"?
 
     my $st_p = dbh()->prepare("
                     select *
                     from petition where status = 'unconfirmed'
-                        and id > ?
-                    limit 100");
+                        and id > ?");
 
     my $p;
     my $petition_id;
@@ -1630,8 +1629,12 @@ sub database_child_process ($) {
         last if ($didclose);
 
         my $fullscan = 0;
-        if ($last_full_scan < time() - 5) {
+        if ($last_full_scan < time() - 300) {
             $fullscan = 1;
+            $last_full_scan = time();
+            Log::print('noise', "doing full scan of database");
+        } else {
+            Log::print('noise', "doing incremental scan of database");
         }
 
         # See if there are any new signers...
@@ -1671,6 +1674,10 @@ sub database_child_process ($) {
             $max_signer_id = $s->{id} if ($s->{id} > $max_signer_id);
         }
 
+        my $nsigners = $nmessages;
+        Log::print('noise', "have $nsigners new signature mails to send");
+        Log::print('noise', "now max signer_id = $max_signer_id");
+
         # ... or any new petitions.
         $st_p->execute($fullscan ? 0 : $max_petition_id);
         while (my $p = $st_p->fetchrow_hashref()) {
@@ -1690,6 +1697,10 @@ sub database_child_process ($) {
 
             $max_petition_id = $p->{id} if ($p->{id} > $max_petition_id);
         }
+
+        my $npetitions = $nmessages - $nsigners;
+        Log::print('noise', "have $npetitions new petition confirmation mails to send");
+        Log::print('noise', "now max petition_id = $max_petition_id");
     }
 }
 
@@ -2272,4 +2283,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.72 2006-11-18 15:31:54 chris Exp $
+$Id: petemaild,v 1.73 2006-11-19 11:25:29 chris Exp $
