@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.45 2006-11-17 17:10:39 matthew Exp $
+// $Id: new.php,v 1.46 2006-11-20 11:35:15 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -219,7 +219,7 @@ There are 5 stages to the petition process:
 <h2><span dir="ltr"><?=_('New petition &#8211; Part 1 of 3 &#8211; Your petition') ?></span></h2>
 <?  errorlist($errors); ?>
 
-<p>Please note that you must be a British citizen to create a petition.</p>
+<p>Please note that you must be a British citizen or resident to create a petition.</p>
 
 <p><strong><?=$petition_prefix ?>...</strong> <br />
     <?
@@ -257,7 +257,7 @@ function petition_form_you($data = array(), $errors = array()) {
     ?>
 <h2><span dir="ltr"><?=_('New petition &#8211; Part 2 of 3 &#8211; About you') ?></span></h2>
 <div>
-<p>Please note that you must be a British citizen to create a petition.</p><?
+<p>Please note that you must be a British citizen or resident to create a petition.</p><?
 
     $fields = array(
             'name'  =>          _('Your name'),
