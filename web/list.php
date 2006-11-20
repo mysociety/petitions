@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.26 2006-11-17 17:10:39 matthew Exp $
+// $Id: list.php,v 1.27 2006-11-20 13:11:39 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -38,7 +38,7 @@ if ($q_type == 'closed') {
     $open = '>=';
     $status = 'live';
 }
-if ($q_sort == "default") $q_sort = 'laststatuschange';
+if ($q_sort == "default") $q_sort = 'signers';
 if ($q_sort == "creationtime") $q_sort = "laststatuschange";
 
 $sql_params = array($status);
@@ -97,7 +97,7 @@ if (!$rss) {
 <?
 #    print "<h2>$heading</h2>";
 
-    $qs_sort = ($q_sort && $q_sort != 'laststatuschange') ? 'sort=' . $q_sort : '';
+    $qs_sort = ($q_sort && $q_sort != 'signers') ? 'sort=' . $q_sort : '';
     $qs_off = ($q_offset) ? 'offset=' . $q_offset : '';
 
     $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
@@ -141,7 +141,7 @@ if (!$rss) {
         foreach ($arr as $s => $desc) {
             if ($b) $navlinks .= ' | ';
 	    $qs = array();
-	    if ($s != 'laststatuschange') $qs[] = "sort=$s";
+	    if ($s != 'signers') $qs[] = "sort=$s";
 	    if ($qs_off) $qs[] = $qs_off;
 	    $qs = join('&amp;', $qs);
             if ($q_sort != $s) $navlinks .= "<a href=\"?$qs\">$desc</a>"; else $navlinks .= $desc;

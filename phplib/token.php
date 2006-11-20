@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: chris@mysociety.org; WWW: http://www.mysociety.org/
  *
- * $Id: token.php,v 1.4 2006-08-14 13:57:58 chris Exp $
+ * $Id: token.php,v 1.5 2006-11-20 13:11:39 matthew Exp $
  * 
  */
 
@@ -15,10 +15,9 @@ require_once '../../phplib/random.php';
 
 function token_encode_base64ish($in) {
     return
-        preg_replace('/\+/', '_',
-            preg_replace('/\//', '-',
+        preg_replace('/\+/', '$',
                 preg_replace('/=+\n/s', '',
-                    base64_encode($in))));
+                    base64_encode($in)));
 }
 
 function token_decode_base64ish($in) {
@@ -26,8 +25,8 @@ function token_decode_base64ish($in) {
         $in .= '=';
     return
         base64_decode(
-            preg_replace('/_/', '+',
-                preg_replace('/-/', '/', $in)));
+            preg_replace('/$|_/', '+',
+                preg_replace('/\'|-/', '/', $in)));
 }
 
 define('TOKEN_LENGTH', 15);

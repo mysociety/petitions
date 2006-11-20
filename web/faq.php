@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.10 2006-11-17 12:06:24 matthew Exp $
+// $Id: faq.php,v 1.11 2006-11-20 13:11:38 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -85,7 +85,7 @@ You can decide how long your petition can run for and we will carry it for up to
 
 <dd>
 <p>
-To sign a petition, you will need to give your name, address and email on the form provided. Once you have signed the petition, you will receive an email asking you to confirm that you wish to add your name to the petition by clicking a link. Once you have done this, your name will be added to the petition. Unless you ask us not to, your name (but no other personal details) will be displayed on the petition on the website.
+To sign a petition, you will need to give your name, address and email on the form provided. Once you have signed the petition, you will receive an email asking you to confirm that you wish to add your name to the petition by clicking a link. Once you have done this, your name will be added to the petition.
 </p>
 </dd>
 
