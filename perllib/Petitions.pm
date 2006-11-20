@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.33 2006-11-16 12:21:35 matthew Exp $
+# $Id: Petitions.pm,v 1.34 2006-11-20 15:12:24 matthew Exp $
 #
 
 package Petitions::DB;
@@ -138,29 +138,33 @@ use Crypt::Blowfish;
 use Digest::HMAC_SHA1 qw(hmac_sha1);
 use Digest::SHA1 qw(sha1);
 use MIME::Base64;
+use mySociety::BaseN;
 
 use mySociety::DBHandle ();
 use mySociety::Util qw(random_bytes);
 
 sub encode_base64ish ($) {
-    my $b64 = encode_base64($_[0], '');
-    $b64 =~ s#\+#\$#g;
-    $b64 =~ s#=+$##;
-    return $b64;
+    return mySociety::BaseN::encodefast(62, $_[0]);
 }
 
+# XXX Specific to tokens now
 sub decode_base64ish ($) {
     my $b64 = shift;
-    while (length($b64) % 4) {
-        $b64 .= '=';
+    if (length($b64) == TOKEN_LENGTH_B64) {
+        while (length($b64) % 4) {
+            $b64 .= '=';
+        }
+        $b64 =~ s#\$|_#+#g;
+        $b64 =~ s#'|-#/#g;
+        return decode_base64($b64);
+    } else {
+        return mySociety::BaseN::decodefast(62, $_[0]);
     }
-    $b64 =~ s#\$|_#+#g;
-    $b64 =~ s#'|-#/#g;
-    return decode_base64($b64);
 }
 
 use constant TOKEN_LENGTH => 15;
 use constant TOKEN_LENGTH_B64 => 20;
+use constant TOKEN_LENGTH_B62 => 23;
 
 =item make WHAT ID
 
@@ -212,7 +216,7 @@ were passed to make; or, if TOKEN is invalid, the empty list.
 sub check ($) {
     my $token = shift;
     croak("TOKEN must be defined") unless (defined($token));
-    return () if (length($token) != TOKEN_LENGTH_B64);
+    return () if (length($token) != TOKEN_LENGTH_B64 && length($token) != TOKEN_LENGTH_B62);
 
     my $data = decode_base64ish($token);
     return () unless ($data);

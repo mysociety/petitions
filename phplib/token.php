@@ -6,31 +6,34 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: chris@mysociety.org; WWW: http://www.mysociety.org/
  *
- * $Id: token.php,v 1.6 2006-11-20 13:55:46 matthew Exp $
+ * $Id: token.php,v 1.7 2006-11-20 15:12:24 matthew Exp $
  * 
  */
 
 require_once '../../phplib/db.php';
 require_once '../../phplib/random.php';
+require_once '../../phplib/BaseN.php';
 
 function token_encode_base64ish($in) {
-    return
-        preg_replace('/\+/', '$',
-                preg_replace('/=+\n/s', '',
-                    base64_encode($in)));
+    return basen_encodefast(62, $in);
 }
 
 function token_decode_base64ish($in) {
-    while (strlen($in) % 4)
-        $in .= '=';
-    return
-        base64_decode(
-            preg_replace('/\$|_/', '+',
-                preg_replace('/\'|-/', '/', $in)));
+    if (strlen($in) == TOKEN_LENGTH_B64) {
+        while (strlen($in) % 4)
+            $in .= '=';
+        return
+            base64_decode(
+                preg_replace('/\$|_/', '+',
+                    preg_replace('/\'|-/', '/', $in)));
+    } else {
+        return basen_decodefast(62, $in);
+    }
 }
 
 define('TOKEN_LENGTH', 15);
 define('TOKEN_LENGTH_B64', 20);
+define('TOKEN_LENGTH_B62', 23);
 
 /* token_make WHAT ID
  * Make a token identifying the given ID (of a petition or signer). WHAT
