@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.34 2006-11-20 15:12:24 matthew Exp $
+# $Id: Petitions.pm,v 1.35 2006-11-20 15:18:34 matthew Exp $
 #
 
 package Petitions::DB;
@@ -143,6 +143,10 @@ use mySociety::BaseN;
 use mySociety::DBHandle ();
 use mySociety::Util qw(random_bytes);
 
+use constant TOKEN_LENGTH => 15;
+use constant TOKEN_LENGTH_B64 => 20;
+use constant TOKEN_LENGTH_B62 => 23;
+
 sub encode_base64ish ($) {
     return mySociety::BaseN::encodefast(62, $_[0]);
 }
@@ -161,10 +165,6 @@ sub decode_base64ish ($) {
         return mySociety::BaseN::decodefast(62, $_[0]);
     }
 }
-
-use constant TOKEN_LENGTH => 15;
-use constant TOKEN_LENGTH_B64 => 20;
-use constant TOKEN_LENGTH_B62 => 23;
 
 =item make WHAT ID
 
