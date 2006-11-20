@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.27 2006-11-20 13:11:39 matthew Exp $
+// $Id: list.php,v 1.28 2006-11-20 16:44:34 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -38,7 +38,9 @@ if ($q_type == 'closed') {
     $open = '>=';
     $status = 'live';
 }
-if ($q_sort == "default") $q_sort = 'signers';
+if ($q_sort == "default") {
+    $q_sort = $rss ? 'laststatuschange' : 'signers';
+}
 if ($q_sort == "creationtime") $q_sort = "laststatuschange";
 
 $sql_params = array($status);
