@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: chris@mysociety.org; WWW: http://www.mysociety.org/
  *
- * $Id: token.php,v 1.5 2006-11-20 13:11:39 matthew Exp $
+ * $Id: token.php,v 1.6 2006-11-20 13:55:46 matthew Exp $
  * 
  */
 
@@ -25,7 +25,7 @@ function token_decode_base64ish($in) {
         $in .= '=';
     return
         base64_decode(
-            preg_replace('/$|_/', '+',
+            preg_replace('/\$|_/', '+',
                 preg_replace('/\'|-/', '/', $in)));
 }
 
