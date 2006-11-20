@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.55 2006-11-20 11:35:15 matthew Exp $
+# $Id: Page.pm,v 1.56 2006-11-20 21:39:21 matthew Exp $
 #
 
 package Petitions::Page;
@@ -241,15 +241,19 @@ the Armed Forces without a postcode, please select from this list:</label>',
                 '-- Select --',
                 'Expatriate',
                 'Armed Forces',
+		'Anguilla',
                 'Ascension Island',
                 'Bermuda',
                 'British Antarctic Territory',
+		'British Indian Ocean Territory',
+		'British Virgin Islands',
                 'Cayman Islands',
                 'Channel Islands',
                 'Falkland Islands',
                 'Gibraltar',
                 'Isle of Man',
                 'Montserrat',
+		'Pitcairn Island',
                 'St Helena',
                 'S. Georgia and the S. Sandwich Islands',
                 'Tristan da Cunha',

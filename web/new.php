@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.46 2006-11-20 11:35:15 matthew Exp $
+// $Id: new.php,v 1.47 2006-11-20 21:39:20 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -268,15 +268,19 @@ function petition_form_you($data = array(), $errors = array()) {
                 '-- Select --',
                 'Expatriate',
                 'Armed Forces',
+		'Anguilla',
                 'Ascension Island',
                 'Bermuda',
                 'British Antarctic Territory',
+		'British Indian Ocean Territory',
+		'British Virgin Islands',
                 'Cayman Islands',
                 'Channel Islands',
                 'Falkland Islands',
                 'Gibraltar',
                 'Isle of Man',
                 'Montserrat',
+		'Pitcairn Island',
                 'St Helena',
                 'S. Georgia and the S. Sandwich Islands',
                 'Tristan da Cunha',
