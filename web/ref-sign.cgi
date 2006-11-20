@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.27 2006-11-18 00:00:59 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.28 2006-11-20 20:54:04 matthew Exp $';
 
 use strict;
 
@@ -175,7 +175,7 @@ sub confirm_page ($$$) {
                     . Petitions::Page::footer($q, 'Confirm_Petition');
         } else {
             # Redirect so that the token isn't left in the browser.
-            print $q->redirect("/$ref?signed=1");
+            print $q->redirect("/$ref/?signed=1");
             return;
         }
     } else {
@@ -229,13 +229,13 @@ sub accept_loop () {
         my $qp_ser = $q->ParamValidate(ser => qr#^[A-za-z0-9/+=]+$#);
         if (!defined($qp_ser)) {
             warn "missing/invalid serialised data in POST request";
-            print $q->redirect("/$qp_ref");
+            print $q->redirect("/$qp_ref/");
             next;
         }
         my $ser = decode_base64($qp_ser);
         if (substr($ser, -20) ne hmac_sha1(substr($ser, 0, length($ser) - 20), Petitions::DB::secret())) {
             warn "bad signature in serialised data '$qp_ser'";
-            print $q->redirect("/$qp_ref");
+            print $q->redirect("/$qp_ref/");
             next;
         }
 
