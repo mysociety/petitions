@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.3 2006-11-17 17:10:39 matthew Exp $
+// $Id: search.php,v 1.4 2006-11-20 00:16:01 francis Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -61,7 +61,7 @@ function search($search) {
     // Link to RSS feed
     if (!$rss) {
         global $heading;
-?><p align="right"><a href="/rss<?=$_SERVER['REQUEST_URI'] ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of search results for') . " '".$search."'" ?>" /> RSS</a>
+?><p align="right"><a href="/rss<?=$_SERVER['REQUEST_URI'] ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of search results for') . " '".htmlspecialchars($search)."'" ?>" /> RSS</a>
 | <a href="http://news.bbc.co.uk/1/hi/help/3223484.stm">What is RSS?</a></p>
 <?
 
