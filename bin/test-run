@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.47 2006-11-21 13:38:24 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.48 2006-11-21 13:39:51 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -296,7 +296,7 @@ sub do_main_test {
     comment("Check that petition is on the front page, and has its own page");
     $wth->browser_get($base_url);
     $wth->browser_check_contents($petition_text);
-    $wth->browser_check_contents("2 signatures");
+    $wth->browser_check_contents("1 signature");
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents($petition_text);
     $wth->browser_check_contents("31 December 1988");
