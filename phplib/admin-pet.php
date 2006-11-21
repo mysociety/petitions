@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.44 2006-11-17 21:07:03 matthew Exp $
+ * $Id: admin-pet.php,v 1.45 2006-11-21 14:40:40 matthew Exp $
  * 
  */
 
@@ -48,6 +48,19 @@ class ADMIN_PAGE_PET_SEARCH {
         $search = get_http_var('search');
         petition_admin_navigation(array('search'=>$search));
         if ($search) {
+            $out = '';
+            $q = db_query("select id, ref, name, email, status
+                from petition
+                where status = 'sentconfirm'
+                and (name ilike '%'||?||'%' or email ilike '%'||?||'%')
+                order by email
+            ", array($search, $search));
+            while ($r = db_fetch_array($q)) {
+                $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td>$r[ref]</td>";
+                $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
+                $out .= '<input type="hidden" name="confirm_petition_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm petition, move to \'draft\'">';
+                $out .= "</form></td></tr>";
+            }
             $q = db_query("select signer.id, ref, signer.name, signer.email, emailsent
                 from signer, petition
                 where signer.petition_id = petition.id
@@ -55,7 +68,6 @@ class ADMIN_PAGE_PET_SEARCH {
                 and (signer.name ilike '%'||?||'%' or signer.email ilike '%'||?||'%')
                 order by signer.email
             ", array($search, $search));
-            $out = '';
             while ($r = db_fetch_array($q)) {
                 $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td><a href=\"".OPTION_BASE_URL."/$r[ref]\">$r[ref]</a></td>";
                 $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
@@ -97,6 +109,16 @@ function petition_admin_perform_actions() {
             $p->log_event('Admin confirmed signer ' . $signer_id, http_auth_user());
             db_commit();
             print '<p><em>That signer has been confirmed.</em></p>';
+        }
+    }
+    if (get_http_var('confirm_petition_id')) {
+        $petition_id = get_http_var('confirm_petition_id');
+        if (ctype_digit($petition_id)) {
+            db_query("UPDATE petition set status = 'draft' where id = ?", $petition_id);
+            $p = new Petition($petition_id);
+            $p->log_event('Admin confirmed petition ' . $petition_id, http_auth_user());
+            db_commit();
+            print '<p><em>That petition has been confirmed.</em></p>';
         }
     }
     return $petition_id;
