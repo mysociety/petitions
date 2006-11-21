@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.18 2006-11-21 13:38:24 matthew Exp $
+# $Id: RPC.pm,v 1.19 2006-11-21 13:44:07 matthew Exp $
 #
 
 package Petitions::RPC;
@@ -106,7 +106,7 @@ sub sign_petition_db ($) {
                 and email = ?', {}, map { $r->{$_} } qw(ref email));
     return if (defined($s) && $s =~ /^(confirmed|pending)$/);
     
-    my $s = dbh()->selectrow_array('
+    $s = dbh()->selectrow_array('
             select email from petition
             where ref = ?
 	        and email = ?', {}, map { $r->{$_} } qw(ref email));
