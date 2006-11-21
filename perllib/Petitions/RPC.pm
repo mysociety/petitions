@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.19 2006-11-21 13:44:07 matthew Exp $
+# $Id: RPC.pm,v 1.20 2006-11-21 14:22:40 matthew Exp $
 #
 
 package Petitions::RPC;
@@ -106,12 +106,6 @@ sub sign_petition_db ($) {
                 and email = ?', {}, map { $r->{$_} } qw(ref email));
     return if (defined($s) && $s =~ /^(confirmed|pending)$/);
     
-    $s = dbh()->selectrow_array('
-            select email from petition
-            where ref = ?
-	        and email = ?', {}, map { $r->{$_} } qw(ref email));
-    return if defined($s);
-    
     # First try updating the row.
     if (defined($s)) {
         dbh()->do("
@@ -159,6 +153,9 @@ sub confirm_db ($) {
                 'admin-new-petition'
             ) if ($n > 0);
     } elsif ($r->{confirm} eq 's') {
+        # XXX: All we have here is signer ID, but we want to
+	# stop petition creators signing their own petitions
+	# somehow
         dbh()->do("
                 update signer set emailsent = 'confirmed'
                 where id = ?", {},
