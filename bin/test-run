@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.45 2006-11-17 20:41:32 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.46 2006-11-21 13:31:11 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -233,7 +233,7 @@ sub do_main_test {
     comment("Check front page works");
     $wth->browser_get($base_url);
     $wth->browser_check_contents("Petitions");
-    $wth->browser_check_no_contents("0 signatures");
+    $wth->browser_check_no_contents("1 signature");
 
     comment("Create a new petition");
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
@@ -296,7 +296,7 @@ sub do_main_test {
     comment("Check that petition is on the front page, and has its own page");
     $wth->browser_get($base_url);
     $wth->browser_check_contents($petition_text);
-    $wth->browser_check_contents("0 signatures");
+    $wth->browser_check_contents("1 signature");
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents($petition_text);
     $wth->browser_check_contents("31 December 1988");
@@ -842,6 +842,6 @@ sub do_resubmit_test {
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_check_no_contents("resubmittest");
     $wth->browser_check_contents('signForm');
-    $wth->browser_check_contents("<strong>Signatures:</strong>&nbsp;0");
+    $wth->browser_check_contents("<strong>Signatures:</strong>&nbsp;1");
 }
 

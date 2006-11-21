@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.32 2006-11-17 19:19:52 francis Exp $
+// $Id: index.php,v 1.33 2006-11-21 13:31:12 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -73,7 +73,7 @@ if (!count($recent)) {
 <?
 $recent = db_getAll("
     select ref, content,
-        (select count(id) from signer
+        (select count(id)+1 from signer
             where showname
             and petition_id = petition.id
             and emailsent = 'confirmed') as signers
