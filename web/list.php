@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.30 2006-11-21 13:31:12 matthew Exp $
+// $Id: list.php,v 1.31 2006-11-21 17:04:13 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -17,7 +17,7 @@ define('PAGE_SIZE', 50);
 
 $err = importparams(
             array('offset', '/^(0|[1-9]\d*)$/', '', 0),
-            array('sort', '/^(content|deadline|name|signers|ref|creationtime|laststatuschange)\/?$/', '', 'default'),
+            array('sort', '/^(content|deadline|name|signers|creationtime|laststatuschange|date)\/?$/', '', 'default'),
             array('type', '/^[a-z_]*$/', '', 'open')
         );
 if ($err) {
@@ -39,9 +39,10 @@ if ($q_type == 'closed') {
     $status = 'live';
 }
 if ($q_sort == "default") {
-    $q_sort = $rss ? 'laststatuschange' : 'signers';
+    $q_sort = $rss ? 'date' : 'signers';
 }
-if ($q_sort == "creationtime") $q_sort = "laststatuschange";
+if ($q_sort == "creationtime" || $q_sort == 'laststatuschange')
+    $q_sort = "date";
 
 $sql_params = array($status);
 $query = "SELECT count(petition.id) FROM petition
@@ -55,7 +56,9 @@ if ($ntotal < $q_offset) {
 }
 
 $sort_phrase = $q_sort;
-if ($q_sort == 'laststatuschange' || $q_sort == 'signers') {
+if ($q_sort == 'date')
+    $sort_phrase = 'laststatuschange';
+if ($q_sort == 'date' || $q_sort == 'signers') {
     $sort_phrase .= " DESC";
 }
 $sql_params[] = PAGE_SIZE;
@@ -131,7 +134,7 @@ if (!$rss) {
     if ($ntotal > 0) {
         $navlinks .= '<p align="center" style="font-size: 89%">' . _('Sort by'). ': ';
         $arr = array(
-                     'laststatuschange'=>_('Start date'), 
+                     'date'=>_('Start date'), 
                      'deadline'=>_('Deadline'), 
 	);
 	if ($status != 'rejected') {
@@ -142,10 +145,8 @@ if (!$rss) {
         $b = false;
         foreach ($arr as $s => $desc) {
             if ($b) $navlinks .= ' | ';
-	    $qs = array();
-	    if ($s != 'signers') $qs[] = "sort=$s";
-	    if ($qs_off) $qs[] = $qs_off;
-	    $qs = join('&amp;', $qs);
+	    $qs = '';
+	    if ($s != 'signers') $qs = "sort=$s";
             if ($q_sort != $s) $navlinks .= "<a href=\"?$qs\">$desc</a>"; else $navlinks .= $desc;
             $b = true;
         }

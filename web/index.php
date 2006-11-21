@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.33 2006-11-21 13:31:12 matthew Exp $
+// $Id: index.php,v 1.34 2006-11-21 17:04:13 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -64,6 +64,7 @@ if (!count($recent)) {
 }
 ?>
 </ul>
+<p align="right"><a href="/list?sort=date" title="More recent petitions">More</a></p>
 </div>
 
 <div id="most_popular">
@@ -95,7 +96,7 @@ if (!count($recent)) {
 }
 ?>
 </ul>
-<? ?>
+<p align="right"><a href="/list?sort=signers" title="More popular petitions">More</a></p>
 </div>
 
 <h2 style="clear: both"><span class="ltr">How it works</span></h2>
