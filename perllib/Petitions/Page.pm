@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.59 2006-11-21 19:10:12 matthew Exp $
+# $Id: Page.pm,v 1.60 2006-11-21 20:52:59 matthew Exp $
 #
 
 package Petitions::Page;
@@ -292,27 +292,27 @@ sub reject_box ($$) {
  
     # Must keep this synchronised with constraint in schema, and list in phplib/petition.php
     my %categories = (
-        1 => 'Party political material',
-        2 => 'False or defamatory statements',
-        4 => 'Information protected by an injunction or court order',
-        8 => 'Material which is commercially sensitive, confidential or which may cause personal distress or loss',
-        16 => 'Names of individual officials of public bodies, unless part of the senior management of those organisations',
-        32 => 'Names of family members of officials of public bodies, or elected representatives',
-        64 => 'Names of individuals, or information where they may be identified, in relation to criminal accusations',
-        128 => 'Offensive language, such as obvious swear words or language that is intemperate, inflammatory, or provocative, or to which people reading it could reasonably take offence',
-        256 => 'Isn\'t clear what the petition is asking signers to endorse',
-        512 => 'Doesn\'t actually ask for an action',
-        1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
-        2048 => 'Identical to an existing petition',
-        4096 => 'Outside the remit or powers of the Prime Minister and Government',
-	8192 => 'False name or address information',
-        # XXX also change in phplib/page.php
+        1 => 'It contained party political material',
+        2 => 'It contained false or defamatory statements',
+        4 => 'It contained information protected by an injunction or court order',
+        8 => 'It contained material which is commercially sensitive, confidential or which may cause personal distress or loss',
+        16 => 'It contained the names of individual officials of public bodies, not part of the senior management of those organisations',
+        32 => 'It contained the names of family members of officials of public bodies, or elected representatives',
+        64 => 'It contained the names of individuals, or information where they may be identified, in relation to criminal accusations',
+        128 => 'It contained offensive language, such as obvious swear words or language that is intemperate, inflammatory, or provocative, or to which people reading it could reasonably take offence',
+        256 => 'It isn\'t clear what the petition is asking signers to endorse',
+        512 => 'It doesn\'t actually ask for an action',
+        1024 => 'It was attempting to market a product irrelevent to the role and office of the PM',
+        2048 => 'It was identical to an existing petition',
+        4096 => 'It was outside the remit or powers of the Prime Minister and Government',
+	8192 => 'It contained false name or address information',
+        # XXX also change in phplib/petition.php
     );
 
     my $reject_reason = $p->{rejection_second_reason};
     my $reject_cats = $p->{rejection_second_categories} + 0; # Need it as an integer
 
-    my $out = $q->p('This petition has been <strong>rejected</strong>, for being in the following categories:');
+    my $out = $q->p('This petition has been <strong>rejected</strong> because:');
     $out .= '<ul>';
     foreach my $k (sort keys %categories) {
         $out .= $q->li($categories{$k}) if ($reject_cats & $k);
