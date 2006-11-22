@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.60 2006-11-21 20:52:59 matthew Exp $
+# $Id: Page.pm,v 1.61 2006-11-22 14:38:44 matthew Exp $
 #
 
 package Petitions::Page;
@@ -149,12 +149,12 @@ sub display_box ($$%) {
     if ($org) {
         if ($org_url) {
             $org_url = "http://$org_url" unless $org_url =~ /^http:\/\//;
-            $org = '<a href="' . $org_url . '">' . $org . '</a>';
+            $org = '<a rel="nofollow" href="' . $org_url . '">' . $org . '</a>';
         }
         $org = ' of ' . $org;
     } elsif ($org_url) {
         $org_url = "http://$org_url" unless $org_url =~ /^http:\/\//;
-        $org = '<a href="' . $org_url . '">' . $org_url . '</a>';
+        $org = '<a rel="nofollow" href="' . $org_url . '">' . $org_url . '</a>';
         $org = ', ' . $org;
     }
     my $name = Petitions::show_part($p, 'name') ? ent($p->{name}) : '&lt;Name cannot be shown&gt;';
