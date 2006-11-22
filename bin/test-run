@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.48 2006-11-21 13:39:51 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.49 2006-11-22 19:35:46 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -243,7 +243,8 @@ sub do_main_test {
                 pet_content => $petition_text,
                 detail => "I think it is very important that the Prime Minister takes all petitions seriously. He should be compelled to do anything that more than 1000 people sign, as this would be good for democracy and not at all exploitable by small groups of people.\n\nMy favourite thing about this petition is that it has two paragraphs of text in the description. That rocks!",
                 rawdeadline => 'Dec 31st',
-                ref => 'onethousand'
+                ref => 'onethousand',
+		category => 521
                 }, button => 'tostepyou') or die "Failed to submit step 1";
 
     $wth->browser_check_contents("Part 2 of 3");
@@ -493,7 +494,8 @@ sub do_rejection_test {
                 pet_content => $petition_text,
                 detail => "Isn't it obvious! I have no understanding of the powers of a Prime Minister! I'm going to dumbly ask him to do something that he can't do!",
                 rawdeadline => '1 week',
-                ref => 'rejecttest'
+                ref => 'rejecttest',
+		category => 521
                 }, button => 'tostepyou') or die "Failed to submit step 1";
 
     $wth->browser_check_contents("Part 2 of 3");
@@ -619,7 +621,8 @@ sub do_timeout_test {
                 pet_content => $petition_text,
                 detail => "Oh flip oh gosh oh golly gee. We said the word and got our knuckles rapped.",
                 rawdeadline => '1 month',
-                ref => 'timeouttest'
+                ref => 'timeouttest',
+		category => 521,
                 }, button => 'tostepyou') or die "Failed to submit step 1";
 
     $wth->browser_check_contents("Part 2 of 3");
@@ -731,7 +734,8 @@ sub do_resubmit_test {
                 pet_content => $petition_text,
                 detail => "If everyone did this, we'd all be much happier!",
                 rawdeadline => '2 years',
-                ref => 'resubmittest'
+                ref => 'resubmittest',
+		category => 521
                 }, button => 'tostepyou') or die "Failed to submit step 1";
     $wth->browser_check_contents("Please change your duration so it is less than 1 year");
     $wth->browser_submit_form(form_name => 'newpetition',

@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.45 2006-11-21 14:40:40 matthew Exp $
+ * $Id: admin-pet.php,v 1.46 2006-11-22 19:35:46 matthew Exp $
  * 
  */
 
@@ -506,8 +506,8 @@ class ADMIN_PAGE_PET_MAIN {
 */
 
     function display_categories() {
-        global $global_categories;
-        foreach ($global_categories as $n => $category) {
+        global $global_rejection_categories;
+        foreach ($global_rejection_categories as $n => $category) {
             print '<br><input type="checkbox" name="categories[]" value="' . $n;
             print '" id="cat' . $n . '"> <label for="cat' . $n . '">';
             print $category . '</label>';

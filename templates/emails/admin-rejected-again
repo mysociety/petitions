@@ -5,11 +5,11 @@ Hi,
 I'm sorry to inform you that your petition has been rejected again.
 
 Your petition was classed as being in the following categories:
-<?=$values['categories']?>
+<?=$values['rejection_categories']?>
 
 Further information:
 
-'<?=$values['reason']?>'
+'<?=$values['rejection_reason']?>'
 
 Your petition will now appear in the list of rejected petitions.
 

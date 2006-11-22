@@ -17,7 +17,7 @@ We the undersigned petition the Prime Minister to:
 
 As we wrote before, the explanation for rejecting your petition was:
 
-"<?=$values['reason']?>"
+"<?=$values['rejection_reason']?>"
 
 For transparency, the parts of your petition that can be published
 legally and in accordance with the civil service code can be seen

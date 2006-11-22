@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.47 2006-11-20 21:39:20 matthew Exp $
+// $Id: new.php,v 1.48 2006-11-22 19:35:47 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -244,6 +244,18 @@ There are 5 stages to the petition process:
 <br /><small>This gives your petition an easy web address. e.g. http://petitions.pm.gov.uk/badgers</small>
 </p>
 
+<p>Please select a category for your petition:
+<select name="category">
+<option value="">-- Select a category --</option><?
+    global $global_petition_categories;
+    foreach ($global_petition_categories as $id => $category) {
+        print '<option';
+	if ($id == $data['category'])
+	    print ' selected="selected"'; # I hate XHTML
+	print ' value="' . $id . '">' . $category . '</option>';
+    }
+?>
+</select></p>
 <?
     nextprevbuttons(null, null, 'tostepyou', null);
     endform($data);
@@ -392,6 +404,11 @@ function step_main_error_check($data) {
 
     if (strlen($data['detail']) > 1000)
         $errors['detail'] = _('Please make your more details a bit shorter (at most 1000 characters).');
+
+    global $global_petition_categories;
+    if (!array_key_exists('category', $data)
+      || !array_key_exists($data['category'], $global_petition_categories))
+        $errors['category'] = 'Please select a category';
 
     $pet_today_arr = explode('-', $pet_today);
     $deadline_limit_years = 1; # in years
@@ -572,7 +589,7 @@ function petition_create($data) {
                     deadline = ?, rawdeadline = ?,
                     name = ?, ref = ?, organisation = ?,
                     postcode = ?, overseas = ?, telephone = ?, org_url = ?,
-                    comments = ?,
+                    comments = ?, category = ?,
                     status = 'resubmitted',
                     laststatuschange = ms_current_timestamp()
                 where id = ? and status = 'rejectedonce'",
@@ -580,7 +597,7 @@ function petition_create($data) {
                 $data['deadline'], $data['rawdeadline'],
                 $data['name'], $data['ref'], $data['organisation'],
                 $data['postcode'], $data['overseas'], $data['telephone'], $data['org_url'],
-                $data['comments'], $id);
+                $data['comments'], $data['category'], $id);
 
         /* Send the admins an email about it. */
         pet_send_message($id, MSG_ADMIN, MSG_ADMIN, 'petition-resubmitted', 'admin-resubmitted-petition');
@@ -609,7 +626,7 @@ function petition_create($data) {
                         email, name, ref, 
                         organisation, address,
                         postcode, overseas, telephone, org_url,
-                        comments, creationtime, 
+                        comments, creationtime, category,
                         status, laststatuschange
                     ) values (
                         ?, ?, ?,
@@ -617,7 +634,7 @@ function petition_create($data) {
                         ?, ?, ?, 
                         ?, ?,
                         ?, ?, ?, ?,
-                        ?, ms_current_timestamp(), 
+                        ?, ms_current_timestamp(), ?,
                         'unconfirmed', ms_current_timestamp()
                     )",
                     $data['id'], $data['detail'], $data['pet_content'],
@@ -625,7 +642,7 @@ function petition_create($data) {
                     $data['email'], $data['name'], $data['ref'],
                     $data['organisation'], $data['address'],
                     $data['postcode'], $data['overseas'], $data['telephone'], $data['org_url'],
-                    $data['comments']);
+                    $data['comments'], $data['category']);
             db_commit();
         }
 

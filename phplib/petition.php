@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.37 2006-11-21 13:31:12 matthew Exp $
+ * $Id: petition.php,v 1.38 2006-11-22 19:35:46 matthew Exp $
  * 
  */
 
@@ -14,7 +14,7 @@
 $petition_prefix = 'We the undersigned petition the Prime Minister to';
 
 /* Must keep this synchronised with constraint in schema. */
-$global_categories = array(
+$global_rejection_categories = array(
     1 => 'Party political material',
     2 => 'False or defamatory statements',
     4 => 'Information protected by an injunction or court order',
@@ -32,10 +32,30 @@ $global_categories = array(
     // XXX also change in perllib/Petitions/Page.pm
 );
 
+# Top level categories of the IPSV v2
+$global_petition_categories = array(
+	692 => 'Business and industry',
+	726 => 'Economics and finance',
+	439 => 'Education and skills',
+	981 => 'Employment, jobs and careers',
+	499 => 'Environment',
+	760 => 'Government, politics and public administration',
+	557 => 'Health, well-being and care',
+	460 => 'Housing',
+	758 => 'Information and communication',
+	911 => 'International affairs and defence',
+	616 => 'Leisure and culture',
+	642 => 'Life in the community',
+	6999 => 'People and organisations',
+	564 => 'Public order, justice and rights',
+	652 => 'Science, technology and innovation',
+	521 => 'Transport and infrastructure'
+);
+
 function prettify_categories($categories, $newlines) {
-    global $global_categories;
+    global $global_rejection_categories;
     $out = array();
-    foreach ($global_categories as $k => $v)
+    foreach ($global_rejection_categories as $k => $v)
         if ($categories & $k) $out[] = $v;
     if ($newlines)
         return "\n\n   * " . join("\n\n   * ", $out) . "\n\n";
@@ -82,6 +102,8 @@ class Petition {
 
     // Internal function to calculate some values from data
     function _calc() {
+        global $global_petition_categories;
+
         if (!array_key_exists('rejection_hidden_parts', $this->data))
             $this->data['rejection_hidden_parts'] = 0;
         if (!array_key_exists('signers', $this->data)) $this->data['signers'] = -1;
@@ -98,14 +120,16 @@ class Petition {
         $this->data['sentence'] = $this->sentence();
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
+        $this->data['category'] = $global_petition_categories[$this->data['category']];
+
         if (array_key_exists('rejection_second_categories', $this->data)
             && $this->data['rejection_second_categories']) {
-            $this->data['categories'] = prettify_categories($this->data['rejection_second_categories'], true);
-            $this->data['reason'] = $this->data['rejection_second_reason'];
+            $this->data['rejection_categories'] = prettify_categories($this->data['rejection_second_categories'], true);
+            $this->data['rejection_reason'] = $this->data['rejection_second_reason'];
         } elseif (array_key_exists('rejection_first_categories', $this->data)
             && $this->data['rejection_first_categories']) {
-            $this->data['categories'] = prettify_categories($this->data['rejection_first_categories'], true);
-            $this->data['reason'] = $this->data['rejection_first_reason'];
+            $this->data['rejection_categories'] = prettify_categories($this->data['rejection_first_categories'], true);
+            $this->data['rejection_reason'] = $this->data['rejection_first_reason'];
         }
     }
 
@@ -177,9 +201,9 @@ class Petition {
             print '</a>';
 ?>
             </p> 
-            <p align="right">&mdash; <?=$this->h_name() ?></p>
-            <p>
-            <?=_('Deadline to sign up by:') ?> <strong><?=$this->h_pretty_deadline()?></strong></p>
+            <p align="center">Submitted by <?=$this->h_name() ?>
+            &ndash; Deadline to sign up by: <strong><?=$this->h_pretty_deadline()?></strong></p>
+	    <p><strong>Category:</strong> <?=$this->data['category'] ?></p>
             <? if ($this->h_detail()) {
             print '<p><strong>More details:</strong></p>' . $this->h_detail();
             }

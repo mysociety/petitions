@@ -12,10 +12,10 @@ About the petition:
     detail
         More details of the petition
 
-    categories
+    rejection_categories
         list of categories under which the petition was rejected
 
-    reason
+    rejection_reason
         explanation of reasons for rejection
 
     creator_name
@@ -41,4 +41,4 @@ Other:
         URL to take further action (depends on circumstance)
 
 
-$Id: README,v 1.3 2006-08-14 12:26:04 matthew Exp $
+$Id: README,v 1.4 2006-11-22 19:35:46 matthew Exp $
