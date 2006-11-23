@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.47 2006-11-23 14:59:37 matthew Exp $
+ * $Id: admin-pet.php,v 1.48 2006-11-23 15:17:45 matthew Exp $
  * 
  */
 
@@ -125,8 +125,8 @@ function petition_admin_perform_actions() {
     # Category updates
     if (isset($_POST['category']) && is_array($_POST['category'])) {
         foreach ($_POST['category'] as $pid => $cat) {
-	    db_query('update petition set category = ? where id = ?', $cat, $pid);
-	}
+            db_query('update petition set category = ? where id = ?', $cat, $pid);
+        }
         db_commit();
     }
 
@@ -225,10 +225,10 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
 
-	$categories = '';
-	foreach ($global_petition_categories as $id => $cat) {
-	    $categories .= '<option value="' . $id . '">' . $cat;
-	}
+        $categories = '';
+        foreach ($global_petition_categories as $id => $cat) {
+            $categories .= '<option value="' . $id . '">' . $cat;
+        }
 
         $status = get_http_var('o');
         if (!$status || !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
@@ -262,9 +262,11 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= '<br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
             $row .= '</td>';
             $row .= '<td>'.trim_characters(htmlspecialchars($r['content']),0,100);
-	    $disp_cat = preg_replace('#value="'.$r['category'].'"#', '$0 selected', $categories);
-	    $row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
-	    $row .= '</td>';
+            if ($status != 'finished') {
+                $disp_cat = preg_replace('#value="'.$r['category'].'"#', '$0 selected', $categories);
+                $row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
+            }
+            $row .= '</td>';
             $row .= '<td>'.htmlspecialchars($r['signers']) . '</td>';
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
@@ -299,8 +301,10 @@ class ADMIN_PAGE_PET_MAIN {
         }
 
         petition_admin_navigation(array('status'=>$status, 'found'=>count($found)));
-	print '<form method="post" action="'.$this->self_link.'">';
-	print '<p><input type="submit" value="Update all categories"></p>';
+        if ($status != 'finished') {
+            print '<form method="post" action="'.$this->self_link.'">';
+            print '<p><input type="submit" value="Update all categories"></p>';
+        }
         $this->petition_header($sort, $status);
         $a = 0;
         foreach ($found as $row) {
@@ -309,7 +313,9 @@ class ADMIN_PAGE_PET_MAIN {
             print '</tr>'."\n";
         }
         print '</table>';
-	print '</form>';
+        if ($status != 'finished') {
+            print '</form>';
+        }
         print '<p>';
     }
 
