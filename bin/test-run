@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.53 2006-11-23 12:26:01 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.54 2006-11-23 12:30:14 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -709,6 +709,11 @@ sub do_resubmit_test {
     comment("Create a new petition");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
+    $wth->browser_check_contents("Before you start");
+    $wth->browser_submit_form(form_name => 'pet_search',
+        fields => { q => 'random words' }) or die "Failed to submit search";
+    $wth->browser_check_contents("could not find any petitions");
+    $wth->browser_submit_form(form_name => 'newpetition');
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => {
