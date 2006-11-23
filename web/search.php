@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.6 2006-11-23 12:21:02 matthew Exp $
+// $Id: search.php,v 1.7 2006-11-23 12:49:23 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -198,7 +198,7 @@ function search($search) {
 EOF;
     else
         print '<h2><span class="ltr">Search E-Petitions</span></h2>';
-    pet_search_form();
+    pet_search_form($create);
 }
 
 ?>
