@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.51 2006-11-23 12:24:19 matthew Exp $
+// $Id: new.php,v 1.52 2006-11-23 12:51:57 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -205,11 +205,13 @@ function textfield($name, $val, $size, $errors, $after = '') {
 /* petition_search_first
  * Make people search before creating a petition */
 function petition_search_first() { ?>
-<p>Before you start creating a petition, we'd like you to check
-whether a petition has already been created for the same thing.
-So please use the search box below to search for the subject of
-your petition:
-</p>
+<p>Welcome to the petition creation page. In the first week the site has received over
+1,000 petitions. In many cases these have been duplicates of petitions that already exist.
+So, before we start creating your petition, please use this box to search to see if anyone
+is already petitioning on the same topic as you.</p>
+
+<p>Once you've done your search, you can either continue to create a new petition,
+or sign someone else's.</p>
 
 <form name="pet_search" method="post" action="/search">
 <input type="hidden" name="create" value="1" />

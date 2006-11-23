@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.7 2006-11-23 12:49:23 matthew Exp $
+// $Id: search.php,v 1.8 2006-11-23 12:51:57 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -186,18 +186,20 @@ function search($search) {
             printf("<p>"._('Sorry, we could not find any petitions that matched "%s".')."</p>", htmlspecialchars($search) );
     }
 
-    if ($create)
+    if ($create) {
+        $blurb = $success ? 'If you still wish to go ahead and create your petition' : 'Go ahead and create your petition';
         print <<<EOF
 <form action="/new" method="post" name="newpetition">
 <input type="hidden" name="tostepmain" value="1" />
-<p>If you still wish to go ahead and create your petition: 
+<p>$blurb:
 <input type="submit" value="Create petition" />
 </p>
 </form>
 <h2><span class="ltr">Search again</span></h2>
 EOF;
-    else
+    } else {
         print '<h2><span class="ltr">Search E-Petitions</span></h2>';
+    }
     pet_search_form($create);
 }
 
