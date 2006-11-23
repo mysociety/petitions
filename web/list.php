@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.31 2006-11-21 17:04:13 matthew Exp $
+// $Id: list.php,v 1.32 2006-11-23 12:41:27 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -120,15 +120,20 @@ if (!$rss) {
 
     pet_search_form();
 
-    $prev = '<span class="greyed">Previous page</span>'; $next = '<span class="greyed">Next page</span>';
+    $first = '<span class="greyed">First</span>';
+    $prev = '<span class="greyed">Previous</span>';
+    $next = '<span class="greyed">Next</span>';
+    $last = '<span class="greyed">Last</span>';
     if ($q_offset > 0) {
         $n = $q_offset - PAGE_SIZE;
         if ($n < 0) $n = 0;
-        $prev = "<a href=\"?offset=$n" . ($qs_sort ? "&amp;$qs_sort" : '') . '">Previous page</a>';
+        $prev = "<a href=\"?offset=$n" . ($qs_sort ? "&amp;$qs_sort" : '') . '">Previous</a>';
+        $first = '<a href="?offset=0">First</a>';
     }
     if ($q_offset + PAGE_SIZE < $ntotal) {
         $n = $q_offset + PAGE_SIZE;
-        $next = "<a href=\"?offset=$n" . ($qs_sort ? "&amp;$qs_sort" : '') . '">Next page</a>';
+        $next = "<a href=\"?offset=$n" . ($qs_sort ? "&amp;$qs_sort" : '') . '">Next</a>';
+        $last = '<a href="?offset=' . floor(($ntotal-1)/PAGE_SIZE)*PAGE_SIZE . '">Last</a>';
     }
     $navlinks = '<p id="petition_view_tabs">' . $views . "</p>\n";
     if ($ntotal > 0) {
@@ -151,9 +156,9 @@ if (!$rss) {
             $b = true;
         }
         $navlinks .= '</p> <p align="center">';
-        $navlinks .= $prev . ' | '._('Petitions'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
+        $navlinks .= "$first | $prev | " . _('Petitions'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
             ($q_offset + PAGE_SIZE > $ntotal ? $ntotal : $q_offset + PAGE_SIZE) . ' of ' .
-            $ntotal . ' | ' . $next;
+            $ntotal . " | $next | $last";
         $navlinks .= '</p>';
     }
     print $navlinks;
