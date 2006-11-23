@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.50 2006-11-23 12:21:02 matthew Exp $
+// $Id: new.php,v 1.51 2006-11-23 12:24:19 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -211,7 +211,7 @@ So please use the search box below to search for the subject of
 your petition:
 </p>
 
-<form name="kbs" method="post" action="/search">
+<form name="pet_search" method="post" action="/search">
 <input type="hidden" name="create" value="1" />
 <p><label for="q">Search:</label>
 <input type="text" name="q" id="q" size="20" maxlength="1000" value="" />&nbsp;<input type="submit" value="Go" /></p>
