@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.49 2006-11-23 17:22:05 matthew Exp $
+ * $Id: admin-pet.php,v 1.50 2006-11-23 18:13:08 matthew Exp $
  * 
  */
 
@@ -139,29 +139,25 @@ function petition_admin_navigation($array = array()) {
     $search = isset($array['search']) ? $array['search'] : '';
     print "<p><strong>Show &ndash;</strong> ";
     if ($status == 'draft') {
-        print 'Draft';
-        print ' (' . $found . ') / ';
+        print 'Draft (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'live') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
-        print 'Live';
-        print ' (' . $found . ') / ';
+        print 'Live (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'finished') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
-        print 'Finished';
-        print ' (' . $found . ') / ';
+        print 'Finished (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'rejected') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
-        print 'Rejected';
-        print ' (' . $found . ')';
+        print 'Rejected (' . $found . ')';
     } else {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
@@ -206,7 +202,7 @@ class ADMIN_PAGE_PET_MAIN {
             if ($sort != $s) print '</a>';
             print '</th>';
         }
-        if ($status == 'finished' || $status == 'draft')
+        if (!$this->cat_change && ($status == 'finished' || $status == 'draft'))
             print '<th>Actions</th>';
         print '</tr>';
         print "\n";
@@ -225,6 +221,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
 
+        $this->cat_change = get_http_var('cats') ? true : false;
         $categories = '';
         foreach ($global_petition_categories as $id => $cat) {
             $categories .= '<option value="' . $id . '">' . $cat;
@@ -261,13 +258,13 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '</a>';
             $row .= '<br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
             $row .= '</td>';
-            $row .= '<td>'.trim_characters(htmlspecialchars($r['content']),0,100);
-            if ($status != 'finished') {
+            $row .= '<td>' . trim_characters(htmlspecialchars($r['content']),0,100);
+            if ($this->cat_change) {
                 $disp_cat = preg_replace('#value="'.$r['category'].'"#', '$0 selected', $categories);
-                #$row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
+                $row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
             }
             $row .= '</td>';
-            $row .= '<td>'.htmlspecialchars($r['signers']) . '</td>';
+            $row .= '<td>' . htmlspecialchars($r['signers']) . '</td>';
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
@@ -278,14 +275,14 @@ class ADMIN_PAGE_PET_MAIN {
                 } elseif ($r['status'] == 'rejected') {
                     $row .= '<td>Rejected twice</td>';
                 }
-            } elseif ($status == 'draft') {
+            } elseif (!$this->cat_change && $status == 'draft') {
                 $row .= '<td><form name="petition_admin_approve" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] .
                     '"><input type="submit" name="approve" value="Approve"> <input type="submit" name="reject" value="Reject"></form>';
                 if ($r['status'] == 'resubmitted') {
                     $row .= ' resubmitted';
                 }
                 $row .= '</td>';
-            } elseif ($status == 'finished') {
+            } elseif (!$this->cat_change && $status == 'finished') {
                 $row .= '<td>';
                 if ($r['message_id']) 
                     $row .= 'Response sent';
@@ -308,9 +305,13 @@ class ADMIN_PAGE_PET_MAIN {
         }
 
         petition_admin_navigation(array('status'=>$status, 'found'=>count($found)));
-        if ($status != 'finished') {
-            #print '<form method="post" action="'.$this->self_link.'">';
-            #print '<p><input type="submit" value="Update all categories"></p>';
+        if ($this->cat_change) { ?>
+<form method="post" action="<?=$this->self_link ?>">
+<input type="hidden" name="cats" value="1"><input type="hidden" name="o" value="<?=$status ?>">
+<p><input type="submit" value="Update all categories">
+<a href="<?=$this->self_link ?>;o=<?=$status ?>">Back to normal screen</a></p>
+<?      } else {
+            print '<p><a href="'.$this->self_link.';o='.$status.';cats=1">Update categories</a></p>';
         }
         $this->petition_header($sort, $status);
         $a = 0;
@@ -320,8 +321,8 @@ class ADMIN_PAGE_PET_MAIN {
             print '</tr>'."\n";
         }
         print '</table>';
-        if ($status != 'finished') {
-            #print '</form>';
+        if ($this->cat_change) {
+            print '</form>';
         }
         print '<p>';
     }
