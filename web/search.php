@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.5 2006-11-21 13:31:12 matthew Exp $
+// $Id: search.php,v 1.6 2006-11-23 12:21:02 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -43,6 +43,8 @@ else
 function search($search) {
     global $pb_today, $rss, $rss_items, $petitions_output;
     $success = 0;
+
+    $create = get_http_var('create');
 
     if (!$rss) {
         // Blank searches
@@ -136,7 +138,11 @@ function search($search) {
 
     // Live petitions
     if ($live) {
-        print sprintf("<p>"._('Results for <strong>open petitions</strong> matching <strong>%s</strong>:')."</p>", htmlspecialchars($search) );
+        if ($create) {
+	    print '<p>The following open petitions matched <strong>' . htmlspecialchars($search) . '</strong>:</p>';
+	} else {
+            printf("<p>"._('Results for <strong>open petitions</strong> matching <strong>%s</strong>:')."</p>", htmlspecialchars($search) );
+        }
         print '<ul>' . $live . '</ul>';
     }
 
@@ -174,10 +180,24 @@ function search($search) {
     } */
 
     if (!$success) {
-        print sprintf("<p>"._('Sorry, we could not find any petitions that matched "%s".')."</p>", htmlspecialchars($search) );
+        if ($create)
+	    printf("<p>"._('We could not find any petitions that matched "%s".')."</p>", htmlspecialchars($search) );
+	else
+            printf("<p>"._('Sorry, we could not find any petitions that matched "%s".')."</p>", htmlspecialchars($search) );
     }
 
-    print '<h2><span class="ltr">Search E-Petitions</span></h2>';
+    if ($create)
+        print <<<EOF
+<form action="/new" method="post" name="newpetition">
+<input type="hidden" name="tostepmain" value="1" />
+<p>If you still wish to go ahead and create your petition: 
+<input type="submit" value="Create petition" />
+</p>
+</form>
+<h2><span class="ltr">Search again</span></h2>
+EOF;
+    else
+        print '<h2><span class="ltr">Search E-Petitions</span></h2>';
     pet_search_form();
 }
 

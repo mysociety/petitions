@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.50 2006-11-23 01:08:00 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.51 2006-11-23 12:21:00 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -225,6 +225,29 @@ sub call_mark_finished {
 #############################################################################
 # Create petition, sign it, wait until completion, send government response
 
+sub do_create_part {
+    my ($fields1, $fields2) = @_;
+    comment("Create a new petition");
+    $wth->browser_follow_link(text_regex => qr/Create a Petition/);
+    $wth->browser_check_contents("Before you start");
+    $wth->browser_submit_form(form_name => 'kbs',
+        fields => { q => 'random words' }) or die "Failed to submit search";
+    $wth->browser_check_contents("Could not find any petitions");
+    $wth->browser_submit_form(form_name => 'newpetition');
+    $wth->browser_check_contents("Part 1 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => $fields1,
+                button => 'tostepyou') or die "Failed to submit step 1";
+    $wth->browser_check_contents("Part 2 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => $fields2,
+                button => 'tosteppreview') or die "Failed to submit step 2";
+    $wth->browser_check_contents("Part 3 of 3");
+    $wth->browser_submit_form(form_name => 'newpetition',
+            fields => { }, button => 'tocreate') or die "Failed to submit step 3";
+    $wth->browser_check_contents("We have sent you an email to confirm");
+}
+
 sub do_main_test {
     set_pet_date('1988-08-08');
 
@@ -235,36 +258,22 @@ sub do_main_test {
     $wth->browser_check_contents("Petitions");
     $wth->browser_check_no_contents("1 signature");
 
-    comment("Create a new petition");
-    $wth->browser_follow_link(text_regex => qr/Create a Petition/);
-    $wth->browser_check_contents("Part 1 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => {
-                pet_content => $petition_text,
-                detail => "I think it is very important that the Prime Minister takes all petitions seriously. He should be compelled to do anything that more than 1000 people sign, as this would be good for democracy and not at all exploitable by small groups of people.\n\nMy favourite thing about this petition is that it has two paragraphs of text in the description. That rocks!",
-                rawdeadline => 'Dec 31st',
-                ref => 'onethousand',
-		category => 521
-                }, button => 'tostepyou') or die "Failed to submit step 1";
-
-    $wth->browser_check_contents("Part 2 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => {
-                name => name_n(99),
-                organisation => "Society for the Advancement of Effective Petitioning",
-                address => "The Beseechment Building\nImportuning Island",
-                postcode => "SW1A 2AA",
-                telephone => "01234 56789",
-                org_url => "http://www.petitionsrock.org.uk",
-                email => email_n(99),
-                email2 => email_n(99)
-                }, button => 'tosteppreview') or die "Failed to submit step 2";
-
-    $wth->browser_check_contents("Part 3 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => { }, button => 'tocreate') or die "Failed to submit step 3";
-
-    $wth->browser_check_contents("We have sent you an email to confirm");
+    do_create_part({
+        pet_content => $petition_text,
+        detail => "I think it is very important that the Prime Minister takes all petitions seriously. He should be compelled to do anything that more than 1000 people sign, as this would be good for democracy and not at all exploitable by small groups of people.\n\nMy favourite thing about this petition is that it has two paragraphs of text in the description. That rocks!",
+        rawdeadline => 'Dec 31st',
+        ref => 'onethousand',
+        category => 521
+    }, {
+        name => name_n(99),
+        organisation => "Society for the Advancement of Effective Petitioning",
+        address => "The Beseechment Building\nImportuning Island",
+        postcode => "SW1A 2AA",
+        telephone => "01234 56789",
+        org_url => "http://www.petitionsrock.org.uk",
+        email => email_n(99),
+        email2 => email_n(99)
+    });
 
     comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(99).'" <'.email_n(99).'>%');
@@ -485,37 +494,23 @@ sub do_rejection_test {
 
     my $petition_text = "impeach President Bush";
 
-    comment("Create a new petition");
     $wth->browser_get($base_url);
-    $wth->browser_follow_link(text_regex => qr/Create a Petition/);
-    $wth->browser_check_contents("Part 1 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => {
-                pet_content => $petition_text,
-                detail => "Isn't it obvious! I have no understanding of the powers of a Prime Minister! I'm going to dumbly ask him to do something that he can't do!",
-                rawdeadline => '1 week',
-                ref => 'rejecttest',
-		category => 521
-                }, button => 'tostepyou') or die "Failed to submit step 1";
-
-    $wth->browser_check_contents("Part 2 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => {
-                name => name_n(44),
-                organisation => "Crazy Pressure Group",
-                address => "Removal From Office Rd.",
-                postcode => "SW1A 2AB",
-                telephone => "09876 5432",
-                org_url => "http://www.impeachbush.org",
-                email => email_n(44),
-                email2 => email_n(44)
-                }, button => 'tosteppreview') or die "Failed to submit step 2";
-
-    $wth->browser_check_contents("Part 3 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => { }, button => 'tocreate') or die "Failed to submit step 3";
-
-    $wth->browser_check_contents("We have sent you an email to confirm");
+    do_create_part({
+        pet_content => $petition_text,
+        detail => "Isn't it obvious! I have no understanding of the powers of a Prime Minister! I'm going to dumbly ask him to do something that he can't do!",
+        rawdeadline => '1 week',
+        ref => 'rejecttest',
+        category => 521
+    }, {
+        name => name_n(44),
+        organisation => "Crazy Pressure Group",
+        address => "Removal From Office Rd.",
+        postcode => "SW1A 2AB",
+        telephone => "09876 5432",
+        org_url => "http://www.impeachbush.org",
+        email => email_n(44),
+        email2 => email_n(44)
+    });
 
     comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(44).'" <'.email_n(44).'>%');
@@ -612,37 +607,23 @@ sub do_timeout_test {
 
     my $petition_text = "say crap on the radio";
 
-    comment("Create a new petition");
     $wth->browser_get($base_url);
-    $wth->browser_follow_link(text_regex => qr/Create a Petition/);
-    $wth->browser_check_contents("Part 1 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => {
-                pet_content => $petition_text,
-                detail => "Oh flip oh gosh oh golly gee. We said the word and got our knuckles rapped.",
-                rawdeadline => '1 month',
-                ref => 'timeouttest',
-		category => 521,
-                }, button => 'tostepyou') or die "Failed to submit step 1";
-
-    $wth->browser_check_contents("Part 2 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => {
-                name => name_n(55),
-                organisation => "Stiff Little Fingers",
-                address => "Uncle John's house",
-                postcode => "WC2H 7LA",
-                telephone => "02143 6587",
-                org_url => "http://www.blablahblah",
-                email => email_n(55),
-                email2 => email_n(55)
-                }, button => 'tosteppreview') or die "Failed to submit step 2";
-
-    $wth->browser_check_contents("Part 3 of 3");
-    $wth->browser_submit_form(form_name => 'newpetition',
-            fields => { }, button => 'tocreate') or die "Failed to submit step 3";
-
-    $wth->browser_check_contents("We have sent you an email to confirm");
+    do_create_part({
+        pet_content => $petition_text,
+        detail => "Oh flip oh gosh oh golly gee. We said the word and got our knuckles rapped.",
+        rawdeadline => '1 month',
+        ref => 'timeouttest',
+	category => 521,
+    }, {
+        name => name_n(55),
+        organisation => "Stiff Little Fingers",
+        address => "Uncle John's house",
+        postcode => "WC2H 7LA",
+        telephone => "02143 6587",
+        org_url => "http://www.blablahblah",
+        email => email_n(55),
+        email2 => email_n(55)
+    });
 
     comment("Confirm petition");
     my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(55).'" <'.email_n(55).'>%');

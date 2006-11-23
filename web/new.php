@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.49 2006-11-22 19:37:42 matthew Exp $
+// $Id: new.php,v 1.50 2006-11-23 12:21:02 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -26,9 +26,10 @@ if (get_http_var('tostepmain')
     if ($token) {
         $data = array('token' => $token);
         check_edited_petition($data);
-    } else
-        $data = array();
-    petition_form_main($data);
+        petition_form_main($data);
+    } else {
+	petition_search_first();
+    }
 }
 $contents = ob_get_contents();
 ob_end_clean();
@@ -199,6 +200,23 @@ function textfield($name, $val, $size, $errors, $after = '') {
         print ' <small>' . $after . '</small>';
     if (array_key_exists($name, $errors))
         print '<br /><span class="errortext">'. $errors[$name] . '</span>';
+}
+
+/* petition_search_first
+ * Make people search before creating a petition */
+function petition_search_first() { ?>
+<p>Before you start creating a petition, we'd like you to check
+whether a petition has already been created for the same thing.
+So please use the search box below to search for the subject of
+your petition:
+</p>
+
+<form name="kbs" method="post" action="/search">
+<input type="hidden" name="create" value="1" />
+<p><label for="q">Search:</label>
+<input type="text" name="q" id="q" size="20" maxlength="1000" value="" />&nbsp;<input type="submit" value="Go" /></p>
+</form>
+<?
 }
 
 /* petition_form_main [DATA [ERRORS]]

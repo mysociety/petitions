@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.38 2006-11-22 19:35:46 matthew Exp $
+ * $Id: petition.php,v 1.39 2006-11-23 12:21:01 matthew Exp $
  * 
  */
 
@@ -34,22 +34,23 @@ $global_rejection_categories = array(
 
 # Top level categories of the IPSV v2
 $global_petition_categories = array(
-	692 => 'Business and industry',
-	726 => 'Economics and finance',
-	439 => 'Education and skills',
-	981 => 'Employment, jobs and careers',
-	499 => 'Environment',
-	760 => 'Government, politics and public administration',
-	557 => 'Health, well-being and care',
-	460 => 'Housing',
-	758 => 'Information and communication',
-	911 => 'International affairs and defence',
-	616 => 'Leisure and culture',
-	642 => 'Life in the community',
-	6999 => 'People and organisations',
-	564 => 'Public order, justice and rights',
-	652 => 'Science, technology and innovation',
-	521 => 'Transport and infrastructure'
+    0 => 'None',
+    692 => 'Business and industry',
+    726 => 'Economics and finance',
+    439 => 'Education and skills',
+    981 => 'Employment, jobs and careers',
+    499 => 'Environment',
+    760 => 'Government, politics and public administration',
+    557 => 'Health, well-being and care',
+    460 => 'Housing',
+    758 => 'Information and communication',
+    911 => 'International affairs and defence',
+    616 => 'Leisure and culture',
+    642 => 'Life in the community',
+    6999 => 'People and organisations',
+    564 => 'Public order, justice and rights',
+    652 => 'Science, technology and innovation',
+    521 => 'Transport and infrastructure'
 );
 
 function prettify_categories($categories, $newlines) {
@@ -203,7 +204,7 @@ class Petition {
             </p> 
             <p align="center">Submitted by <?=$this->h_name() ?>
             &ndash; Deadline to sign up by: <strong><?=$this->h_pretty_deadline()?></strong></p>
-	    <p><strong>Category:</strong> <?=$this->data['category'] ?></p>
+            <p><strong>Category:</strong> <?=$this->data['category'] ?></p>
             <? if ($this->h_detail()) {
             print '<p><strong>More details:</strong></p>' . $this->h_detail();
             }
