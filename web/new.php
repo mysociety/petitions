@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.52 2006-11-23 12:51:57 matthew Exp $
+// $Id: new.php,v 1.53 2006-11-23 12:53:49 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -269,6 +269,7 @@ There are 5 stages to the petition process:
 <option value="">-- Select a category --</option><?
     global $global_petition_categories;
     foreach ($global_petition_categories as $id => $category) {
+        if (!$id) continue;
         print '<option';
 	if (array_key_exists('category', $data) && $id == $data['category'])
 	    print ' selected="selected"'; # I hate XHTML
@@ -427,6 +428,7 @@ function step_main_error_check($data) {
 
     global $global_petition_categories;
     if (!array_key_exists('category', $data)
+      || !$data['category']
       || !array_key_exists($data['category'], $global_petition_categories))
         $errors['category'] = 'Please select a category';
 
