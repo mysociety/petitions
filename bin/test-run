@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.54 2006-11-23 12:30:14 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.55 2006-11-23 14:59:35 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -539,7 +539,7 @@ sub do_rejection_test {
     $wth->browser_check_contents("You have chosen to reject the petition 'rejecttest'");
     $wth->browser_submit_form(form_name => 'rejection_details_form',
             fields => { reject_reason => 'Sorry, this is something the US Congress can do, but not the Prime Minster of the UK! You might want to change your petition to ask the Prime Minister to write a public letter to the Congress leader to ask him to impeach Bush, or something like that.',
-                'categories[]' => ['4096', 13], # the 13th checkbox has value 4096, and means "PM doesn't have power"
+                'rejection_cats[]' => ['4096', 13], # the 13th checkbox has value 4096, and means "PM doesn't have power"
             }, button => 'reject_submit') or die "Failed to submit reject details form";
 
     comment("Get rejection message to creator");
@@ -584,7 +584,7 @@ sub do_rejection_test {
     $wth->browser_check_contents("You have chosen to reject the petition 'rejecttest'");
     $wth->browser_submit_form(form_name => 'rejection_details_form',
             fields => { reject_reason => 'It is just nonsense, sorry!',
-                'categories[]' => ['256', 9], # the 9th checkbox has value 256, and means "Not clear what asking signers to endorse"
+                'rejection_cats[]' => ['256', 9], # the 9th checkbox has value 256, and means "Not clear what asking signers to endorse"
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
     $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%clear what the petition%');
@@ -651,8 +651,8 @@ sub do_timeout_test {
             fields => { }, button => 'reject') or die "Failed to submit reject petition button";
     $wth->browser_check_contents("You have chosen to reject the petition 'timeouttest'");
     $wth->browser_form_name('rejection_details_form');
-    $wth->browser_field('categories[]', '128', 8); # the 8th checkbox has value 128, and means "offensive language"
-    $wth->browser_field('categories[]', '1024', 11); # the 11th checkbox has value 1024, and means "attempting to market a product"
+    $wth->browser_field('rejection_cats[]', '128', 8); # the 8th checkbox has value 128, and means "offensive language"
+    $wth->browser_field('rejection_cats[]', '1024', 11); # the 11th checkbox has value 1024, and means "attempting to market a product"
     $wth->browser_field('reject_hide[content]', '2');
     $wth->browser_submit_form(form_name => 'rejection_details_form',
             fields => { reject_reason => 'You can\'t say that on our website either. Beside, you\'re just trying to sell your song.',
@@ -774,7 +774,7 @@ sub do_resubmit_test {
     $wth->browser_check_contents("You have chosen to reject the petition 'resubmittest'");
     $wth->browser_submit_form(form_name => 'rejection_details_form',
             fields => { reject_reason => 'He could do this, but not really in his capacity as Prime Minister.',
-                'categories[]' => ['4096', 13], # the 13th checkbox has value 4096, and means "PM doesn't have power"
+                'rejection_cats[]' => ['4096', 13], # the 13th checkbox has value 4096, and means "PM doesn't have power"
             }, button => 'reject_submit') or die "Failed to submit reject details form";
 
     comment("Get rejection message to creator");

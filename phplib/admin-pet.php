@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.46 2006-11-22 19:35:46 matthew Exp $
+ * $Id: admin-pet.php,v 1.47 2006-11-23 14:59:37 matthew Exp $
  * 
  */
 
@@ -121,6 +121,15 @@ function petition_admin_perform_actions() {
             print '<p><em>That petition has been confirmed.</em></p>';
         }
     }
+
+    # Category updates
+    if (isset($_POST['category']) && is_array($_POST['category'])) {
+        foreach ($_POST['category'] as $pid => $cat) {
+	    db_query('update petition set category = ? where id = ?', $cat, $pid);
+	}
+        db_commit();
+    }
+
     return $petition_id;
 }
 
@@ -131,28 +140,28 @@ function petition_admin_navigation($array = array()) {
     print "<p><strong>Show &ndash;</strong> ";
     if ($status == 'draft') {
         print 'Draft';
-        print ' (' . count($found) . ') / ';
+        print ' (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'live') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print 'Live';
-        print ' (' . count($found) . ') / ';
+        print ' (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'finished') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print 'Finished';
-        print ' (' . count($found) . ') / ';
+        print ' (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'rejected') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print 'Rejected';
-        print ' (' . count($found) . ')';
+        print ' (' . $found . ')';
     } else {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
@@ -197,14 +206,14 @@ class ADMIN_PAGE_PET_MAIN {
             if ($sort != $s) print '</a>';
             print '</th>';
         }
-        if ($status == 'draft' || $status == 'finished')
+        if ($status == 'finished')
             print '<th>Actions</th>';
         print '</tr>';
         print "\n";
     }
 
     function list_all_petitions() {
-        global $open, $pet_today;
+        global $open, $pet_today, $global_petition_categories;
         $sort = get_http_var('s');
         if (!$sort || preg_match('/[^radecsz]/', $sort)) $sort = 'c';
         $order = '';
@@ -215,6 +224,11 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='c') $order = 'petition.creationtime';
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
+
+	$categories = '';
+	foreach ($global_petition_categories as $id => $cat) {
+	    $categories .= '<option value="' . $id . '">' . $cat;
+	}
 
         $status = get_http_var('o');
         if (!$status || !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
@@ -247,7 +261,10 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '</a>';
             $row .= '<br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
             $row .= '</td>';
-            $row .= '<td>'.trim_characters(htmlspecialchars($r['content']),0,100).'</td>';
+            $row .= '<td>'.trim_characters(htmlspecialchars($r['content']),0,100);
+	    $disp_cat = preg_replace('#value="'.$r['category'].'"#', '$0 selected', $categories);
+	    $row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
+	    $row .= '</td>';
             $row .= '<td>'.htmlspecialchars($r['signers']) . '</td>';
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
@@ -259,13 +276,6 @@ class ADMIN_PAGE_PET_MAIN {
                 } elseif ($r['status'] == 'rejected') {
                     $row .= '<td>Rejected twice</td>';
                 }
-            } elseif ($status == 'draft') {
-                $row .= '<td><form name="petition_admin_approve" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] .
-                    '"><input type="submit" name="approve" value="Approve"> <input type="submit" name="reject" value="Reject"></form>';
-                if ($r['status'] == 'resubmitted') {
-                    $row .= ' resubmitted';
-                }
-                $row .= '</td>';
             } elseif ($status == 'finished') {
                 $row .= '<td>';
                 if ($r['message_id']) 
@@ -288,7 +298,9 @@ class ADMIN_PAGE_PET_MAIN {
             uksort($open, 'sort_by_percent');
         }
 
-        petition_admin_navigation(array('status'=>$status, 'found'=>$found));
+        petition_admin_navigation(array('status'=>$status, 'found'=>count($found)));
+	print '<form method="post" action="'.$this->self_link.'">';
+	print '<p><input type="submit" value="Update all categories"></p>';
         $this->petition_header($sort, $status);
         $a = 0;
         foreach ($found as $row) {
@@ -297,6 +309,7 @@ class ADMIN_PAGE_PET_MAIN {
             print '</tr>'."\n";
         }
         print '</table>';
+	print '</form>';
         print '<p>';
     }
 
@@ -508,7 +521,7 @@ class ADMIN_PAGE_PET_MAIN {
     function display_categories() {
         global $global_rejection_categories;
         foreach ($global_rejection_categories as $n => $category) {
-            print '<br><input type="checkbox" name="categories[]" value="' . $n;
+            print '<br><input type="checkbox" name="rejection_cats[]" value="' . $n;
             print '" id="cat' . $n . '"> <label for="cat' . $n . '">';
             print $category . '</label>';
         }
@@ -696,7 +709,7 @@ EOF;
         } elseif (get_http_var('reject')) {
             $this->reject_form($petition_id);
         } elseif (get_http_var('reject_form_submit')) {
-            $categories = get_http_var('categories');
+            $categories = get_http_var('rejection_cats');
             if (is_array($categories)) $categories = array_sum($categories);
             else $categories = 0;
             $reason = get_http_var('reject_reason');
