@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.48 2006-11-23 15:17:45 matthew Exp $
+ * $Id: admin-pet.php,v 1.49 2006-11-23 17:22:05 matthew Exp $
  * 
  */
 
@@ -206,7 +206,7 @@ class ADMIN_PAGE_PET_MAIN {
             if ($sort != $s) print '</a>';
             print '</th>';
         }
-        if ($status == 'finished')
+        if ($status == 'finished' || $status == 'draft')
             print '<th>Actions</th>';
         print '</tr>';
         print "\n";
@@ -264,7 +264,7 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= '<td>'.trim_characters(htmlspecialchars($r['content']),0,100);
             if ($status != 'finished') {
                 $disp_cat = preg_replace('#value="'.$r['category'].'"#', '$0 selected', $categories);
-                $row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
+                #$row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
             }
             $row .= '</td>';
             $row .= '<td>'.htmlspecialchars($r['signers']) . '</td>';
@@ -278,6 +278,13 @@ class ADMIN_PAGE_PET_MAIN {
                 } elseif ($r['status'] == 'rejected') {
                     $row .= '<td>Rejected twice</td>';
                 }
+            } elseif ($status == 'draft') {
+                $row .= '<td><form name="petition_admin_approve" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] .
+                    '"><input type="submit" name="approve" value="Approve"> <input type="submit" name="reject" value="Reject"></form>';
+                if ($r['status'] == 'resubmitted') {
+                    $row .= ' resubmitted';
+                }
+                $row .= '</td>';
             } elseif ($status == 'finished') {
                 $row .= '<td>';
                 if ($r['message_id']) 
@@ -302,8 +309,8 @@ class ADMIN_PAGE_PET_MAIN {
 
         petition_admin_navigation(array('status'=>$status, 'found'=>count($found)));
         if ($status != 'finished') {
-            print '<form method="post" action="'.$this->self_link.'">';
-            print '<p><input type="submit" value="Update all categories"></p>';
+            #print '<form method="post" action="'.$this->self_link.'">';
+            #print '<p><input type="submit" value="Update all categories"></p>';
         }
         $this->petition_header($sort, $status);
         $a = 0;
@@ -314,7 +321,7 @@ class ADMIN_PAGE_PET_MAIN {
         }
         print '</table>';
         if ($status != 'finished') {
-            print '</form>';
+            #print '</form>';
         }
         print '<p>';
     }
