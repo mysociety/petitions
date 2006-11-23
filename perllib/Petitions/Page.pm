@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.61 2006-11-22 14:38:44 matthew Exp $
+# $Id: Page.pm,v 1.62 2006-11-23 19:23:30 matthew Exp $
 #
 
 package Petitions::Page;
@@ -221,22 +221,22 @@ sub sign_box ($$) {
                 " sign up to the petition."
             )
         . $q->p( '<label for="email">Your email:</label>',
-                $q->textfield(-name => 'email', -size => 30, -id => 'email'))
+                $q->textfield(-name => 'email', -size => 25, -id => 'email'))
         . $q->p( '<label for="email2">Confirm email:</label>',
-                $q->textfield(-name => 'email2', -size => 30, -id => 'email2'))
+                $q->textfield(-name => 'email2', -size => 25, -id => 'email2'))
         . $q->p($q->small($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.'))
         )
         . $q->div({-id => 'signFormRight' },
           $q->p( 'You must be a British citizen or resident to sign the petition.'),
           $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
-                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4) ),
+                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:100%') ),
           $q->p( '<label for="postcode">UK postcode:</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),
         $q->p( '<label class="wide" for="overseas">Or, if you\'re an
 	expatriate, you\'re in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>', 
-            $q->popup_menu(-name=>'overseas', -id=>'overseas', -values=>[
+            $q->popup_menu(-name=>'overseas', -id=>'overseas', -style=>'width:100%', -values=>[
                 '-- Select --',
                 'Expatriate',
                 'Armed Forces',
