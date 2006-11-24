@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.21 2006-11-24 11:46:31 chris Exp $
+# $Id: RPC.pm,v 1.22 2006-11-24 16:09:49 chris Exp $
 #
 
 package Petitions::RPC;
@@ -240,8 +240,9 @@ push(@sent, time());
         $interval *= RPC_RETRY_EXP;
     }
 
-warn "no response; packets sent at: "
-        . join(", ", @sent) . "; timed out at " . time();
+warn "no RPC response; packets sent at: "
+        . join(", ", @sent) . "; timed out at " . time()
+        . "; cookie = " . unpack('h*', $r->{cookie}) . "\n";
 
     return 0;
 }
