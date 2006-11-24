@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.76 2006-11-24 10:12:30 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.77 2006-11-24 10:31:03 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -500,7 +500,7 @@ sub ehlo ($) {
     if (!defined($name)) {
         # XXX this could block, but that's probably not a disaster
         my ($port, $addr) = sockaddr_in(getsockname($self->s()));
-        my $name = gethostbyaddr($addr, AF_INET);
+        $name = gethostbyaddr($addr, AF_INET);
         if (!$name) {
             $self->log('warning', "unable to get name for local address @{[ inet_ntoa($addr) ]}");
             $name = sprintf('[%s]', inet_ntoa($addr));
@@ -2294,4 +2294,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.76 2006-11-24 10:12:30 chris Exp $
+$Id: petemaild,v 1.77 2006-11-24 10:31:03 chris Exp $
