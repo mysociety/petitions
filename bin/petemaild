@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.75 2006-11-19 12:12:56 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.76 2006-11-24 10:12:30 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -313,7 +313,9 @@ sub new ($$$) {
     $self->{messages} = $msgs;
     $self->{target} = $target;
     $self->{error} = undef;
+    my $source_ip = mySociety::Config::get('EMAIL_SOURCE_IP', '0.0.0.0');
     $self->{s} = new IO::Socket::INET(
+                            LocalAddr => $source_ip,
                             PeerAddr => $target,
                             PeerPort => 25,
                             Type => SOCK_STREAM,
@@ -494,12 +496,15 @@ sub send ($$) {
 sub ehlo ($) {
     my Sender $self = shift;
     # Figure out our name.
-    # XXX this could block, but that's probably not a disaster
-    my ($port, $addr) = sockaddr_in(getsockname($self->s()));
-    my $name = gethostbyaddr($addr, AF_INET);
-    if (!$name) {
-        $self->log('warning', "unable to get name for local address @{[ inet_ntoa($addr) ]}");
-        $name = sprintf('[%s]', inet_ntoa($addr));
+    my $name = mySociety::Config::get('EMAIL_HELO_DOMAIN', undef);
+    if (!defined($name)) {
+        # XXX this could block, but that's probably not a disaster
+        my ($port, $addr) = sockaddr_in(getsockname($self->s()));
+        my $name = gethostbyaddr($addr, AF_INET);
+        if (!$name) {
+            $self->log('warning', "unable to get name for local address @{[ inet_ntoa($addr) ]}");
+            $name = sprintf('[%s]', inet_ntoa($addr));
+        }
     }
     $self->send("HELO $name");
     $self->state(STATE_HELO);
@@ -2289,4 +2294,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.75 2006-11-19 12:12:56 chris Exp $
+$Id: petemaild,v 1.76 2006-11-24 10:12:30 chris Exp $

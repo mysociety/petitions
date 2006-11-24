@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.14 2006-10-05 10:27:29 francis Exp $
+ * $Id: general-example,v 1.15 2006-11-24 10:12:29 chris Exp $
  * 
  */
 
@@ -55,6 +55,10 @@ define('OPTION_EMAIL_DOMAIN', '---.com');
 define('OPTION_CONTACT_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
 define('OPTION_CONTACT_NAME', 'Name for From line');
 define('OPTION_TEST_EMAIL_PREFIX', 'petharness');
+
+// Optional originating IP and HELO name for SMTP connections
+// define('OPTION_EMAIL_SOURCE_IP', '0.0.0.0');
+// define('OPTION_EMAIL_HELO_DOMAIN', 'mail.example.com');
 
 // Debug log level for PHP website
 define('OPTION_PHP_DEBUG_LEVEL', 0);
