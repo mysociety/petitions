@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.22 2006-11-24 16:09:49 chris Exp $
+# $Id: RPC.pm,v 1.23 2006-11-24 16:13:08 chris Exp $
 #
 
 package Petitions::RPC;
@@ -37,8 +37,8 @@ use constant RPC_TIMEOUT => 2;
 
 # Retry schedule for the RPC packets. The back end caches completed requests
 # so we can be reasonably aggressive with this.
-use constant RPC_RETRY_TIME => 0.1;
-use constant RPC_RETRY_EXP => 1.5;
+use constant RPC_RETRY_TIME => 0.05;
+use constant RPC_RETRY_EXP => 1.25;
 
 # Bytes of random data in request ID.
 use constant COOKIE_LEN => 6;
