@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.63 2006-11-24 14:58:06 matthew Exp $
+# $Id: Page.pm,v 1.64 2006-11-24 17:32:04 matthew Exp $
 #
 
 package Petitions::Page;
@@ -168,7 +168,7 @@ sub display_box ($$%) {
     }
     my $details = '';
     $details = '<a href="#detail"><small>More details</small></a>'
-        if (exists($params{detail}) && Petitions::show_part($p, 'detail'));
+        if (exists($params{detail}) && $p->{detail} && Petitions::show_part($p, 'detail'));
     return
         $q->div({ -class => 'petition_box' },
             $q->p({ -style => 'margin-top: 0' },
