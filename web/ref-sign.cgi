@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.28 2006-11-20 20:54:04 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.29 2006-11-24 10:32:45 chris Exp $';
 
 use strict;
 
@@ -110,8 +110,9 @@ sub signup_page ($$) {
                 $html .=
                     $q->h1({-class => 'ltr'}, "Now check your email!")
                     . $q->p({-class => 'noprint loudmessage', -align => 'center'},
-                        "We've sent you an email; before your signature is added to
-                        the petition you'll have to click the link in it."
+                        "We've sent you an email; before your signature is
+                        added to the petition you'll have to click the link in
+                        it."
                     );
             } else {
                 $errors{busy} =
