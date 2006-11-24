@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.53 2006-11-23 12:53:49 matthew Exp $
+// $Id: new.php,v 1.54 2006-11-24 14:40:59 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -469,7 +469,7 @@ function step_you_error_check($data) {
     if (!$data['postcode'] && !$data['overseas'])
         $errors['postcode'] = 'Please enter a valid postcode or choose an option from the drop-down menu';
     if ($data['postcode'] && $data['overseas'])
-        $errors['postcode'] = 'Please enter a valid postcode OR choose an option from the drop-down menu';
+        $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
 
     $vars = array(
         'name' => 'name',
