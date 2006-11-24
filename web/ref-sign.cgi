@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.32 2006-11-24 15:07:53 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.33 2006-11-24 15:50:11 chris Exp $';
 
 use strict;
 
@@ -114,7 +114,7 @@ sub signup_page ($$) {
                         added to the petition you'll have to click the link in
                         it."
                     );
-                if ($email =~ /\@(hotmail\.(com|co\.uk))$/i) {
+                if ($qp_email =~ /\@(hotmail\.(com|co\.uk))$/i) {
                     $html .=
                         $q->p({-class => 'noprint loudmessage'},
                         q(<strong>Important note:</strong> Many confirmation 
