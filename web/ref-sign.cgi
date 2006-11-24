@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.33 2006-11-24 15:50:11 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.34 2006-11-24 23:03:33 matthew Exp $';
 
 use strict;
 
@@ -120,7 +120,9 @@ sub signup_page ($$) {
                         q(<strong>Important note:</strong> Many confirmation 
                         messages we've been sending out to users of Hotmail
                         have not arrived because of problems with Hotmail
-                        which are beyond our control.  If you have not received
+                        which are beyond our control.  Please check your
+			junk mail folder in case the message went there; but
+			if you have not received
                         your confirmation email within five minutes of seeing
                         this page, and you are certain that you typed your
                         email address correctly, then please contact Hotmail
