@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.30 2006-11-24 11:25:09 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.31 2006-11-24 11:31:35 chris Exp $';
 
 use strict;
 
@@ -65,7 +65,7 @@ sub stderronly ($) {
     $stderronly = shift;
 }
 
-use mySociety::Util qw(print_log printf_log);
+use mySociety::Util qw(open_log print_log);
 
 sub do_output ($$) {
     my ($prio, $str) = @_;
@@ -74,7 +74,7 @@ sub do_output ($$) {
     } else {
         our $have_opened_log;
         if (!defined($have_opened_log) || $$ != $have_opened_log) {
-            open_log('petemaild');
+            open_log('petsignupd');
             $have_opened_log = $$;
         }
         print_log($prio eq 'noise' ? 'debug' : $prio, $str);
@@ -237,14 +237,16 @@ while (!$foad) {
                 # immediately send an acknowledgement. Otherwise, add it to the
                 # list of requests to process later.
                 if (exists($cache{$r->{cookie}})) {
-                    Log::printf('noise', 'duplicate signup request from %s:%d',
-                                inet_ntoa($ip), $port);
+                    Log::printf('noise', 'early ack duplicate request from %s:%d cookie %s',
+                                inet_ntoa($ip), $port,
+                                unpack('h*', $r->{cookie}));
                     my $ack = Petitions::RPC::make_ack_packet($r->{cookie});
                     $s->send($ack, 0, $r->{client});
                         # don't care much if this fails
                 } elsif (!exists($pending{$r->{cookie}})) {
-                    Log::print('noise', 'new signup request from %s:%d',
-                                inet_ntoa($ip), $port);
+                    Log::printf('noise', 'new request from %s:%d cookie %s',
+                                inet_ntoa($ip), $port,
+                                unpack('h*', $r->{cookie}));
                     $pending{$r->{cookie}} = $r;
                 }
 
@@ -339,5 +341,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.30 2006-11-24 11:25:09 chris Exp $
+$Id: petsignupd,v 1.31 2006-11-24 11:31:35 chris Exp $
 
