@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.28 2006-11-24 10:23:47 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.29 2006-11-24 10:28:20 chris Exp $';
 
 use strict;
 
@@ -214,6 +214,7 @@ while (!$foad) {
     my @ready = IO::Select->new($s)->can_read($max_signup_time / 10);
     if (@ready) {
         while (defined($sender = $s->recv($buf, 65536, 0))) {
+            my ($port, $ip) = sockaddr_in($sender);
             if (my $r = Petitions::RPC::parse_packet($buf)) {
                 # We have a valid request. Schedule an alarm so that we will
                 # send a response within the deadline.
@@ -231,17 +232,20 @@ while (!$foad) {
                 # immediately send an acknowledgement. Otherwise, add it to the
                 # list of requests to process later.
                 if (exists($cache{$r->{cookie}})) {
+                    Log::printf('noise', 'duplicate signup request from %s:%d',
+                                inet_ntoa($ip), $port);
                     my $ack = Petitions::RPC::make_ack_packet($r->{cookie});
                     $s->send($ack, 0, $r->{client});
                         # don't care much if this fails
                 } elsif (!exists($pending{$r->{cookie}})) {
+                    Log::print('noise', 'new signup request from %s:%d',
+                                inet_ntoa($ip), $port);
                     $pending{$r->{cookie}} = $r;
                 }
 
                 # Done handling this request.
             } else {
                 # Invalid packet of some sort. Log and continue.
-                my ($port, $ip) = sockaddr_in($sender);
                 Log::printf('err', 'bad packet from %s:%d',
                             inet_ntoa($ip), $port);
             }
@@ -330,5 +334,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.28 2006-11-24 10:23:47 chris Exp $
+$Id: petsignupd,v 1.29 2006-11-24 10:28:20 chris Exp $
 
