@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.31 2006-11-24 11:31:35 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.32 2006-11-24 15:57:01 chris Exp $';
 
 use strict;
 
@@ -248,6 +248,10 @@ while (!$foad) {
                                 inet_ntoa($ip), $port,
                                 unpack('h*', $r->{cookie}));
                     $pending{$r->{cookie}} = $r;
+                } else {
+                    Log::printf('noise', 'duplicate request from %s:%d cookie %s',
+                                inet_ntoa($ip), $port,
+                                unpack('h*', $r->{cookie}));
                 }
 
                 # Done handling this request.
@@ -341,5 +345,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.31 2006-11-24 11:31:35 chris Exp $
+$Id: petsignupd,v 1.32 2006-11-24 15:57:01 chris Exp $
 
