@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.31 2006-11-24 14:40:59 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.32 2006-11-24 15:07:53 chris Exp $';
 
 use strict;
 
@@ -114,6 +114,22 @@ sub signup_page ($$) {
                         added to the petition you'll have to click the link in
                         it."
                     );
+                if ($email =~ /\@(hotmail\.(com|co\.uk))$/i) {
+                    $html .=
+                        $q->p({-class => 'noprint loudmessage'},
+                        q(<strong>Important note:</strong> Many confirmation 
+                        messages we've been sending out to users of Hotmail
+                        have not arrived because of problems with Hotmail
+                        which are beyond our control.  If you have not received
+                        your confirmation email within five minutes of seeing
+                        this page, and you are certain that you typed your
+                        email address correctly, then please contact Hotmail
+                        Support
+                        <a href="http://support.msn.com/eform.aspx?productKey=hotmail&page=support_home_options_form_byemail&ct=eformts">by
+                        filling in the form on their web page</a>. We
+                        apologise for the inconvenience and are working with
+                        Microsoft to resolve this problem.));
+                }
             } else {
                 $errors{busy} =
                         "Sorry, but we weren't able to add your signature to
