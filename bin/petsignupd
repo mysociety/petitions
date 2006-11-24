@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.27 2006-10-24 17:02:03 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.28 2006-11-24 10:23:47 chris Exp $';
 
 use strict;
 
@@ -76,8 +76,20 @@ sub do_output ($$) {
     }
 }
 
+
+# signal handler to permit changing of verbose level on-the-fly.
+my $changeverboselevel = 0;
+$SIG{USR1} = sub { ++$changeverboselevel; };
+
 sub print ($@) {
     my $prio = shift;
+
+    if ($changeverboselevel) {
+        $verboselevel = ($verboselevel + $changeverboselevel) % 3;
+        do_output('info', "verbose level now $verboselevel");
+        $changeverboselevel = 0;
+    }
+    
     if ($verboselevel < 2) {
         return if ($prio eq 'noise');
         return if ($verboselevel < 1 && $prio eq 'debug');
@@ -88,13 +100,8 @@ sub print ($@) {
 
 sub printf ($$;@) {
     my $prio = shift;
-    if ($verboselevel < 2) {
-        return if ($prio eq 'noise');
-        return if ($verboselevel < 1 && $prio eq 'debug');
-        return if ($verboselevel < 0 && $prio eq 'info');
-    }
     my $fmt = shift;
-    do_output($prio, sprintf($fmt, @_));
+    Log::print($prio, sprintf($fmt, @_));
 }
 
 package main;
@@ -323,5 +330,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.27 2006-10-24 17:02:03 francis Exp $
+$Id: petsignupd,v 1.28 2006-11-24 10:23:47 chris Exp $
 
