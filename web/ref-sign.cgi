@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.29 2006-11-24 10:32:45 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.30 2006-11-24 10:35:27 chris Exp $';
 
 use strict;
 
@@ -119,6 +119,7 @@ sub signup_page ($$) {
                         "Sorry, but we weren't able to add your signature to
                         the petition, because our site is extremely busy at
                         the moment. Please try again in a few minutes' time.";
+                print STDERR "no RPC response signing $p->{ref}\n";
             }
         }
     } 
@@ -192,6 +193,7 @@ sub confirm_page ($$$) {
                     because our site is extremely busy at the moment.
                     Please try again in a few minutes' time.")
                 . Petitions::Page::footer($q, 'Confirm_something_busy');
+        print STDERR "no RPC response confirming '$desc'\n";
     }
 
     utf8::encode($html);
