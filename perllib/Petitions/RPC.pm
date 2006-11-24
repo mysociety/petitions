@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.23 2006-11-24 16:13:08 chris Exp $
+# $Id: RPC.pm,v 1.24 2006-11-24 18:45:32 chris Exp $
 #
 
 package Petitions::RPC;
@@ -33,7 +33,7 @@ use Petitions;
 use constant HMAC_SHA1_LEN => 20;
 
 # Total amount of time we wait until our request is acknowledged.
-use constant RPC_TIMEOUT => 2;
+use constant RPC_TIMEOUT => 10;
 
 # Retry schedule for the RPC packets. The back end caches completed requests
 # so we can be reasonably aggressive with this.
