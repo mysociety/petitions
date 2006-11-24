@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.50 2006-11-23 18:13:08 matthew Exp $
+ * $Id: admin-pet.php,v 1.51 2006-11-24 11:20:40 matthew Exp $
  * 
  */
 
@@ -209,7 +209,7 @@ class ADMIN_PAGE_PET_MAIN {
     }
 
     function list_all_petitions() {
-        global $open, $pet_today, $global_petition_categories;
+        global $pet_today, $global_petition_categories;
         $sort = get_http_var('s');
         if (!$sort || preg_match('/[^radecsz]/', $sort)) $sort = 'c';
         $order = '';
@@ -238,6 +238,7 @@ class ADMIN_PAGE_PET_MAIN {
         $q = db_query("
             SELECT petition.*,
                 date_trunc('second',creationtime) AS creationtime, 
+                (ms_current_timestamp() - interval '7 days' > creationtime) AS late, 
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND emailsent in ('sent','confirmed')) AS signers,
                 (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
                 message.id AS message_id
@@ -269,6 +270,8 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
             $row .= '<td>'.$r['creationtime'].'</td>';
+	    $late = false;
+	    if ($status == 'draft' && $r['late'] == 't') $late = true;
             if ($status == 'rejected') {
                 if ($r['status'] == 'rejectedonce') {
                     $row .= '<td>Rejected once</td>';
@@ -291,8 +294,9 @@ class ADMIN_PAGE_PET_MAIN {
                         '"><input type="submit" name="respond" value="Write response"></form>';
                 $row .= '</td>';
             }
-            $found[] = $row;
+            $found[] = array($late, $row);
         }
+/*
         if ($sort=='o') {
             function sort_by_percent($a, $b) {
                 global $open;
@@ -303,7 +307,7 @@ class ADMIN_PAGE_PET_MAIN {
             }
             uksort($open, 'sort_by_percent');
         }
-
+*/
         petition_admin_navigation(array('status'=>$status, 'found'=>count($found)));
         if ($this->cat_change) { ?>
 <form method="post" action="<?=$this->self_link ?>">
@@ -316,9 +320,12 @@ class ADMIN_PAGE_PET_MAIN {
         $this->petition_header($sort, $status);
         $a = 0;
         foreach ($found as $row) {
-            print '<tr'.($a++%2==0?' class="v"':'').'>';
-            print $row;
-            print '</tr>'."\n";
+            print '<tr';
+	    $class = array();
+	    if ($row[0]) $class[] = 'l';
+	    if ($a++%2==0) $class[] = 'v';
+	    if ($class) print ' class="' . join(' ', $class) . '"';
+	    print ">$row[1]</tr>\n";
         }
         print '</table>';
         if ($this->cat_change) {
