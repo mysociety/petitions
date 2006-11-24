@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.29 2006-11-24 10:28:20 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.30 2006-11-24 11:25:09 chris Exp $';
 
 use strict;
 
@@ -72,7 +72,12 @@ sub do_output ($$) {
     if ($stderronly) {
         STDERR->print("petsignupd: $prio: ", $str, "\n");
     } else {
-        print_log($prio, $str);
+        our $have_opened_log;
+        if (!defined($have_opened_log) || $$ != $have_opened_log) {
+            open_log('petemaild');
+            $have_opened_log = $$;
+        }
+        print_log($prio eq 'noise' ? 'debug' : $prio, $str);
     }
 }
 
@@ -334,5 +339,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.29 2006-11-24 10:28:20 chris Exp $
+$Id: petsignupd,v 1.30 2006-11-24 11:25:09 chris Exp $
 
