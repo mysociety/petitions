@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.37 2006-11-21 13:31:11 matthew Exp $
+# $Id: Petitions.pm,v 1.38 2006-11-24 14:58:07 matthew Exp $
 #
 
 package Petitions::DB;
@@ -271,8 +271,9 @@ sub sentence ($;$) {
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     croak("Field 'content' missing from PETITION") unless (exists($p->{content}));
     my $sentence = sprintf('%s %s', $petition_prefix, $p->{content});
-    $sentence = 'This petition cannot be shown' unless Petitions::show_part($p, 'content');
+    $sentence = 'This petition cannot be shown.' unless Petitions::show_part($p, 'content');
     $sentence = ent($sentence) if ($html);
+    $sentence .= '.' unless $sentence =~ /\.$/;
     return $sentence;
 }
 
@@ -289,7 +290,7 @@ sub detail ($) {
     $detail =~ s/\n\n+/<\/p> <p>/g;
     if ($detail) {
         $detail = <<EOF;
-<div style="float: right; width:45%">
+<div id="detail"><a name="detail"></a>
 <h2><span dir="ltr">More details from petition creator</span></h2>
 <p>$detail</p></div>
 EOF

@@ -5,7 +5,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: pet.css,v 1.19 2006-11-17 17:10:39 matthew Exp $
+ * $Id: pet.css,v 1.20 2006-11-24 14:58:05 matthew Exp $
  *
  */
 
@@ -190,4 +190,9 @@ div#signatories {
 
 .greyed {
     color: #999999;
+}
+
+#detail {
+    float: right;
+    width: 45%;
 }
