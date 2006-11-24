@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.20 2006-11-21 14:22:40 matthew Exp $
+# $Id: RPC.pm,v 1.21 2006-11-24 11:46:31 chris Exp $
 #
 
 package Petitions::RPC;
@@ -203,6 +203,8 @@ sub do_rpc ($) {
     local $SIG{ALRM} = sub { $alarmfired = 1; };
     alarm(RPC_TIMEOUT);
 
+my @sent = ( );
+
     while (!$alarmfired) {
         # Send request.
         my $n;
@@ -210,6 +212,7 @@ sub do_rpc ($) {
             $n = $s->send($packet, 0, $serveraddr);
         } while (!defined($n) && $!{EINTR});
         # XXX handle transmission errors?
+push(@sent, time());
         
         if (IO::Select->new($s)->can_read($interval)) {
             my $ack = '';
@@ -236,6 +239,9 @@ sub do_rpc ($) {
 
         $interval *= RPC_RETRY_EXP;
     }
+
+warn "no response; packets sent at: "
+        . join(", ", @sent) . "; timed out at " . time();
 
     return 0;
 }
