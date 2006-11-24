@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.78 2006-11-24 17:51:03 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.79 2006-11-24 18:43:59 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1883,6 +1883,7 @@ sub post_select ($$) {
 
                 # Now do all the A queries.
                 my $nq = 0;
+                my $nip = 0;
                 my %have;
                 foreach my $mx (@{$self->{mx}}) {
                     my $host = $mx->exchange();
@@ -1903,6 +1904,9 @@ sub post_select ($$) {
                                         address => $host
                                     )
                             ];
+                        ++$nip
+                    } elsif ($host !~ /^$RE{net}{domain}$/) {
+                        $self->log('warning', "exchanger $host is not a valid domain name; ignoring it");
                     } else {
                         my $s = $self->{r}->bgsend($mx->exchange(), 'A');
                         $self->{sockets}->{$s} = $s;
@@ -1912,8 +1916,12 @@ sub post_select ($$) {
 
                 if ($nq) {
                     $self->state(STATE_A);
-                } else {
+                } elsif ($nip) {
                     $self->log('debug', 'all MXs point to IP addresses');
+                    $self->state(STATE_DONE);
+                } else {
+                    $self->log('warning', 'no valid MXs');
+                    $self->{mx} = undef;
                     $self->state(STATE_DONE);
                 }
             } elsif ($self->state() == STATE_A) {
@@ -2305,4 +2313,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.78 2006-11-24 17:51:03 chris Exp $
+$Id: petemaild,v 1.79 2006-11-24 18:43:59 chris Exp $
