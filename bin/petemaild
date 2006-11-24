@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.77 2006-11-24 10:31:03 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.78 2006-11-24 17:51:03 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1929,6 +1929,17 @@ sub post_select ($$) {
                     $self->log('warning', "temporary failure resolving A record for '$q'");
                     $self->state(STATE_BAD);
                     return;
+                } elsif ($result->header()->rcode() eq 'NXDOMAIN') {
+                    # This A record does not exist.
+                    $self->log('warning', "exchange $q does not exist");
+                    @{$self->{mx}} = grep { $_->exchange() ne $q } @{$self->{mx}};
+                    delete $self->{a}->{$q};
+                    $self->{mx} = undef if (!@{$self->{mx}});
+                        # XXX Is this correct? If a domain has a number of MXs,
+                        # all of which have exchanges which are NXDOMAIN,
+                        # should the domain really be regarded as unroutable?
+                    $self->state(STATE_DONE) if (!keys(%{$self->{sockets}}));
+                    return;
                 }
 
                 # It's possible that one of these domains could be a CNAME
@@ -2294,4 +2305,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.77 2006-11-24 10:31:03 chris Exp $
+$Id: petemaild,v 1.78 2006-11-24 17:51:03 chris Exp $
