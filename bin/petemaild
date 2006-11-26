@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.83 2006-11-26 15:57:30 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.84 2006-11-26 16:01:36 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1832,7 +1832,7 @@ sub is_valid_domain ($) {
     # their 3Com back!"
     my $ld = '[0-9a-z]';
     my $ldh = '[0-9a-z-]';
-    return ($domain =~ /^$ld$ldh{0,61}$ld(\.$ld$ldh{0,61}$ld)*$/);
+    return ($domain =~ /^$ld(|$ldh{0,61}$ld)(\.$ld(|$ldh{0,61}$ld))*$/);
 }
 
 # post_select RDS WRS
@@ -2342,4 +2342,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.83 2006-11-26 15:57:30 chris Exp $
+$Id: petemaild,v 1.84 2006-11-26 16:01:36 chris Exp $
