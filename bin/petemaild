@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.79 2006-11-24 18:43:59 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.80 2006-11-26 15:17:47 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -727,6 +727,7 @@ sub parse_smtp_response ($$$) {
     } elsif ($state == STATE_MESSAGE) {
         if ($code =~ /^2/) {
             # Message has been successfully submitted.
+            $self->log('info', "successful response after message data: \"$ltext\"");
             $self->deliver();
             if ($self->get_message_to_send()) {
                 $self->mail_from($self->{message}->sender());
@@ -1481,12 +1482,14 @@ sub DESTROY ($) {
 # Child process talking to the database.
 #
 
-# message_id
-# Return a value suitable for use as a Message-ID: in an email.
-sub message_id () {
-    return sprintf('<%08x.%08x@%s>',
-                int(rand(0xffffffff)),
-                time(),
+# message_id WHAT ID
+# Return a value suitable for use as a Message-ID: in an email. WHAT should be
+# either "signer" or "petition" and ID should be the ID of the corresponding
+# row in the database.
+sub message_id ($$) {
+    my ($what, $id) = @_;
+    return sprintf('<%s-%d-%08x.%08x@%s>',
+                $what, $id, int(rand(0xffffffff)), time(),
                 mySociety::Config::get('EMAIL_DOMAIN'));
 }
 
@@ -1518,7 +1521,7 @@ sub make_signer_email ($$) {
 
                 To => [[$signer->{email}, $signer->{name}]],
                 From => [mySociety::Config::get('CONTACT_EMAIL'), mySociety::Config::get('CONTACT_NAME')],
-                'Message-ID' => message_id()
+                'Message-ID' => message_id('signer', $signer->{id})
             });
 }
 
@@ -1548,7 +1551,7 @@ sub make_petition_email ($) {
 
                 To => [[$petition->{email}, $petition->{name}]],
                 From => [mySociety::Config::get('CONTACT_EMAIL'), mySociety::Config::get('CONTACT_NAME')],
-                'Message-ID' => message_id()
+                'Message-ID' => message_id('petition', $petition->{id})
             });
 }
 
@@ -2313,4 +2316,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.79 2006-11-24 18:43:59 chris Exp $
+$Id: petemaild,v 1.80 2006-11-26 15:17:47 chris Exp $
