@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.81 2006-11-26 15:34:11 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.82 2006-11-26 15:47:03 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1821,6 +1821,20 @@ sub pre_select ($$$) {
     }
 }
 
+# is_valid_domain DOMAIN
+# Is DOMAIN a valid domain name?
+sub is_valid_domain ($) {
+    my $domain = lc(shift);
+    # AAAAARGH. Would just use $RE{net}{domain} from Regexp::Common, except for
+    # the fact that its idea of what constitutes a domain name comes from
+    # RFC1035, and therefore dates back to 1987 when it wasn't valid to have
+    # a number at the beginning of a domain name. "The 1980s called, they want
+    # their 3Com back!"
+    my $ld = '[0-9a-z]';
+    my $ldh = '[0-9a-z-]';
+    return ($domain =~ /^$ld$ldh{0,61}$ld(\.$ld$ldh{0,61}$ld)*$/);
+}
+
 # post_select RDS WRS
 # Post-select processing. RDS and WRS are references to hashes whose keys are
 # handles which are, respectively, available for reading and for writing.
@@ -1893,6 +1907,7 @@ sub post_select ($$) {
                 my $nq = 0;
                 my $nip = 0;
                 my %have;
+                my %cull_mx = ( );
                 foreach my $mx (@{$self->{mx}}) {
                     my $host = $mx->exchange();
                     if (exists($have{$host})) {
@@ -1913,13 +1928,19 @@ sub post_select ($$) {
                                     )
                             ];
                         ++$nip
-                    } elsif ($host !~ /^$RE{net}{domain}$/) {
-                        $self->log('warning', "exchanger $host is not a valid domain name; ignoring it");
+                    } elsif (!is_valid_domain($host)) {
+                        $self->log('warning', "exchange $host is not a valid domain name; ignoring it");
+                        $cull_mx{$host} = 1;
                     } else {
                         my $s = $self->{r}->bgsend($mx->exchange(), 'A');
                         $self->{sockets}->{$s} = $s;
                         ++$nq;
                     }
+                }
+
+                # If any of the MXs were bogus, cull them here.
+                foreach my $q (keys(%cull_mx)) {
+                    @{$self->{mx}} = grep { $_->exchange() ne $q } @{$self->{mx}};
                 }
 
                 if ($nq) {
@@ -1934,7 +1955,7 @@ sub post_select ($$) {
                 }
             } elsif ($self->state() == STATE_A) {
                 # 
-                # Response to query for A records for mail exchangers.
+                # Response to query for A records for mail exchanges.
                 #
 
                 my $q = ($result->question())[0]->qname();
@@ -2321,4 +2342,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.81 2006-11-26 15:34:11 chris Exp $
+$Id: petemaild,v 1.82 2006-11-26 15:47:03 chris Exp $
