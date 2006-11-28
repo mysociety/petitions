@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.51 2006-11-24 11:20:40 matthew Exp $
+ * $Id: admin-pet.php,v 1.52 2006-11-28 10:35:00 matthew Exp $
  * 
  */
 
@@ -734,7 +734,7 @@ EOF;
             if (is_array($categories)) $categories = array_sum($categories);
             else $categories = 0;
             $reason = get_http_var('reject_reason');
-            if ($categories && $reason) {
+            if ($categories) {
                 $this->reject_petition($petition_id, $categories, $reason);
             } else {
                 $this->reject_form($petition_id);
