@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.32 2006-11-23 12:41:27 matthew Exp $
+// $Id: list.php,v 1.33 2006-11-29 09:40:35 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -128,12 +128,12 @@ if (!$rss) {
         $n = $q_offset - PAGE_SIZE;
         if ($n < 0) $n = 0;
         $prev = "<a href=\"?offset=$n" . ($qs_sort ? "&amp;$qs_sort" : '') . '">Previous</a>';
-        $first = '<a href="?offset=0">First</a>';
+        $first = '<a href="?offset=0' . ($qs_sort ? "&amp;$qs_sort" : '') . '">First</a>';
     }
     if ($q_offset + PAGE_SIZE < $ntotal) {
         $n = $q_offset + PAGE_SIZE;
         $next = "<a href=\"?offset=$n" . ($qs_sort ? "&amp;$qs_sort" : '') . '">Next</a>';
-        $last = '<a href="?offset=' . floor(($ntotal-1)/PAGE_SIZE)*PAGE_SIZE . '">Last</a>';
+        $last = '<a href="?offset=' . floor(($ntotal-1)/PAGE_SIZE)*PAGE_SIZE . ($qs_sort ? "&amp;$qs_sort" : '') . '">Last</a>';
     }
     $navlinks = '<p id="petition_view_tabs">' . $views . "</p>\n";
     if ($ntotal > 0) {
