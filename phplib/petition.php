@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.41 2006-11-29 14:44:47 matthew Exp $
+ * $Id: petition.php,v 1.42 2006-11-29 16:15:04 matthew Exp $
  * 
  */
 
@@ -107,7 +107,7 @@ class Petition {
 
         if (!array_key_exists('rejection_hidden_parts', $this->data))
             $this->data['rejection_hidden_parts'] = 0;
-        if (!array_key_exists('signers', $this->data)) $this->data['signers'] = 'n/a';
+        if (!array_key_exists('signers', $this->data)) $this->data['signers'] = -1;
         if (!array_key_exists('open', $this->data)) $this->data['open'] = 't';
         $this->data['open'] = ($this->data['open'] == 't');
         $this->h_ref = htmlspecialchars($this->data['ref']);

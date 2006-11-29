@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.9 2006-11-29 14:44:45 matthew Exp $
+// $Id: search.php,v 1.10 2006-11-29 16:15:05 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -72,9 +72,7 @@ function search($search) {
     // General query
     global $pet_today;
     $petition_select = "SELECT petition.*, '$pet_today' <= petition.deadline AS open,
-                        (SELECT count(*)+1 FROM signer
-                            WHERE showname = 't' and signer.petition_id = petition.id
-                                and signer.emailsent = 'confirmed') AS signers ";
+        cached_signers ";
 
     // Exact petition reference match
 /*    if (!$rss) {
@@ -114,8 +112,8 @@ function search($search) {
             #if ($c%2) $text .= ' class="a"';
             $text .= '><a href="/' . $r['ref'] . '/">';
             $text .= htmlspecialchars($r['content']) . '</a> <small>(';
-            $text .= $r['signers'] . ' signature';
-            $text .= ($r['signers'] == 1 ? '' : 's') . ')</small></li>';
+            $text .= $r['cached_signers'] . ' signature';
+            $text .= ($r['cached_signers'] == 1 ? '' : 's') . ')</small></li>';
             $text .= '</li>';
             #$c++; 
 
