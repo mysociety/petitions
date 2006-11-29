@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.34 2006-11-29 11:22:37 matthew Exp $
+// $Id: list.php,v 1.35 2006-11-29 11:26:25 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -58,8 +58,10 @@ if ($ntotal < $q_offset) {
 $sort_phrase = $q_sort;
 if ($q_sort == 'date')
     $sort_phrase = 'laststatuschange';
-if ($q_sort == 'signers')
+if ($q_sort == 'signers') {
     $sort_phrase = 'laststatuschange';
+    $q_sort = 'date';
+}
 if ($q_sort == 'date' || $q_sort == 'signers') {
     $sort_phrase .= " DESC";
 }
@@ -122,6 +124,10 @@ if (!$rss) {
     }
 
     pet_search_form();
+
+print '<p>This page is currently having a problem with displaying the number of
+signatures, or the petitions ordered by number of signatures. We\'re working on fixing it,
+sorry for the inconvenience.</p>';
 
     $first = '<span class="greyed">First</span>';
     $prev = '<span class="greyed">Previous</span>';
