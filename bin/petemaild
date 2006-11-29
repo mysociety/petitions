@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.85 2006-11-29 23:29:04 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.86 2006-11-29 23:32:36 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1293,7 +1293,7 @@ use mySociety::Email;
 
 use Petitions;
 
-use fields qw(s pid queue q rdbuf wrbuf);
+use fields qw(s pid queue q rdbuf wrbuf failed);
 
 # Because we can't integrate PostgreSQL into the select loop in any sane
 # fashion we fork a subprocess which polls the database for new messages to
@@ -1337,6 +1337,7 @@ sub new ($$) {
     $self->{pid} = $pid;
     $self->{queue} = $queue;
     $self->{q} = [ ];           # confusing -- that's the packet queue
+    $self->{failed} = 0;
     my $rdbuf = ''; $self->{rdbuf} = \$rdbuf;
     my $wrbuf = ''; $self->{wrbuf} = \$wrbuf;
 
@@ -1383,7 +1384,15 @@ sub post_select ($$$) {
             },
             $rds, $wrs)) {
         $self->log('error', "connection to child process closed");
+        $self->{failed} = 1;
     }
+}
+
+# failed
+# Return true if the database child process has failed.
+sub failed ($) {
+    my Source $self = shift;
+    return $self->{failed};
 }
 
 # notify ID RESULT
@@ -2310,6 +2319,12 @@ while (!$foad) {
     $wrs = { map { $_ => 1 } @$w };
     $Q->post_select($rds, $wrs);
     $S->post_select($rds, $wrs);
+
+    if ($S->failed()) {
+        Log::print('error', "database child process failed; starting another");
+        undef $S;
+        $S = new Source($Q);
+    }
 }
 
 exit(0);
@@ -2358,4 +2373,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.85 2006-11-29 23:29:04 chris Exp $
+$Id: petemaild,v 1.86 2006-11-29 23:32:36 chris Exp $
