@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.33 2006-11-29 09:40:35 matthew Exp $
+// $Id: list.php,v 1.34 2006-11-29 11:22:37 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -58,18 +58,21 @@ if ($ntotal < $q_offset) {
 $sort_phrase = $q_sort;
 if ($q_sort == 'date')
     $sort_phrase = 'laststatuschange';
+if ($q_sort == 'signers')
+    $sort_phrase = 'laststatuschange';
 if ($q_sort == 'date' || $q_sort == 'signers') {
     $sort_phrase .= " DESC";
 }
 $sql_params[] = PAGE_SIZE;
 $qrows = db_query("
-        SELECT petition.*, '$pet_today' <= petition.deadline AS open,
+        SELECT petition.*, '$pet_today' <= petition.deadline AS open" . /* ,
             (SELECT count(*)+1 FROM signer
                 WHERE showname and signer.petition_id = petition.id
                     and signer.emailsent = 'confirmed') AS signers,
-                message.id as message_id
-            FROM petition
+                message.id as message_id */ "
+            FROM petition " . /* 
             left join message on petition.id = message.petition_id and circumstance = 'government-response'
+	    */ "
             WHERE status = ?".
             ($open ? " AND deadline $open '$pet_today' " : ""). 
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
@@ -198,9 +201,9 @@ if ($ntotal > 0) {
                 print 'more details';
             }
             print '</a>';
-            if ($q_type == 'closed' && $petition->data['message_id']) {
+            /* if ($q_type == 'closed' && $petition->data['message_id']) {
                 print '<br />(with government response)';
-            }
+            } */
             print '</td><td>' . $petition->h_name() . '</td>';
             if ($q_type != 'rejected') {
                 print '<td>' . $petition->h_pretty_deadline() . '</td>';
