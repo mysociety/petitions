@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.39 2006-11-29 14:41:59 matthew Exp $
+-- $Id: schema.sql,v 1.40 2006-11-29 16:05:02 matthew Exp $
 --
 
 -- global_seq
@@ -84,6 +84,7 @@ create table petition (
 
     -- metadata
     creationtime timestamp not null,
+    cached_signers integer not null default 0,
     
     status text not null default 'unconfirmed' check (
         status in (

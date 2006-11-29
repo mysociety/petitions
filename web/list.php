@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.35 2006-11-29 11:26:25 matthew Exp $
+// $Id: list.php,v 1.36 2006-11-29 16:05:01 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -58,23 +58,16 @@ if ($ntotal < $q_offset) {
 $sort_phrase = $q_sort;
 if ($q_sort == 'date')
     $sort_phrase = 'laststatuschange';
-if ($q_sort == 'signers') {
-    $sort_phrase = 'laststatuschange';
-    $q_sort = 'date';
-}
 if ($q_sort == 'date' || $q_sort == 'signers') {
     $sort_phrase .= " DESC";
 }
 $sql_params[] = PAGE_SIZE;
 $qrows = db_query("
-        SELECT petition.*, '$pet_today' <= petition.deadline AS open" . /* ,
-            (SELECT count(*)+1 FROM signer
-                WHERE showname and signer.petition_id = petition.id
-                    and signer.emailsent = 'confirmed') AS signers,
-                message.id as message_id */ "
-            FROM petition " . /* 
+        SELECT petition.*, '$pet_today' <= petition.deadline AS open,
+	    cached_signers as signers,
+                message.id as message_id
+            FROM petition
             left join message on petition.id = message.petition_id and circumstance = 'government-response'
-	    */ "
             WHERE status = ?".
             ($open ? " AND deadline $open '$pet_today' " : ""). 
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
@@ -124,10 +117,6 @@ if (!$rss) {
     }
 
     pet_search_form();
-
-print '<p>This page is currently having a problem with displaying the number of
-signatures, or the petitions ordered by number of signatures. We\'re working on fixing it,
-sorry for the inconvenience.</p>';
 
     $first = '<span class="greyed">First</span>';
     $prev = '<span class="greyed">Previous</span>';
@@ -207,9 +196,9 @@ if ($ntotal > 0) {
                 print 'more details';
             }
             print '</a>';
-            /* if ($q_type == 'closed' && $petition->data['message_id']) {
+            if ($q_type == 'closed' && $petition->data['message_id']) {
                 print '<br />(with government response)';
-            } */
+            }
             print '</td><td>' . $petition->h_name() . '</td>';
             if ($q_type != 'rejected') {
                 print '<td>' . $petition->h_pretty_deadline() . '</td>';

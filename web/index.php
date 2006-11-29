@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.39 2006-11-29 15:13:13 matthew Exp $
+// $Id: index.php,v 1.40 2006-11-29 16:05:01 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -65,29 +65,24 @@ if (!count($recent)) {
 </ul>
 <p align="right"><a href="/list?sort=date" title="More recent petitions">More</a></p>
 </div>
-<? /*
 <div id="most_popular">
 <h2><span class="ltr">Five most popular petitions</span></h2>
 <p>We the undersigned petition the Prime Minister to&hellip;</p>
 <ul>
 <?
 $recent = db_getAll("
-    select ref, content,
-        (select count(id)+1 from signer
-            where showname = 't'
-            and petition_id = petition.id
-            and emailsent = 'confirmed') as signers
+    select ref, content, cached_signers
     from petition
     where status = 'live'
-    order by signers desc limit 5");
+    order by cached_signers desc limit 5");
 $c = 1;
 foreach ($recent as $petition) {
     print '<li';
     if ($c%2) print ' class="a"';
     print '><a href="/' . $petition['ref'] . '/">';
     print htmlspecialchars($petition['content']) . '</a> <small>(';
-    print $petition['signers'] . ' signature';
-    print ($petition['signers'] == 1 ? '' : 's') . ')</small></li>';
+    print $petition['cached_signers'] . ' signature';
+    print ($petition['cached_signers'] == 1 ? '' : 's') . ')</small></li>';
     $c++;
 }
 if (!count($recent)) {
@@ -97,7 +92,6 @@ if (!count($recent)) {
 </ul>
 <p align="right"><a href="/list?sort=signers" title="More popular petitions">More</a></p>
 </div>
-*/ ?>
 <h2 style="clear: both"><span class="ltr">How it works</span></h2>
 
 <!-- <p>This service has been set up in partnership with <a
