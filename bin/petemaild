@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.84 2006-11-26 16:01:36 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.85 2006-11-29 23:29:04 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -164,6 +164,7 @@ sub new ($$$$$) {
     $self->{nattempts} = 0;
     
     $self->log('info', "from <$sender> to <$recipient> length ", length($_[3]));
+        # XXX would be nice to log the Message-ID: here
     $self->addevent(EVENT_CREATED);
 
     return $self;
@@ -1298,6 +1299,8 @@ use fields qw(s pid queue q rdbuf wrbuf);
 # fashion we fork a subprocess which polls the database for new messages to
 # send. That's pretty lame, of course, but welcome to database land.
 
+my $is_db_child = 0;
+
 # new QUEUE
 # 
 sub new ($$) {
@@ -1318,8 +1321,11 @@ sub new ($$) {
         die "fork: $!";
     } elsif (0 == $pid) {
         $s1->close();
+        $is_db_child = 1;
         database_child_process($s2);
         exit(0);
+    } else {
+        Log::print('info', "database child process is $pid");
     }
 
     $s2->close();
@@ -1368,14 +1374,16 @@ sub pre_select ($$$) {
 sub post_select ($$$) {
     my Source $self = shift;
     my ($rds, $wrs) = @_;
-    do_ipc($self->s(), $self->{rdbuf}, $self->{wrbuf}, $self->{q},
+    if (do_ipc($self->s(), $self->{rdbuf}, $self->{wrbuf}, $self->{q},
             sub ($) {
                 my Source::Packet $packet = shift;
                 if ($packet->type() == Source::Packet::TYPE_NEWMESSAGE) {
                     $self->queue()->add($packet->data());
                 }
             },
-            $rds, $wrs);
+            $rds, $wrs)) {
+        $self->log('error', "connection to child process closed");
+    }
 }
 
 # notify ID RESULT
@@ -1437,7 +1445,12 @@ sub do_ipc ($$$$$;$$) {
                 if ($!{EAGAIN}) {
                     last;
                 } else {
-                    die "reading from socket in child process: $!";
+                    my $what = $is_db_child
+                                ? 'database process'
+                                : 'parent process';
+                    Log::print('error', "reading from socket in $what: $!");
+                    $didclose = 1;
+                    last;
                 }
             } elsif (0 == $n) {
                 $didclose = 1;
@@ -1446,7 +1459,7 @@ sub do_ipc ($$$$$;$$) {
         }
     }
 
-    if (keys(%$wrs)) {
+    if (keys(%$wrs) && !$didclose) {
         while (length($$wrbuf) || @$queue) {
             while (@$queue && length($$wrbuf) < 32768) {
                 my $pkt = shift(@$queue);
@@ -1458,10 +1471,13 @@ sub do_ipc ($$$$$;$$) {
             if (!defined($n)) {
                 if ($!{EAGAIN}){
                     last;
-                } elsif ($!{EPIPE}) {
-                    $didclose = 1;
                 } else {
-                    die "writing to IPC socket: $!";
+                    my $what = $is_db_child
+                                ? 'parent process'
+                                : 'database process';
+                    my $prio = $!{EPIPE} ? 'warning' : 'error';
+                    Log::print($prio, "while sending data to $what: $!");
+                    $didclose = 1;
                 }
             } else {
                 $$wrbuf = substr($$wrbuf, $n);
@@ -2342,4 +2358,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.84 2006-11-26 16:01:36 chris Exp $
+$Id: petemaild,v 1.85 2006-11-29 23:29:04 chris Exp $
