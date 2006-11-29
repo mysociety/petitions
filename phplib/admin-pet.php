@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.52 2006-11-28 10:35:00 matthew Exp $
+ * $Id: admin-pet.php,v 1.53 2006-11-29 14:44:47 matthew Exp $
  * 
  */
 
@@ -29,8 +29,8 @@ class ADMIN_PAGE_PET_SUMMARY {
         $petitions_closed = db_getOne("SELECT COUNT(*) FROM petition WHERE status='finished'");
         $petitions_rejected = db_getOne("SELECT COUNT(*) FROM petition WHERE status='rejected' or status='rejectedonce'");
         $petitions_resubmitted = db_getOne("select count(*) from petition where status='resubmitted'");
-        $signatures = db_getOne('SELECT COUNT(*) FROM signer WHERE showname');
-        $signers = db_getOne("SELECT COUNT(DISTINCT email) FROM signer WHERE showname AND emailsent IN ('sent', 'confirmed')");
+        $signatures = db_getOne('SELECT COUNT(*) FROM signer WHERE showname = \'t\'');
+        $signers = db_getOne("SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent IN ('sent', 'confirmed')");
         
         print "Total petitions in system: $petitions<br>$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $petitions_resubmitted resubmitted<br>$signatures signatures, $signers signers";
         petition_admin_search_form();
@@ -64,7 +64,7 @@ class ADMIN_PAGE_PET_SEARCH {
             $q = db_query("select signer.id, ref, signer.name, signer.email, emailsent
                 from signer, petition
                 where signer.petition_id = petition.id
-                and showname and emailsent in ('sent', 'confirmed')
+                and showname = 't' and emailsent in ('sent', 'confirmed')
                 and (signer.name ilike '%'||?||'%' or signer.email ilike '%'||?||'%')
                 order by signer.email
             ", array($search, $search));
@@ -239,8 +239,8 @@ class ADMIN_PAGE_PET_MAIN {
             SELECT petition.*,
                 date_trunc('second',creationtime) AS creationtime, 
                 (ms_current_timestamp() - interval '7 days' > creationtime) AS late, 
-                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND emailsent in ('sent','confirmed')) AS signers,
-                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
+                (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND emailsent in ('sent','confirmed')) AS signers,
+                (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
                 message.id AS message_id
             FROM petition
             LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
@@ -349,7 +349,7 @@ class ADMIN_PAGE_PET_MAIN {
             $list_limit = 100;
 
         $q = db_query("SELECT petition.*,
-                (SELECT count(*) FROM signer WHERE showname and petition_id=petition.id AND
+                (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
                     emailsent in ('sent', 'confirmed')) AS signers
             FROM petition
             WHERE ref ILIKE ?", $petition);
@@ -394,7 +394,7 @@ class ADMIN_PAGE_PET_MAIN {
                          date_trunc('second',signtime) AS signtime,
                          signer.id AS signid, emailsent
                        FROM signer
-                       WHERE showname AND petition_id=? AND emailsent in ('sent', 'confirmed')";
+                       WHERE showname = 't' AND petition_id=? AND emailsent in ('sent', 'confirmed')";
             if ($sort=='t') $query .= ' ORDER BY signtime DESC';
             else $query .= ' ORDER BY signname DESC';
             if ($list_limit) 

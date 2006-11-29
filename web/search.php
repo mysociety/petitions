@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.8 2006-11-23 12:51:57 matthew Exp $
+// $Id: search.php,v 1.9 2006-11-29 14:44:45 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -73,7 +73,7 @@ function search($search) {
     global $pet_today;
     $petition_select = "SELECT petition.*, '$pet_today' <= petition.deadline AS open,
                         (SELECT count(*)+1 FROM signer
-                            WHERE showname and signer.petition_id = petition.id
+                            WHERE showname = 't' and signer.petition_id = petition.id
                                 and signer.emailsent = 'confirmed') AS signers ";
 
     // Exact petition reference match
