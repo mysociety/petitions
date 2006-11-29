@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.38 2006-11-23 01:17:40 matthew Exp $
+-- $Id: schema.sql,v 1.39 2006-11-29 14:41:59 matthew Exp $
 --
 
 -- global_seq
@@ -184,6 +184,7 @@ create table signer (
 create index signer_petition_id_idx on signer(petition_id);
 create unique index signer_petition_id_email_idx on signer(petition_id, email);
 create index signer_emailsent_idx on signer(emailsent);
+create index signer_petition_id_emailsent_showname on signer(petition_id, emailsent, showname);
 
 -- petition_is_valid_to_sign PETITION EMAIL
 -- Check whether the PETITION is valid for EMAIL to sign.
