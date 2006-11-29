@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.21 2006-11-28 10:48:02 matthew Exp $
+ * $Id: send-messages,v 1.22 2006-11-29 18:53:56 matthew Exp $
  *
  */
 
@@ -54,9 +54,22 @@ Usage: send-messages [--verbose]
 }
 
 db_connect();
+update_cached_signers();
 send_pending_messages();
 
 # ---
+
+# Does what it says
+function update_cached_signers() {
+    $q = db_query("
+update petition
+set cached_signers =
+    (select count(id)+1 from signer
+     where signer.petition_id = petition.id
+       and showname = 't'
+       and emailsent='confirmed')");
+    db_commit();
+}
 
 /* send_pending_messages
  * Dispatch messages to petition signers and creators which have not yet been
