@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.54 2006-11-29 15:22:55 matthew Exp $
+ * $Id: admin-pet.php,v 1.55 2006-11-30 11:16:25 matthew Exp $
  * 
  */
 
@@ -94,6 +94,7 @@ function petition_admin_perform_actions() {
         if (ctype_digit($signer_id)) {
             $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
             db_query('UPDATE signer set showname = false where id = ?', $signer_id);
+            db_query('update petition set cached_signers = cached_signers - 1 where id = ?', $petition_id);
             $p = new Petition($petition_id);
             $p->log_event('Admin hid signer ' . $signer_id, http_auth_user());
             db_commit();
@@ -218,7 +219,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='d') $order = 'deadline desc';
         elseif ($sort=='e') $order = 'email';
         elseif ($sort=='c') $order = 'petition.creationtime';
-        # elseif ($sort=='s') $order = 'signers desc';
+        elseif ($sort=='s') $order = 'signers desc';
         # elseif ($sort=='z') $order = 'surge desc';
 
         $this->cat_change = get_http_var('cats') ? true : false;
@@ -239,7 +240,7 @@ class ADMIN_PAGE_PET_MAIN {
             SELECT petition.*,
                 date_trunc('second',creationtime) AS creationtime, 
                 (ms_current_timestamp() - interval '7 days' > creationtime) AS late, 
-                -- (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND emailsent in ('sent','confirmed')) AS signers,
+                cached_signers AS signers,
                 -- (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
                 message.id AS message_id
             FROM petition
@@ -265,7 +266,7 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
             }
             $row .= '</td>';
-            # $row .= '<td>' . htmlspecialchars($r['signers']) . '</td>';
+            $row .= '<td>' . htmlspecialchars($r['signers']) . '</td>';
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
