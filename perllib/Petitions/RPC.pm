@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.25 2006-11-30 11:16:24 matthew Exp $
+# $Id: RPC.pm,v 1.26 2006-11-30 11:27:56 matthew Exp $
 #
 
 package Petitions::RPC;
@@ -164,7 +164,7 @@ sub confirm_db ($) {
                 where id = ?", {},
                 $r->{id});
         dbh()->do("
-                update petition set cached_signer = cached_signer + 1
+                update petition set cached_signers = cached_signers + 1
                 where id = (select petition_id from signer where id = ?)",
                 {}, $r->{id});
     }
