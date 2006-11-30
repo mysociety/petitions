@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.86 2006-11-29 23:32:36 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.87 2006-11-30 13:41:45 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1383,7 +1383,7 @@ sub post_select ($$$) {
                 }
             },
             $rds, $wrs)) {
-        $self->log('error', "connection to child process closed");
+        Log::print('error', "connection to child process closed");
         $self->{failed} = 1;
     }
 }
@@ -2373,4 +2373,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.86 2006-11-29 23:32:36 chris Exp $
+$Id: petemaild,v 1.87 2006-11-30 13:41:45 matthew Exp $
