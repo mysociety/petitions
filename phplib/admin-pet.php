@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.55 2006-11-30 11:16:25 matthew Exp $
+ * $Id: admin-pet.php,v 1.56 2006-11-30 11:37:43 matthew Exp $
  * 
  */
 
@@ -106,6 +106,7 @@ function petition_admin_perform_actions() {
         if (ctype_digit($signer_id)) {
             $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
             db_query("UPDATE signer set emailsent = 'confirmed' where id = ?", $signer_id);
+            db_query('update petition set cached_signers = cached_signers + 1 where id = ?', $petition_id);
             $p = new Petition($petition_id);
             $p->log_event('Admin confirmed signer ' . $signer_id, http_auth_user());
             db_commit();
