@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.40 2006-11-29 16:05:01 matthew Exp $
+// $Id: index.php,v 1.41 2006-11-30 10:52:32 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -42,6 +42,7 @@ and to deliver your petition directly to Downing Street.</p>
 </form>
 
 </div>
+<? /*
 <div id="most_recent">
 <h2><span class="ltr">Five most recent petitions</span></h2>
 <p>We the undersigned petition the Prime Minister to&hellip;</p>
@@ -92,6 +93,7 @@ if (!count($recent)) {
 </ul>
 <p align="right"><a href="/list?sort=signers" title="More popular petitions">More</a></p>
 </div>
+*/ ?>
 <h2 style="clear: both"><span class="ltr">How it works</span></h2>
 
 <!-- <p>This service has been set up in partnership with <a
