@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.4 2006-11-14 18:21:16 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.5 2006-12-01 00:21:31 chris Exp $';
 
 use strict;
 
@@ -67,5 +67,6 @@ while (!$foad && (my $q = new mySociety::Web())) {
 #                -expires => '+1s'),
         ), $html;
     $W->exit_if_changed();
+    dbh()->rollback();
 }
 
