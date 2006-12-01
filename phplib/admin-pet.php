@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.56 2006-11-30 11:37:43 matthew Exp $
+ * $Id: admin-pet.php,v 1.57 2006-12-01 15:24:09 matthew Exp $
  * 
  */
 
@@ -29,10 +29,14 @@ class ADMIN_PAGE_PET_SUMMARY {
         $petitions_closed = db_getOne("SELECT COUNT(*) FROM petition WHERE status='finished'");
         $petitions_rejected = db_getOne("SELECT COUNT(*) FROM petition WHERE status='rejected' or status='rejectedonce'");
         $petitions_resubmitted = db_getOne("select count(*) from petition where status='resubmitted'");
-        $signatures = db_getOne('SELECT COUNT(*) FROM signer WHERE showname = \'t\'');
-        $signers = db_getOne("SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent IN ('sent', 'confirmed')");
-        
-        print "Total petitions in system: $petitions<br>$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $petitions_resubmitted resubmitted<br>$signatures signatures, $signers signers";
+        $signatures_confirmed = db_getOne("SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'");
+        $signatures_unconfirmed = db_getOne("SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'sent'");
+        $signers = db_getOne("SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'");
+        print <<<EOF
+Total petitions in system: $petitions<br>
+$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $petitions_resubmitted resubmitted<br>
+$signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
+EOF;
         petition_admin_search_form();
     }
 }
