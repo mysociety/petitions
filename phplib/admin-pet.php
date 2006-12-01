@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.57 2006-12-01 15:24:09 matthew Exp $
+ * $Id: admin-pet.php,v 1.58 2006-12-01 16:56:14 matthew Exp $
  * 
  */
 
@@ -225,7 +225,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='e') $order = 'email';
         elseif ($sort=='c') $order = 'petition.creationtime';
         elseif ($sort=='s') $order = 'signers desc';
-        # elseif ($sort=='z') $order = 'surge desc';
+        elseif ($sort=='z') $order = 'surge desc';
 
         $this->cat_change = get_http_var('cats') ? true : false;
         $categories = '';
@@ -246,7 +246,7 @@ class ADMIN_PAGE_PET_MAIN {
                 date_trunc('second',creationtime) AS creationtime, 
                 (ms_current_timestamp() - interval '7 days' > creationtime) AS late, 
                 cached_signers AS signers,
-                -- (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
+                (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
                 message.id AS message_id
             FROM petition
             LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
@@ -256,7 +256,7 @@ class ADMIN_PAGE_PET_MAIN {
         while ($r = db_fetch_array($q)) {
             $row = "";
 
-            # $row .= '<td>'.$r['surge'].'</td>';
+            $row .= '<td>'.$r['surge'].'</td>';
             $row .= '<td>';
             if ($r['status']=='live' || $r['status']=='finished' || $r['status']=='rejected')
                 $row .= '<a href="' . OPTION_BASE_URL . '/' . $r['ref'] . '">';
