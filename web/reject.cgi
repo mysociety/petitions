@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.5 2006-12-01 00:21:31 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.6 2006-12-02 20:43:58 matthew Exp $';
 
 use strict;
 
@@ -19,7 +19,7 @@ use mySociety::Config;
 BEGIN {
     mySociety::Config::set_file("../conf/general");
 }
-# use mySociety::DBHandle qw(dbh);
+use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
 
