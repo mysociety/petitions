@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.54 2006-11-24 14:40:59 matthew Exp $
+// $Id: new.php,v 1.55 2006-12-02 08:47:40 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -63,7 +63,7 @@ function check_edited_petition(&$data) {
     /* Fill out data with data from database. */
     $petition['pet_content'] = $petition['content'];
     foreach (array_keys($petition) as $field) {
-        if (!array_key_exists($field, $data) || !$data[$field])
+        if (!array_key_exists($field, $data))
             $data[$field] = $petition[$field];
     }
 
