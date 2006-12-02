@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.41 2006-11-29 18:53:56 matthew Exp $
+-- $Id: schema.sql,v 1.42 2006-12-02 08:48:41 matthew Exp $
 --
 
 -- global_seq
@@ -134,6 +134,7 @@ create table petition (
     )
 
 );
+ALTER TABLE petition CLUSTER ON petition_pkey;
 
 create unique index petition_ref_idx on petition(ref);
 create index petition_status_idx on petition(status);
@@ -181,6 +182,7 @@ create table signer (
     )
 
 );
+ALTER TABLE signer CLUSTER ON signer_pkey;
 
 create index signer_petition_id_idx on signer(petition_id);
 create unique index signer_petition_id_email_idx on signer(petition_id, email);
