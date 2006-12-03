@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.87 2006-11-30 13:41:45 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.88 2006-12-03 15:32:20 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -990,7 +990,6 @@ sub host_bad ($$) {
 # Should we assume that resolution of the DOMAIN is failing, or should it be
 # tried again?
 sub domain_bad ($$) {
-        # this is exactly th
     my Queue $self = shift;
     my $domain = shift;
     return $self->thing_bad('domain', $domain, $self->{baddomains},
@@ -2373,4 +2372,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.87 2006-11-30 13:41:45 matthew Exp $
+$Id: petemaild,v 1.88 2006-12-03 15:32:20 chris Exp $
