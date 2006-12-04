@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.34 2006-11-24 23:03:33 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.35 2006-12-04 12:02:32 matthew Exp $';
 
 use strict;
 
@@ -113,25 +113,13 @@ sub signup_page ($$) {
                         "We've sent you an email; before your signature is
                         added to the petition you'll have to click the link in
                         it."
-                    );
-                if ($qp_email =~ /\@(hotmail\.(com|co\.uk))$/i) {
-                    $html .=
-                        $q->p({-class => 'noprint loudmessage'},
-                        q(<strong>Important note:</strong> Many confirmation 
-                        messages we've been sending out to users of Hotmail
-                        have not arrived because of problems with Hotmail
-                        which are beyond our control.  Please check your
-			junk mail folder in case the message went there; but
-			if you have not received
-                        your confirmation email within five minutes of seeing
-                        this page, and you are certain that you typed your
-                        email address correctly, then please contact Hotmail
-                        Support
-                        <a href="http://support.msn.com/eform.aspx?productKey=hotmail&page=support_home_options_form_byemail&ct=eformts">by
-                        filling in the form on their web page</a>. We
-                        apologise for the inconvenience and are working with
-                        Microsoft to resolve this problem.));
-                }
+                    )
+		    . $q->p({-class => 'noprint loudmessage', -align => 'center'},
+                    q(If you don't receive the email and you use web-based
+                    email or have "junk mail" filters, please check
+                    your bulk/spam mail folders, in case the message
+                    went there by mistake.)
+                );
             } else {
                 $errors{busy} =
                         "Sorry, but we weren't able to add your signature to
