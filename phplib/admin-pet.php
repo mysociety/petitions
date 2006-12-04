@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.58 2006-12-01 16:56:14 matthew Exp $
+ * $Id: admin-pet.php,v 1.59 2006-12-04 15:20:15 matthew Exp $
  * 
  */
 
@@ -193,10 +193,10 @@ class ADMIN_PAGE_PET_MAIN {
     function petition_header($sort, $status) {
         print '<table border="1" cellpadding="3" cellspacing="0"><tr>';
         $cols = array(
-            #'z'=>'Surge (day)',
+            'z'=>'Surge (day)',
             'r'=>'Ref', 
             'a'=>'Title', 
-            #'s'=>'Signers', 
+            's'=>'Signers', 
             'd'=>'Deadline', 
             'e'=>'Creator', 
             'c'=>'Creation Time', 
