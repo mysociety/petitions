@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.59 2006-12-04 15:20:15 matthew Exp $
+ * $Id: admin-pet.php,v 1.60 2006-12-05 13:26:31 matthew Exp $
  * 
  */
 
@@ -725,7 +725,7 @@ EOF;
         if (get_http_var('approve')) {
             $p = new Petition($petition_id);
             db_getOne("UPDATE petition
-                SET status='live', deadline=deadline+(ms_current_date()-date_trunc('day', creationtime)),
+                SET status='live', deadline=deadline+(ms_current_date()-date_trunc('day', laststatuschange)),
                 rejection_hidden_parts = 0,
                 laststatuschange = ms_current_timestamp()
                 WHERE id=?", $petition_id);
