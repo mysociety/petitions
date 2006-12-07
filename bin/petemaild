@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.90 2006-12-05 11:18:23 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.91 2006-12-07 08:52:33 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1544,9 +1544,9 @@ sub make_signer_email ($$) {
 
     if ($signer->{email} =~ /@(hotmail|msn)\./i && $signer->{month} == 11) {
         $h{signature} = "[ This email is being resent to you because in the days
-immediately following the launch of the Number 10 petitions
-site Hotmail's anti-spam system was blocking nearly all
-messages from us. ]";
+following the launch of the Number 10 petitions site
+Hotmail's anti-spam system was blocking nearly all
+messages from us. Apologies if you receive this twice. ]";
     } else {
         $h{signature} = '[ This email has been automatically sent by the Number 10 petitions system ]';
     }
@@ -2379,4 +2379,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.90 2006-12-05 11:18:23 matthew Exp $
+$Id: petemaild,v 1.91 2006-12-07 08:52:33 matthew Exp $
