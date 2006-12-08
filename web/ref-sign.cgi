@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.35 2006-12-04 12:02:32 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.36 2006-12-08 14:06:35 matthew Exp $';
 
 use strict;
 
@@ -31,8 +31,12 @@ use Petitions::RPC;
 
 my $W = new mySociety::WatchUpdate();
 
-sub i_check_email ($$) {
-    return mySociety::Util::is_valid_email($_[1]);
+sub i_check_email ($) {
+    my $email = shift;
+    $email =~ s/^\s+//;
+    $email =~ s/\s+$//;
+    $email = undef unless mySociety::Util::is_valid_email($email);
+    return $email;
 }
 
 use Data::Dumper;
@@ -60,8 +64,8 @@ sub signup_page ($$) {
         Petitions::Page::header($q, 'Signature addition');
 
     my $qp_name = $q->param('name');
-    my $qp_email = $q->ParamValidate(email => \&i_check_email);
-    my $qp_email2 = $q->ParamValidate(email2 => \&i_check_email);
+    my $qp_email = i_check_email($q->param('email'));
+    my $qp_email2 = i_check_email($q->param('email2'));
     my $qp_address = $q->param('address');
     my $qp_postcode = $q->param('postcode');
     $qp_postcode =~ s/[^a-z0-9]//ig;
