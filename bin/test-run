@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.57 2006-12-08 17:27:13 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.58 2006-12-08 17:36:46 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -184,11 +184,11 @@ if ($action{'resubmit'}) {
 # Check for any unhandled mails or errors
 call_send_messages();
 call_mark_finished();
-print "Checking no emails left at end...\n" if $verbose > 0;
+date_print("Checking no emails left at end...") if $verbose > 0;
 $wth->email_check_none_left();
-print "Checking no log file errors at end...\n" if $verbose > 0;
+date_print("Checking no log file errors at end...") if $verbose > 0;
 $wth->log_watcher_check();
-print "Everything completed successfully\n";
+date_print("Everything completed successfully") if $verbose > 0;
 
 #############################################################################
 # General functions
