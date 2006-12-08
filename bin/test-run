@@ -9,7 +9,7 @@
 # * a petitions database with name ending "_testharness"; this script will drop and remake 
 #   the database, so make sure it is never used for anything important
 # * email addresses (email_n below) configured to pipe to ./test-mailin with fast
-#   local delivery, and
+#   local delivery
 #
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: francis@mysociety.org; WWW: http://www.mysociety.org/
@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.56 2006-11-23 15:11:23 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.57 2006-12-08 17:27:13 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -81,7 +81,7 @@ foreach (@ARGV) {
         $action{$_} = 1;
     } else {
         help();
-        print "Action '$_' not known\n";
+        print STDERR "Action '$_' not known\n";
         exit(0);
     }
 }
@@ -111,7 +111,7 @@ sub name_n { my $n = shift; return "Persephone Petitioner $n"; }
 #mySociety::Util::kill_named_processes(SIGTERM, '"^(ref-index.cgi|ref-sign.cgi|php4-cgi)\$"');
 
 # Configure test harness class
-print "Set up web test harness...\n" if $verbose > 0;
+date_print("Set up web test harness...") if $verbose > 0;
 our $wth = new mySociety::WebTestHarness();
 $base_url =~ m#^http://(.+)/?$#;
 $wth->browser_credentials("$1:80", "ePetitions staging site", $auth_user, $auth_password); 
@@ -142,7 +142,7 @@ END {
     }
     exit($exit_code);
 };
-print "Starting daemons...\n" if $verbose > 0;
+date_print("Starting daemons...") if $verbose > 0;
 $petemaild_pid = fork();
 die "failed to fork" if (!defined($petemaild_pid));
 my $daemon_verbose = -1;
@@ -159,25 +159,25 @@ if ($petsignupd_pid == 0) {
 }
 
 # Syntax check all .php files
-print "Syntax check all PHP files...\n" if $verbose > 0;
+date_print("Syntax check all PHP files...") if $verbose > 0;
 $wth->php_check_syntax("../../pet/");
 $wth->php_check_syntax("../../pet/templates/emails/", qr//);
 
 # Run tests specified
 if ($action{'main'}) {
-    print "Main test...\n" if $verbose > 0;
+    date_print("Main test...") if $verbose > 0;
     do_main_test();
 }
 if ($action{'rejection'}) {
-    print "Rejection test...\n" if $verbose > 0;
+    date_print("Rejection test...") if $verbose > 0;
     do_rejection_test();
 }
 if ($action{'timeout'}) {
-    print "Timeout test...\n" if $verbose > 0;
+    date_print("Timeout test...") if $verbose > 0;
     do_timeout_test();
 }
 if ($action{'resubmit'}) {
-    print "Resubmit test...\n" if $verbose > 0;
+    date_print("Resubmit test...") if $verbose > 0;
     do_resubmit_test();
 }
 
@@ -193,10 +193,16 @@ print "Everything completed successfully\n";
 #############################################################################
 # General functions
 
+# Print log line with date
+sub date_print {
+    $_ = shift;
+    print scalar localtime() . " $_\n";
+}
+
 # Print what we're doing
 sub comment {
     my $comment = shift;
-    print "\t$comment\n" if $verbose > 0;
+    date_print("  $comment") if $verbose > 0;
 }
 
 # Change the date that all parts of ePetitions think is today.  Call with no
@@ -332,7 +338,7 @@ sub do_main_test {
         die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*)$#m);
         my $confirm_signature_link = $1;
         if ($signer_no == 1490) {
-            comment("Confirm signature by administraor");
+            comment("Confirm signature by administrator");
             $wth->browser_get($admin_approve_link);
             $wth->browser_follow_link(text_regex => qr/Draft/);
             $wth->browser_check_contents("Petitions and Signers");
@@ -421,7 +427,9 @@ sub do_main_test {
     $wth->browser_check_no_contents("Now check your email!"); 
     $wth->browser_check_contents("Sorry, but that petition is now closed."); 
 
-    # Policy is currently that this is OK, so we just leave the unconfirmed signature around (as that is a useful test)
+    # Policy is currently that signing a petition after the deadline using an
+    # email you got before the deadline is OK. So instead of this test, we just
+    # leave the unconfirmed signature around (as that is a useful test itself)
     #comment("Try to sign the petition, using the email we prepared earlier");
     #$wth->browser_get($partial_signup_confirm);
     #$wth->browser_check_no_contents("Thank you, you're now signed up to this petition!"); 
