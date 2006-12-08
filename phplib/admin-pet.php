@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.60 2006-12-05 13:26:31 matthew Exp $
+ * $Id: admin-pet.php,v 1.61 2006-12-08 12:28:46 matthew Exp $
  * 
  */
 
@@ -199,7 +199,7 @@ class ADMIN_PAGE_PET_MAIN {
             's'=>'Signers', 
             'd'=>'Deadline', 
             'e'=>'Creator', 
-            'c'=>'Creation Time', 
+            'c'=>'Last Status Change', 
         );
         foreach ($cols as $s => $col) {
             print '<th>';
@@ -223,7 +223,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='a') $order = 'content';
         elseif ($sort=='d') $order = 'deadline desc';
         elseif ($sort=='e') $order = 'email';
-        elseif ($sort=='c') $order = 'petition.creationtime';
+        elseif ($sort=='c') $order = 'petition.laststatuschange';
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
 
@@ -243,8 +243,8 @@ class ADMIN_PAGE_PET_MAIN {
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
         $q = db_query("
             SELECT petition.*,
-                date_trunc('second',creationtime) AS creationtime, 
-                (ms_current_timestamp() - interval '7 days' > creationtime) AS late, 
+                date_trunc('second',laststatuschange) AS laststatuschange,
+                (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
                 cached_signers AS signers,
                 (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
                 message.id AS message_id
@@ -275,7 +275,7 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
-            $row .= '<td>'.$r['creationtime'].'</td>';
+            $row .= '<td>'.$r['laststatuschange'].'</td>';
 	    $late = false;
 	    if ($status == 'draft' && $r['late'] == 't') $late = true;
             if ($status == 'rejected') {
@@ -377,6 +377,7 @@ class ADMIN_PAGE_PET_MAIN {
         if ($pdata['org_url'])
             print ', <a href="' . htmlspecialchars($pdata['org_url']) . '">' . htmlspecialchars($pdata['org_url']) . '</a>';
         print "<br>Created: " . prettify($pdata['creationtime']);
+        print "<br>Last status change: " . prettify($pdata['laststatuschange']);
         print "<br>Deadline: <b>" . prettify($pdata['deadline']) . "</b> (" . htmlspecialchars($pdata['rawdeadline']) . ')';
         print '<br>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
         print '<br>Title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
