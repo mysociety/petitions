@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.91 2006-12-07 08:52:33 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.92 2006-12-08 11:37:04 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1541,15 +1541,7 @@ sub make_signer_email ($$) {
                 . Petitions::Token::make('s', $signer->{id});
     $h{creator_name} = $petition->{name};
     $h{sentence} = Petitions::sentence($petition);
-
-    if ($signer->{email} =~ /@(hotmail|msn)\./i && $signer->{month} == 11) {
-        $h{signature} = "[ This email is being resent to you because in the days
-following the launch of the Number 10 petitions site
-Hotmail's anti-spam system was blocking nearly all
-messages from us. Apologies if you receive this twice. ]";
-    } else {
-        $h{signature} = '[ This email has been automatically sent by the Number 10 petitions system ]';
-    }
+    $h{signature} = '[ This email has been automatically sent by the Number 10 petitions system ]';
 
     return mySociety::Email::construct_email({
                 _template_ => $sig_template,
@@ -1602,7 +1594,7 @@ sub database_child_process ($) {
     my @queue = ( );
     
     my $st_s = dbh()->prepare("
-                    select id, petition_id, email, name, extract(month from signtime) as month
+                    select id, petition_id, email, name
                     from signer where emailsent = 'pending'
                         and id > ?
                     order by petition_id");
@@ -2379,4 +2371,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.91 2006-12-07 08:52:33 matthew Exp $
+$Id: petemaild,v 1.92 2006-12-08 11:37:04 francis Exp $
