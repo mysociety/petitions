@@ -21,7 +21,7 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.58 2006-12-08 17:36:46 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.59 2006-12-11 16:32:22 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -456,7 +456,13 @@ sub do_main_test {
                 fields => { }, button => 'respond') or die "Failed to submit write response button";
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
                 fields => {
-                    message_body => "Thank you for your petition. We are going to do exactly what you say, because obviously we would never get contradictory petitions from different people. Yours faithfully, the PM.",
+                    message_body => "Thank you for your petition. 
+
+We are going to do exactly what you say, because obviously we would never get contradictory petitions from different people.
+
+Yours faithfully, 
+
+the PM.",
                     }, button => 'respond') or die "Failed to submit response form";
     $wth->browser_check_contents("Your response has been recorded and will be sent out shortly");
     call_send_messages();

@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.66 2006-12-05 11:15:53 matthew Exp $
+# $Id: Page.pm,v 1.67 2006-12-11 16:32:23 francis Exp $
 #
 
 package Petitions::Page;
@@ -277,9 +277,11 @@ the Armed Forces without a postcode, please select from this list:</label>',
 
 sub response_box ($$) {
     my ($q, $p) = @_;
+    my $full_response = $p->{response};
+    $full_response =~ s#\n\nPetition info: http://.*$##;
     my $out = $q->div({-id => 'response'},
         $q->h2($q->span({-class => 'ltr'}, 'Government Response')),
-        $p->{response} # Presumably will need formatting! XXX
+        mySociety::Util::nl2br(mySociety::Util::ms_make_clickable(ent($full_response)))
     );
     return $out;
 }
