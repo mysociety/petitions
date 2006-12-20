@@ -5,13 +5,14 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.40 2006-12-20 13:53:17 matthew Exp $
+// $Id: list.php,v 1.41 2006-12-20 14:07:36 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
 require_once '../../phplib/db.php';
 require_once '../../phplib/importparams.php';
+require_once '../../phplib/urls.php';
 
 define('PAGE_SIZE', 50);
 
@@ -110,14 +111,6 @@ if (!$rss) {
 <?
 #    print "<h2>$heading</h2>";
 
-    $qs_sort = ($q_sort && $q_sort != 'signers') ? 'sort=' . $q_sort : '';
-    #$qs_off = ($q_offset) ? 'offset=' . $q_offset : '';
-    $qs_cat = $q_cat ? 'cat=' . $q_cat : '';
-    $qs = array();
-    if ($qs_sort) $qs[] = $qs_sort;
-    if ($qs_cat) $qs[] = $qs_cat;
-    $qs = join('&amp;', $qs);
-
     $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
         'rejected' => 'Rejected petitions');
     $views = '';
@@ -127,9 +120,7 @@ if (!$rss) {
         if ($q_type == $s) {
             $views .= '<span>' . $desc . '</span>';
         } else {
-            $views .= "<a href=\"/list/$s";
-	    if ($qs) $views .= '?' . $qs;
-	    $views .= "\">$desc</a>";
+            $views .= "<a href=\"/list/$s" . url_new('', true, 'type', null) . "\">$desc</a>";
 	}
         $b = true;
     }
@@ -147,13 +138,13 @@ if (!$rss) {
     if ($q_offset > 0) {
         $n = $q_offset - PAGE_SIZE;
         if ($n < 0) $n = 0;
-        $prev = "<a href=\"?offset=$n" . ($qs ? "&amp;$qs" : '') . '">Previous</a>';
-        $first = '<a href="?offset=0' . ($qs ? "&amp;$qs" : '') . '">First</a>';
+        $prev = '<a href="' . url_new('', true, 'offset', $n, 'type', null) . '">Previous</a>';
+        $first = '<a href="' . url_new('', true, 'offset', 0, 'type', null) . '">First</a>';
     }
     if ($q_offset + PAGE_SIZE < $ntotal) {
         $n = $q_offset + PAGE_SIZE;
-        $next = "<a href=\"?offset=$n" . ($qs ? "&amp;$qs" : '') . '">Next</a>';
-        $last = '<a href="?offset=' . floor(($ntotal-1)/PAGE_SIZE)*PAGE_SIZE . ($qs ? "&amp;$qs" : '') . '">Last</a>';
+        $next = '<a href="' . url_new('', true, 'offset', $n, 'type', null) . '">Next</a>';
+        $last = '<a href="' . url_new('', true, 'offset', floor(($ntotal-1)/PAGE_SIZE)*PAGE_SIZE, 'type', null) . '">Last</a>';
     }
     $navlinks = '<p id="petition_view_tabs">' . $views . "</p>\n";
     if ($ntotal > 0) {
@@ -170,7 +161,7 @@ if (!$rss) {
         $b = false;
         foreach ($arr as $s => $desc) {
             if ($b) $navlinks .= ' | ';
-            if ($q_sort != $s) $navlinks .= "<a href=\"?$qs\">$desc</a>";
+            if ($q_sort != $s) $navlinks .= '<a href="' . url_new('', true, 'sort', $s, 'type', null) . "\">$desc</a>";
 	    else $navlinks .= $desc;
             $b = true;
         }
