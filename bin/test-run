@@ -22,7 +22,7 @@
 # Resubmit and accept a previously partially rejected petition
 # Search by category
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.63 2006-12-20 13:27:09 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.64 2006-12-20 16:06:49 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -277,7 +277,6 @@ sub do_main_test {
         address => "The Beseechment Building\nImportuning Island",
         postcode => "SW1A 2AA",
         telephone => "01234 56789",
-        org_url => "http://www.petitionsrock.org.uk",
         email => email_n(99),
         email2 => email_n(99)
     });
@@ -525,7 +524,6 @@ sub do_rejection_test {
         address => "Removal From Office Rd.",
         postcode => "SW1A 2AB",
         telephone => "09876 5432",
-        org_url => "http://www.impeachbush.org",
         email => email_n(44),
         email2 => email_n(44)
     });
@@ -639,7 +637,6 @@ sub do_timeout_test {
         address => "Uncle John's house",
         postcode => "WC2H 7LA",
         telephone => "02143 6587",
-        org_url => "http://www.blablahblah",
         email => email_n(55),
         email2 => email_n(55)
     });
@@ -757,7 +754,6 @@ sub do_resubmit_test {
                 address => "Eternity Lane",
                 postcode => "EH1 2NG",
                 telephone => "00000 000",
-                org_url => "http://www.forever.blah",
                 email => email_n(504),
                 email2 => email_n(504)
                 }, button => 'tosteppreview') or die "Failed to submit step 2";

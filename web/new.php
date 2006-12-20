@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.55 2006-12-02 08:47:40 matthew Exp $
+// $Id: new.php,v 1.56 2006-12-20 16:07:23 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -320,7 +320,6 @@ function petition_form_you($data = array(), $errors = array()) {
                 'Turks and Caicos Islands',
             ),
             'telephone' =>      _('Telephone number'),
-            'org_url' =>        _('URL of campaign/organisation')
         );
 
     if (!array_key_exists('token', $data)) {
@@ -514,7 +513,6 @@ longer be valid.
 <ul><li>Name: <strong><?=$data['name'] ?></strong></li>
 <li>Email: <strong><?=$data['email'] ?></strong></li>
 <li>Organisation: <strong><?=$data['organisation'] ?></strong></li>
-<li>URL: <strong><?=$data['org_url'] ?></strong></li>
 <li>Address: <strong><?=$data['address'] ?></strong></li>
 <? if ($data['postcode']) { ?>
 <li>Postcode: <strong><?=$data['postcode'] ?></strong></li>
@@ -618,7 +616,7 @@ function petition_create($data) {
                 $data['detail'], $data['pet_content'],
                 $data['deadline'], $data['rawdeadline'],
                 $data['name'], $data['ref'], $data['organisation'],
-                $data['postcode'], $data['overseas'], $data['telephone'], $data['org_url'],
+                $data['postcode'], $data['overseas'], $data['telephone'], '',
                 $data['comments'], $data['category'], $id);
 
         /* Send the admins an email about it. */
@@ -663,7 +661,7 @@ function petition_create($data) {
                     $data['deadline'], $data['rawdeadline'],
                     $data['email'], $data['name'], $data['ref'],
                     $data['organisation'], $data['address'],
-                    $data['postcode'], $data['overseas'], $data['telephone'], $data['org_url'],
+                    $data['postcode'], $data['overseas'], $data['telephone'], '',
                     $data['comments'], $data['category']);
             db_commit();
         }
