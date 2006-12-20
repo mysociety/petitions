@@ -4,13 +4,13 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.4 2006-11-30 21:51:53 matthew Exp $
+# $Id: crontab.ugly,v 1.5 2006-12-20 12:00:39 francis Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
 
 !!(* if ($hostname eq "bitter") { *)!!
 # Frequently, on one machine only as not concurrent. I think, haven't checked.
-*/2 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/send-messages.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/send-messages || echo "stalled?"
+*/12 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/send-messages.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/send-messages || echo "stalled?"
 3 0 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/mark-finished
 !!(* } *)!!
