@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.39 2006-12-20 13:51:22 matthew Exp $
+// $Id: list.php,v 1.40 2006-12-20 13:53:17 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -135,6 +135,10 @@ if (!$rss) {
     }
 
     pet_search_form();
+
+    if ($q_cat) {
+        print '<h2><span class="ltr">' . $global_petition_categories[$q_cat] . '</span></h2>';
+    }
 
     $first = '<span class="greyed">First</span>';
     $prev = '<span class="greyed">Previous</span>';
