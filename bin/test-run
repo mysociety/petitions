@@ -22,7 +22,7 @@
 # Resubmit and accept a previously partially rejected petition
 # Search by category
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.61 2006-12-20 13:05:33 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.62 2006-12-20 13:13:10 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -710,7 +710,7 @@ sub do_timeout_test {
     $wth->browser_check_contents("Petition details cannot be shown");
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_follow_link(text_regex => qr/more details/);
-    $wth->browser_check_contents("attempting to market");
+    $wth->browser_check_contents("Commercial endorsement");
     $wth->browser_check_contents("offensive language");
     $wth->browser_check_no_contents($petition_text);
     comment("... check not in RSS feed");
