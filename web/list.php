@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.37 2006-12-01 16:28:24 matthew Exp $
+// $Id: list.php,v 1.38 2006-12-20 12:50:12 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -18,13 +18,19 @@ define('PAGE_SIZE', 50);
 $err = importparams(
             array('offset', '/^(0|[1-9]\d*)$/', '', 0),
             array('sort', '/^(content|deadline|name|signers|creationtime|laststatuschange|date)\/?$/', '', 'default'),
-            array('type', '/^[a-z_]*$/', '', 'open')
+            array('cat', '/^\d+$/', '', 'default'),
+            array('type', '/^[a-z_]*$/', '', 'default')
         );
 if ($err) {
     err(_('Illegal offset or sort parameter passed'));
 }
 
 $rss = get_http_var('rss') ? true : false;
+
+if (!$rss && $q_type == 'default' && $q_sort == 'default' && $q_cat == 'default') {
+    list_front();
+    exit;
+}
 
 // Strip any trailing '/'.
 $q_sort = preg_replace("#/$#", "", $q_sort);
@@ -43,11 +49,14 @@ if ($q_sort == "default") {
 }
 if ($q_sort == "creationtime" || $q_sort == 'laststatuschange')
     $q_sort = "date";
+if ($q_cat == 'default') $q_cat = null;
 
 $sql_params = array($status);
+if ($q_cat) $sql_params[] = $q_cat;
 $query = "SELECT count(petition.id) FROM petition
                 WHERE status = ? " .
-                ($open ? " AND deadline $open '$pet_today' " : "");
+                ($open ? "AND deadline $open '$pet_today' " : '') .
+                ($q_cat ? 'AND category = ? ' : '');
 $ntotal = db_getOne($query , $sql_params);
 if ($ntotal < $q_offset) {
     $q_offset = $ntotal - PAGE_SIZE;
@@ -70,6 +79,7 @@ $qrows = db_query("
             left join message on petition.id = message.petition_id and circumstance = 'government-response'
             WHERE status = ?".
             ($open ? " AND deadline $open '$pet_today' " : ""). 
+            ($q_cat ? "AND category = ? " : "") .
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
 /* PG bug: mustn't quote parameter of offset */
 
@@ -215,7 +225,7 @@ if ($ntotal > 0) {
         print "<br style=\"clear: both;\">$navlinks";
 } else {
     if (!$rss)
-        print '<p>There are currently none.</p>';
+        print '<p>There are currently no petitions in that category.</p>';
 }
 
 if ($rss)
@@ -227,4 +237,27 @@ else {
 <?
     page_footer('List.' . $q_type);
 }
+
+function list_front() {
+    global $global_petition_categories;
+    page_header('List petitions');
+?>
+<h2><span class="ltr">List petitions...</span></h2>
+<ul style="font-size:150%;">
+<li><a href="/list/open?sort=deadline">By deadline</a></li>
+<li><a href="/list/open?sort=signers">By size</a></li>
+<li><a href="/list/open?sort=date">By start date</a></li>
+</ul>
+
+<h2><span class="ltr">By category</span></h2>
+<?
+    print '<ul style="font-size:125%">';
+    foreach ($global_petition_categories as $id => $cat) {
+        if ($cat == 'None') continue;
+        print '<li style="margin-bottom: 0.5em;"><a href="/list/open?cat=' . $id . '">' . $cat . '</a></li>';
+    }
+    print '</ul>';
+    page_footer();
+}
+
 ?>

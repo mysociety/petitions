@@ -5,10 +5,14 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: pet.css,v 1.20 2006-11-24 14:58:05 matthew Exp $
+ * $Id: pet.css,v 1.21 2006-12-20 12:50:12 matthew Exp $
  *
  */
 
+.primeminister #content a:visited, #ilinks .primeminister a:visited, #rel_links .primeminister a:visited {
+    color: #846e74;
+    color: #543e44;
+}
 .primeminister #content h1 {
     background-color: #876E74;
     background-image: url("/images/clipboard-background-top.jpg");

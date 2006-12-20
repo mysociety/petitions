@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.7 2006-11-16 13:08:44 matthew Exp $
+// $Id: terms.php,v 1.8 2006-12-20 12:50:12 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -18,11 +18,15 @@ page_header('E-petitions Terms and Conditions');
 <p>The purpose of the
 e-petition service is to enable as many people as possible to make
 their views know. All petitions will be accepted and published on the
-Downing Street website, providing they meet the following criteria.</p>
+Downing Street website, providing they meet the criteria below.</p>
 
 <p>Petitions have long been sent to the Prime Minister by post, or
 delivered to the Number 10 door in person. E-petitions are welcome in
 the same way.</p>
+
+<p>Petitioners may freely disagree with the Government or call for
+changes of policy. There will be no attempt to exclude critical views
+and decisions to accept or reject will not be made on a party political basis.</p>
 
 <p>However, to protect this service from abuse, petitions must satisfy
 some basic conditions.</p>
@@ -30,20 +34,20 @@ some basic conditions.</p>
 <p>To submit a petition, you must use the online form to provide:</p>
 
 <ul>
-<li>The title or subject of the petition;</li>
+<li>the title or subject of the petition;</li>
 <li>a clear and concise statement covering the subject of the
 petition. It should state what action the petitioner wishes the PM or
 the Government to take. The petition will be returned to you to edit
-if it is unclear what action is being asked for;</li>
+if it is unclear what action is being sought;</li>
 <li>the petition author's contact address (in case we need to
 contact you about the petition. This
 will not be placed on the website);</li>
-<li>the starting and closing date of the petition.</li>
+<li>a duration for the petition.</li>
 </ul>
 
 <p>
 The information in a petition must be submitted in good faith. In
-order for the for the petition service to comply with the law and with
+order for the petition service to comply with the law and with
 the Civil Service Code, you must not include: </p>
 
 <ul>
@@ -55,34 +59,43 @@ controversial issues. For example, this party political petition
 would not be permitted: "We petition the PM to change his party's policy on education",
 but this non-party political version would be:
 "We petition the PM to change the government's policy on education".</li>
-<li>false or defamatory statements;</li>
-<li>information protected by an injunction or court order (for
+<li>potentially libellous, false, or defamatory statements;</li>
+<li>information which may be protected by an injunction or court order (for
 example, the identities of children in custody disputes);</li>
-<li>material which is commercially sensitive, confidential or which
+<li>material which is potentially confidential, commercially sensitive, or which
 may cause personal distress or loss;</li>
+<li>any commercial endorsement, promotion of any product, service or publication;</li>
+<li>URLs or web links (we cannot vet the content of external sites, and
+therefore cannot link to them from this site);</li>
 <li>the names of individual officials of public bodies, unless they
 are part of the senior management of those organisations;</li>
 <li>the names of family members of elected representatives or
 officials of public bodies;</li>
 <li>the names of individuals, or information where they may be
 identified, in relation to criminal accusations;</li>
-<li>offensive language, such as obvious swear words or language that
-is intemperate, inflammatory, or provocative, or to which people
-reading it could reasonably take offence.</li>
+<li>language which is offensive, intemperate, or provocative. This not
+only includes obvious swear words and insults, but any language to which
+people reading it could reasonably take offence (we believe it is
+possible to petition for anything, no matter how radical, politely).</li>
 </ul>
 
 <p>We reserve the right to reject:</p>
 <ul>
-<li>petitions outside the remit or powers of the Prime Minister and Government;</li>
+<li>duplicate petitions;</li>
+<li>petitions which ask for things outside the remit or powers of the Prime Minister and Government;</li>
 <li>statements that don't actually request any action;</li>
 <li>wording that is impossible to understand;</li>
-<li>statements that are simply advertisements with no petition aim;</li>
-<li>petitions that are identical to existing petitions.</li>
+<li>statements that amount to advertisements;</li>
+<li>petitions which are intended to be humorous, or which
+have no point about government policy (however witty these
+are, it is not appropriate to use a publically-funded website
+for purely frivolous purposes);</li>
+<li>issues for which an e-petition is not the appropriate channel
+(for example, correspondence about a personal issue);</li>
+<li>Freedom of Information requests. This is not the right channel
+for FOI requests; information about the appropriate procedure can be
+found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
 </ul>
-
-<p>Petitioners may freely disagree with the Government or call for
-changes of policy. There will be no attempt to exclude critical views
-and decisions to accept or reject will not be made on a party political basis.</p>
 
 <p>Petitions that do not follow these guidelines cannot be accepted. In
 these cases, you will be informed in writing of the reason(s) your
@@ -115,10 +128,10 @@ information on the process, read our <a href="/steps">step-by-step guide</a>.
 
 <p>
 Your petition will be available on this website until the specified
-close date. If, however, during this time it becomes clear that your
+closing date. If, however, during this time it becomes clear that your
 petition is not being run in accordance with the terms, we reserve the
 right to withdraw it. If this happens, we will contact you first to
-allow you address the concerns we raise and we will only remove the
+allow you to address the concerns we raise and we will only remove the
 petition as a last resort. 
 </p>
 

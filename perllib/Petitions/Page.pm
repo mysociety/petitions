@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.67 2006-12-11 16:32:23 francis Exp $
+# $Id: Page.pm,v 1.68 2006-12-20 12:50:11 matthew Exp $
 #
 
 package Petitions::Page;
@@ -176,7 +176,7 @@ sub display_box ($$%) {
                 (exists($params{href}) ? qq(<a href="@{[ ent($params{href}) ]}">) : ''),
                 Petitions::sentence($p, 1),
                 (exists($params{href}) ? '</a>' : ''),
-		$details
+                $details
             ),
             $q->p({ -align => 'center' }, $meta)
         );
@@ -199,13 +199,13 @@ sub sign_box ($$) {
     my $safe_p = {
         deadline => $p->{deadline},
         'ref' => $p->{ref},
-	organisation => $p->{organisation},
-	org_url => $p->{org_url},
-	name => $p->{name},
-	status => $p->{status},
-	signers => $p->{signers},
-	content => $p->{content},
-	rejection_hidden_parts => $p->{rejection_hidden_parts},
+        organisation => $p->{organisation},
+        org_url => $p->{org_url},
+        name => $p->{name},
+        status => $p->{status},
+        signers => $p->{signers},
+        content => $p->{content},
+        rejection_hidden_parts => $p->{rejection_hidden_parts},
     };
     $safe_p->{salt} = random_bytes(4);
     my $buf = RABX::serialise($safe_p);
@@ -239,25 +239,25 @@ sub sign_box ($$) {
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),
         $q->p( '<label class="wide" for="overseas">Or, if you\'re an
-	expatriate, you\'re in an overseas territory, a Crown dependency or in
+        expatriate, you\'re in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>', 
             $q->popup_menu(-name=>'overseas', -id=>'overseas', -style=>'width:100%', -values=>[
                 '-- Select --',
                 'Expatriate',
                 'Armed Forces',
-		'Anguilla',
+                'Anguilla',
                 'Ascension Island',
                 'Bermuda',
                 'British Antarctic Territory',
-		'British Indian Ocean Territory',
-		'British Virgin Islands',
+                'British Indian Ocean Territory',
+                'British Virgin Islands',
                 'Cayman Islands',
                 'Channel Islands',
                 'Falkland Islands',
                 'Gibraltar',
                 'Isle of Man',
                 'Montserrat',
-		'Pitcairn Island',
+                'Pitcairn Island',
                 'St Helena',
                 'S. Georgia and the S. Sandwich Islands',
                 'Tristan da Cunha',
@@ -300,19 +300,22 @@ sub reject_box ($$) {
     # Must keep this synchronised with constraint in schema, and list in phplib/petition.php
     my %categories = (
         1 => 'It contained party political material',
-        2 => 'It contained false or defamatory statements',
-        4 => 'It contained information protected by an injunction or court order',
-        8 => 'It contained material which is commercially sensitive, confidential or which may cause personal distress or loss',
+        2 => 'It contained potentially libellous, false, or defamatory statements',
+        4 => 'It contained information which may be protected by an injunction or court order',
+        8 => 'It contained material which is potentially confidential, commercially sensitive, or which may cause personal distress or loss',
         16 => 'It contained the names of individual officials of public bodies, not part of the senior management of those organisations',
-        32 => 'It contained the names of family members of officials of public bodies, or elected representatives',
+        32 => 'It contained the names of family members of elected representatives or officials of public bodies',
         64 => 'It contained the names of individuals, or information where they may be identified, in relation to criminal accusations',
-        128 => 'It contained offensive language, such as obvious swear words or language that is intemperate, inflammatory, or provocative, or to which people reading it could reasonably take offence',
-        256 => 'It isn\'t clear what the petition is asking signers to endorse',
-        512 => 'It doesn\'t actually ask for an action',
-        1024 => 'It was attempting to market a product irrelevent to the role and office of the PM',
+        128 => 'It contained language which is offensive, intemperate, or provocative',
+        256 => 'It contained wording that is impossible to understand',
+        512 => 'It doesn\'t actually request any action',
+        1024 => 'It was commercial endorsement, promotion of a product, service or publication, or statements that amounted to adverts',
         2048 => 'It was identical to an existing petition',
         4096 => 'It was outside the remit or powers of the Prime Minister and Government',
-	8192 => 'It contained false name or address information',
+        8192 => 'It contained false name or address information',
+        16384 => 'It was an issue for which an e-petition is not the appropriate channel',
+        32768 => 'It was intended to be humourous, or have no point about government policy',
+        65536 => 'It contained links to other websites',
         # XXX also change in phplib/petition.php
     );
 

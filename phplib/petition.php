@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.43 2006-12-04 12:02:31 matthew Exp $
+ * $Id: petition.php,v 1.44 2006-12-20 12:50:12 matthew Exp $
  * 
  */
 
@@ -16,19 +16,22 @@ $petition_prefix = 'We the undersigned petition the Prime Minister to';
 /* Must keep this synchronised with constraint in schema. */
 $global_rejection_categories = array(
     1 => 'Party political material',
-    2 => 'False or defamatory statements',
-    4 => 'Information protected by an injunction or court order',
-    8 => 'Material which is commercially sensitive, confidential or which may cause personal distress or loss',
-    16 => 'Names of individual officials of public bodies, unless part of the senior management of those organisations',
-    32 => 'Names of family members of officials of public bodies, or elected representatives',
-    64 => 'Names of individuals, or information where they may be identified, in relation to criminal accusations',
-    128 => 'Offensive language',
-    256 => 'Isn\'t clear what the petition is asking signers to endorse',
-    512 => 'Doesn\'t actually ask for an action',
-    1024 => 'Attempting to market a product irrelevent to the role and office of the PM',
+    2 => 'Potentially libellous, false, or defamatory statements',
+    4 => 'Information which may be protected by an injunction or court order',
+    8 => 'Material which is potentially confidential, commercially sensitive, or which may cause personal distress or loss',
+    16 => 'The names of individual officials of public bodies, unless they are part of the senior management of those organisations',
+    32 => 'The names of family members of elected representatives or officials of public bodies',
+    64 => 'The names of individuals, or information where they may be identified, in relation to criminal accusations',
+    128 => 'Language which is offensive, intemperate, or provocative',
+    256 => 'Wording that is impossible to understand',
+    512 => 'Statements that don\'t actually request any action',
+    1024 => 'Commercial endorsement, promotion of any product, service or publication, or statements that amount to adverts',
     2048 => 'Identical to an existing petition',
     4096 => 'Outside the remit or powers of the Prime Minister and Government',
     8192 => 'False name or address information',
+    16384 => 'Issues for which an e-petition is not the appropriate channel',
+    32768 => 'Intended to be humourous, or has no point about government policy',
+    65536 => 'Contains links to other websites',
     // XXX also change in perllib/Petitions/Page.pm
 );
 
