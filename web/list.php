@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.41 2006-12-20 14:07:36 matthew Exp $
+// $Id: list.php,v 1.42 2006-12-20 14:15:39 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -51,6 +51,7 @@ if ($q_sort == "default") {
 if ($q_sort == "creationtime" || $q_sort == 'laststatuschange')
     $q_sort = "date";
 if ($q_cat == 'default') $q_cat = null;
+if (!array_key_exists($q_cat, $global_petition_categories)) $q_cat = null;
 
 $sql_params = array($status);
 if ($q_cat) $sql_params[] = $q_cat;
@@ -84,14 +85,19 @@ $qrows = db_query("
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
 /* PG bug: mustn't quote parameter of offset */
 
+$heading = '';
+if ($q_cat) {
+    $heading = $global_petition_categories[$q_cat] . ' - ';
+}
 if ($q_type == 'open') {
-    $heading = "Open petitions";
     if ($rss)
-        $heading = 'New Petitions';
+        $heading .= 'New Petitions';
+    else
+        $heading .= "Open petitions";
 } elseif ($q_type == 'closed') {
-    $heading = "Closed petitions";
+    $heading .= "Closed petitions";
 } elseif ($q_type == 'rejected') {
-    $heading = "Rejected petitions";
+    $heading .= "Rejected petitions";
 } else {
     err('Unknown type ' . $q_type);
 }
@@ -109,7 +115,6 @@ if (!$rss) {
 ?>
 <h1><span dir="ltr">E-Petitions</span></h1>
 <?
-#    print "<h2>$heading</h2>";
 
     $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
         'rejected' => 'Rejected petitions');
@@ -128,7 +133,7 @@ if (!$rss) {
     pet_search_form();
 
     if ($q_cat) {
-        print '<h2><span class="ltr">' . $global_petition_categories[$q_cat] . '</span></h2>';
+        print '<h2><span class="ltr">You are viewing petitions in the "' . $global_petition_categories[$q_cat] . '" category</span></h2>';
     }
 
     $first = '<span class="greyed">First</span>';
