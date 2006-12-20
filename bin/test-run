@@ -22,7 +22,7 @@
 # Resubmit and accept a previously partially rejected petition
 # Search by category
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.60 2006-12-20 12:59:39 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.61 2006-12-20 13:05:33 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -602,10 +602,10 @@ sub do_rejection_test {
     $wth->browser_check_contents("You have chosen to reject the petition 'rejecttest'");
     $wth->browser_submit_form(form_name => 'rejection_details_form',
             fields => { reject_reason => 'It is just nonsense, sorry!',
-                'rejection_cats[]' => ['256', 9], # the 9th checkbox has value 256, and means "Not clear what asking signers to endorse"
+                'rejection_cats[]' => ['256', 9], # the 9th checkbox has value 256, and means "Wording that is impossible to understand"
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
-    $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%clear what the petition%');
+    $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%impossible to understand%');
     die "Rejection email link found when it should not have been\n" if ($rejection_email =~ m#^\s*(https?://.*)$#m);
 
     comment("Check appears on rejection page");
@@ -679,7 +679,7 @@ sub do_timeout_test {
 #                'categories[]' => ['1024', 11], 
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
-    my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(55).'%Offensive language%');
+    my $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(55).'%Language which is offensive%');
     die "Rejection email link not found\n" if ($rejection_email !~ m#^\s*(https?://.*)$#m);
     my $rejection_email_link = $1;
     comment("Rejection resubmit link: $rejection_email_link");
