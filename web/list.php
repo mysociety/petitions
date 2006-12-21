@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.44 2006-12-21 16:51:38 francis Exp $
+// $Id: list.php,v 1.45 2006-12-21 19:01:20 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -35,8 +35,6 @@ if (!$rss && $q_type == 'default' && $q_sort == 'default' && $q_cat == 'default'
 
 // Strip any trailing '/'.
 $q_sort = preg_replace("#/$#", "", $q_sort);
-if ($q_type == 'default') 
-    $q_type = 'open';
 if ($q_type == 'closed') {
     $open = '<';
     $status = 'finished';
