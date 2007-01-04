@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.39 2006-11-29 14:44:46 matthew Exp $
+# $Id: Petitions.pm,v 1.40 2007-01-04 12:22:04 matthew Exp $
 #
 
 package Petitions::DB;
@@ -101,10 +101,7 @@ sub get ($;$$) {
             select petition.*,
                 ms_current_date() <= deadline as open";
     $s .= ", message.id AS message_id, message.emailbody as response" if ($govtresponse);
-    $s .= ", (select count(id)+1 from signer
-                    where showname = 't' and signer.petition_id = petition.id
-                        and signer.emailsent = 'confirmed')
-                    as signers" unless ($nocount);
+    $s .= ", cached_signers as signers" unless ($nocount);
     $s .= "
             from petition";
     $s .= " left join message on petition.id = message.petition_id and circumstance = 'government-response'"
