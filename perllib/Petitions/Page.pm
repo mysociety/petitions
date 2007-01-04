@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.68 2006-12-20 12:50:11 matthew Exp $
+# $Id: Page.pm,v 1.69 2007-01-04 12:06:42 matthew Exp $
 #
 
 package Petitions::Page;
@@ -357,6 +357,7 @@ sub signatories_box ($$) {
     
     my $st;
     my $showall = $q->param('showall') ? 1 : 0;      # ugh
+    my $reverse = 0;
     if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
         $html .=
             $q->p("Because there are so many signatories, only the most recent",
@@ -364,9 +365,9 @@ sub signatories_box ($$) {
         $st = dbh()->prepare("
                 select name from signer
                 where petition_id = ? and showname = 't' and emailsent = 'confirmed'
-                order by signtime
-                limit @{[ MAX_PAGE_SIGNERS ]}
-                offset @{[ ($p->{signers} - MAX_PAGE_SIGNERS) ]}");
+                order by signtime desc
+                limit @{[ MAX_PAGE_SIGNERS ]}");
+        $reverse = 1;
     } else {
         $html .=
             $q->p("@{[ ent($p->{name}) ]}, the Petition Creator, joined by:");
@@ -376,11 +377,14 @@ sub signatories_box ($$) {
                 order by signtime");
     }
 
-    $html .= '<ul>';
     $st->execute($p->{id});
+    my @names;
     while (my ($name) = $st->fetchrow_array()) {
-        $html .= $q->li(ent($name));
+        push @names, ent($name);
     }
+    @names = reverse(@names) if ($reverse);
+    $html .= '<ul>';
+    $html .= '<li>' . join('</li><li>', @names) . '</li>';
     $html .= '</ul>';
 
     if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
