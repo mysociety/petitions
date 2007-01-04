@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.56 2006-12-20 16:07:23 matthew Exp $
+// $Id: new.php,v 1.57 2007-01-04 18:32:54 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -253,7 +253,7 @@ There are 5 stages to the petition process:
 </p>
 <p>Requested duration:
     <?
-    textfield('rawdeadline', $data['rawdeadline'], 15, $errors, '(e.g. "2 months")');
+    textfield('rawdeadline', $data['rawdeadline'], 15, $errors, '(e.g. "2 months"; maximum 1 year)');
     ?>
 </p>
 
