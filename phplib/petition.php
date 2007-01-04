@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.45 2007-01-04 12:22:05 matthew Exp $
+ * $Id: petition.php,v 1.46 2007-01-04 17:42:10 matthew Exp $
  * 
  */
 
@@ -30,7 +30,7 @@ $global_rejection_categories = array(
     4096 => 'Outside the remit or powers of the Prime Minister and Government',
     8192 => 'False name or address information',
     16384 => 'Issues for which an e-petition is not the appropriate channel',
-    32768 => 'Intended to be humourous, or has no point about government policy',
+    32768 => 'Intended to be humorous, or has no point about government policy',
     65536 => 'Contains links to other websites',
     // XXX also change in perllib/Petitions/Page.pm
 );
