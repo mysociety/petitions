@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.101 2007-01-06 13:43:47 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.102 2007-01-06 13:50:52 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -880,7 +880,8 @@ package Queue;
 use Carp;
 use IO::Select;
 
-use fields qw(messages finished badhosts baddomains r ss lastcheckedqueue);
+use fields qw(messages finished badhosts baddomains r ss lastcheckedqueue
+                noexpire);
 
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
@@ -901,10 +902,13 @@ use constant MIN_DOMAIN_BAD_INTERVAL => 30;
 # Maximum.
 use constant MAX_DOMAIN_BAD_INTERVAL => 600;
 
-# new
-# Construct a new queue object.
-sub new ($) {
+# new [NOEXPIRE]
+# Construct a new queue object. If NOEXPIRE is true, messages older than
+# MAX_MESSAGE_AGE will not be expired as usual.
+sub new ($;$) {
     my Queue $self = shift;
+    my $noexpire = shift;
+    $noexpire ||= 0;
     $self = fields::new($self)
         unless (ref($self));
 
@@ -927,6 +931,8 @@ sub new ($) {
     $self->{ss} = [ ];
 
     $self->{lastcheckedqueue} = time();
+
+    $self->{noexpire} = $noexpire;
 
     return $self;
 }
@@ -1053,7 +1059,8 @@ Log::print('noise', "  -> already delivered/failed, retiring");
         }
 
         # If the message is too old, fail it.
-        if ($msg->createdtime() < time() - MAX_MESSAGE_AGE) {
+        if (!$self->{noexpire}
+            && $msg->createdtime() < time() - MAX_MESSAGE_AGE) {
 Log::print('noise', "  -> too old; failing");
             $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
         }
@@ -2293,10 +2300,12 @@ my $pidfilepath = mySociety::Config::get('PETEMAILD_PIDFILE', '/var/run/petemail
 my $debug = 0;
 my $verbose = 0;
 my $help = 0;
+my $noexpire = 0;
 if (!GetOptions(
         'pidfile=s' =>  \$pidfilepath,
         debug =>        \$debug,
-        'verbose=i' =>      \$verbose,
+        'verbose=i' =>  \$verbose,
+        noexpire =>     \$noexpire,
         help =>         \$help
     )) {
     print_log('err', "bad options; try --help for help");
@@ -2330,7 +2339,7 @@ try {
     exit(1);
 };
 
-my $Q = new Queue();
+my $Q = new Queue($noexpire);
 my $S = new Source($Q);
 
     # XXX ugly -- we'll drop all connections at the moment of termination.
@@ -2385,6 +2394,11 @@ well as the system log.
 
 Specify amount of debug information to log, from -1 to 2.
 
+=item --noexpire
+
+Don't expire old messages from the queue (used by the test suite, since this
+program doesn't implement the clock offset used for testing).
+
 =item --pidfile PATH
 
 Use PATH as the location of the PID file. By default, uses the value defined in
@@ -2398,4 +2412,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.101 2007-01-06 13:43:47 chris Exp $
+$Id: petemaild,v 1.102 2007-01-06 13:50:52 chris Exp $
