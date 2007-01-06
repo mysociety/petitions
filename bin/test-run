@@ -21,8 +21,9 @@
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 # Search by category
+# Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.65 2007-01-06 13:51:28 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.66 2007-01-06 14:29:56 francis Exp $';
 
 use strict;
 require 5.8.0;
