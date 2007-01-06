@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.99 2007-01-06 11:45:30 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.100 2007-01-06 13:42:15 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -134,7 +134,7 @@ use Scalar::Util qw(weaken);
 use Time::HiRes qw(time);
 
 use fields qw(id state sender recipient domain text events owner starttime
-                nattempts lastattempt);
+                createdtime nattempts lastattempt);
 
             # message is yet to be sent successfully
 use constant STATE_PENDING =>       0;
@@ -150,12 +150,13 @@ use constant EVENT_TEMP_FAILURE =>  1;
 use constant EVENT_PERM_FAILURE =>  2;
 use constant EVENT_DELIVERED =>     3;
 
-# new ID SENDER RECIPIENT TEXT
+# new ID SENDER RECIPIENT TEXT CREATEDTIME
 # Construct a new message with the given ID, SENDER, RECIPIENT and TEXT
-# (on-the-wire message but with "\n" line-endings).
-sub new ($$$$$) {
+# (on-the-wire message but with "\n" line-endings). CREATEDTIME should
+# give the time at which the message was originally entered in the database.
+sub new ($$$$$$) {
     my Queue::Message $self = shift;
-    my ($id, $sender, $recipient) = @_;
+    my ($id, $sender, $recipient, $created) = @_;
 
     $self = fields::new($self)
         unless (ref($self));
@@ -169,6 +170,7 @@ sub new ($$$$$) {
     $self->{owner} = undef;
 
     $self->{starttime} = time();
+    $self->{createdtime} = $created;
 
     my $domain = $recipient;
     $domain =~ s/.*@//;
@@ -241,7 +243,8 @@ sub owner ($;$) {
 }
 
 # Accessors.
-foreach (qw(id sender recipient domain text events starttime nattempts lastattempt)) {
+foreach (qw(id sender recipient domain text events starttime createdtime
+            nattempts lastattempt)) {
     eval <<EOF;
 sub $_ (\$) {
     my Queue::Message \$self = shift;
@@ -1048,6 +1051,13 @@ Log::print('noise', "  -> already delivered/failed, retiring");
             push(@{$self->{finished}}, $msg);
             next;
         }
+
+        # If the message is too old, fail it.
+        if ($msg->createdtime() < time() - MAX_MESSAGE_AGE) {
+Log::print('noise', "  -> too old; failing");
+            $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
+        }
+        
 Log::print('noise', " ... not already delivered");
         # Skip if a sender is already handling this message.
         next if (defined($msg->owner()));
@@ -1608,14 +1618,15 @@ sub database_child_process ($) {
     my @queue = ( );
     
     my $st_s = dbh()->prepare("
-                    select id, petition_id, email, name
+                    select id, petition_id, email, name,
+                        extract(epoch from signtime) as t
                     from signer where emailsent = 'pending'
                         and id > ?
                     order by petition_id");
         # XXX what's the point of the "order by petition_id"?
 
     my $st_p = dbh()->prepare("
-                    select *
+                    select *, extract(epoch from creationtime) as t
                     from petition where status = 'unconfirmed'
                         and id > ?");
 
@@ -1721,7 +1732,8 @@ sub database_child_process ($) {
                             $id,
                             mySociety::Config::get('CONTACT_EMAIL'),
                             $s->{email},
-                            make_signer_email($s, $p)
+                            make_signer_email($s, $p),
+                            $s->{t}
                         )))
                 unless (exists($already{"s-$s->{id}"}));
             $already{$id} = 1;
@@ -1745,7 +1757,8 @@ sub database_child_process ($) {
                             $id,
                             mySociety::Config::get('CONTACT_EMAIL'),
                             $p->{email},
-                            make_petition_email($p)
+                            make_petition_email($p),
+                            $p->{t}
                         )))
                 unless (exists($already{$id}));
             $already{$id} = 1;
@@ -2385,4 +2398,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.99 2007-01-06 11:45:30 chris Exp $
+$Id: petemaild,v 1.100 2007-01-06 13:42:15 chris Exp $
