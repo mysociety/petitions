@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.100 2007-01-06 13:42:15 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.101 2007-01-06 13:43:47 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -156,7 +156,7 @@ use constant EVENT_DELIVERED =>     3;
 # give the time at which the message was originally entered in the database.
 sub new ($$$$$$) {
     my Queue::Message $self = shift;
-    my ($id, $sender, $recipient, $created) = @_;
+    my ($id, $sender, $recipient) = @_;
 
     $self = fields::new($self)
         unless (ref($self));
@@ -170,7 +170,7 @@ sub new ($$$$$$) {
     $self->{owner} = undef;
 
     $self->{starttime} = time();
-    $self->{createdtime} = $created;
+    $self->{createdtime} = $_[4];
 
     my $domain = $recipient;
     $domain =~ s/.*@//;
@@ -2398,4 +2398,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.100 2007-01-06 13:42:15 chris Exp $
+$Id: petemaild,v 1.101 2007-01-06 13:43:47 chris Exp $
