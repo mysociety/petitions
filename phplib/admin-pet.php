@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.61 2006-12-08 12:28:46 matthew Exp $
+ * $Id: admin-pet.php,v 1.62 2007-01-08 18:59:20 francis Exp $
  * 
  */
 
@@ -193,7 +193,7 @@ class ADMIN_PAGE_PET_MAIN {
     function petition_header($sort, $status) {
         print '<table border="1" cellpadding="3" cellspacing="0"><tr>';
         $cols = array(
-            'z'=>'Surge (day)',
+            'z'=>'Signers<br>(in last day)',
             'r'=>'Ref', 
             'a'=>'Title', 
             's'=>'Signers', 
@@ -246,7 +246,7 @@ class ADMIN_PAGE_PET_MAIN {
                 date_trunc('second',laststatuschange) AS laststatuschange,
                 (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
                 cached_signers AS signers,
-                (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day') AS surge,
+                (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day' and emailsent = 'confirmed') AS surge,
                 message.id AS message_id
             FROM petition
             LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
