@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.70 2007-01-04 17:42:09 matthew Exp $
+# $Id: Page.pm,v 1.71 2007-01-08 13:37:10 matthew Exp $
 #
 
 package Petitions::Page;
@@ -356,7 +356,8 @@ sub signatories_box ($$) {
     }
     
     my $st;
-    my $showall = $q->param('showall') ? 1 : 0;      # ugh
+    # my $showall = $q->param('showall') ? 1 : 0;      # ugh
+    my $showall = 0; # Showing all is timing out ref-index elsewhere
     my $reverse = 0;
     if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
         $html .=
@@ -390,9 +391,9 @@ sub signatories_box ($$) {
     if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
         $html .=
             $q->p("Because there are so many signatories, only the most recent",
-                MAX_PAGE_SIGNERS, "are shown on this page.")
-            . $q->p($q->a({ -href => "?showall=1" },
-                    "Show all signatories"));
+                MAX_PAGE_SIGNERS, "are shown on this page.");
+            #. $q->p($q->a({ -href => "?showall=1" },
+            #        "Show all signatories"));
     }
 
     $html .= "</div>";
