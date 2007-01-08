@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.31 2007-01-03 11:48:51 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.32 2007-01-08 15:07:30 francis Exp $';
 
 use strict;
 
@@ -47,8 +47,8 @@ while (!$foad && (my $q = new mySociety::Web())) {
         next;
     }
 
-    #my $lastmodified = dbh()->selectrow_array('select extract(epoch from petition_last_change_time((select id from petition where ref = ?)))', {}, $ref);
-    #next if ($q->Maybe304($lastmodified));
+    my $lastmodified = dbh()->selectrow_array('select extract(epoch from petition_last_change_time((select id from petition where ref = ?)))', {}, $ref);
+    next if ($q->Maybe304($lastmodified));
 
     my $qp_signed = $q->param('signed');
 
@@ -118,7 +118,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     print $q->header(
                 -content_length => length($html),
-                #-last_modified => HTTP::Date::time2str($lastmodified),
+                -last_modified => HTTP::Date::time2str($lastmodified),
                 #($ce
                 #    ? (-content_encoding => $ce)
                 #    : () ),
