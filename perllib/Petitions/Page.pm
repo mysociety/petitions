@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.73 2007-01-10 11:15:44 matthew Exp $
+# $Id: Page.pm,v 1.74 2007-01-10 20:02:48 matthew Exp $
 #
 
 package Petitions::Page;
@@ -167,10 +167,12 @@ sub display_box ($$%) {
     my $name = Petitions::show_part($p, 'name') ? ent($p->{name}) : '&lt;Name cannot be shown&gt;';
     my $meta = 'Submitted by ' . $name . $org;
     if ($p->{status} ne 'rejected') {
+        my $signers = $p->{signers};
+        $signers =~ s/(\d+?(?=(?>(?:\d{3})+)(?!\d))|\G\d{3}(?=\d))/$1,/g;
         $meta .= ' &ndash; ' . 
                 $q->strong('Deadline to sign up by: ') . Petitions::pretty_deadline($p, 1) .
                 (defined($p->{signers})
-                    ? ' &ndash; ' . $q->strong('Signatures:') . '&nbsp;' . $p->{signers}
+                    ? ' &ndash; ' . $q->strong('Signatures:') . '&nbsp;' . $signers
                     : '');
     }
     my $details = '';
