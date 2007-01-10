@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.72 2007-01-08 14:07:02 matthew Exp $
+# $Id: Page.pm,v 1.73 2007-01-10 11:15:44 matthew Exp $
 #
 
 package Petitions::Page;
@@ -65,7 +65,13 @@ sub header ($$%) {
     $out =~ s/PARAM_DEV_WARNING/$devwarning/g;
     $out =~ s/PARAM_STAT_JS/$js/g;
     $out =~ s/PARAM_RSS_LINKS//g;
-    $out =~ s/index,follow/noindex,follow/ if ($q->param('signed'));
+    # Currently, no need to follow links from CGI-generated pages -
+    # will also stop bots indexing showall page
+    if ($q->param('signed') || $q->param('showall')) {
+        $out =~ s/index,follow/noindex,nofollow/;
+    } else {
+        $out =~ s/index,follow/index,nofollow/;
+    }
 
     return $out;
 }
@@ -356,7 +362,7 @@ sub signatories_box ($$) {
     }
     
     my $st;
-    my $showall = $q->param('showtestall') ? 1 : 0;      # ugh
+    my $showall = $q->param('showall') ? 1 : 0;      # ugh
     my $reverse = 0;
     if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
         $html .=
@@ -391,8 +397,8 @@ sub signatories_box ($$) {
         $html .=
             $q->p("Because there are so many signatories, only the most recent",
                 MAX_PAGE_SIGNERS, "are shown on this page.");
-            #. $q->p($q->a({ -href => "?showall=1" },
-            #        "Show all signatories"));
+        $html .= $q->p($q->a({ -href => "?showall=1" }, "Show all signatories"))
+            unless $p->{ref} eq 'traveltax';
     }
 
     $html .= "</div>";
