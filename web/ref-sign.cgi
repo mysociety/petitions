@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.37 2007-01-12 11:17:42 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.38 2007-01-12 11:53:38 matthew Exp $';
 
 use strict;
 
@@ -81,10 +81,10 @@ sub signup_page ($$) {
     } elsif (!$qp_email2) {
         $errors{email2} = 'Please enter your email address again for confirmation';
     } else {
-        (my $qp_email_local = $qp_email) =~ s/\@.+//;
-        (my $qp_email2_local = $qp_email2) =~ s/\@.+//;
+        my ($local1, $domain1) = $qp_email =~ /^(.*?)\@(.*)$/;
+        my ($local2, $domain2) = $qp_email2 =~ /^(.*?)\@(.*)$/;
         $errors{email2} = 'The two email addresses do not match'
-            if ($qp_email_local ne $qp_email2_local);
+            if ($local1 ne $local2 || lc($domain1) ne lc($domain2));
     }
     $errors{address} = 'Please enter your address'
         if (!$qp_address);
@@ -123,7 +123,7 @@ sub signup_page ($$) {
                         added to the petition you'll have to click the link in
                         it."
                     )
-		    . $q->p({-class => 'noprint loudmessage', -align => 'center'},
+                    . $q->p({-class => 'noprint loudmessage', -align => 'center'},
                     q(If you don't receive the email and you use web-based
                     email or have "junk mail" filters, please check
                     your bulk/spam mail folders, in case the message
