@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.36 2006-12-08 14:06:35 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.37 2007-01-12 11:17:42 matthew Exp $';
 
 use strict;
 
@@ -78,8 +78,13 @@ sub signup_page ($$) {
         if (!$qp_name || $qp_name eq '<Enter your name>');
     if (!$qp_email) {
         $errors{email} = 'Please enter a valid email address';
-    } elsif (!$qp_email2 || $qp_email ne $qp_email2) {
-        $errors{email2} = 'The two email addresses do not match';
+    } elsif (!$qp_email2) {
+        $errors{email2} = 'Please enter your email address again for confirmation';
+    } else {
+        (my $qp_email_local = $qp_email) =~ s/\@.+//;
+        (my $qp_email2_local = $qp_email2) =~ s/\@.+//;
+        $errors{email2} = 'The two email addresses do not match'
+            if ($qp_email_local ne $qp_email2_local);
     }
     $errors{address} = 'Please enter your address'
         if (!$qp_address);
