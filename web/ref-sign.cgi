@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.39 2007-01-14 14:01:16 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.40 2007-01-14 14:22:27 chris Exp $';
 
 use strict;
 
@@ -195,6 +195,14 @@ sub confirm_page ($$$) {
             # a signed timestamp so that a "?signed=..." URL can't be
             # distributed and used to mislead people into thinking they've
             # signed when they haven't. (This is a hack, and I am ashamed.)
+            #
+            # XXX a slightly better hack would be to somehow pass the signer's
+            # name or signer_id to ref-index, so that it could say "Thank you
+            # Fred Bloggs, you've now signed the petition"; that would make it
+            # even clearer to a third party that simply visiting the link
+            # hasn't signed them up. Might implement this if we can be
+            # bothered but it's a little awkward and this should be good
+            # enough.
             my $t = sprintf('%x', int(time()) - 1_000_000_000);
             $t .= "." . substr(hmac_sha1_hex($t, Petitions::DB::secret()), 0, 6);
             print $q->redirect("/$ref/?signed=$t");
