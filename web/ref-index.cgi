@@ -7,11 +7,12 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.33 2007-01-14 14:01:16 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.34 2007-01-14 14:17:33 chris Exp $';
 
 use strict;
 
 # use Compress::Zlib;
+use Digest::HMAC_SHA1 qw(hmac_sha1_hex);
 use HTTP::Date qw();
 use utf8;
 
@@ -57,7 +58,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
         my ($t, $s) = ($qp_signed =~ /^([0-9a-f]+)\.([0-9a-f]+)$/);
         if ($t && $s) {
             my $s2 = substr(hmac_sha1_hex($t, Petitions::DB::secret()), 0, 6);
-            if ($s eq $s2 && $t > (time() - 1_000_000_000 - 60)) {
+            if ($s eq $s2 && hex($t) > (time() - 1_000_000_000 - 60)) {
                 $show_signed_box = 1;
             }
         }
@@ -102,7 +103,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
 
     $html .= Petitions::Page::display_box($q, $p, detail=>1);
     $html .= Petitions::Page::sign_box($q, $p)
-        if ($p->{status} eq 'live' && !$qp_signed);
+        if ($p->{status} eq 'live' && !$show_signed_box);
     $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
     $html .= Petitions::detail($p);
     if ($p->{status} ne 'rejected') {
@@ -114,7 +115,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
         $html .= $q->end_div();
     }
     my $stat = 'View.' . $p->{ref};
-    $stat .= '.signed' if ($qp_signed);
+    $stat .= '.signed' if ($show_signed_box);
     $html .= Petitions::Page::footer($q, $stat);
 
     utf8::encode($html);
