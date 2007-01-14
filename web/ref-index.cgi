@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.32 2007-01-08 15:07:30 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.33 2007-01-14 14:01:16 chris Exp $';
 
 use strict;
 
@@ -50,7 +50,25 @@ while (!$foad && (my $q = new mySociety::Web())) {
     my $lastmodified = dbh()->selectrow_array('select extract(epoch from petition_last_change_time((select id from petition where ref = ?)))', {}, $ref);
     next if ($q->Maybe304($lastmodified));
 
-    my $qp_signed = $q->param('signed');
+    # We show the "you've signed" box if a signed=... parameter with a
+    # recent-enough timestamp is passed.
+    my $show_signed_box = 0;
+    if (my $qp_signed = $q->param('signed')) {
+        my ($t, $s) = ($qp_signed =~ /^([0-9a-f]+)\.([0-9a-f]+)$/);
+        if ($t && $s) {
+            my $s2 = substr(hmac_sha1_hex($t, Petitions::DB::secret()), 0, 6);
+            if ($s eq $s2 && $t > (time() - 1_000_000_000 - 60)) {
+                $show_signed_box = 1;
+            }
+        }
+
+        if (!$show_signed_box) {
+            # Bogus/out-of-date signed parameter, so redirect to main petitions
+            # page.
+            print $q->redirect("/$ref/");
+            next;
+        }
+    }
 
     my $p = Petitions::DB::get($ref, 0, 1);
     my $title = Petitions::sentence($p, 1);
@@ -63,7 +81,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     $html .= $q->p({ -id => 'finished' }, "This petition is now closed, as its deadline has passed.")
         if ($p->{status} eq 'finished');
 
-    if ($qp_signed) {
+    if ($show_signed_box) {
         $html .=
             $q->p({ -id =>'success' },
                     "Thank you, you're now signed up to this petition! If you'd like to

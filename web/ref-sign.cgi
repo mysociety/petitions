@@ -7,11 +7,11 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.38 2007-01-12 11:53:38 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.39 2007-01-14 14:01:16 chris Exp $';
 
 use strict;
 
-use Digest::HMAC_SHA1 qw(hmac_sha1);
+use Digest::HMAC_SHA1 qw(hmac_sha1 hmac_sha1_hex);
 use MIME::Base64;
 use utf8;
 use POSIX;
@@ -191,8 +191,13 @@ sub confirm_page ($$$) {
                         the Number 10 team for approval.")
                     . Petitions::Page::footer($q, 'Confirm_Petition');
         } else {
-            # Redirect so that the token isn't left in the browser.
-            print $q->redirect("/$ref/?signed=1");
+            # Redirect so that the token isn't left in the browser. But use
+            # a signed timestamp so that a "?signed=..." URL can't be
+            # distributed and used to mislead people into thinking they've
+            # signed when they haven't. (This is a hack, and I am ashamed.)
+            my $t = sprintf('%x', int(time()) - 1_000_000_000);
+            $t .= "." . substr(hmac_sha1_hex($t, Petitions::DB::secret()), 0, 6);
+            print $q->redirect("/$ref/?signed=$t");
             return;
         }
     } else {
