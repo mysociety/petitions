@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.12 2007-01-05 17:22:36 matthew Exp $
+// $Id: faq.php,v 1.13 2007-01-15 17:13:25 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -27,6 +27,13 @@ page_header('E-petitions Questions and Answers');
 <dt>What's the difference between an e-petition and a paper petition?</dt>
 <dd>
 <p>There is no theoretical difference, only the way in which the signatures are collected and delivered. A petition can gather names and addresses in either or both forms, though once someone has signed a petition in one format, they cannot sign it in another.
+</p>
+</dd>
+
+<dt>How do I get in touch with the team behind the website?</dt>
+<dd>
+<p>If you have any comments on the functioning of the petitions system, please contact
+<a href="mailto:team&#64;petitions.pm.gov.uk">team&#64;petitions.pm.gov.uk</a>.
 </p>
 </dd>
 </dl>
@@ -128,7 +135,7 @@ You can decide how long your petition can run for and we will carry it for up to
 <p>Every person who signs a petition via this website will receive an email detailing the Government's response to the issues raised.</p>
 </dd>
 
-<h2><span dir="ltr">Organisational Questions</span></h2>
+<h2><span dir="ltr">Organisational questions</span></h2>
 
 <dt>Who are mySociety and what is their involvement in the e-petition service?</dt>
 
