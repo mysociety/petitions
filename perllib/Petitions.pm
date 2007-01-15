@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.40 2007-01-04 12:22:04 matthew Exp $
+# $Id: Petitions.pm,v 1.41 2007-01-15 19:15:59 chris Exp $
 #
 
 package Petitions::DB;
@@ -182,6 +182,7 @@ sub make ($$) {
     warn "ID '$id' is quite large; the token format may have to be expanded soon"
         if ($id > 0x10000000);
 
+again:
     my @salt = unpack('C4', random_bytes(4));
     # Top two bits of first byte of salt encode WHAT.
     # 00        p
@@ -201,7 +202,13 @@ sub make ($$) {
 
     # 8 bytes of ciphertext plus 7 bytes of HMAC gives 15 bytes, 20 chars
     # base64.
-    return encode_base64ish($ciphertext . substr($hmac, 0, 7));
+    my $token = encode_base64ish($ciphertext . substr($hmac, 0, 7));
+
+    # probably need more than these but this shows willing and therefore is
+    # enough for now ;-)
+    goto again if ($token =~ /[s5]h[i1]t|p[i1]ss|fuck|cunt|c[o0]ck/i);
+
+    return $token;
 }
 
 =item check TOKEN
