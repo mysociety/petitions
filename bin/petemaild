@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.103 2007-01-16 12:47:14 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.104 2007-01-16 22:56:02 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1630,7 +1630,8 @@ sub database_child_process ($) {
                     from signer where emailsent = 'pending'
                         and id > ?
                     order by petition_id");
-        # XXX what's the point of the "order by petition_id"?
+        # "order by petition_id" so that we only need to cache data about one
+        # petition at once
 
     my $st_p = dbh()->prepare("
                     select *, extract(epoch from creationtime) as t
@@ -2416,4 +2417,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.103 2007-01-16 12:47:14 matthew Exp $
+$Id: petemaild,v 1.104 2007-01-16 22:56:02 chris Exp $
