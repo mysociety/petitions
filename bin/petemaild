@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.104 2007-01-16 22:56:02 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.105 2007-01-16 23:03:43 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -774,6 +774,26 @@ sub parse_smtp_response ($$$) {
     }
 }
 
+sub escape_char ($) {
+    if ($_[0] eq "\t") {
+        return '\t';
+    } elsif ($_[0] eq "\n") {
+        return '\n';
+    } elsif ($_[0] eq "\r") {
+        return '\r';
+    } else {
+        return sprintf('\x02x', ord($_[0]));
+    }
+}
+
+# escape_text TEXT
+# Return a copy of TEXT escaped as if for perl or C.
+sub escape_text ($) {
+    my $text = shift;
+    $text =~ s#([\x00-\x1f\x80-\xff])#escape_char($1)#gei;
+    return $text;
+}
+
 # pre_select RDS WRS
 # 
 sub pre_select ($$$) {
@@ -786,6 +806,9 @@ sub pre_select ($$$) {
             $self->oops(sprintf(
                             'timeout; %d bytes received since last activity',
                             length(${$self->{recvbuf}})));
+            my $escaped_recvbuf = $self->{recvbuf};
+            $self->log('warning', 'contents of recvbuf at timeout: %s',
+                            escape_text($self->{recvbuf}));
         } else {
             $self->oops('timeout');
         }
@@ -2417,4 +2440,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.104 2007-01-16 22:56:02 chris Exp $
+$Id: petemaild,v 1.105 2007-01-16 23:03:43 chris Exp $
