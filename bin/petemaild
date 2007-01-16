@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.102 2007-01-06 13:50:52 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.103 2007-01-16 12:47:14 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2139,9 +2139,13 @@ sub valid ($) {
         }
     } else {
         foreach my $mx (@{$self->mx()}) {
-            return 0 if ($self->starttime() + $mx->ttl() < time());
+            my $ttl = $mx->ttl();
+            $ttl = 10 unless $ttl;
+            return 0 if ($self->starttime() + $ttl < time());
             foreach my $a (@{$self->a($mx->exchange())}) {
-                return 0 if ($self->starttime() + $a->ttl() < time());
+                $ttl = $a->ttl();
+                $ttl = 10 unless $ttl;
+                return 0 if ($self->starttime() + $ttl < time());
             }
         }
     }
@@ -2412,4 +2416,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.102 2007-01-06 13:50:52 chris Exp $
+$Id: petemaild,v 1.103 2007-01-16 12:47:14 matthew Exp $
