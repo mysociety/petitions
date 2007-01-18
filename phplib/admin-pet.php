@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.68 2007-01-18 16:01:38 matthew Exp $
+ * $Id: admin-pet.php,v 1.69 2007-01-18 16:13:09 matthew Exp $
  * 
  */
 
@@ -141,29 +141,29 @@ function petition_admin_perform_actions() {
 
 function petition_admin_navigation($array = array()) {
     $status = isset($array['status']) ? $array['status'] : '';
-    $found = isset($array['found']) ? $array['found'] : 0;
+    # $found = isset($array['found']) ? $array['found'] : 0;
     $search = isset($array['search']) ? $array['search'] : '';
     print "<p><strong>Show &ndash;</strong> ";
     if ($status == 'draft') {
-        print 'Draft (' . $found . ') / ';
+        print 'Draft / '; # (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'live') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
-        print 'Live (' . $found . ') / ';
+        print 'Live / '; # (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'finished') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
-        print 'Finished (' . $found . ') / ';
+        print 'Finished / '; # (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'rejected') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
-        print 'Rejected (' . $found . ')';
+        print 'Rejected / '; # (' . $found . ')';
     } else {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
