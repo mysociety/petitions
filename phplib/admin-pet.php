@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.64 2007-01-18 15:37:37 matthew Exp $
+ * $Id: admin-pet.php,v 1.65 2007-01-18 15:50:35 matthew Exp $
  * 
  */
 
@@ -228,7 +228,8 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='z') $order = 'surge desc';
 
         $page = get_http_var('p'); if (!ctype_digit($page) || $page<0) $page = 0;
-        $offset = $page * 100;
+	$page_limit = 50;
+        $offset = $page * $page_limit;
 
         $this->cat_change = get_http_var('cats') ? true : false;
         $categories = '';
@@ -255,7 +256,7 @@ class ADMIN_PAGE_PET_MAIN {
             LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
             WHERE $status_query
             " .  ($order ? ' ORDER BY ' . $order : '')
-            . ' OFFSET ' . $offset . ' LIMIT 100');
+            . ' OFFSET ' . $offset . ' LIMIT ' . $page_limit);
         $found = array();
         while ($r = db_fetch_array($q)) {
             $row = "";
@@ -327,8 +328,8 @@ class ADMIN_PAGE_PET_MAIN {
 <?      } else {
             print '<p><a href="'.$this->self_link.';o='.$status.';cats=1">Update categories</a></p>';
         }
-        print '<p><a href="'.$this->self_link.';p='.($page-1).'">Previous 100</a>';
-        print ' | <a href="'.$this->self_link.';p='.($page+1).'">Next 100</a></p>';
+        print '<p><a href="'.$this->self_link.';p='.($page-1).'">Previous '.$page_limit'</a>';
+        print ' | <a href="'.$this->self_link.';p='.($page+1).'">Next '.$page_limit.'</a></p>';
         $this->petition_header($sort, $status);
         $a = 0;
         foreach ($found as $row) {
