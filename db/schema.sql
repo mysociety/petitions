@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.46 2007-01-18 16:01:38 matthew Exp $
+-- $Id: schema.sql,v 1.47 2007-01-18 16:17:21 matthew Exp $
 --
 
 -- global_seq
@@ -284,6 +284,7 @@ create table message (
 
 create unique index message_petition_id_circumstance_idx
     on message(petition_id, circumstance, circumstance_count);
+create index message_circumstance_idx on message(circumstance);
 
 -- To whom have messages been sent?
 create table message_admin_recipient (
