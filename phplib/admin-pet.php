@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.66 2007-01-18 15:51:51 matthew Exp $
+ * $Id: admin-pet.php,v 1.67 2007-01-18 15:55:56 matthew Exp $
  * 
  */
 
@@ -228,7 +228,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='z') $order = 'surge desc';
 
         $page = get_http_var('p'); if (!ctype_digit($page) || $page<0) $page = 0;
-	$page_limit = 50;
+	$page_limit = 25;
         $offset = $page * $page_limit;
 
         $this->cat_change = get_http_var('cats') ? true : false;
@@ -328,8 +328,8 @@ class ADMIN_PAGE_PET_MAIN {
 <?      } else {
             print '<p><a href="'.$this->self_link.';o='.$status.';cats=1">Update categories</a></p>';
         }
-        print '<p><a href="'.$this->self_link.';p='.($page-1).'">Previous '.$page_limit.'</a>';
-        print ' | <a href="'.$this->self_link.';p='.($page+1).'">Next '.$page_limit.'</a></p>';
+        print '<p><a href="'.$this->self_link.';o='.$status.';p='.($page-1).'">Previous '.$page_limit.'</a>';
+        print ' | <a href="'.$this->self_link.';o='.$status.';p='.($page+1).'">Next '.$page_limit.'</a></p>';
         $this->petition_header($sort, $status);
         $a = 0;
         foreach ($found as $row) {
