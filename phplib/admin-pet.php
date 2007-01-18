@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.62 2007-01-08 18:59:20 francis Exp $
+ * $Id: admin-pet.php,v 1.63 2007-01-18 15:24:39 matthew Exp $
  * 
  */
 
@@ -227,6 +227,9 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
 
+        $page = get_http_var('p'); if (!ctype_digit($p) || $p<0) $p = 0;
+        $offset = $page * 100;
+
         $this->cat_change = get_http_var('cats') ? true : false;
         $categories = '';
         foreach ($global_petition_categories as $id => $cat) {
@@ -251,7 +254,8 @@ class ADMIN_PAGE_PET_MAIN {
             FROM petition
             LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
             WHERE $status_query
-            " .  ($order ? ' ORDER BY ' . $order : '') );
+            " .  ($order ? ' ORDER BY ' . $order : '')
+            . ' OFFSET ' . $offset . ' LIMIT 100');
         $found = array();
         while ($r = db_fetch_array($q)) {
             $row = "";
@@ -276,8 +280,8 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
             $row .= '<td>'.$r['laststatuschange'].'</td>';
-	    $late = false;
-	    if ($status == 'draft' && $r['late'] == 't') $late = true;
+            $late = false;
+            if ($status == 'draft' && $r['late'] == 't') $late = true;
             if ($status == 'rejected') {
                 if ($r['status'] == 'rejectedonce') {
                     $row .= '<td>Rejected once</td>';
@@ -323,15 +327,17 @@ class ADMIN_PAGE_PET_MAIN {
 <?      } else {
             print '<p><a href="'.$this->self_link.';o='.$status.';cats=1">Update categories</a></p>';
         }
+        print '<p><a href="'.$this->self_link.';p='.($page-1).'">Previous 100</a>';
+        print ' | <a href="'.$this->self_link.';p='.($page+1).'">Next 100</a></p>';
         $this->petition_header($sort, $status);
         $a = 0;
         foreach ($found as $row) {
             print '<tr';
-	    $class = array();
-	    if ($row[0]) $class[] = 'l';
-	    if ($a++%2==0) $class[] = 'v';
-	    if ($class) print ' class="' . join(' ', $class) . '"';
-	    print ">$row[1]</tr>\n";
+            $class = array();
+            if ($row[0]) $class[] = 'l';
+            if ($a++%2==0) $class[] = 'v';
+            if ($class) print ' class="' . join(' ', $class) . '"';
+            print ">$row[1]</tr>\n";
         }
         print '</table>';
         if ($this->cat_change) {
