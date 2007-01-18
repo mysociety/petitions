@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.65 2007-01-18 15:50:35 matthew Exp $
+ * $Id: admin-pet.php,v 1.66 2007-01-18 15:51:51 matthew Exp $
  * 
  */
 
@@ -328,7 +328,7 @@ class ADMIN_PAGE_PET_MAIN {
 <?      } else {
             print '<p><a href="'.$this->self_link.';o='.$status.';cats=1">Update categories</a></p>';
         }
-        print '<p><a href="'.$this->self_link.';p='.($page-1).'">Previous '.$page_limit'</a>';
+        print '<p><a href="'.$this->self_link.';p='.($page-1).'">Previous '.$page_limit.'</a>';
         print ' | <a href="'.$this->self_link.';p='.($page+1).'">Next '.$page_limit.'</a></p>';
         $this->petition_header($sort, $status);
         $a = 0;
