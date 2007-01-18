@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.45 2006-12-21 12:45:19 francis Exp $
+-- $Id: schema.sql,v 1.46 2007-01-18 16:01:38 matthew Exp $
 --
 
 -- global_seq
@@ -139,6 +139,7 @@ ALTER TABLE petition CLUSTER ON petition_pkey;
 create unique index petition_ref_idx on petition(ref);
 create index petition_status_idx on petition(status);
 create index petition_category_idx on petition(category);
+create index petition_laststatuschange_idx on petition(laststatuschange);
 
 -- History of things which have happened to a petition
 create table petition_log (

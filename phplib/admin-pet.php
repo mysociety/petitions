@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.67 2007-01-18 15:55:56 matthew Exp $
+ * $Id: admin-pet.php,v 1.68 2007-01-18 16:01:38 matthew Exp $
  * 
  */
 
@@ -228,7 +228,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='z') $order = 'surge desc';
 
         $page = get_http_var('p'); if (!ctype_digit($page) || $page<0) $page = 0;
-	$page_limit = 25;
+	$page_limit = 100;
         $offset = $page * $page_limit;
 
         $this->cat_change = get_http_var('cats') ? true : false;
