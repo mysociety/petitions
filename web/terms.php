@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.8 2006-12-20 12:50:12 matthew Exp $
+// $Id: terms.php,v 1.9 2007-01-19 17:09:01 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -134,6 +134,10 @@ right to withdraw it. If this happens, we will contact you first to
 allow you to address the concerns we raise and we will only remove the
 petition as a last resort. 
 </p>
+
+<p>Please note that to keep the system manageable, and justify use of
+resources, we can usually only respond to serious petitions of 100
+signatures or more.</p>
 
 <?
 
