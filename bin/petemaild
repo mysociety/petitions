@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.105 2007-01-16 23:03:43 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.106 2007-01-19 11:01:51 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -807,8 +807,8 @@ sub pre_select ($$$) {
                             'timeout; %d bytes received since last activity',
                             length(${$self->{recvbuf}})));
             my $escaped_recvbuf = $self->{recvbuf};
-            $self->log('warning', 'contents of recvbuf at timeout: %s',
-                            escape_text($self->{recvbuf}));
+            $self->log('warning', 'contents of recvbuf at timeout: ' .
+                            escape_text(${$self->{recvbuf}}));
         } else {
             $self->oops('timeout');
         }
@@ -2440,4 +2440,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.105 2007-01-16 23:03:43 chris Exp $
+$Id: petemaild,v 1.106 2007-01-19 11:01:51 chris Exp $
