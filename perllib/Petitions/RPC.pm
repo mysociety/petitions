@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.30 2007-01-11 23:56:45 matthew Exp $
+# $Id: RPC.pm,v 1.31 2007-01-19 13:25:57 chris Exp $
 #
 
 package Petitions::RPC;
@@ -202,7 +202,10 @@ sub do_rpc ($) {
             or die "socket: $!";
     }
 
-    $r->{cookie} = random_bytes(COOKIE_LEN);
+    # Cookie is only exposed on the internal network so it only needs to be
+    # unpredictable, not securely random. Probably we could just use rand in
+    # fact.
+    $r->{cookie} = random_bytes(COOKIE_LEN, 1);
 
     my $packet = make_packet($r);
 
