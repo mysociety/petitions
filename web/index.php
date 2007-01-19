@@ -5,11 +5,14 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.43 2007-01-04 17:42:10 matthew Exp $
+// $Id: index.php,v 1.44 2007-01-19 15:12:39 chris Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
+require_once "../../phplib/conditional.php";
 
+// Lame: send last-modified now to encourage squid to cache us.
+cond_headers(time());
 header('Cache-Control: max-age=5');
 page_header('Introduction to e-petitions', array(
     'rss' => array(
