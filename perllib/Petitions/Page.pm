@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.74 2007-01-10 20:02:48 matthew Exp $
+# $Id: Page.pm,v 1.75 2007-01-19 13:18:17 chris Exp $
 #
 
 package Petitions::Page;
@@ -20,7 +20,6 @@ use RABX;
 use File::Slurp qw(read_file);
 
 use mySociety::DBHandle qw(dbh);
-use mySociety::Util qw(random_bytes);
 use mySociety::Web qw(ent);
 
 use Petitions;
@@ -215,7 +214,7 @@ sub sign_box ($$) {
         content => $p->{content},
         rejection_hidden_parts => $p->{rejection_hidden_parts},
     };
-    $safe_p->{salt} = random_bytes(4);
+    $safe_p->{salt} = "\0\0\0\0";
     my $buf = RABX::serialise($safe_p);
     my $ser = encode_base64($buf . hmac_sha1($buf, Petitions::DB::secret()), '');
     delete($safe_p->{salt});
