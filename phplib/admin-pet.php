@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.70 2007-01-23 17:16:52 matthew Exp $
+ * $Id: admin-pet.php,v 1.71 2007-01-23 17:32:35 matthew Exp $
  * 
  */
 
@@ -23,18 +23,19 @@ class ADMIN_PAGE_PET_SUMMARY {
     function display() {
         global $pet_today;
 
-        $petitions = db_getOne('SELECT COUNT(*) FROM petition');
-        $petitions_live = db_getOne("SELECT COUNT(*) FROM petition WHERE status='live'");
-        $petitions_draft = db_getOne("SELECT COUNT(*) FROM petition WHERE status='draft'");
-        $petitions_closed = db_getOne("SELECT COUNT(*) FROM petition WHERE status='finished'");
-        $petitions_rejected = db_getOne("SELECT COUNT(*) FROM petition WHERE status='rejected' or status='rejectedonce'");
-        $petitions_resubmitted = db_getOne("select count(*) from petition where status='resubmitted'");
+        $petitions = db_getAll("SELECT status,COUNT(*) AS count FROM petition GROUP BY status");
+        $total = 0;
+        foreach ($petitions as $r) {
+            $counts[$r['status']] = $r['count'];
+            $total += $r['count'];
+        }
+        $counts['rejected'] += $counts['rejectedonce'];
         $signatures_confirmed = db_getOne("SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'");
         $signatures_unconfirmed = db_getOne("SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'sent'");
         $signers = db_getOne("SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'");
         print <<<EOF
-Total petitions in system: $petitions<br>
-$petitions_live live, $petitions_draft draft, $petitions_closed finished, $petitions_rejected rejected, $petitions_resubmitted resubmitted<br>
+Total petitions in system: $total<br>
+$counts[live] live, $counts[draft] draft, $counts[finished] finished, $counts[rejected] rejected, $counts[resubmitted] resubmitted<br>
 $signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
 EOF;
         petition_admin_search_form();
@@ -228,7 +229,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='z') $order = 'surge desc';
 
         $page = get_http_var('p'); if (!ctype_digit($page) || $page<0) $page = 0;
-	$page_limit = 100;
+        $page_limit = 100;
         $offset = $page * $page_limit;
 
         $this->cat_change = get_http_var('cats') ? true : false;
