@@ -9,6 +9,9 @@ DAEMON=/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petemaild
 PIDFILE=/data/vhost/!!(*= $vhost *)!!/petemaild.pid
 DUSER=!!(*= $user *)!!
 
+# petemaild uses lots of handles
+ulimit -n 10240
+
 trap "" 1
 
 case "$1" in
