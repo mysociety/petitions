@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.71 2007-01-23 17:32:35 matthew Exp $
+ * $Id: admin-pet.php,v 1.72 2007-01-26 15:25:31 matthew Exp $
  * 
  */
 
@@ -403,6 +403,11 @@ class ADMIN_PAGE_PET_MAIN {
 </p>
 </form>';
         } else {
+            if ($pdata['status'] == 'finished') {
+                print '<form name="petition_admin_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                    '"><input type="submit" name="respond" value="Write response"></form>';
+            }
+
             // Signers
             print "<h2>Signers (".$pdata['signers'].")</h2>";
             $query = "SELECT signer.name as signname, signer.email as signemail,
