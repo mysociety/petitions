@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.72 2007-01-26 15:25:31 matthew Exp $
+ * $Id: admin-pet.php,v 1.73 2007-01-26 15:54:03 francis Exp $
  * 
  */
 
@@ -25,6 +25,7 @@ class ADMIN_PAGE_PET_SUMMARY {
 
         $petitions = db_getAll("SELECT status,COUNT(*) AS count FROM petition GROUP BY status");
         $total = 0;
+        $counts['rejectedonce' ] = 0; // as referred to below
         foreach ($petitions as $r) {
             $counts[$r['status']] = $r['count'];
             $total += $r['count'];
