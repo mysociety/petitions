@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.40 2007-01-14 14:22:27 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.41 2007-01-26 14:43:15 francis Exp $';
 
 use strict;
 
@@ -251,7 +251,7 @@ sub accept_loop () {
         # This page is only ever invoked for a POST form, so redirect to the
         # petition page if this is a GET.
         if ($q->request_method() ne 'POST') {
-            warn "bad method";
+            #warn "bad method";
             print $q->redirect("/$qp_ref/");
             next;
         }
