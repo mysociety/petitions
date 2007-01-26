@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.74 2007-01-26 16:35:47 francis Exp $
+ * $Id: admin-pet.php,v 1.75 2007-01-26 17:15:27 francis Exp $
  * 
  */
 
@@ -311,7 +311,7 @@ class ADMIN_PAGE_PET_MAIN {
                 if ($r['message_id']) 
                     $row .= 'Response sent';
                 else 
-                    $row .= '<form name="petition_admin_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
+                    $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
                         '"><input type="submit" name="respond" value="Write response"></form>';
                 $row .= '</td>';
             }
@@ -413,7 +413,7 @@ class ADMIN_PAGE_PET_MAIN {
 </form>';
         } else {
             if ($pdata['status'] == 'finished') {
-                print '<form name="petition_admin_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                print '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
                     '"><input type="submit" name="respond" value="Write response"></form>';
             }
 
