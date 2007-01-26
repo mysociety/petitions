@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.6 2006-12-02 20:43:58 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.7 2007-01-26 16:30:15 francis Exp $';
 
 use strict;
 
@@ -42,9 +42,6 @@ while (!$foad && (my $q = new mySociety::Web())) {
         print $q->redirect('/' . $p->{ref} . '/');
         next;
     }
-
-    #my $lastmodified = dbh()->selectrow_array('select extract(epoch from petition_last_change_time((select id from petition where ref = ?)))', {}, $ref);
-    #next if ($q->Maybe304($lastmodified));
 
     my $title = Petitions::sentence($p, 1);
     my $html =

@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.34 2007-01-14 14:17:33 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.35 2007-01-26 16:30:15 francis Exp $';
 
 use strict;
 
@@ -48,7 +48,23 @@ while (!$foad && (my $q = new mySociety::Web())) {
         next;
     }
 
-    my $lastmodified = dbh()->selectrow_array('select extract(epoch from petition_last_change_time((select id from petition where ref = ?)))', {}, $ref);
+    # We don't do this in a PostgreSQL function because they don't use indices always
+    # (at least in PostgreSQL 7.4) which led to slow sequential scans.
+    my $lastmodified;
+    my $lm_c = dbh()->selectrow_array('select count(*) from signer where petition_id = 
+        (select id from petition where ref = ?)', {}, $ref);
+    if ($lm_c > 0) {
+        # Also, this query is very slow when run on petitions with no signers, so nice to explicitly avoid it
+        $lastmodified = dbh()->selectrow_array('select 
+            extract(epoch from(select signtime from signer where petition_id = 
+                    (select id from petition where ref = ?) order by signtime desc limit 1))',
+        {}, $ref);
+    } else {
+        $lastmodified = dbh()->selectrow_array('select 
+            extract(epoch from(select creationtime from petition where ref = ?))',
+        {}, $ref);
+    }
+
     next if ($q->Maybe304($lastmodified));
 
     # We show the "you've signed" box if a signed=... parameter with a
