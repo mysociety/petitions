@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.36 2007-01-26 16:46:55 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.37 2007-01-26 16:54:07 francis Exp $';
 
 use strict;
 
@@ -52,7 +52,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     # (at least in PostgreSQL 7.4) which led to slow sequential scans.
     my $lastmodified;
     my $lm_c = dbh()->selectrow_array('select cached_signers from petition where ref = ?', {}, $ref);
-    if ($lm_c > 0) {
+    if ($lm_c > 1) {
         # Also, this query is very slow when run on petitions with no signers, so nice to explicitly avoid it
         $lastmodified = dbh()->selectrow_array('select 
             extract(epoch from(select signtime from signer where petition_id = 
