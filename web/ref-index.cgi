@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.35 2007-01-26 16:30:15 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.36 2007-01-26 16:46:55 francis Exp $';
 
 use strict;
 
@@ -51,8 +51,7 @@ while (!$foad && (my $q = new mySociety::Web())) {
     # We don't do this in a PostgreSQL function because they don't use indices always
     # (at least in PostgreSQL 7.4) which led to slow sequential scans.
     my $lastmodified;
-    my $lm_c = dbh()->selectrow_array('select count(*) from signer where petition_id = 
-        (select id from petition where ref = ?)', {}, $ref);
+    my $lm_c = dbh()->selectrow_array('select cached_signers from petition where ref = ?', {}, $ref);
     if ($lm_c > 0) {
         # Also, this query is very slow when run on petitions with no signers, so nice to explicitly avoid it
         $lastmodified = dbh()->selectrow_array('select 
