@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.73 2007-01-26 15:54:03 francis Exp $
+ * $Id: admin-pet.php,v 1.74 2007-01-26 16:35:47 francis Exp $
  * 
  */
 
@@ -25,7 +25,15 @@ class ADMIN_PAGE_PET_SUMMARY {
 
         $petitions = db_getAll("SELECT status,COUNT(*) AS count FROM petition GROUP BY status");
         $total = 0;
-        $counts['rejectedonce' ] = 0; // as referred to below
+        $counts['unconfirmed'] = 0;
+        $counts['failedconfirm'] = 0;
+        $counts['sentconfirm'] = 0;
+        $counts['draft'] = 0;
+        $counts['rejectedonce'] = 0;
+        $counts['resubmitted'] = 0;
+        $counts['rejected'] = 0;
+        $counts['live'] = 0;
+        $counts['finished'] = 0;
         foreach ($petitions as $r) {
             $counts[$r['status']] = $r['count'];
             $total += $r['count'];
@@ -36,7 +44,7 @@ class ADMIN_PAGE_PET_SUMMARY {
         $signers = db_getOne("SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'");
         print <<<EOF
 Total petitions in system: $total<br>
-$counts[live] live, $counts[draft] draft, $counts[finished] finished, $counts[rejected] rejected, $counts[resubmitted] resubmitted<br>
+$counts[live] live] = 0;
 $signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
 EOF;
         petition_admin_search_form();
