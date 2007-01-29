@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.14 2007-01-19 17:09:01 matthew Exp $
+// $Id: faq.php,v 1.15 2007-01-29 00:46:54 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -74,6 +74,28 @@ email address for free in a few moments. On the converse, if we let people
 use one address to sign multiple times we will likely see considerable fake
 signatures almost straight away.
 </p>
+</dd>
+
+<dt>Why not "sign against" petitions?</dt>
+
+<dd>
+<p>Many people have suggested changes to the e-petitions service during this
+test phase, and a number of improvements have been made as a result.</p>
+
+<p>One of the most popular proposals has been the creation of a 'sign against'
+mechanism, which would allow users to disagree with petitions. After much
+discussion, we have decided not to add this function.</p>
+
+<p>The rationale is this: "e-petitions" is designed essentially as a modern
+equivalent of the traditional petitions presented at the door of No.10. It
+enables people to put their views to the Prime Minister. It is not intended to
+be a form of quasi-referendum or unrepresentative opinion poll (professional
+polls use special techniques to ensure balanced samples). With a "vote against"
+function, that is what it would effectively become.</p>
+
+<p>It is of course possible to create a counter-petition to an existing
+campaign (as many people already have). This remains the best option if you
+disagree with a particular petition.</p>
 </dd>
 
 </dl>
