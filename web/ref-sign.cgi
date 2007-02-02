@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.41 2007-01-26 14:43:15 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.42 2007-02-02 15:04:48 chris Exp $';
 
 use strict;
 
@@ -273,8 +273,6 @@ sub accept_loop () {
         my $p = RABX::unserialise(substr($ser, 0, length($ser) - 20));
 
         signup_page($q, $p);
-
-    #    $W->exit_if_changed();
     }
 }
 
@@ -290,7 +288,7 @@ dbh()->disconnect();
 # without having to alter the global FastCGI server number config parameter
 # NB: This doesn't run well in a cgi environment, only in fastcgi
 mySociety::Util::manage_child_processes({
-               web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
+                web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
                         \&accept_loop]
             });
 
