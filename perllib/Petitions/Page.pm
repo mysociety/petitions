@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.75 2007-01-19 13:18:17 chris Exp $
+# $Id: Page.pm,v 1.76 2007-02-03 16:09:30 chris Exp $
 #
 
 package Petitions::Page;
@@ -385,15 +385,26 @@ sub signatories_box ($$) {
     }
 
     $st->execute($p->{id});
-    my @names;
-    while (my ($name) = $st->fetchrow_array()) {
-        push @names, ent($name);
-    }
-    @names = reverse(@names) if ($reverse);
-    $html .= '<ul>';
-    $html .= '<li>' . join('</li><li>', @names) . '</li>';
-    $html .= '</ul>';
 
+    $html .= '<ul>';
+
+    if ($reverse) {
+        my @names;
+        while (($_) = $st->fetchrow_array()) {
+            push(@names, ent($_));
+        }
+        @names = reverse(@names);
+        foreach (@names) {
+            $html .= "<li>$_</li>";
+        }
+    } else {
+        while (($_) = $st->fetchrow_array()) {
+            $html .= "<li>" . ent($_) . "</li>";
+        }
+    }
+
+    $html .= '</ul>';
+    
     if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
         $html .=
             $q->p("Because there are so many signatories, only the most recent",
