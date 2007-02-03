@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.38 2007-02-02 15:04:48 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.39 2007-02-03 10:57:40 chris Exp $';
 
 use strict;
 
@@ -145,6 +145,9 @@ sub accept_loop () {
                     -cache_control => 'max-age=1',
                     -expires => '+1s'),
                     $html;
+
+        $html = '';
+        undef $html;
     }
 }
 
