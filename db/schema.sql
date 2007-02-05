@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.50 2007-02-05 18:10:18 matthew Exp $
+-- $Id: schema.sql,v 1.51 2007-02-05 18:10:59 matthew Exp $
 --
 
 -- global_seq
@@ -115,8 +115,8 @@ create table petition (
         check (rejection_hidden_parts >= 0
                 and rejection_hidden_parts < 64),
 
-    laststatuschange timestamp not null,
-    lastupdate timestamp not null
+    laststatuschange timestamp not null default ms_current_timestamp(),
+    lastupdate timestamp not null default ms_current_timestamp()
 
     -- add fields to run confirmation email stuff
 
