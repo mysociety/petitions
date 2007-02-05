@@ -2,7 +2,7 @@
 #
 # !!(*= $daemon_name *)!! Start the ePetitions signup daemon
 
-!!(* if ($hostname eq "bitter") { *)!!
+!!(* if ($hostname eq "peas") { *)!!
 
 NAME=!!(*= $daemon_name *)!!
 DAEMON=/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petsignupd
