@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.57 2007-01-04 18:32:54 matthew Exp $
+// $Id: new.php,v 1.58 2007-02-05 18:10:19 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -28,7 +28,7 @@ if (get_http_var('tostepmain')
         check_edited_petition($data);
         petition_form_main($data);
     } else {
-	petition_search_first();
+        petition_search_first();
     }
 }
 $contents = ob_get_contents();
@@ -271,9 +271,9 @@ There are 5 stages to the petition process:
     foreach ($global_petition_categories as $id => $category) {
         if (!$id) continue;
         print '<option';
-	if (array_key_exists('category', $data) && $id == $data['category'])
-	    print ' selected="selected"'; # I hate XHTML
-	print ' value="' . $id . '">' . $category . '</option>';
+        if (array_key_exists('category', $data) && $id == $data['category'])
+            print ' selected="selected"'; # I hate XHTML
+        print ' value="' . $id . '">' . $category . '</option>';
     }
 ?>
 </select></p>
@@ -301,19 +301,19 @@ function petition_form_you($data = array(), $errors = array()) {
                 '-- Select --',
                 'Expatriate',
                 'Armed Forces',
-		'Anguilla',
+                'Anguilla',
                 'Ascension Island',
                 'Bermuda',
                 'British Antarctic Territory',
-		'British Indian Ocean Territory',
-		'British Virgin Islands',
+                'British Indian Ocean Territory',
+                'British Virgin Islands',
                 'Cayman Islands',
                 'Channel Islands',
                 'Falkland Islands',
                 'Gibraltar',
                 'Isle of Man',
                 'Montserrat',
-		'Pitcairn Island',
+                'Pitcairn Island',
                 'St Helena',
                 'S. Georgia and the S. Sandwich Islands',
                 'Tristan da Cunha',
@@ -611,7 +611,8 @@ function petition_create($data) {
                     postcode = ?, overseas = ?, telephone = ?, org_url = ?,
                     comments = ?, category = ?,
                     status = 'resubmitted',
-                    laststatuschange = ms_current_timestamp()
+                    laststatuschange = ms_current_timestamp(),
+                    lastupdate = ms_current_timestamp()
                 where id = ? and status = 'rejectedonce'",
                 $data['detail'], $data['pet_content'],
                 $data['deadline'], $data['rawdeadline'],
@@ -647,7 +648,7 @@ function petition_create($data) {
                         organisation, address,
                         postcode, overseas, telephone, org_url,
                         comments, creationtime, category,
-                        status, laststatuschange
+                        status, laststatuschange, lastupdate
                     ) values (
                         ?, ?, ?,
                         ?, ?,
@@ -655,7 +656,7 @@ function petition_create($data) {
                         ?, ?,
                         ?, ?, ?, ?,
                         ?, ms_current_timestamp(), ?,
-                        'unconfirmed', ms_current_timestamp()
+                        'unconfirmed', ms_current_timestamp(), ms_current_timestamp()
                     )",
                     $data['id'], $data['detail'], $data['pet_content'],
                     $data['deadline'], $data['rawdeadline'],

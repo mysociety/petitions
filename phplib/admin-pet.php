@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.76 2007-01-26 21:37:03 matthew Exp $
+ * $Id: admin-pet.php,v 1.77 2007-02-05 18:10:19 matthew Exp $
  * 
  */
 
@@ -24,9 +24,9 @@ class ADMIN_PAGE_PET_SUMMARY {
         global $pet_today;
 
         $counts = array(
-	    'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
-	    'rejected'=>0, 'live'=>0, 'finished'=>0
-	);
+            'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
+            'rejected'=>0, 'live'=>0, 'finished'=>0
+        );
         $petitions = db_getAll("SELECT status,COUNT(*) AS count FROM petition GROUP BY status");
         $total = 0;
         foreach ($petitions as $r) {
@@ -103,7 +103,8 @@ function petition_admin_perform_actions() {
         if (ctype_digit($signer_id)) {
             $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
             db_query('UPDATE signer set showname = false where id = ?', $signer_id);
-            db_query('update petition set cached_signers = cached_signers - 1 where id = ?', $petition_id);
+            db_query('update petition set cached_signers = cached_signers - 1,
+                lastupdate = ms_current_timestamp() where id = ?', $petition_id);
             $p = new Petition($petition_id);
             $p->log_event('Admin hid signer ' . $signer_id, http_auth_user());
             db_commit();
@@ -115,7 +116,8 @@ function petition_admin_perform_actions() {
         if (ctype_digit($signer_id)) {
             $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
             db_query("UPDATE signer set emailsent = 'confirmed' where id = ?", $signer_id);
-            db_query('update petition set cached_signers = cached_signers + 1 where id = ?', $petition_id);
+            db_query('update petition set cached_signers = cached_signers + 1,
+                lastupdate = ms_current_timestamp() where id = ?', $petition_id);
             $p = new Petition($petition_id);
             $p->log_event('Admin confirmed signer ' . $signer_id, http_auth_user());
             db_commit();
@@ -630,7 +632,8 @@ EOF;
                         rejection_first_categories = ?,
                         rejection_first_reason = ?,
                         rejection_hidden_parts = ?,
-                        laststatuschange = ms_current_timestamp()
+                        laststatuschange = ms_current_timestamp(),
+                        lastupdate = ms_current_timestamp()
                     WHERE id=?", $categories, $reason, $hide, $id);
             $p->log_event("Admin rejected petition for the first time. Categories: $cats_pretty. Reasons: $reason", http_auth_user());
             $template = 'admin-rejected-once';
@@ -642,7 +645,8 @@ EOF;
                         rejection_second_categories = ?,
                         rejection_second_reason = ?,
                         rejection_hidden_parts = ?,
-                        laststatuschange = ms_current_timestamp()
+                        laststatuschange = ms_current_timestamp(),
+                        lastupdate = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason", http_auth_user());
             $template = 'admin-rejected-again';
@@ -745,7 +749,7 @@ EOF;
             db_getOne("UPDATE petition
                 SET status='live', deadline=deadline+(ms_current_date()-date_trunc('day', laststatuschange)),
                 rejection_hidden_parts = 0,
-                laststatuschange = ms_current_timestamp()
+                laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
             $p->log_event("Admin approved petition", http_auth_user());
             pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'approved', 'petition-approved');

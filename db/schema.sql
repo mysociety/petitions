@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.49 2007-01-26 17:07:39 francis Exp $
+-- $Id: schema.sql,v 1.50 2007-02-05 18:10:18 matthew Exp $
 --
 
 -- global_seq
@@ -115,7 +115,8 @@ create table petition (
         check (rejection_hidden_parts >= 0
                 and rejection_hidden_parts < 64),
 
-    laststatuschange timestamp not null
+    laststatuschange timestamp not null,
+    lastupdate timestamp not null
 
     -- add fields to run confirmation email stuff
 
@@ -140,6 +141,7 @@ create unique index petition_ref_idx on petition(ref);
 create index petition_status_idx on petition(status);
 create index petition_category_idx on petition(category);
 create index petition_laststatuschange_idx on petition(laststatuschange);
+create index petition_lastupdate_idx on petition(lastupdate);
 create index petition_deadline_idx on petition(deadline);
 
 -- History of things which have happened to a petition

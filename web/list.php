@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.45 2006-12-21 19:01:20 matthew Exp $
+// $Id: list.php,v 1.46 2007-02-05 18:10:19 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -76,7 +76,7 @@ if ($q_sort == 'date' || $q_sort == 'signers') {
 $sql_params[] = PAGE_SIZE;
 $qrows = db_query("
         SELECT petition.*, '$pet_today' <= petition.deadline AS open,
-	    cached_signers as signers,
+            cached_signers as signers,
                 message.id as message_id
             FROM petition
             left join message on petition.id = message.petition_id and circumstance = 'government-response'
@@ -127,7 +127,7 @@ if (!$rss) {
             $views .= '<span>' . $desc . '</span>';
         } else {
             $views .= "<a href=\"/list/$s" . url_new('', true, 'type', null) . "\">$desc</a>";
-	}
+        }
         $b = true;
     }
 
@@ -158,17 +158,17 @@ if (!$rss) {
         $arr = array(
                      'date'=>_('Start date'), 
                      'deadline'=>_('Deadline'), 
-	);
-	if ($status != 'rejected') {
-		$arr['signers'] = _('Signatures');
-	}
+        );
+        if ($status != 'rejected') {
+                $arr['signers'] = _('Signatures');
+        }
         # Removed as not useful (search is better for these): 'ref'=>'Short name',
         # 'title'=>'Title', 'name'=>'Creator'
         $b = false;
         foreach ($arr as $s => $desc) {
             if ($b) $navlinks .= ' | ';
             if ($q_sort != $s) $navlinks .= '<a href="' . url_new('', true, 'sort', $s, 'type', null) . "\">$desc</a>";
-	    else $navlinks .= $desc;
+            else $navlinks .= $desc;
             $b = true;
         }
         $navlinks .= '</p> <p align="center">';

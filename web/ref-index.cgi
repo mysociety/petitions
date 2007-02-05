@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.39 2007-02-03 10:57:40 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.40 2007-02-05 18:10:19 matthew Exp $';
 
 use strict;
 
@@ -54,20 +54,8 @@ sub accept_loop () {
 
         # We don't do this in a PostgreSQL function because they don't use indices always
         # (at least in PostgreSQL 7.4) which led to slow sequential scans.
-        my $lastmodified;
-        my $lm_c = dbh()->selectrow_array('select cached_signers from petition where ref = ?', {}, $ref);
-        if ($lm_c > 1) {
-            # Also, this query is very slow when run on petitions with no signers, so nice to explicitly avoid it
-            $lastmodified = dbh()->selectrow_array('select 
-                extract(epoch from(select signtime from signer where petition_id = 
-                        (select id from petition where ref = ?) order by signtime desc limit 1))',
-            {}, $ref);
-        } else {
-            $lastmodified = dbh()->selectrow_array('select 
-                extract(epoch from(select creationtime from petition where ref = ?))',
-            {}, $ref);
-        }
-
+        my $lastmodified = dbh()->selectrow_array('select extract(epoch from lastupdate)
+            from petition where ref = ?', {}, $ref);
         next if ($q->Maybe304($lastmodified));
 
         # We show the "you've signed" box if a signed=... parameter with a

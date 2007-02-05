@@ -7,7 +7,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: mark-finished,v 1.5 2006-10-24 10:47:52 francis Exp $
+ * $Id: mark-finished,v 1.6 2007-02-05 18:10:18 matthew Exp $
  *
  */
 
@@ -103,7 +103,8 @@ function find_timed_out_rejected_petitions() {
         verbose("petition #${petition['id']} (${petition['ref']}) has timed out from rejectedonce to rejected");
         db_query("update petition set status='rejected',  
             rejection_second_categories = rejection_first_categories,
-            rejection_second_reason = rejection_first_reason
+            rejection_second_reason = rejection_first_reason,
+            laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
             where id=?", $petition['id']);
         pet_send_message(intval($petition['id']), MSG_ADMIN, MSG_CREATOR, 'rejected-timeout', 'admin-rejected-timeout');
     }

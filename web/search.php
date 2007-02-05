@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.10 2006-11-29 16:15:05 matthew Exp $
+// $Id: search.php,v 1.11 2007-02-05 18:10:19 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -137,8 +137,8 @@ function search($search) {
     // Live petitions
     if ($live) {
         if ($create) {
-	    print '<p>The following open petitions matched <strong>' . htmlspecialchars($search) . '</strong>:</p>';
-	} else {
+            print '<p>The following open petitions matched <strong>' . htmlspecialchars($search) . '</strong>:</p>';
+        } else {
             printf("<p>"._('Results for <strong>open petitions</strong> matching <strong>%s</strong>:')."</p>", htmlspecialchars($search) );
         }
         print '<ul>' . $live . '</ul>';
@@ -179,8 +179,8 @@ function search($search) {
 
     if (!$success) {
         if ($create)
-	    printf("<p>"._('We could not find any petitions that matched "%s".')."</p>", htmlspecialchars($search) );
-	else
+            printf("<p>"._('We could not find any petitions that matched "%s".')."</p>", htmlspecialchars($search) );
+        else
             printf("<p>"._('Sorry, we could not find any petitions that matched "%s".')."</p>", htmlspecialchars($search) );
     }
 

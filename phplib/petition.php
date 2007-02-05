@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.46 2007-01-04 17:42:10 matthew Exp $
+ * $Id: petition.php,v 1.47 2007-02-05 18:10:19 matthew Exp $
  * 
  */
 
@@ -78,7 +78,7 @@ class Petition {
         global $pet_today;
         $main_query_part = "SELECT petition.*,
                                '$pet_today' <= petition.deadline AS open,
-			       cached_signers as signers,
+                               cached_signers as signers,
                                email,
                                content, detail
                            FROM petition";
