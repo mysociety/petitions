@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.68 2007-02-06 00:32:50 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.69 2007-02-06 01:17:49 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -469,8 +469,8 @@ the PM.",
     $wth->browser_check_contents("Your response has been recorded and will be sent out shortly");
     call_send_messages();
 
-    comment("Check everyone gets the response; signers, creator and admin");
-    foreach my $signer_no (1488..1490) {
+    comment("Check everyone gets the response; non deleted signers, creator and admin");
+    foreach my $signer_no (1488,1490) {
         $wth->email_get_containing('%Subject: Government response%To: '.email_n($signer_no).'%Thank you for your petition%');
     }
     $wth->email_get_containing('%Subject: Government response%To: '.email_n(99).'%Thank you for your petition%');
