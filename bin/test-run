@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.67 2007-02-03 03:33:28 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.68 2007-02-06 00:32:50 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -103,14 +103,13 @@ our $contact_email = mySociety::Config::get('CONTACT_EMAIL');
 our $test_email_prefix = mySociety::Config::get('TEST_EMAIL_PREFIX');
 sub email_n { my $n = shift; return "$test_email_prefix+$n\@$email_domain"; }
 sub name_n { my $n = shift; return "Persephone Petitioner $n"; }
+my $named_fcgi_processes = '"^(ref-index.cgi|ref-sign.cgi|reject.cgi)\$"';
 
 #############################################################################
 # Main code
 
 # Kill FastCGI processes
-# XXX The processes respawn from SIGTERM, and SIGKILL seems to confuse Apache.
-# Any way of doing this without needing root access to "apachectl graceful"?
-#mySociety::Util::kill_named_processes(SIGTERM, '"^(ref-index.cgi|ref-sign.cgi|php4-cgi)\$"');
+mySociety::Util::kill_named_processes(SIGKILL, $named_fcgi_processes);
 
 # Configure test harness class
 date_print("Set up web test harness...") if $verbose > 0;
@@ -121,6 +120,7 @@ $wth->browser_credentials("$1:80", "$web_domain admin pages", $auth_user, $auth_
 $wth->database_connect('PET_');
 $wth->database_drop_reload('../db/schema.sql');
 $wth->database_cycle_sequences(200);
+mySociety::Util::kill_named_processes(SIGKILL, $named_fcgi_processes);
 $wth->log_watcher_setup($httpd_error_log);
 $wth->log_watcher_self_test($base_url . "/test.php?error=1", "deliberate_error_to_test_error_handling");
 my $eveld_bin = "$FindBin::Bin/../../services/EvEl/bin/eveld";
