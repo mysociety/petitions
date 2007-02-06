@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: chris@mysociety.org; WWW: http://www.mysociety.org/
  *
- * $Id: token.php,v 1.7 2006-11-20 15:12:24 matthew Exp $
+ * $Id: token.php,v 1.8 2007-02-06 13:19:48 francis Exp $
  * 
  */
 
@@ -47,7 +47,7 @@ function token_make($what, $id) {
         err("ID must be a positive integer");
 
     /* see explanation of format in Petitions.pm */
-    $s1 = unpack('C', random_bytes(1));
+    $s1 = unpack('C', urandom_bytes(1));
     $s1 = $s1[1];
     $s1 &= 0x3f;
     if ($what == 's')
@@ -55,7 +55,7 @@ function token_make($what, $id) {
     elseif ($what == 'e')
         $s1 |= 0x80;
 
-    $plaintext = pack('C', $s1) . random_bytes(3) . pack('N', $id);
+    $plaintext = pack('C', $s1) . urandom_bytes(3) . pack('N', $id);
 
     $hmac = mhash(MHASH_SHA1, $plaintext, db_secret());
 
