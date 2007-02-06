@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.41 2007-01-15 19:15:59 chris Exp $
+# $Id: Petitions.pm,v 1.42 2007-02-06 00:33:56 francis Exp $
 #
 
 package Petitions::DB;
@@ -183,7 +183,7 @@ sub make ($$) {
         if ($id > 0x10000000);
 
 again:
-    my @salt = unpack('C4', random_bytes(4));
+    my @salt = unpack('C4', random_bytes(4, 1));
     # Top two bits of first byte of salt encode WHAT.
     # 00        p
     # 01        s
