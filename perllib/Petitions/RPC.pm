@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.34 2007-02-07 14:51:56 francis Exp $
+# $Id: RPC.pm,v 1.35 2007-02-07 15:56:34 francis Exp $
 #
 
 package Petitions::RPC;
@@ -166,7 +166,7 @@ sub confirm_db ($;$) {
                 where id = ? and emailsent in ('sent', 'pending')", {},
                 $r->{id});
         if ($signercount && $n > 0) {
-            my $petition_id = dbh()->do("
+            my $petition_id = dbh()->selectrow_array("
                     select petition_id from signer where id = ?", {},
                     $r->{id});
             $signercount->{$petition_id} += $n;
