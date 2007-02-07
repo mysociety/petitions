@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.33 2007-02-07 14:11:30 chris Exp $
+# $Id: RPC.pm,v 1.34 2007-02-07 14:51:56 francis Exp $
 #
 
 package Petitions::RPC;
@@ -139,7 +139,7 @@ petition ID corresponding to a confirmed signature the added signature count.
 
 =cut
 sub confirm_db ($;$) {
-    my $r = shift;
+    my ($r, $signercount) = @_;
 
     if ($r->{confirm} eq 'p') {
         # never move a petition backwards in status...
