@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.32 2006-11-24 15:57:01 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.33 2007-02-07 14:11:30 chris Exp $';
 
 use strict;
 
@@ -119,13 +119,22 @@ my $s;
 sub do_pending () {
     my $t0 = time();
     
+    my $signercount = { };
     foreach my $r (values(%pending)) {
         if (exists($r->{confirm})) {
-            Petitions::RPC::confirm_db($r);
+            Petitions::RPC::confirm_db($r, $signercount);
         } else {
             Petitions::RPC::sign_petition_db($r);
         }
     }
+
+    foreach my $id (keys(%$signercount)) {
+        dbh()->do('
+            update petition set cached_signers = cached_signers + ?,
+                lastupdate = ms_current_timestamp()
+            where id = ?', {}, $signercount->{$id}, $id);
+    }
+    
     dbh()->commit();
 
     my $t1 = time();
@@ -345,5 +354,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.32 2006-11-24 15:57:01 chris Exp $
+$Id: petsignupd,v 1.33 2007-02-07 14:11:30 chris Exp $
 

@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.32 2007-02-05 18:10:18 matthew Exp $
+# $Id: RPC.pm,v 1.33 2007-02-07 14:11:30 chris Exp $
 #
 
 package Petitions::RPC;
@@ -131,12 +131,14 @@ sub sign_petition_db ($) {
     }
 }
 
-=item confirm_db REQUEST
+=item confirm_db REQUEST [SIGNERCOUNT]
 
-Confirm a signature or petition creation according to REQUEST.
+Confirm a signature or petition creation according to REQUEST. If the reference
+to hash SIGNERCOUNT is passed, record in the element of the hash for the
+petition ID corresponding to a confirmed signature the added signature count.
 
 =cut
-sub confirm_db ($) {
+sub confirm_db ($;$) {
     my $r = shift;
 
     if ($r->{confirm} eq 'p') {
@@ -163,12 +165,12 @@ sub confirm_db ($) {
                 update signer set emailsent = 'confirmed'
                 where id = ? and emailsent in ('sent', 'pending')", {},
                 $r->{id});
-        dbh()->do("
-                update petition set cached_signers = cached_signers + ?,
-                lastupdate = ms_current_timestamp()
-                where id = (select petition_id from signer where id = ?)",
-                {}, $n, $r->{id})
-            if ($n > 0);
+        if ($signercount && $n > 0) {
+            my $petition_id = dbh()->do("
+                    select petition_id from signer where id = ?", {},
+                    $r->{id});
+            $signercount->{$petition_id} += $n;
+        }
     }
 }
 
