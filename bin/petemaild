@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.109 2007-02-09 13:47:25 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.110 2007-02-09 13:48:30 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1138,8 +1138,8 @@ sub pre_select ($$$) {
     # 
 
     my @messages_to_requeue = ( );
-    while (defined(my $level = $self->{queue}->next_level())
-            && $level <= $now) {
+    my $level;
+    while (defined($level = $self->{queue}->next_level()) && $level <= $now) {
         my $msg = $self->{queue}->pop();
             # the message has now been popped off the queue; if it is not
             # assigned to a sender and there are to be any further attempts it
@@ -2529,4 +2529,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.109 2007-02-09 13:47:25 chris Exp $
+$Id: petemaild,v 1.110 2007-02-09 13:48:30 chris Exp $
