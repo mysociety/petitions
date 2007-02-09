@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.112 2007-02-09 13:52:37 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.113 2007-02-09 13:55:05 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -218,7 +218,7 @@ sub addevent ($$;$) {
         $self->state(STATE_DONE);
     }
 
-    $self->{queue}->requeue($self);
+    $self->{queue}->requeue($self) if ($self->{queue});
 }
 
 # state [STATE]
@@ -1878,7 +1878,8 @@ sub database_child_process ($) {
                             mySociety::Config::get('CONTACT_EMAIL'),
                             $p->{email},
                             make_petition_email($p),
-                            $p->{t}
+                            $p->{t},
+                            undef
                         )))
                 unless (exists($already{$id}));
             $already{$id} = 1;
@@ -2529,4 +2530,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.112 2007-02-09 13:52:37 chris Exp $
+$Id: petemaild,v 1.113 2007-02-09 13:55:05 chris Exp $
