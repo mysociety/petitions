@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.40 2007-02-05 18:10:19 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.41 2007-02-09 16:57:48 matthew Exp $';
 
 use strict;
 
@@ -91,13 +91,17 @@ sub accept_loop () {
 
         if ($show_signed_box) {
             $html .=
-                $q->p({ -id =>'success' },
+                $q->div({ -id =>'success' },
+                    $q->p(
                         "Thank you, you're now signed up to this petition! If you'd like to
                         tell your friends about it, its permanent web address is:",
-                        $q->br(),
                         $q->strong($q->a({ -href => "/$ref/" },
                             ent(mySociety::Config::get('BASE_URL') . "/$ref/"
-                        ))));
+                        )))),
+                    $q->p($q->a({ -href => 'http://www.number10.gov.uk/' },
+                        'Keep up with the latest news and information about
+                         the Prime Minister\'s work and agenda'))
+                );
                         # XXX: *** Send to friend ***
                         
         }
