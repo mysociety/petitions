@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.43 2007-02-06 22:03:34 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.44 2007-02-09 10:05:36 matthew Exp $';
 
 use strict;
 
@@ -77,7 +77,7 @@ sub signup_page ($$) {
     $errors{name} = 'Please enter your name'
         if (!$qp_name || $qp_name eq '<Enter your name>');
     $errors{name} = 'Your name is too long' if (length($qp_name) > 100);
-    $errors{name} = 'Your name cannot contain a web address' if ($qp_name =~ m#http://#);
+    $errors{name} = 'Your name cannot contain a web address' if ($qp_name =~ m#http://|www\.#);
     if (!$qp_email) {
         $errors{email} = 'Please enter a valid email address';
     } elsif (!$qp_email2) {
