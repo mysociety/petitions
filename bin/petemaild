@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.106 2007-01-19 11:01:51 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.107 2007-02-09 13:37:39 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -134,7 +134,7 @@ use Scalar::Util qw(weaken);
 use Time::HiRes qw(time);
 
 use fields qw(id state sender recipient domain text events owner starttime
-                createdtime nattempts lastattempt);
+                createdtime nattempts lastattempt queue);
 
             # message is yet to be sent successfully
 use constant STATE_PENDING =>       0;
@@ -150,13 +150,15 @@ use constant EVENT_TEMP_FAILURE =>  1;
 use constant EVENT_PERM_FAILURE =>  2;
 use constant EVENT_DELIVERED =>     3;
 
-# new ID SENDER RECIPIENT TEXT CREATEDTIME
+# new ID SENDER RECIPIENT TEXT CREATEDTIME QUEUE
 # Construct a new message with the given ID, SENDER, RECIPIENT and TEXT
 # (on-the-wire message but with "\n" line-endings). CREATEDTIME should
 # give the time at which the message was originally entered in the database.
+# QUEUE is the queue object associated with the message.
 sub new ($$$$$$) {
     my Queue::Message $self = shift;
     my ($id, $sender, $recipient) = @_;
+    my Queue $queue = shift;
 
     $self = fields::new($self)
         unless (ref($self));
@@ -168,6 +170,7 @@ sub new ($$$$$$) {
     $self->{text} = $_[3];  # XXX ref?
     $self->{events} = [ ];
     $self->{owner} = undef;
+    $self->{queue} = $queue;
 
     $self->{starttime} = time();
     $self->{createdtime} = $_[4];
@@ -214,6 +217,8 @@ sub addevent ($$;$) {
         $self->log('info', 'delivery completed');
         $self->state(STATE_DONE);
     }
+
+    $self->{queue}->requeue($self);
 }
 
 # state [STATE]
@@ -383,10 +388,14 @@ sub state ($;$) {
     if (@_) {
         $self->{state} = $_[0];
         $self->log('debug', "-> $statename[$_[0]]");
-        # Once we're finished, relinquish ownership of the messages.
+
+        # Once we're finished, relinquish ownership of the messages, regarding
+        # each as having undergone a temporary failure.
         if ($_[0] == STATE_DONE || $_[0] == STATE_BAD) {
             foreach (@{$self->{messages}}) {
                 $_->owner(undef);
+                $_->addevent(Queue::Message::EVENT_TEMP_FAILURE,
+                                $self->{target});
             }
         }
     }
@@ -402,7 +411,8 @@ sub state ($;$) {
 sub tempfail ($) {
     my Sender $self = shift;
     if ($self->{message}) {
-        $self->{message}->addevent(Queue::Message::EVENT_TEMP_FAILURE, $self->{target});
+        $self->{message}->addevent(Queue::Message::EVENT_TEMP_FAILURE,
+                                    $self->{target});
         $self->{message}->owner(undef);
         ++$self->{tempfailed};
     }
@@ -414,7 +424,8 @@ sub permfail ($) {
     my Sender $self = shift;
     if ($self->{message}) {
         $self->{message}->owner(undef);
-        $self->{message}->addevent(Queue::Message::EVENT_PERM_FAILURE, $self->{target});
+        $self->{message}->addevent(Queue::Message::EVENT_PERM_FAILURE,
+                                    $self->{target});
         ++$self->{permfailed};
     }
 }
@@ -904,7 +915,7 @@ use Carp;
 use IO::Select;
 
 use fields qw(messages finished badhosts baddomains r ss lastcheckedqueue
-                noexpire);
+                noexpire queue);
 
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
@@ -938,6 +949,13 @@ sub new ($;$) {
     # hash of opaque ID to message object
     $self->{messages} = { };
 
+    # priority queue of messages
+    $self->{queue} = new Heap::Priority();
+
+    # use scheduled retry time as the "priority", so we want to extract the
+    # lowest-numbered elements.
+    $self->{queue}->lowest_first();
+
     # list of completed messages
     $self->{finished} = [ ];
     
@@ -968,7 +986,12 @@ sub add ($$) {
     croak "MESSAGE must be defined" unless (defined($msg));
     croak "MESSAGE must be a Queue::Message object, not " . ref($msg)
         unless (UNIVERSAL::isa($msg, 'Queue::Message'));
+    croak "MESSAGE may not already be on a queue"
+        unless (!defined($msg->{queue}));
+    $msg->{queue} = $self;
     $self->{messages}->{$msg->id()} = $msg;
+    # add new messages at the highest possible priority
+    $self->{queue}->add($msg, 0);
 }
 
 # attempt_interval MESSAGE
@@ -985,6 +1008,39 @@ sub attempt_interval ($) {
     } else {
         # Then every hour.
         return 3600;
+    }
+}
+
+# finish MESSAGE
+# Push a completed or failed MESSAGE onto the finished queue for passing back
+# to the database.
+sub finish ($$) {
+    my Queue $self = shift;
+    my Queue::Message $msg = shift;
+    delete($self->{messages}->{$msg->id()});
+    push(@{$self->{finished}}, $msg);
+}
+
+# requeue MESSAGE [INTERVAL]
+# Following an event on MESSAGE, reinsert it into the queue of messages to
+# send, unless it has failed or is completed, in which case add it to the list
+# of finished messages. If INTERVAL is specified, it overrides the default
+# retry interval for MESSAGE.
+sub requeue ($$) {
+    my Queue $self = shift;
+    my Queue::Message $msg = shift;
+    if (Queue::Message::STATE_BAD == $msg->state()
+        || Queue::Message::STATE_DONE == $msg->state()) {
+        $self->finish($msg);
+    } else {
+        # decide when it should be redelivered
+        my $when = time();
+        if (@_) {
+            $when += $_[0];
+        } else {
+            $when += attempt_interval($msg);
+        }
+        $self->{queue}->add($msg, $when);
     }
 }
 
@@ -1069,15 +1125,31 @@ sub pre_select ($$$) {
     return if ($self->{lastcheckedqueue} > $now - 1);
     $self->{lastcheckedqueue} = $now;
     Log::print('debug', "iterating over queue");
-    foreach my $msg (values(%{$self->{messages}})) {
+
+    #
+    # The queue allows us to find the nominal retry time for the
+    # next-most-urgent message, and its identity. Unfortunately that's not
+    # enough for us, because when DNS resolution is in progress for a domain,
+    # we need to continue looking for other messages from the queue for later
+    # delivery. For the moment handle this in an ugly way, popping such
+    # messages off the queue and reinserting them after we've gone through the
+    # loop.
+    # 
+
+    my @messages_to_requeue = ( );
+    while ((my $level = $self->{queue}->next_level()) < $now) {
+        my $msg = $self->{queue}->pop();
+            # the message has now been popped off the queue; if it is not
+            # assigned to a sender and there are to be any further attempts it
+            # must be requeued later
 Log::print('noise', "considering ", $msg->id());
+
         # If this message has already been delivered, or has failed
         # permanently, retire it from the queue.
         if ($msg->state() != Queue::Message::STATE_PENDING) {
-            delete($self->{messages}->{$msg->id()});
 Log::print('noise', "  -> already delivered/failed, retiring");
             # if it isn't pending, it's been dealt with
-            push(@{$self->{finished}}, $msg);
+            $self->finish($msg);
             next;
         }
 
@@ -1086,6 +1158,7 @@ Log::print('noise', "  -> already delivered/failed, retiring");
             && $msg->createdtime() < time() - MAX_MESSAGE_AGE) {
 Log::print('noise', "  -> too old; failing");
             $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
+            next;
         }
         
 Log::print('noise', " ... not already delivered");
@@ -1096,6 +1169,8 @@ Log::print('noise', " ... not presently being delivered");
         my $domain = $msg->domain();
         if ($self->domain_bad($domain)) {
 Log::print('noise', "  -> but domain $domain is not resolving, holding off");
+            # have another go at the message later
+            push(@messages_to_requeue, [$msg, $now + MIN_DOMAIN_BAD_INTERVAL]);
             next;
         }
 
@@ -1104,33 +1179,26 @@ Log::print('noise', "  -> but domain $domain is not resolving, holding off");
         if (!$r) {
 Log::print('noise', "  -> domain $domain not resolved, adding to resolver queue");
             $self->r()->add($domain);
+            push(@messages_to_requeue, [$msg, $level]);   # or $now?
             next;
         }
         # If domain resolution failed, mark the domain as failing and hold off.
         if ($r->failed()) {
 Log::print('noise', "  -> resolution of $domain failed, holding off");
             push(@{$self->{baddomains}->{$domain}}, $now);
+            # have another go at the message later
+            push(@messages_to_requeue, [$msg, $now + MIN_DOMAIN_BAD_INTERVAL]);
             next;
         }
+
 Log::print('noise', " ... domain $domain has been resolved");
         # If the domain is unroutable, then the message should be failed.
         if ($r->unroutable()) {
-            $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
 Log::print('noise', "  -> and is unroutable; failing message");
+            $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
             next;
         }
 Log::print('noise', " ... and is routable");
-        # Don't attempt messages before their retry interval.
-        next if ($msg->nattempts() > 0
-                    && $msg->lastattempt() + attempt_interval($msg) > $now);
-Log::print('noise', " ... message is eligible for a delivery attempt");
-        # Time out messages that have been on the queue for too long.
-        if ($msg->nattempts() > 100
-            || $msg->nattempts() > 0 && $msg->lastattempt() < $now - 86400) {
-            $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
-            next;
-        }
-Log::print('noise', " ... and has not timed out");
         # OK, potentially we want to send this message. See if there's an
         # appropriate host to which to send it. We must send messages to the
         # lowest-numbered MX where possible.
@@ -1174,21 +1242,38 @@ Log::print('noise', "      already queued up a full session for host") if (exist
 
             if (@{$newsessions{$host}} == MAX_PER_SESSION) {
                 my $s = new Sender($host, $newsessions{$host});
-                Log::print('info', "created sender S@{[ $s->id() ]} for $host to send @{[ scalar(@{$newsessions{$host}}) ]} messages");
+                Log::printf('info',
+                            'created sender S%s for %s to send %d messages',
+                            $s->id(),
+                            $host,
+                            scalar(@{$newsessions{$host}}));
                 push(@{$self->{ss}}, $s);
                 delete($newsessions{$host});
                 ++$numsessions{$host};
+                    # at this point the message is off the queue completely; it
+                    # may be requeued when its ->addevent method is called by
+                    # the sender
             }
         } else {
 Log::print('debug', "     ... but cannot find any valid host");
+            $self->requeue($msg, 5); # XXX
         }
     }
     Log::print('debug', 'finished iterating over queue');
 
+    # now put any relevant messages back on the queue
+    foreach (@messages_to_requeue) {
+        my ($msg, $level) = @$_;
+        $self->{queue}->add($msg, $level);
+    }
+
     # Create new sessions for each host.
     foreach my $host (keys %newsessions) {
         my $s = new Sender($host, $newsessions{$host});
-        Log::print('info', "created sender S@{[ $s->id() ]} for $host to send @{[ scalar(@{$newsessions{$host}}) ]} messages");
+        Log::printf('info', 'created sender S%s for %s to send %d messages',
+                        $s->id(),
+                        $host,
+                        scalar(@{$newsessions{$host}}));
         push(@{$self->{ss}}, $s);
     }
 }
@@ -1219,6 +1304,7 @@ sub post_select ($$$) {
         } else {
             push(@ss, $smtp);
         }
+
         if ($bad) {
             Log::print('info', "recording host ", $smtp->target(), " as bad: $bad");
             $self->{badhosts}->{$smtp->target()} ||= [ ];
@@ -1236,7 +1322,7 @@ sub post_select ($$$) {
 }
 
 # get_finished
-#
+# Return the next finished message, or undef if there is none.
 sub get_finished ($) {
     my Queue $self = shift;
     return shift(@{$self->{finished}});
@@ -1764,7 +1850,8 @@ sub database_child_process ($) {
                             mySociety::Config::get('CONTACT_EMAIL'),
                             $s->{email},
                             make_signer_email($s, $p),
-                            $s->{t}
+                            $s->{t},
+                            undef       # set in parent process
                         )))
                 unless (exists($already{"s-$s->{id}"}));
             $already{$id} = 1;
@@ -2440,4 +2527,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.106 2007-01-19 11:01:51 chris Exp $
+$Id: petemaild,v 1.107 2007-02-09 13:37:39 chris Exp $
