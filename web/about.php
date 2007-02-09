@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: about.php,v 1.11 2006-10-13 10:26:41 matthew Exp $
+// $Id: about.php,v 1.12 2007-02-09 19:24:15 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -29,7 +29,7 @@ For legal and anti-spam reasons this site cannot host every petition submitted,
 but the rule is to accept everything that meets the terms and conditions of use.</p>
 
 <p>No petition will be rejected unless it violates these terms. And even when
-petitions cannot be not hosted No10 will still publish as much of rejected
+petitions cannot be hosted No10 will still publish as much of rejected
 petitions as is consistent with legal and anti-spam requirements, including
 the reason why it could not be hosted.</p>
 
