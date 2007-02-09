@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.111 2007-02-09 13:51:12 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.112 2007-02-09 13:52:37 chris Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -158,7 +158,7 @@ use constant EVENT_DELIVERED =>     3;
 sub new ($$$$$$) {
     my Queue::Message $self = shift;
     my ($id, $sender, $recipient) = @_;
-    my Queue $queue = $_[3];
+    my Queue $queue = $_[5];
 
     $self = fields::new($self)
         unless (ref($self));
@@ -2529,4 +2529,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.111 2007-02-09 13:51:12 chris Exp $
+$Id: petemaild,v 1.112 2007-02-09 13:52:37 chris Exp $
