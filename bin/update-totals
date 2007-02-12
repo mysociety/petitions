@@ -1,0 +1,52 @@
+#!/usr/bin/perl -w -I../../perllib -I../perllib
+
+# Oh god, this is awful. As someone else said quite frequently. :)
+# 
+# So updating cached_signers at the same time you confirm a
+# signature is so slow as to collapse the whole site when it's
+# busy, as we discovered today. So let's update cached_signers
+# separately on cron. But you can't just do it in one update
+# as the signer table somehow gets locked and given the number
+# of writes going on there, that's just not allowed.
+#
+# Even just fetching the ids first and then updating with current
+# live values does that sometimes. So let's just fetch some values
+# and use them, even if by then they'll be out of date. It's not
+# as if it's for anything important.
+# 
+# This currently takes around 2 minutes for the first query.
+# And occasionally deadlocks, sigh.
+
+use strict;
+require 5.8.0;
+use mySociety::Util;
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file('../conf/general');
+}
+use mySociety::DBHandle qw(dbh);
+use Petitions;
+
+# print "Starting to fetch 'correct' totals at " . localtime(). "\n";
+
+my $r = dbh()->selectcol_arrayref("select id,
+    (select count(*)+1 from signer 
+        where petition_id=petition.id and emailsent='confirmed' and showname='t')
+    from petition
+    where cached_signers !=
+        (select count(*)+1 from signer
+	    where petition_id=petition.id and emailsent='confirmed' and showname='t')",
+    { Columns => [1,2] } );
+my %hash = @$r;
+
+# print "Starting to update " . (@$r/2) . " cached totals at " . localtime() . "\n";
+
+foreach (keys %hash) {
+    # print "Updating $_ to $hash{$_}...\n";
+    dbh()->do("update petition set cached_signers=? where id=?",
+        {}, $hash{$_}, $_);
+    dbh()->commit();
+}
+
+# print "Finished at " . localtime() . "\n";
+
