@@ -4,7 +4,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.6 2007-02-05 01:27:00 francis Exp $
+# $Id: crontab.ugly,v 1.7 2007-02-12 21:21:09 matthew Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
@@ -13,4 +13,6 @@ MAILTO=team@mysociety.org
 # Frequently, on one machine only as not concurrent. I think, haven't checked.
 */12 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/send-messages.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/send-messages || echo "stalled?"
 3 0 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/mark-finished
+
+7,18,30,42,54 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals || echo "stalled?"
 !!(* } *)!!
