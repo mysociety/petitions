@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.79 2007-02-08 17:40:39 matthew Exp $
+ * $Id: admin-pet.php,v 1.80 2007-02-14 00:52:51 francis Exp $
  * 
  */
 
@@ -22,8 +22,18 @@ class ADMIN_PAGE_PET_SUMMARY {
     }
     function display() {
         global $pet_today;
+        petition_admin_search_form();
+    }
+}
 
-        /* Commented out as simply times out all the time
+class ADMIN_PAGE_PET_STATS {
+    function ADMIN_PAGE_PET_STATS() {
+        $this->id = 'stats';
+        $this->navname = 'Statistics';
+    }
+    function display() {
+        global $pet_today;
+
         $counts = array(
             'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
             'rejected'=>0, 'live'=>0, 'finished'=>0
@@ -43,8 +53,6 @@ Total petitions in system: $total<br>
 $counts[live] live, $counts[draft] draft, $counts[finished] finished, $counts[rejected] rejected, $counts[resubmitted] resubmitted<br>
 $signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
 EOF;
-        */
-        petition_admin_search_form();
     }
 }
 
@@ -196,7 +204,7 @@ Search for name/email: <input type="text" name="search" value="<?=htmlspecialcha
 class ADMIN_PAGE_PET_MAIN {
     function ADMIN_PAGE_PET_MAIN () {
         $this->id = "pet";
-        $this->navname = "Petitions and Signers";
+        $this->navname = "Petitions and signers";
     }
 
     function petition_header($sort, $status) {
