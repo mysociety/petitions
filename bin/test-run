@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.69 2007-02-06 01:17:49 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.70 2007-02-14 00:54:34 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -300,7 +300,7 @@ sub do_main_test {
 
     comment("Follow link to admin page and approve");
     $wth->browser_get($admin_approve_link);
-    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents("Petitions and signers");
     $wth->browser_check_contents($petition_text);
     $wth->email_check_none_left();
     call_send_messages();
@@ -342,7 +342,7 @@ sub do_main_test {
             comment("Confirm signature by administrator");
             $wth->browser_get($admin_approve_link);
             $wth->browser_follow_link(text_regex => qr/Draft/);
-            $wth->browser_check_contents("Petitions and Signers");
+            $wth->browser_check_contents("Petitions and signers");
             $wth->browser_check_no_contents($petition_text);
             $wth->browser_follow_link(text_regex => qr/Live/);
             $wth->browser_check_contents($petition_text);
@@ -371,7 +371,7 @@ sub do_main_test {
 
     comment("Delete a signer from the administration interface");
     $wth->browser_get($admin_approve_link);
-    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents("Petitions and signers");
     $wth->browser_follow_link(text_regex => qr/Live/);
     $wth->browser_check_contents($petition_text);
     $wth->browser_follow_link(text_regex => qr/admin/);
@@ -451,7 +451,7 @@ sub do_main_test {
 
     comment("Send a response to all the signers");
     $wth->browser_get($admin_url);
-    $wth->browser_follow_link(text_regex => qr/Petitions and Signers/);
+    $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
     $wth->browser_check_no_contents('Response sent');
     $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
@@ -478,7 +478,7 @@ the PM.",
 
     comment("Check that can't send another response");
     $wth->browser_get($admin_url);
-    $wth->browser_follow_link(text_regex => qr/Petitions and Signers/);
+    $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
     $wth->browser_check_contents('Response sent');
     $wth->browser_check_no_contents('petition_admin_go_respond');
@@ -548,7 +548,7 @@ sub do_rejection_test {
 
     comment("Follow link to admin page and reject");
     $wth->browser_get($admin_approve_link);
-    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents("Petitions and signers");
     $wth->browser_check_contents($petition_text);
     $wth->email_check_none_left();
     call_send_messages();
@@ -592,7 +592,7 @@ sub do_rejection_test {
 
     comment("Follow link to admin page and reject again");
     $wth->browser_get($admin_approve_link);
-    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents("Petitions and signers");
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_check_contents($petition_text_resubmitted);
     $wth->email_check_none_left();
@@ -661,7 +661,7 @@ sub do_timeout_test {
 
     comment("Follow link to admin page and reject");
     $wth->browser_get($admin_approve_link);
-    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents("Petitions and signers");
     $wth->browser_check_contents($petition_text);
     $wth->email_check_none_left();
     call_send_messages();
@@ -784,7 +784,7 @@ sub do_resubmit_test {
 
     comment("Follow link to admin page and reject");
     $wth->browser_get($admin_approve_link);
-    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents("Petitions and signers");
     $wth->browser_check_contents($petition_text);
     $wth->email_check_none_left();
     call_send_messages();
@@ -828,7 +828,7 @@ sub do_resubmit_test {
 
     comment("Follow link to admin page and approve it");
     $wth->browser_get($admin_approve_link);
-    $wth->browser_check_contents("Petitions and Signers");
+    $wth->browser_check_contents("Petitions and signers");
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_check_contents($petition_text_resubmitted);
     $wth->email_check_none_left();
