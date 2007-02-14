@@ -43,7 +43,7 @@ my %hash = @$r;
 
 foreach (keys %hash) {
     # print "Updating $_ to $hash{$_}...\n";
-    dbh()->do("update petition set cached_signers=? where id=?",
+    dbh()->do("update petition set cached_signers=?, lastupdate=ms_current_timestamp() where id=?",
         {}, $hash{$_}, $_);
     dbh()->commit();
 }
