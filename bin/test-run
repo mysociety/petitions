@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.70 2007-02-14 00:54:34 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.71 2007-02-14 01:06:19 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -230,6 +230,11 @@ sub call_mark_finished {
      $wth->multi_spawn($multispawn, "php mark-finished " . ($verbose > 1 ? qw(--verbose) : ''), $verbose);
 }
 
+# Call update signature totals
+sub call_update_totals {
+     $wth->multi_spawn($multispawn, "./update-totals", $verbose);
+}
+
 #############################################################################
 # Create petition, sign it, wait until completion, send government response
 
@@ -361,6 +366,7 @@ sub do_main_test {
         }
 
         comment("Check it says it is signed on the front page");
+        call_update_totals();
         $wth->browser_get($base_url);
         $wth->browser_check_contents($petition_text);
         $c++;
