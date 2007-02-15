@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.80 2007-02-14 00:52:51 francis Exp $
+ * $Id: admin-pet.php,v 1.81 2007-02-15 18:57:34 matthew Exp $
  * 
  */
 
@@ -696,9 +696,9 @@ EOF;
         elseif (!is_null(db_getOne('select id from message where id = ?', $q_message_id)))
             $this->respond_success();
 
-        $n = db_getOne("select id from message where petition_id = ? and circumstance = 'government-response'", $id);
+        $n = db_getOne("select id from message where petition_id = ? and circumstance = 'government-response' and circumstance_count = 1", $id);
         if (!is_null($n)) {
-            print '<p><strong>You have already sent a response to this petition!</strong></p>';
+            print '<p><strong>You have already sent two responses to this petition!</strong></p>';
             return;
         }
 
@@ -716,14 +716,20 @@ EOF;
             $q_message_body .= "\n\nPetition info: " . $p->url_main();
             /* Got all the data we need. Just drop the announcement into the database
              * and let the send-messages script pass it to the signers. */
+
+             
             db_query("insert into message
                     (id, petition_id, circumstance, circumstance_count, fromaddress,
                     sendtocreator, sendtosigners, sendtolatesigners, sendtoadmin,
                     emailsubject, emailbody)
                 values
-                    (?, ?, 'government-response', 0, 'number10', true, true, true, true, ?, ?)",
+                    (?, ?, 'government-response',
+                    coalesce((select max(circumstance_count)
+                            from message where petition_id = ?
+                                and circumstance = 'government-response'), -1) + 1,
+                    'number10', true, true, true, true, ?, ?)",
             array(
-                $q_message_id, $p->id(),
+                $q_message_id, $p->id(), $p->id(),
                 $q_message_subject, $q_message_body));
             db_commit();
             $this->respond_success();
