@@ -1,0 +1,20 @@
+#!/bin/bash
+
+
+set -e
+
+# Global config
+CACHE_DIR=/var/cache/process-logfiles
+AWSTATS_OUTPUT_DIR=/var/lib/awstats
+AWSTATS=/usr/lib/cgi-bin/awstats.pl
+mkdir -p $CACHE_DIR
+TODAY=`date +"%Y-%m-%d"`
+YESTERDAY=`date --date yesterday +"%Y-%m-%d"`
+
+DODATE="2007-02-13"
+
+VHOST=petitions.pm.gov.uk
+LOG_FILES=`find $CACHE_DIR -type f | grep "/$VHOST-.*/" | grep $DODATE`
+echo $LOG_FILES
+/usr/bin/zmergelog $LOG_FILES | /data/mysociety/pet/bin/pet-log-frobinator > /tmp/out-$DODATE
+

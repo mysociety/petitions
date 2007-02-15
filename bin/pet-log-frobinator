@@ -1,0 +1,75 @@
+#!/usr/bin/perl -w
+#
+# pet-log-frobinator:
+# Parse E-Petitions site logfiles and output interesting information.
+#
+# Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
+# Email: francis@mysociety.org; WWW: http://www.mysociety.org/
+#
+
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+chdir $FindBin::Bin;
+
+use strict;
+use Data::Dumper;
+
+my $signs;
+my $confirms;
+while(<>) {
+    @_ = split /\s+/,$_;
+    my $method = $_[5];
+    my $uri = $_[6];
+    $method =~ s/\"//;
+    my $timing = $_[3];
+    $timing =~ s/\[//;
+    my $timezone = $_[4] ;
+    $timezone =~ s/\]//;
+
+    die "method unknown '$method':\n$_" if $method ne "GET" && $method ne "POST" && $method ne "HEAD";
+    die "timezone unknown '$timezone':\n$_" if $timezone ne "+0000";
+
+    # Skip stuff we definitely don't care about
+    next if $uri =~ m/\.(css|jpg|gif)$/;
+    next if $uri =~ m#^/[?]?$#;
+    next if $uri eq "/robots.txt";
+    next if $uri eq "/favicon.ico";
+    next if $uri =~ m#^/[a-z0-9-]+(/$|$|/\?signed\=)#i;
+    next if $uri =~ m#^/(list|rss|about)[/?]#i;
+    next if $uri =~ m#^/(search|reject)\?#i;
+    next if $uri =~ m#_vti_bin#;
+
+    # Explicitly match action
+    my $action;
+    $action = "sign" if $uri =~ m#^/[a-z0-9-]+/sign$#i;
+    $action = "confirm" if $uri =~ m#^/[a-z0-9-]+/[a-z0-9]{23}$#i;
+    #warn "don't know action for '$uri':\n$_" if !$action;
+    next if !$action;
+
+    #print $action . " " . $timing . " " . $method . " " .$uri . "\n";
+    if ($action eq "sign") {
+        $signs->{$timing} |= 0;
+        $signs->{$timing} = $signs->{$timing} + 1;
+    } elsif ($action eq "confirm") {
+        $confirms->{$timing} |= 0;
+        $confirms->{$timing} = $confirms->{$timing} + 1;
+    }
+}
+
+my @times = keys %$signs;
+@times = sort { $signs->{$a} <=> $signs->{$b} } @times;
+foreach my $time (@times) {
+    print "sign $time " . $signs->{$time} . "\n";
+}
+
+@times = keys %$confirms;
+@times = sort { $confirms->{$a} <=> $confirms->{$b} } @times;
+foreach my $time (@times) {
+    print "confirm $time " . $confirms->{$time} . "\n";
+}
+
+
+#cat access_log.2007-02-14 | egrep -v "(css|jpg|gif) HTTP" | egrep -v "GET /(list|search|rss|about)" | egrep -v "GET /[a-zA-Z-]+/? "
+
