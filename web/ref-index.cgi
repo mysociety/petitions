@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.41 2007-02-09 16:57:48 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.42 2007-02-15 08:14:06 matthew Exp $';
 
 use strict;
 
@@ -54,6 +54,10 @@ sub accept_loop () {
 
         # We don't do this in a PostgreSQL function because they don't use indices always
         # (at least in PostgreSQL 7.4) which led to slow sequential scans.
+
+        # XXX: lastupdate is only updated when the number changes on cron now
+        # People notice names changing, but not the number, so should probably
+	# add some sort of explanation that the number might be behind real-time
         my $lastmodified = dbh()->selectrow_array('select extract(epoch from lastupdate)
             from petition where ref = ?', {}, $ref);
         next if ($q->Maybe304($lastmodified));
