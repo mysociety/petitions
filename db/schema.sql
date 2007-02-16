@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.52 2007-02-14 10:25:40 francis Exp $
+-- $Id: schema.sql,v 1.53 2007-02-16 11:48:30 francis Exp $
 --
 
 -- global_seq
@@ -165,7 +165,8 @@ create table signer (
     overseas text,
 
     -- whether this signer is included in the petition or not
-    showname boolean not null default false,
+    -- (should really be called "notdeleted" or something)
+    showname boolean not null default false, -- XXX this column is confusingly named
       
     -- when they signed
     signtime timestamp not null,
