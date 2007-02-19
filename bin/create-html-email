@@ -1,0 +1,70 @@
+#!/usr/bin/perl -w -I../perllib -I../../perllib
+
+use strict;
+use mySociety::Email;
+use File::Slurp;
+use Net::SMTP;
+use POSIX qw(strftime);
+
+my $ref = shift;
+my $test = shift;
+unless ($ref && $test) {
+    print "Usage: $0 REF EMAIL\n";
+    exit;
+}
+
+# Create text and HTML parts
+my $html = File::Slurp::read_file("$ref-response");
+my $plain = remove_html($html);
+$plain = construct_part($plain, 0);
+$html = construct_part($html, 1);
+
+# Construct email
+my $boundary = '----=_NextPart_000_6C92_50657469.74696F6E';
+my $id = strftime('%Y-%m-%d.%H-%M-%S.message@id', localtime());
+my $date = strftime('%a, %d %b %Y %H:%M:%S %z', localtime());
+my $email = <<EOF;
+Return-Path: <$test>
+Message-ID: <$id>
+From: "10 Downing Street" <$test>
+To: $test
+Subject: E-petition: Response from the Prime Minister
+Date: $date
+MIME-Version: 1.0
+Content-Type: multipart/alternative;
+	boundary="$boundary"
+
+This is a multi-part message in MIME format.
+
+--$boundary
+$plain
+--$boundary
+$html
+--$boundary--
+EOF
+
+# And send it!
+my $smtp = Net::SMTP->new('localhost');
+$smtp->mail($test);
+$smtp->to($test) or die "Could not set TO: $!";
+$smtp->data($email) or die "Could not send DATA: $!";
+$smtp->quit();
+
+sub remove_html {
+    $_ = shift;
+    s/(<br>)+/\n/g;
+    s/<(title|h1)[^>]*>.*?<\/\1>//g;
+    s/<(([^>]|\n)*)>//g;
+    s/\s+$/\n/g;
+    s/^\s+//g;
+    return $_;
+}
+
+sub construct_part {
+    my ($body, $ishtml) = @_;
+    $body = mySociety::Email::construct_email( { _body_ => $body, Subject => 'Subject', From => 'From' });
+    $body =~ s/^(Subject|From|To|MIME-Version|Date): .*\n//mg;
+    $body =~ s/text\/plain/text\/html/ if ($ishtml);
+    return $body;
+}
+
