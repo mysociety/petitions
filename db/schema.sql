@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.53 2007-02-16 11:48:30 francis Exp $
+-- $Id: schema.sql,v 1.54 2007-02-20 01:42:23 francis Exp $
 --
 
 -- global_seq
@@ -167,6 +167,9 @@ create table signer (
     -- whether this signer is included in the petition or not
     -- (should really be called "notdeleted" or something)
     showname boolean not null default false, -- XXX this column is confusingly named
+
+    -- whether this signer has opted out of receiving update emails
+    optout boolean not null default false, 
       
     -- when they signed
     signtime timestamp not null,
