@@ -17,6 +17,12 @@
 # This currently takes around 2 minutes for the first query.
 # And occasionally deadlocks, sigh.
 
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+chdir $FindBin::Bin;
+
 use strict;
 require 5.8.0;
 use mySociety::Util;
