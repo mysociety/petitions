@@ -28,7 +28,7 @@ require 5.8.0;
 use mySociety::Util;
 use mySociety::Config;
 BEGIN {
-    mySociety::Config::set_file('../conf/general');
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
 }
 use mySociety::DBHandle qw(dbh);
 use Petitions;
