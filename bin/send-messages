@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.24 2007-01-26 20:35:55 matthew Exp $
+ * $Id: send-messages,v 1.25 2007-02-20 13:51:10 matthew Exp $
  *
  */
 
@@ -231,8 +231,11 @@ function send_pending_messages() {
                         where message_id = message.id
                             and signer_id = signer.id) is null
                     and signer.emailsent = \'confirmed\'
-		    and signer.showname = \'t\'
+                    and signer.showname = \'t\'
+                    and signer.email not in (select email from optout)
                 order by whencreated desc');
+        # XXX: Should optout be done like this?
+
         /* XXX ugly. For a raw email we will transmit the (possibly large)
          * body of the mail over the wire once for each row. Should do a
          * subquery for it and cache the result. */

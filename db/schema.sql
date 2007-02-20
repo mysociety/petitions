@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.55 2007-02-20 02:12:26 francis Exp $
+-- $Id: schema.sql,v 1.56 2007-02-20 13:51:10 matthew Exp $
 --
 
 -- global_seq
@@ -291,3 +291,9 @@ create table message_signer_recipient (
 create unique index message_signer_recipient_message_id_signer_id_idx
     on message_signer_recipient(message_id, signer_id);
 
+-- Table for people who don't want to receive government responses
+create table optout (
+    id integer not null primary key default nextval('global_seq'),
+    email text not null
+);
+create unique index optout_email_idx on optout(email);
