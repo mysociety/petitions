@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.56 2007-02-20 13:51:10 matthew Exp $
+-- $Id: schema.sql,v 1.57 2007-02-20 13:57:12 matthew Exp $
 --
 
 -- global_seq
@@ -296,4 +296,4 @@ create table optout (
     id integer not null primary key default nextval('global_seq'),
     email text not null
 );
-create unique index optout_email_idx on optout(email);
+create unique index optout_email_idx on optout(lower(email));
