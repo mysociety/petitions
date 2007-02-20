@@ -69,10 +69,10 @@ h1 {
 
 .news #content #galleryContent h1 {
     background-color: #4a95c2;
-    background-image: url(http://www.number10.gov.uk/images/bg_nw_news-light.gif);
+    background-image: url(http://www.pm.gov.uk/images/bg_nw_news-light.gif);
 }
 .news #content #galleryContent h1 span {
-    background-image: url(http://www.number10.gov.uk/images/bg_se_news-light.gif);
+    background-image: url(http://www.pm.gov.uk/images/bg_se_news-light.gif);
 }
 
 
@@ -134,7 +134,7 @@ html>body #galleryContent #galleryImages #imageWithLinks img {
 
 #galleryImages #imageWithLinks #miniMenu #miniMenuDownload {
     float:left;
-    background-image: url(http://www.number10.gov.uk/images/icon_download.gif);
+    background-image: url(http://www.pm.gov.uk/images/icon_download.gif);
     background-repeat: no-repeat;
     background-position: center left;
     padding: 2px 0 2px 22px;    
@@ -143,7 +143,7 @@ html>body #galleryContent #galleryImages #imageWithLinks img {
 
 #galleryImages #imageWithLinks #miniMenu #miniMenuPrint {
     float:left;
-    background-image: url(http://www.number10.gov.uk/images/icon_print.gif);
+    background-image: url(http://www.pm.gov.uk/images/icon_print.gif);
     background-repeat: no-repeat;
     background-position: center left;
     margin-left: 10px;
@@ -236,7 +236,7 @@ html>body #content #galleryContent #galleryImages .imagespanel li img {
 }
 
 #galleryImages #imagesNavLeft .nextimage {
-    background-image: url(http://www.number10.gov.uk/images/arrow_next.gif);
+    background-image: url(http://www.pm.gov.uk/images/arrow_next.gif);
     background-position: center right;
     background-repeat: no-repeat;
     padding: 0 12px 0 0px;
@@ -246,7 +246,7 @@ html>body #content #galleryContent #galleryImages .imagespanel li img {
 }
 
 #galleryImages #imagesNavLeft .previousimage {
-    background-image: url(http://www.number10.gov.uk/images/arrow_previous.gif);
+    background-image: url(http://www.pm.gov.uk/images/arrow_previous.gif);
     background-position: 0px 4px;
     background-repeat: no-repeat;
     padding: 0 0 0 12px;
@@ -263,7 +263,7 @@ html>body #content #galleryContent #galleryImages .imagespanel li img {
     margin-right:7px;
     padding-right:6px;*/
     padding-bottom:7px;  
-    /*background-image: url(http://www.number10.gov.uk/images/grey_pixel.gif);*/
+    /*background-image: url(http://www.pm.gov.uk/images/grey_pixel.gif);*/
     background-position: bottom left;
     background-repeat: repeat-x;
     /*background-color:purple;*/
@@ -271,7 +271,7 @@ html>body #content #galleryContent #galleryImages .imagespanel li img {
 }
 
 #galleryImages #imagesNavRight .previousimage {
-    background-image: url(http://www.number10.gov.uk/images/arrow_previous.gif);
+    background-image: url(http://www.pm.gov.uk/images/arrow_previous.gif);
     background-position: 0px 4px;
     background-repeat: no-repeat;
     padding: 0 0 0 12px;
@@ -284,7 +284,7 @@ html>body #content #galleryContent #galleryImages .imagespanel li img {
 }
 
 #galleryImages #imagesNavRight .nextimage {
-    background-image: url(http://www.number10.gov.uk/images/arrow_next.gif);
+    background-image: url(http://www.pm.gov.uk/images/arrow_next.gif);
     background-position: center right;
     background-repeat: no-repeat;
     padding: 0 12px 0 0px; 

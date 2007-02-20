@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.21 2006-11-16 17:52:43 matthew Exp $
+// $Id: page.php,v 1.22 2007-02-20 16:26:46 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -47,7 +47,7 @@ function page_header($title, $params = array()) {
     // Display header
     $stat_js = '';
     if (!OPTION_PET_STAGING) {
-        $stat_js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>';
+        $stat_js = '<script type="text/javascript" src="http://www.pm.gov.uk/include/js/nedstat.js"></script>';
     }
 
     global $devwarning;

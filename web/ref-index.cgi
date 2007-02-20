@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.42 2007-02-15 08:14:06 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.43 2007-02-20 16:26:46 matthew Exp $';
 
 use strict;
 
@@ -102,7 +102,7 @@ sub accept_loop () {
                         $q->strong($q->a({ -href => "/$ref/" },
                             ent(mySociety::Config::get('BASE_URL') . "/$ref/"
                         )))),
-                    $q->p($q->a({ -href => 'http://www.number10.gov.uk/' },
+                    $q->p($q->a({ -href => 'http://www.pm.gov.uk/' },
                         'Keep up with the latest news and information about
                          the Prime Minister\'s work and agenda'))
                 );

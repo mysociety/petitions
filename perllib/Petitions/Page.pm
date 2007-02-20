@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.76 2007-02-03 16:09:30 chris Exp $
+# $Id: Page.pm,v 1.77 2007-02-20 16:26:45 matthew Exp $
 #
 
 package Petitions::Page;
@@ -58,7 +58,7 @@ sub header ($$%) {
     my $ent_url = ent($q->url());
     my $ent_title = ent($title);
     my $js = '';
-    $js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
+    $js = '<script type="text/javascript" src="http://www.pm.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
     $out =~ s/PARAM_DC_IDENTIFIER/$ent_url/g;
     $out =~ s/PARAM_TITLE/$ent_title/g;
     $out =~ s/PARAM_DEV_WARNING/$devwarning/g;

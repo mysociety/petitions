@@ -189,13 +189,13 @@ a.toolbarWhiteLink:visited {
 }
 
 #navigation li li a, #navigation li li strong {
-    background: url(http://www.number10.gov.uk/files/images/bullet_arrow-right_black.gif) no-repeat 0% 60%;
+    background: url(http://www.pm.gov.uk/files/images/bullet_arrow-right_black.gif) no-repeat 0% 60%;
     padding: 1px 9px;
     color: #000;
 }
 
 #navigation li li strong {
-    background-image: url(http://www.number10.gov.uk/files/images/bullet_arrow-down_white.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/bullet_arrow-down_white.gif);
     font-weight: normal;
     color: #fff;
 }
@@ -303,19 +303,19 @@ a.toolbarWhiteLink:visited {
 
 /* colours and arrows: level 1 (li) */
 #navigation li.primeminister, #navigation li.primeminister span {
-    background: #846e74 url(http://www.number10.gov.uk/files/images/menu_arrow_primeminister.gif) no-repeat left;
+    background: #846e74 url(http://www.pm.gov.uk/files/images/menu_arrow_primeminister.gif) no-repeat left;
 }
 #navigation li.government, #navigation li.government span {
-    background: #4e682a url(http://www.number10.gov.uk/files/images/menu_arrow_government.gif) no-repeat left;
+    background: #4e682a url(http://www.pm.gov.uk/files/images/menu_arrow_government.gif) no-repeat left;
 }
 #navigation li.news, #navigation li.news span {
-    background: #224676 url(http://www.number10.gov.uk/files/images/menu_arrow_news.gif) no-repeat left;
+    background: #224676 url(http://www.pm.gov.uk/files/images/menu_arrow_news.gif) no-repeat left;
 }
 #navigation li.downingstreet, #navigation li.downingstreet span {
-    background: #6b3f61 url(http://www.number10.gov.uk/files/images/menu_arrow_downingstreet.gif) no-repeat left;
+    background: #6b3f61 url(http://www.pm.gov.uk/files/images/menu_arrow_downingstreet.gif) no-repeat left;
 }
 #navigation li.broadcasts, #navigation li.broadcasts span {
-    background: #cb5d28 url(http://www.number10.gov.uk/files/images/menu_arrow_broadcasts.gif) no-repeat left;
+    background: #cb5d28 url(http://www.pm.gov.uk/files/images/menu_arrow_broadcasts.gif) no-repeat left;
 }
 html>body #navigation li {
     background-image: none !important;
@@ -327,19 +327,19 @@ html>body #navigation li {
     background-repeat: repeat-y;
 }
 #navigation li.primeminister ul {
-    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_primeminister.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/menu_bg_primeminister.gif);
 }
 #navigation li.government ul {
-    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_government.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/menu_bg_government.gif);
 }
 #navigation li.news ul {
-    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_news.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/menu_bg_news.gif);
 }
 #navigation li.downingstreet ul {
-    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_downingstreet.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/menu_bg_downingstreet.gif);
 }
 #navigation li.broadcasts ul {
-    background-image: url(http://www.number10.gov.uk/files/images/menu_bg_broadcasts.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/menu_bg_broadcasts.gif);
 }
 
 
@@ -394,7 +394,7 @@ html>body #navigation li {
     float: left;
     padding: 0 16px;
     margin-left: 10px;
-    background: url(http://www.number10.gov.uk/files/images/arrow.gif) no-repeat center left;
+    background: url(http://www.pm.gov.uk/files/images/arrow.gif) no-repeat center left;
 }
 #helpbar .help a {
     font-weight: bold;
@@ -426,7 +426,7 @@ html>body #navigation li {
 #helpbar #go {
     border: none !important;
     font-weight: bold;
-    background: url(http://www.number10.gov.uk/files/images/arrow.gif) no-repeat 0% 30%;
+    background: url(http://www.pm.gov.uk/files/images/arrow.gif) no-repeat 0% 30%;
     padding: 0 0 0 12px;
 
     cursor: pointer;
@@ -495,7 +495,7 @@ html>body #navigation li {
     height: 5px;
     line-height: 5px;
     border-width: 0 1px 0 0;
-    background: transparent url(http://www.number10.gov.uk/files/images/ilink_header.gif) no-repeat 0 0;
+    background: transparent url(http://www.pm.gov.uk/files/images/ilink_header.gif) no-repeat 0 0;
 }
 
 #ilinks #frmSummit div div {
@@ -509,7 +509,7 @@ html>body #navigation li {
     height: 5px;
     line-height: 5px;
     border-width: 0 1px 0 0;
-    background: transparent url(http://www.number10.gov.uk/files/images/ilink_header_g8.gif) no-repeat 100% 100%;
+    background: transparent url(http://www.pm.gov.uk/files/images/ilink_header_g8.gif) no-repeat 100% 100%;
 }
 #ilinks #frmSummit div.g8News div h3  {
     /*padding-top: 5px;*/
@@ -521,13 +521,13 @@ html>body #navigation li {
 #ilinks div.footer {
     height: 9px;
     line-height: 9px;
-    background: transparent url(http://www.number10.gov.uk/files/images/ilink_footer.gif) no-repeat 100% 100%;
+    background: transparent url(http://www.pm.gov.uk/files/images/ilink_footer.gif) no-repeat 100% 100%;
     border-width: 0 0 0 1px;
 }
 #ilinks #frmSummit div.footer {
     height: 9px;
     line-height: 9px;
-    background: transparent url(http://www.number10.gov.uk/files/images/ilink_footer_g8.gif) no-repeat 100% 100%;
+    background: transparent url(http://www.pm.gov.uk/files/images/ilink_footer_g8.gif) no-repeat 100% 100%;
     border-width: 0 0 0 1px;
 }
 #ilinks h3 img {
@@ -550,10 +550,10 @@ html>body #ilinks h3 img {
     background-color: #eeeaec;
 }
 #ilinks .primeminister div.header {
-    background-image: url(http://www.number10.gov.uk/files/images/ilink_header_primeminister.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/ilink_header_primeminister.gif);
 }
 #ilinks .primeminister div.footer {
-    background-image: url(http://www.number10.gov.uk/files/images/ilink_footer_primeminister.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/ilink_footer_primeminister.gif);
 }
 
 #ilinks .g8News h3 {
@@ -654,7 +654,7 @@ html>body #ilinks h3 img {
 #ilinks h3 a {
     display: block;
     padding: 0 0 2px 17px;
-    background: url(http://www.number10.gov.uk/files/images/arrow.gif) no-repeat 0 2px;
+    background: url(http://www.pm.gov.uk/files/images/arrow.gif) no-repeat 0 2px;
 }
 
 /* no arrow for G8 News */
@@ -724,7 +724,7 @@ html>body #ilinks h3 img {
 #rel_links h1 a, #rel_links h2 a {
     display: block;
     padding: 0 0 2px 16px;
-    background: url(http://www.number10.gov.uk/files/images/arrow.gif) no-repeat 0 2px;
+    background: url(http://www.pm.gov.uk/files/images/arrow.gif) no-repeat 0 2px;
 }
 
 
@@ -741,28 +741,28 @@ submenu
 
 #rel_links .primeminister {
    background-color: #eeeaec;
-   background-image: url(http://www.number10.gov.uk/files/images/bg_se_primeminister-medium.gif);
+   background-image: url(http://www.pm.gov.uk/files/images/bg_se_primeminister-medium.gif);
 }
 #rel_links .primeminister h2 {
    background-color: #846e74;
-   background-image: url(http://www.number10.gov.uk/files/images/bg_nw_primeminister-dark.gif);
+   background-image: url(http://www.pm.gov.uk/files/images/bg_nw_primeminister-dark.gif);
 }
 #rel_links .primeminister h2 span {
-   background-image: url(http://www.number10.gov.uk/files/images/bg_se_primeminister-dark.gif);
+   background-image: url(http://www.pm.gov.uk/files/images/bg_se_primeminister-dark.gif);
 } 
 
 #rel_links .offsite {
     background-color: #ccc;
-    background-image: url(http://www.number10.gov.uk/files/images/bg_se_offsite-light.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/bg_se_offsite-light.gif);
 }
 #rel_links .offsite h2 {
     background-color: #000;
-    background-image: url(http://www.number10.gov.uk/files/images/bg_nw_offsite-dark.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/bg_nw_offsite-dark.gif);
 }
 
 #rel_links .offsite h2 a {
     color: #fff;
-    background:  url(http://www.number10.gov.uk/files/images/arrow_grey.gif) no-repeat 0 2px;
+    background:  url(http://www.pm.gov.uk/files/images/arrow_grey.gif) no-repeat 0 2px;
 }
 
 /* SUB MENUs */
@@ -793,7 +793,7 @@ submenu
 }
 
 #rel_links .primeminister.submenu li  {
-    background-image: url(http://www.number10.gov.uk/files/images/arrow_primeminister.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/arrow_primeminister.gif);
 }
 
 h1, h2, h3 {
@@ -840,10 +840,10 @@ h1, h2, h3 {
 /* CONTENT H1 and H2 COLOURS */
 .primeminister #content h1, .primeminister #content h2 {
    background-color: #b7aeb1;
-   background-image: url(http://www.number10.gov.uk/files/images/bg_nw_primeminister-light.gif);
+   background-image: url(http://www.pm.gov.uk/files/images/bg_nw_primeminister-light.gif);
 }
 .primeminister #content h1 span, .primeminister #content h2 span {
-   background-image: url(http://www.number10.gov.uk/files/images/bg_se_primeminister-light.gif);
+   background-image: url(http://www.pm.gov.uk/files/images/bg_se_primeminister-light.gif);
 } 
 
 #content h3 a {
@@ -856,7 +856,7 @@ h1, h2, h3 {
 }
 /* H3 content LINKS: coloured bullets; link text a different color from non-heading link text */
 .primeminister #content h3 a/* */{
-    background-image: url(http://www.number10.gov.uk/files/images/arrow_primeminister.gif);
+    background-image: url(http://www.pm.gov.uk/files/images/arrow_primeminister.gif);
 }
 
 span.clear {
@@ -906,7 +906,7 @@ h1, h2 {margin: 0; padding: 0;}
     padding: 8px 0;
 }
 #content ul li, #ilinks ul li {
-    background: url(http://www.number10.gov.uk/files/images/bullet_arrow-right_black.gif) no-repeat 0 4px;
+    background: url(http://www.pm.gov.uk/files/images/bullet_arrow-right_black.gif) no-repeat 0 4px;
     margin: 0;
     padding:0 0 0 10px;
     /* Mac hider \*/position: relative;/* */

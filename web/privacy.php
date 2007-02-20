@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: privacy.php,v 1.4 2006-10-13 10:26:41 matthew Exp $
+// $Id: privacy.php,v 1.5 2007-02-20 16:26:46 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -15,7 +15,7 @@ page_header('E-petitions Privacy Policy');
 
 <h1><span dir="ltr">Privacy policy</span></h1>
 
-In addition to the <a href="http://www.number10.gov.uk/output/Page52.asp">normal privacy policy</a> we have the following:
+In addition to the <a href="http://www.pm.gov.uk/output/Page52.asp">normal privacy policy</a> we have the following:
 
 <h2><span dir="ltr">E-petitions</span></h2>
 
