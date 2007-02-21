@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.27 2007-02-21 16:58:00 francis Exp $
+ * $Id: send-messages,v 1.28 2007-02-21 17:02:15 francis Exp $
  *
  */
 
@@ -64,6 +64,7 @@ send_pending_messages();
  * Dispatch messages to petition signers and creators which have not yet been
  * sent. */
 function send_pending_messages() {
+    global $separate_mailout_petitions;
 
     /* Messages to the administrators. */
     verbose("sending pending admin messages");
