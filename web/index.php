@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.44 2007-01-19 15:12:39 chris Exp $
+// $Id: index.php,v 1.45 2007-02-21 00:17:10 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -69,7 +69,7 @@ if (!count($recent)) {
 <p align="right"><a href="/list/open?sort=date" title="More recent petitions">More</a></p>
 </div>
 <div id="most_popular">
-<h2><span class="ltr">Five most popular petitions</span></h2>
+<h2><span class="ltr">Five most popular open petitions</span></h2>
 <p>We the undersigned petition the Prime Minister to&hellip;</p>
 <ul>
 <?
