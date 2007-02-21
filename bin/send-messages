@@ -8,12 +8,14 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.26 2007-02-20 13:57:12 matthew Exp $
+ * $Id: send-messages,v 1.27 2007-02-21 16:58:00 francis Exp $
  *
  */
 
 $short_opts = '';
 $long_opts = array('verbose','help');
+
+$separate_mailout_petitions = " and (message.petition_id <> 138 and message.petition_id <> 27794)";
 
 chdir(dirname($_SERVER['SCRIPT_FILENAME']));
 require_once '../conf/general';
@@ -66,13 +68,14 @@ function send_pending_messages() {
     /* Messages to the administrators. */
     verbose("sending pending admin messages");
     
-    $q = db_query('
+    $q = db_query("
                 select * from message
                 where sendtoadmin
                     and (select message_id
                         from message_admin_recipient
                         where message_id = id) is null
-                order by random()');
+                    $separate_mailout_petitions
+                order by random()");
 
     while ($msg = db_fetch_array($q)) {
         db_query("lock table message_admin_recipient in exclusive mode");
@@ -119,7 +122,7 @@ function send_pending_messages() {
     /* Messages to creators. */
     verbose("sending pending creator messages");
     
-    $q = db_query('
+    $q = db_query("
                 select * from message
                 where sendtocreator
                     and (select message_id
@@ -127,7 +130,8 @@ function send_pending_messages() {
                         where message_id = id
                             and message_creator_recipient.petition_id
                                 = message.petition_id) is null
-                order by random()');
+                    $separate_mailout_petitions
+                order by random()");
 
     while ($msg = db_fetch_array($q)) {
         /* Grab lock. As ever, this is bloody ugly, because we have to do
@@ -212,7 +216,7 @@ function send_pending_messages() {
      * info for each signer-message pair which is pending on delivery. */
     verbose("sending pending signer messages");
      
-    $q = db_query('
+    $q = db_query("
                 select message.*,
                     signer.id as signer_id,
                     signer.name as signer_name,
@@ -233,7 +237,8 @@ function send_pending_messages() {
                     and signer.emailsent = \'confirmed\'
                     and signer.showname = \'t\'
                     and lower(signer.email) not in (select lower(email) from optout)
-                order by whencreated desc');
+                    $separate_mailout_petitions
+                order by whencreated desc");
         # XXX: Should optout be done like this?
 
         /* XXX ugly. For a raw email we will transmit the (possibly large)
