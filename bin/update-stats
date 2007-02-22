@@ -26,7 +26,7 @@ dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timest
 dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_confirmed', 
     (SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'))");
 dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_confirmed_unique', 
-    (SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed')");
+    (SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'))");
 dbh()->commit();
 
 # Petition counts
