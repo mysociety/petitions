@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.83 2007-02-22 16:39:58 francis Exp $
+ * $Id: admin-pet.php,v 1.84 2007-02-22 16:45:58 francis Exp $
  * 
  */
 
@@ -34,6 +34,8 @@ class ADMIN_PAGE_PET_STATS {
     function display() {
         global $pet_today;
 
+        $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
+
         $counts = array(
             'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
             'rejected'=>0, 'live'=>0, 'finished'=>0
@@ -46,10 +48,11 @@ class ADMIN_PAGE_PET_STATS {
         $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent' order by id desc limit 1");
         $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique' order by id desc limit 1");
         print <<<EOF
+<p>Statistics last updated: $statsdate
 <h2>Petitions</h2>
-$counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again <br>
+<p>$counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again <br>
 <h2>Signatures</h2>
-$signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
+<p>$signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
 <p><img src="pet-live-signups.png" alt="Graph of across whole site">
 EOF;
     }
