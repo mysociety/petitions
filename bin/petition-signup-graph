@@ -5,7 +5,7 @@
 # Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
 # Email: francis@mysociety.org. WWW: http://www.mysociety.org/
 # 
-# $Id: petition-signup-graph,v 1.3 2007-02-22 16:47:33 francis Exp $
+# $Id: petition-signup-graph,v 1.4 2007-02-22 16:52:43 francis Exp $
 
 GPLOT_OUTPUT="set terminal png font 'Vera.ttf' 9 size 800,400"
 EXTENSION=".png"
@@ -31,8 +31,6 @@ echo "select
     group by date(signtime)
     order by date(signtime)
     ;" | psql --host $OPTION_PET_DB_HOST --port $OPTION_PET_DB_PORT -A -F " " $OPTION_PET_DB_NAME $OPTION_PET_DB_USER | egrep -v "date|rows" >$SOURCEO
-
-SOURCEO=/tmp/pet-signup-rate-graph-data-nonwmc-15644012
 
 cat >$GPSCRIPT <<END 
     unset border
