@@ -5,9 +5,9 @@
 # Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
 # Email: francis@mysociety.org. WWW: http://www.mysociety.org/
 # 
-# $Id: petition-signup-graph,v 1.4 2007-02-22 16:52:43 francis Exp $
+# $Id: petition-signup-graph,v 1.5 2007-02-22 17:18:59 francis Exp $
 
-GPLOT_OUTPUT="set terminal png font 'Vera.ttf' 9 size 800,400"
+GPLOT_OUTPUT="set terminal png font 'Vera.ttf' 9 size 1200,400"
 EXTENSION=".png"
 #GPLOT_OUTPUT="set terminal fig color big thickness 1"
 #EXTENSION=".fig"
@@ -49,7 +49,7 @@ cat >$GPSCRIPT <<END
     set ytics nomirror tc lt 3
     set ylabel "confirmed signups / calendar day" tc lt 3
     set y2tics tc lt 2
-    set y2label "total number of signers" tc lt 2
+    set y2label "total number of signatures" tc lt 2
     set format y2 "%.0f"
 
 #    set arrow 1 from '2005-02-14', 0 to '2005-02-14', 900 lt 0 nohead
