@@ -5,7 +5,7 @@
 # Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
 # Email: francis@mysociety.org. WWW: http://www.mysociety.org/
 # 
-# $Id: petition-signup-graph,v 1.2 2007-02-22 16:39:57 francis Exp $
+# $Id: petition-signup-graph,v 1.3 2007-02-22 16:47:33 francis Exp $
 
 GPLOT_OUTPUT="set terminal png font 'Vera.ttf' 9 size 800,400"
 EXTENSION=".png"
@@ -64,5 +64,5 @@ END
 #echo "gpscript $GPSCRIPT"
 
 export GDFONTPATH=/usr/share/fonts/truetype/ttf-bitstream-vera
-gnuplot < $GPSCRIPT > petweb-admin/pet-live-signups$EXTENSION
+gnuplot < $GPSCRIPT > pet/web-admin/pet-live-signups$EXTENSION
 
