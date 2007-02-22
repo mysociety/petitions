@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.82 2007-02-22 14:36:13 francis Exp $
+ * $Id: admin-pet.php,v 1.83 2007-02-22 16:39:58 francis Exp $
  * 
  */
 
@@ -50,6 +50,7 @@ class ADMIN_PAGE_PET_STATS {
 $counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again <br>
 <h2>Signatures</h2>
 $signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
+<p><img src="pet-live-signups.png" alt="Graph of across whole site">
 EOF;
     }
 }
