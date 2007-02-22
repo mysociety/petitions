@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.81 2007-02-15 18:57:34 matthew Exp $
+ * $Id: admin-pet.php,v 1.82 2007-02-22 14:36:13 francis Exp $
  * 
  */
 
@@ -38,19 +38,17 @@ class ADMIN_PAGE_PET_STATS {
             'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
             'rejected'=>0, 'live'=>0, 'finished'=>0
         );
-        $petitions = db_getAll("SELECT status,COUNT(*) AS count FROM petition GROUP BY status");
-        $total = 0;
-        foreach ($petitions as $r) {
-            $counts[$r['status']] = $r['count'];
-            $total += $r['count'];
+        foreach (array_keys($counts) as $t) {
+            $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t' order by id desc limit 1");
         }
-        $counts['rejected'] += $counts['rejectedonce'];
-        $signatures_confirmed = db_getOne("SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'");
-        $signatures_unconfirmed = db_getOne("SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'sent'");
-        $signers = db_getOne("SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'");
+
+        $signatures_confirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed' order by id desc limit 1");
+        $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent' order by id desc limit 1");
+        $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique' order by id desc limit 1");
         print <<<EOF
-Total petitions in system: $total<br>
-$counts[live] live, $counts[draft] draft, $counts[finished] finished, $counts[rejected] rejected, $counts[resubmitted] resubmitted<br>
+<h2>Petitions</h2>
+$counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again <br>
+<h2>Signatures</h2>
 $signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
 EOF;
     }

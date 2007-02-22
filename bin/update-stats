@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w -I../../perllib -I../perllib
+
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+chdir $FindBin::Bin;
+
+use strict;
+require 5.8.0;
+use mySociety::Util;
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
+use mySociety::DBHandle qw(dbh);
+use Petitions;
+
+# Signatures counts
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_pending', 
+    (SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'pending'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_sent', 
+    (SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'sent'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_failed', 
+    (SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'failed'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_confirmed', 
+    (SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_confirmed_unique', 
+    (SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed')");
+dbh()->commit();
+
+# Petition counts
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_draft', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'draft'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_rejectedonce', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'rejectedonce'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_resubmitted', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'resubmitted'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_rejected', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'rejected'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_live', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'live'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_finished', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'finished'))");
+dbh()->commit();
+

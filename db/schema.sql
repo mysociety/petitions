@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.57 2007-02-20 13:57:12 matthew Exp $
+-- $Id: schema.sql,v 1.58 2007-02-22 14:36:13 francis Exp $
 --
 
 -- global_seq
@@ -297,3 +297,13 @@ create table optout (
     email text not null
 );
 create unique index optout_email_idx on optout(lower(email));
+
+-- Statistics that are too slow to make for admin page
+create table stats (
+    id integer not null primary key default nextval('global_seq'),
+    whencounted timestamp not null,
+    key text not null,
+    value text not null
+);
+create index stats_key_idx on stats(key);
+

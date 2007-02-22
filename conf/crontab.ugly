@@ -4,7 +4,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.7 2007-02-12 21:21:09 matthew Exp $
+# $Id: crontab.ugly,v 1.8 2007-02-22 14:36:13 francis Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
@@ -15,4 +15,8 @@ MAILTO=team@mysociety.org
 3 0 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/mark-finished
 
 7,18,30,42,54 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals || echo "stalled?"
+
+# Rarely, once a day after midnight
+10 1 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-stats.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-stats || echo "stalled?"
 !!(* } *)!!
+
