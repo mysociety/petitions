@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.115 2007-02-20 17:21:50 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.116 2007-02-23 07:57:27 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1788,7 +1788,8 @@ sub database_child_process ($) {
                                     $packet->type() == Source::Packet::TYPE_DELIVERED
                                         ? 'sent' : 'failed',
                                     $signer_id);
-                            dbh()->commit();
+                            dbh()->commit(); # XXX added later by Matthew in case of crashes; maybe
+                                             # inefficient, can be done with error catching instead
                             $docommit = 1;
                         } elsif ($id =~ /^p-([1-9]\d*)$/) {
                             my $petition_id = $1;
@@ -1799,7 +1800,7 @@ sub database_child_process ($) {
                                     $packet->type() == Source::Packet::TYPE_DELIVERED
                                         ? 'sentconfirm' : 'failedconfirm',
                                     $petition_id);
-                            dbh()->commit();
+                            dbh()->commit(); # XXX added later by Matthew in case of crashes, as above
                             $docommit = 1;
                         } else {
                             Log::print('err', "unknown ID $id sent to child process");
@@ -2534,4 +2535,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.115 2007-02-20 17:21:50 matthew Exp $
+$Id: petemaild,v 1.116 2007-02-23 07:57:27 francis Exp $
