@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.116 2007-02-23 07:57:27 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.117 2007-02-24 01:30:35 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -992,7 +992,7 @@ sub add ($$) {
     $msg->{queue} = $self;
     $self->{messages}->{$msg->id()} = $msg;
     # add new messages at the highest possible priority
-    $self->{queue}->add($msg, 0);
+    $self->{queue}->add($msg, 0); # XXX this functions is sometimes called with priority as param which should be in here
 }
 
 # attempt_interval MESSAGE
@@ -2535,4 +2535,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.116 2007-02-23 07:57:27 francis Exp $
+$Id: petemaild,v 1.117 2007-02-24 01:30:35 francis Exp $
