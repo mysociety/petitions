@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.117 2007-02-24 01:30:35 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.118 2007-02-27 11:51:35 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -33,14 +33,12 @@ my $foad = 0;
 use IO::Socket;
 use Socket;
 
-# on SIGUSR2, send current context information to a socket
-my $context_socket;
+# on SIGUSR2, send current context information to a file
 $SIG{USR2} = sub {
-    # This is only really safe with perl's deferred signals (see rants
-    # passim). Ho-hum.
-    $context_socket ||= new IO::Socket::UNIX(Type => SOCK_DGRAM);
-    $context_socket->send(Carp::longmess(), 0,
-                            scalar(sockaddr_un("/tmp/petemaild.context.$$")));
+    # Deliberately ignore errors
+    open(FH, ">> /tmp/petemaild.context.$$");
+    print FH "Carp::longmess()\n" . Carp::longmess();
+    close(FH);
 };
 
 #
@@ -2535,4 +2533,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.117 2007-02-24 01:30:35 francis Exp $
+$Id: petemaild,v 1.118 2007-02-27 11:51:35 francis Exp $
