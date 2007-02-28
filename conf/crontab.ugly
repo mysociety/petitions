@@ -4,7 +4,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.11 2007-02-22 17:06:17 francis Exp $
+# $Id: crontab.ugly,v 1.12 2007-02-28 00:12:47 francis Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
@@ -26,5 +26,6 @@ MAILTO=team@mysociety.org
 
 # On every web host machine, as makes files
 45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petition-signup-graph
+45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petition-creation-graph
 
 !!(* } *)!!

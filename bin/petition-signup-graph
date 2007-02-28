@@ -5,7 +5,7 @@
 # Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
 # Email: francis@mysociety.org. WWW: http://www.mysociety.org/
 # 
-# $Id: petition-signup-graph,v 1.5 2007-02-22 17:18:59 francis Exp $
+# $Id: petition-signup-graph,v 1.6 2007-02-28 00:12:47 francis Exp $
 
 GPLOT_OUTPUT="set terminal png font 'Vera.ttf' 9 size 1200,400"
 EXTENSION=".png"
@@ -20,8 +20,7 @@ source shlib/deployfns
 
 read_conf pet/conf/general
 
-SOURCEO=/tmp/pet-signup-rate-graph-data-nonwmc-$RANDOM$RANDOM
-SOURCED=/tmp/pet-signup-rate-graph-data-dispatched-$RANDOM$RANDOM
+SOURCEO=/tmp/pet-signup-rate-graph-data-$RANDOM$RANDOM
 GPSCRIPT=/tmp/pet-signup-rate-graph-script-$RANDOM$RANDOM
 
 echo "select 

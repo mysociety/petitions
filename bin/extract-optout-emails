@@ -1,0 +1,22 @@
+#!/usr/bin/perl -w
+
+# Read an mbox, and spit out sql statements for adding from address to optout
+
+use strict;
+use Mail::Address;
+use Data::Dumper;
+
+while(<>) {
+    next if !m/^From: (.*)/;
+    $_= $1;
+    next if m/pmreply\@petitions.pm.gov.uk/;
+
+    ($_) = Mail::Address->parse($1);
+    $_ = $_->address();
+    next if !m/\@/;
+    next if m/'/;
+    next if m/"/;
+
+    print "insert into optout (email) values ('$_'); \n";
+}
+
