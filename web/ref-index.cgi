@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.43 2007-02-20 16:26:46 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.44 2007-03-02 16:39:39 matthew Exp $';
 
 use strict;
 
@@ -97,17 +97,13 @@ sub accept_loop () {
             $html .=
                 $q->div({ -id =>'success' },
                     $q->p(
-                        "Thank you, you're now signed up to this petition! If you'd like to
-                        tell your friends about it, its permanent web address is:",
+                        "You are now signed up to this petition. Thank you."),
+		    $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.pm.gov.uk/' }, 'main Downing Street homepage')),
+		    $q->p("If you'd like to tell your friends about this petition, its permanent web address is:",
                         $q->strong($q->a({ -href => "/$ref/" },
                             ent(mySociety::Config::get('BASE_URL') . "/$ref/"
-                        )))),
-                    $q->p($q->a({ -href => 'http://www.pm.gov.uk/' },
-                        'Keep up with the latest news and information about
-                         the Prime Minister\'s work and agenda'))
+                        ))))
                 );
-                        # XXX: *** Send to friend ***
-                        
         }
 
         # If the ref has been marked as not to be shown, do not give a hint at its existance
