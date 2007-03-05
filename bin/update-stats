@@ -44,3 +44,7 @@ dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timest
     (SELECT COUNT(*) FROM petition WHERE status = 'finished'))");
 dbh()->commit();
 
+# Most prolific signers
+# fun but probably pointless (unless maybe helps with antispamming)
+# select count(*) as c, email from signer group by signer.email order by c desc limit 20;
+
