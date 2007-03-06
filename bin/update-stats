@@ -30,6 +30,12 @@ dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timest
 dbh()->commit();
 
 # Petition counts
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_unconfirmed', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'unconfirmed'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_failedconfirm', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'failedconfirm'))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_sentconfirm', 
+    (SELECT COUNT(*) FROM petition WHERE status = 'sentconfirm'))");
 dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_draft', 
     (SELECT COUNT(*) FROM petition WHERE status = 'draft'))");
 dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_rejectedonce', 
@@ -44,6 +50,13 @@ dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timest
     (SELECT COUNT(*) FROM petition WHERE status = 'finished'))");
 dbh()->commit();
 
+# Petition totals
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_all_unconfirmed', 
+    (SELECT COUNT(*) FROM petition WHERE status in ('unconfirmed', 'failedconfirm', 'sentconfirm')))");
+dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'petitions_all_confirmed', 
+    (SELECT COUNT(*) FROM petition WHERE status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')))");
+dbh()->commit();
+ 
 # Most prolific signers
 # fun but probably pointless (unless maybe helps with antispamming)
 # select count(*) as c, email from signer group by signer.email order by c desc limit 20;

@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.86 2007-02-28 00:12:47 francis Exp $
+ * $Id: admin-pet.php,v 1.87 2007-03-06 17:59:50 francis Exp $
  * 
  */
 
@@ -37,8 +37,10 @@ class ADMIN_PAGE_PET_STATS {
         $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
 
         $counts = array(
+            'unconfirmed'=>0, 'failedconfirm'=>0, 'sentconfirm'=>0,
             'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
-            'rejected'=>0, 'live'=>0, 'finished'=>0
+            'rejected'=>0, 'live'=>0, 'finished'=>0,
+            'all_confirmed'=>0, 'all_unconfirmed'=>0
         );
         foreach (array_keys($counts) as $t) {
             $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t' order by id desc limit 1");
@@ -50,10 +52,12 @@ class ADMIN_PAGE_PET_STATS {
         print <<<EOF
 <p>Statistics last updated: $statsdate
 <h2>Petitions</h2>
-<p>$counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again <br>
+<p>$counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again = <strong>$counts[all_confirmed]</strong> total with confirmed emails<br>
+With unconfirmed emails: $counts[unconfirmed] not sent, $counts[failedconfirm] failed send, $counts[sentconfirm] sent
+= <strong>$counts[all_unconfirmed]</strong> total with unconfirmed emails
 <p><img src="pet-live-creation.png" alt="Graph of petition status by creation date">
 <h2>Signatures</h2>
-<p>$signatures_confirmed confirmed signatures ($signers signers), $signatures_unconfirmed unconfirmed
+<p>$signatures_confirmed confirmed signatures ($signers unique emails), $signatures_unconfirmed unconfirmed
 <p><img src="pet-live-signups.png" alt="Graph of signers across whole site">
 EOF;
     }
