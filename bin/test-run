@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.72 2007-03-06 12:33:13 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.73 2007-03-06 12:39:37 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -362,7 +362,7 @@ sub do_main_test {
             comment("Confirm signature by user clicking link");
             comment("Confirmation link: $confirm_signature_link");
             $wth->browser_get($confirm_signature_link);
-            $wth->browser_check_contents("Thank you, you're now signed up to this petition!");
+            $wth->browser_check_contents("You are now signed up to this petition.");
         }
 
         comment("Check it says it is signed on the front page");
@@ -439,7 +439,7 @@ sub do_main_test {
     # leave the unconfirmed signature around (as that is a useful test itself)
     #comment("Try to sign the petition, using the email we prepared earlier");
     #$wth->browser_get($partial_signup_confirm);
-    #$wth->browser_check_no_contents("Thank you, you're now signed up to this petition!"); 
+    #$wth->browser_check_no_contents("You are now signed up to this petition."); 
  
     comment("Check that petition now appears in closed section, and has no sign form");
     $wth->browser_get($base_url);
