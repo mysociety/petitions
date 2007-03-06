@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.71 2007-02-14 01:06:19 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.72 2007-03-06 12:33:13 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -337,7 +337,7 @@ sub do_main_test {
                     address => "$signer_no Signature Street\n\nSealville",
                     postcode => "EH99 1SP",
                     }, button => 'submit') or die "Failed to submit sign petition";
-        $wth->browser_check_contents("We've sent you an email");
+        $wth->browser_check_contents("We have sent you an email");
 
         comment("Find confirmation email");
         my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
@@ -400,7 +400,7 @@ sub do_main_test {
                 address => "1501 Signature Street\n\nSealville",
                 postcode => "EH99 1SP",
                 }, button => 'submit') or die "Failed to submit sign petition";
-    $wth->browser_check_contents("We've sent you an email");
+    $wth->browser_check_contents("We have sent you an email");
     my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1501).'" <'.email_n(1501).'>%Please click on the link below to confirm your signature%');
     die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*)$#m);
     my $partial_signup_confirm = $1;
