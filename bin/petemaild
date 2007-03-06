@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.118 2007-02-27 11:51:35 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.119 2007-03-06 12:16:55 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -32,14 +32,7 @@ my $foad = 0;
 
 use IO::Socket;
 use Socket;
-
-# on SIGUSR2, send current context information to a file
-$SIG{USR2} = sub {
-    # Deliberately ignore errors
-    open(FH, ">> /tmp/petemaild.context.$$");
-    print FH "Carp::longmess()\n" . Carp::longmess();
-    close(FH);
-};
+use Data::Dumper;
 
 #
 # Counter to give unique IDs to objects (for logging purposes, mostly).
@@ -2460,7 +2453,34 @@ try {
     exit(1);
 };
 
-my $Q = new Queue($noexpire);
+# global for debugging dump of queue on SIGUSR2
+our $Q;
+
+# on SIGUSR2, send current context information to a file
+$SIG{USR2} = sub {
+    # Deliberately ignore errors
+    open(FH, ">> /tmp/petemaild.context.$$");
+    print FH "Carp::longmess()\n" . Carp::longmess();
+    if ($Q) {
+        print FH "\nqueue dump...\n";
+        print FH "messages count: " . scalar(keys(%{$Q->{messages}})) . "\n";
+        print FH "finished count: " . scalar(@{$Q->{finished}}) . "\n";
+        print FH "badhosts count: " . scalar(keys(%{$Q->{badhosts}})) . "\n";
+        print FH "baddomains count: " . scalar(keys(%{$Q->{baddomains}})) . "\n";
+        print FH "domain resolver\n";
+        print FH "\tmaxrequests: " . $Q->{r}->{maxrequests} . "\n";
+        print FH "\tqueue count: " . scalar(@{$Q->{r}->{queue}}) . "\n";
+        print FH "\tstate count: " . scalar(keys(%{$Q->{r}->{state}})) . "\n";
+        print FH "\tresults count: " . scalar(keys(%{$Q->{r}->{results}})) . "\n";
+        print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . "\n";
+        print FH "lastcheckedqueue: " . $Q->{lastcheckedqueue} . "\n";
+        print FH "noexpire: " . $Q->{noexpire} . "\n";
+        print FH "queue count: " . $Q->{queue}->count . "\n";
+    }
+    close(FH);
+};
+
+$Q = new Queue($noexpire);
 my $S = new Source($Q);
 
     # XXX ugly -- we'll drop all connections at the moment of termination.
@@ -2533,4 +2553,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.118 2007-02-27 11:51:35 francis Exp $
+$Id: petemaild,v 1.119 2007-03-06 12:16:55 francis Exp $
