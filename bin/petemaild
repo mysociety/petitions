@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.120 2007-03-07 16:58:08 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.121 2007-03-07 18:52:29 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1260,6 +1260,7 @@ Log::print('debug', "     ... but cannot find any valid host");
         my ($msg, $level) = @$_;
         $self->{queue}->add($msg, $level);
     }
+    @messages_to_requeue = ( );
 
     # Create new sessions for each host.
     foreach my $host (keys %newsessions) {
@@ -2463,6 +2464,7 @@ $SIG{USR2} = sub {
     open(FH, ">> /tmp/petemaild.context.$$");
     print FH "Carp::longmess()\n" . Carp::longmess();
     if ($Q) {
+        # Print basic numbers about queue
         print FH "\nqueue dump...\n";
         print FH "messages count: " . scalar(keys(%{$Q->{messages}})) . "\n";
         print FH "finished count: " . scalar(@{$Q->{finished}}) . "\n";
@@ -2484,6 +2486,27 @@ $SIG{USR2} = sub {
         print FH "noexpire: " . $Q->{noexpire} . "\n";
         print FH "queue count: " . $Q->{queue}->count . "\n";
         print FH "messages to requeue: " . scalar(@{$Q->{debug_messages_to_requeue_local}}) . "\n";
+        print FH "\n";
+
+        # Hunt for missing messages, which have dropped off queue by surprise
+        print FH "Lost messages:\n";
+        my %all_messages;
+        foreach my $message ($Q->{queue}->get_list()) {
+            $all_messages{$message->id()} = $message;
+        }
+        foreach my $smtp_client (@{$Q->{ss}}) {
+            foreach my $message (@{$smtp_client->{messages}}) {
+                $all_messages{$message->id()} = $message; 
+            }
+        }
+        foreach my $message (@{$Q->{debug_messages_to_requeue_local}}) {
+            $all_messages{$message->id()} = $message;
+        }
+        # ... check against main list of messages
+        foreach my $message (keys(%{$Q->{messages}})) {
+            next if $all_messages{$message->id()};
+            print "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner() . " queue: " . $message->queue(). " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
+        }
     }
     close(FH);
 };
@@ -2561,4 +2584,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.120 2007-03-07 16:58:08 francis Exp $
+$Id: petemaild,v 1.121 2007-03-07 18:52:29 francis Exp $
