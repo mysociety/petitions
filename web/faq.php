@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.15 2007-01-29 00:46:54 matthew Exp $
+// $Id: faq.php,v 1.16 2007-03-07 12:21:14 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -152,8 +152,8 @@ You can decide how long your petition can run for and we will carry it for up to
 <dt>What will happen to my petition once it is finished?</dt>
 
 <dd>
-<p>Once your petition has closed, provided there are 100 signatures or more, it
-will usually be passed to officials who work for the Prime Minister in Downing
+<p>Once your petition has closed, usually provided there are 200 signatures or more, it
+will be passed to officials who work for the Prime Minister in Downing
 Street, or sent to the relevant Government department for a response.</p>
 
 <p>Every person who signs such a petition will receive an email detailing the
