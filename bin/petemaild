@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.122 2007-03-07 19:03:48 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.123 2007-03-07 19:04:55 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2505,7 +2505,7 @@ $SIG{USR2} = sub {
         # ... check against main list of messages
         foreach my $message (values(%{$Q->{messages}})) {
             next if $all_messages{$message->id()};
-            print FH "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner() . " queue: " . $message->queue(). " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
+            print FH "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner() . " queue: " . $message->{queue}. " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
         }
     }
     close(FH);
@@ -2584,4 +2584,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.122 2007-03-07 19:03:48 francis Exp $
+$Id: petemaild,v 1.123 2007-03-07 19:04:55 francis Exp $
