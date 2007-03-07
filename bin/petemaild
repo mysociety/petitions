@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.119 2007-03-06 12:16:55 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.120 2007-03-07 16:58:08 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -907,7 +907,7 @@ use Heap::Priority;
 use IO::Select;
 
 use fields qw(messages finished badhosts baddomains r ss lastcheckedqueue
-                noexpire queue);
+                noexpire queue debug_messages_to_requeue_local);
 
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
@@ -1129,6 +1129,7 @@ sub pre_select ($$$) {
     # 
 
     my @messages_to_requeue = ( );
+    $self->{debug_messages_to_requeue_local} = \@messages_to_requeue;
     my $level;
     while (defined($level = $self->{queue}->next_level()) && $level <= $now) {
         my $msg = $self->{queue}->pop();
@@ -2473,9 +2474,16 @@ $SIG{USR2} = sub {
         print FH "\tstate count: " . scalar(keys(%{$Q->{r}->{state}})) . "\n";
         print FH "\tresults count: " . scalar(keys(%{$Q->{r}->{results}})) . "\n";
         print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . "\n";
+        my $total_messages_in_smtp = 0;
+        foreach my $smtp_client (@{$Q->{ss}}) {
+            $total_messages_in_smtp += scalar(@{$smtp_client->{messages}});
+        }
+        print FH "\ttotal messages in SMTP: " . $total_messages_in_smtp . "\n";
+        print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . "\n";
         print FH "lastcheckedqueue: " . $Q->{lastcheckedqueue} . "\n";
         print FH "noexpire: " . $Q->{noexpire} . "\n";
         print FH "queue count: " . $Q->{queue}->count . "\n";
+        print FH "messages to requeue: " . scalar(@{$Q->{debug_messages_to_requeue_local}}) . "\n";
     }
     close(FH);
 };
@@ -2553,4 +2561,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.119 2007-03-06 12:16:55 francis Exp $
+$Id: petemaild,v 1.120 2007-03-07 16:58:08 francis Exp $
