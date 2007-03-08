@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.127 2007-03-08 03:42:22 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.128 2007-03-08 04:45:01 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -326,6 +326,7 @@ sub new ($$$) {
         $_->owner($self);
     }
     $self->{messages} = $msgs;
+    $self->{message} = undef;
     $self->{target} = $target;
     $self->{error} = undef;
     my $source_ip = mySociety::Config::get('EMAIL_SOURCE_IP', '0.0.0.0');
@@ -339,7 +340,7 @@ sub new ($$$) {
                         );
     if (!$self->{s}) {
         $self->{error} = "socket: $!";
-        $self->{state} = STATE_BAD; # XXX this doesn't call state function, so won't temp fail messages
+        $self->state(STATE_BAD); # call via function, so messages temp failed
         return $self;
     }
 
@@ -385,10 +386,12 @@ sub state ($;$) {
         # Once we're finished, relinquish ownership of the messages, regarding
         # each as having undergone a temporary failure.
         if ($_[0] == STATE_DONE || $_[0] == STATE_BAD) {
+            $self->tempfail(); # fail message which was being sent, if any
             foreach (@{$self->{messages}}) {
                 $_->owner(undef);
                 $_->addevent(Queue::Message::EVENT_TEMP_FAILURE,
                                 $self->{target});
+                ++$self->{tempfailed};
             }
         }
     }
@@ -407,6 +410,7 @@ sub tempfail ($) {
         $self->{message}->owner(undef);
         $self->{message}->addevent(Queue::Message::EVENT_TEMP_FAILURE,
                                     $self->{target});
+        $self->{message} = undef:
         ++$self->{tempfailed};
     }
 }
@@ -419,6 +423,7 @@ sub permfail ($) {
         $self->{message}->owner(undef);
         $self->{message}->addevent(Queue::Message::EVENT_PERM_FAILURE,
                                     $self->{target});
+        $self->{message} = undef:
         ++$self->{permfailed};
     }
 }
@@ -430,6 +435,7 @@ sub deliver ($) {
     if ($self->{message}) {
         $self->{message}->owner(undef);
         $self->{message}->addevent(Queue::Message::EVENT_DELIVERED, $self->{target});
+        $self->{message} = undef:
         ++$self->{delivered};
     }
 }
@@ -2509,10 +2515,11 @@ $SIG{USR2} = sub {
         # XXX should add @finished here, but things don't last there long so doesn't matter much
         # (the finished count being nearly always zero shows that is the case)
         # ... check against main list of messages
-        my ($found, $lost);
+        my $found = "";
+        my $lost = "";
         foreach my $message (values(%{$Q->{messages}})) {
             my $message_debug_str = "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner(); 
-            $message_debug_str .= " (state: ".$message->owner()->{state}."error: ".$message->owner()->{error}.")" if ($message->owner());
+            $message_debug_str .= " (state: ".$Sender::statename[$message->owner()->{state}]." error: ".$message->owner()->{error}.")" if ($message->owner());
             $message_debug_str .= " queue: " . $message->{queue}. " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
             if ($all_messages{$message->id()}) {
                 $found .= $message_debug_str;
@@ -2601,4 +2608,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.127 2007-03-08 03:42:22 francis Exp $
+$Id: petemaild,v 1.128 2007-03-08 04:45:01 francis Exp $
