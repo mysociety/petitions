@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.123 2007-03-07 19:04:55 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.124 2007-03-08 03:07:18 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -146,6 +146,8 @@ use constant EVENT_DELIVERED =>     3;
 # (on-the-wire message but with "\n" line-endings). CREATEDTIME should
 # give the time at which the message was originally entered in the database.
 # QUEUE is the queue object associated with the message.
+# XXX Setting QUEUE might not do what you expect, as then the message gets
+# immediately requeued by the EVENT_CREATED
 sub new ($$$$$$) {
     my Queue::Message $self = shift;
     my ($id, $sender, $recipient) = @_;
@@ -402,9 +404,9 @@ sub state ($;$) {
 sub tempfail ($) {
     my Sender $self = shift;
     if ($self->{message}) {
+        $self->{message}->owner(undef);
         $self->{message}->addevent(Queue::Message::EVENT_TEMP_FAILURE,
                                     $self->{target});
-        $self->{message}->owner(undef);
         ++$self->{tempfailed};
     }
 }
@@ -2584,4 +2586,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.123 2007-03-07 19:04:55 francis Exp $
+$Id: petemaild,v 1.124 2007-03-08 03:07:18 francis Exp $
