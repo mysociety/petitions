@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.132 2007-03-08 05:05:48 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.133 2007-03-08 05:10:12 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2473,6 +2473,9 @@ try {
 # global for debugging dump of queue on SIGUSR2
 our $Q;
 
+# This one liner is useful for using the SIGUSR2 debegging. Just run it to get current queue state.
+# cd /tmp; rm petemaild.context*; kill -USR2 `pgrep petemaild | head --lines=1`; sleep 1s; cat petemaild.context.* |less
+
 # on SIGUSR2, send current context information to a file
 $SIG{USR2} = sub {
     # Deliberately ignore errors
@@ -2619,4 +2622,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.132 2007-03-08 05:05:48 francis Exp $
+$Id: petemaild,v 1.133 2007-03-08 05:10:12 francis Exp $
