@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.129 2007-03-08 04:47:12 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.130 2007-03-08 04:51:49 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -393,6 +393,10 @@ sub state ($;$) {
                                 $self->{target});
                 ++$self->{tempfailed};
             }
+            # XXX logically, should clear @{$self->{messages}} here. However
+            # there is something subtle with notattempted() and graylisting.
+            # See comment in Queue code below (search for 'notattempted').
+            # Not sure when that is called though.
         }
     }
     return $self->{state};
@@ -2608,4 +2612,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.129 2007-03-08 04:47:12 francis Exp $
+$Id: petemaild,v 1.130 2007-03-08 04:51:49 francis Exp $
