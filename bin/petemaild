@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.126 2007-03-08 03:18:08 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.127 2007-03-08 03:42:22 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -339,7 +339,7 @@ sub new ($$$) {
                         );
     if (!$self->{s}) {
         $self->{error} = "socket: $!";
-        $self->{state} = STATE_BAD;
+        $self->{state} = STATE_BAD; # XXX this doesn't call state function, so won't temp fail messages
         return $self;
     }
 
@@ -2467,7 +2467,7 @@ $SIG{USR2} = sub {
     print FH "Carp::longmess()\n" . Carp::longmess();
     if ($Q) {
         # Print basic numbers about queue
-        print FH "\nqueue dump...\n";
+        print FH "\nQueue info:\n";
         print FH "messages count: " . scalar(keys(%{$Q->{messages}})) . "\n";
         print FH "finished count: " . scalar(@{$Q->{finished}}) . "\n";
         print FH "badhosts count: " . scalar(keys(%{$Q->{badhosts}})) . "\n";
@@ -2511,16 +2511,18 @@ $SIG{USR2} = sub {
         # ... check against main list of messages
         my ($found, $lost);
         foreach my $message (values(%{$Q->{messages}})) {
-            my $message_debug_str = "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner() . " queue: " . $message->{queue}. " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
+            my $message_debug_str = "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner(); 
+            $message_debug_str .= " (state: ".$message->owner()->{state}."error: ".$message->owner()->{error}.")" if ($message->owner());
+            $message_debug_str .= " queue: " . $message->{queue}. " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
             if ($all_messages{$message->id()}) {
                 $found .= $message_debug_str;
             } else {
                 $lost .= $message_debug_str;
             }
         }
-        print FH "Found messages:\n";
+        print FH "\nFound messages:\n";
         print FH $found;
-        print FH "Lost messages:\n";
+        print FH "\nLost messages:\n";
         print FH $lost;
     }
     close(FH);
@@ -2599,4 +2601,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.126 2007-03-08 03:18:08 francis Exp $
+$Id: petemaild,v 1.127 2007-03-08 03:42:22 francis Exp $
