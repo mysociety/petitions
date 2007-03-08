@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.125 2007-03-08 03:14:17 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.126 2007-03-08 03:18:08 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2494,7 +2494,6 @@ $SIG{USR2} = sub {
         print FH "\n";
 
         # Hunt for missing messages, which have dropped off queue by surprise
-        print FH "Lost messages:\n";
         my %all_messages;
         foreach my $message ($Q->{queue}->get_list()) {
             $all_messages{$message->id()} = $message;
@@ -2510,10 +2509,19 @@ $SIG{USR2} = sub {
         # XXX should add @finished here, but things don't last there long so doesn't matter much
         # (the finished count being nearly always zero shows that is the case)
         # ... check against main list of messages
+        my ($found, $lost);
         foreach my $message (values(%{$Q->{messages}})) {
-            next if $all_messages{$message->id()};
-            print FH "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner() . " queue: " . $message->{queue}. " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
+            my $message_debug_str = "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner() . " queue: " . $message->{queue}. " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
+            if ($all_messages{$message->id()}) {
+                $found .= $message_debug_str;
+            } else {
+                $lost .= $message_debug_str;
+            }
         }
+        print FH "Found messages:\n";
+        print FH $found;
+        print FH "Lost messages:\n";
+        print FH $lost;
     }
     close(FH);
 };
@@ -2591,4 +2599,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.125 2007-03-08 03:14:17 francis Exp $
+$Id: petemaild,v 1.126 2007-03-08 03:18:08 francis Exp $
