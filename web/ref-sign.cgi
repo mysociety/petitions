@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.45 2007-03-02 16:39:39 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.46 2007-03-08 06:05:08 francis Exp $';
 
 use strict;
 
@@ -121,7 +121,7 @@ sub signup_page ($$) {
                 $html .=
                     $q->h1({-class => 'ltr'}, "Now check your email!")
                     . $q->p({-class => 'noprint loudmessage', -align => 'center'},
-                        "Thank you. We have sent you an email. TO add your signature to the petition, you need to click the link in this email."
+                        "Thank you. We have sent you an email. To add your signature to the petition, you need to click the link in this email."
                     )
                     . $q->p({-class => 'noprint loudmessage', -align => 'center'},
                         "For more news about the Prime Minister's work and agenda, and other information including speeches, web chats, history and a virtual tour of No.10, visit the ", $q->a({-href => 'http://www.pm.gov.uk/'}, 'main Downing Street homepage'))
