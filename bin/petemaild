@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.128 2007-03-08 04:45:01 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.129 2007-03-08 04:47:12 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -410,7 +410,7 @@ sub tempfail ($) {
         $self->{message}->owner(undef);
         $self->{message}->addevent(Queue::Message::EVENT_TEMP_FAILURE,
                                     $self->{target});
-        $self->{message} = undef:
+        $self->{message} = undef;
         ++$self->{tempfailed};
     }
 }
@@ -423,7 +423,7 @@ sub permfail ($) {
         $self->{message}->owner(undef);
         $self->{message}->addevent(Queue::Message::EVENT_PERM_FAILURE,
                                     $self->{target});
-        $self->{message} = undef:
+        $self->{message} = undef;
         ++$self->{permfailed};
     }
 }
@@ -435,7 +435,7 @@ sub deliver ($) {
     if ($self->{message}) {
         $self->{message}->owner(undef);
         $self->{message}->addevent(Queue::Message::EVENT_DELIVERED, $self->{target});
-        $self->{message} = undef:
+        $self->{message} = undef;
         ++$self->{delivered};
     }
 }
@@ -2608,4 +2608,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.128 2007-03-08 04:45:01 francis Exp $
+$Id: petemaild,v 1.129 2007-03-08 04:47:12 francis Exp $
