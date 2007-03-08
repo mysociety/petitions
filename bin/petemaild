@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.124 2007-03-08 03:07:18 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.125 2007-03-08 03:14:17 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2479,9 +2479,12 @@ $SIG{USR2} = sub {
         print FH "\tresults count: " . scalar(keys(%{$Q->{r}->{results}})) . "\n";
         print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . "\n";
         my $total_messages_in_smtp = 0;
+        print FH "\tthey are: ";
         foreach my $smtp_client (@{$Q->{ss}}) {
             $total_messages_in_smtp += scalar(@{$smtp_client->{messages}});
+            print FH $smtp_client . " ";
         }
+        print FH "\n";
         print FH "\ttotal messages in SMTP: " . $total_messages_in_smtp . "\n";
         print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . "\n";
         print FH "lastcheckedqueue: " . $Q->{lastcheckedqueue} . "\n";
@@ -2504,6 +2507,8 @@ $SIG{USR2} = sub {
         foreach my $message (@{$Q->{debug_messages_to_requeue_local}}) {
             $all_messages{$message->id()} = $message;
         }
+        # XXX should add @finished here, but things don't last there long so doesn't matter much
+        # (the finished count being nearly always zero shows that is the case)
         # ... check against main list of messages
         foreach my $message (values(%{$Q->{messages}})) {
             next if $all_messages{$message->id()};
@@ -2586,4 +2591,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.124 2007-03-08 03:07:18 francis Exp $
+$Id: petemaild,v 1.125 2007-03-08 03:14:17 francis Exp $
