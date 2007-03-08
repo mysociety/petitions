@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.131 2007-03-08 04:54:36 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.132 2007-03-08 05:05:48 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -125,7 +125,7 @@ use Scalar::Util qw(weaken);
 use Time::HiRes qw(time);
 
 use fields qw(id state sender recipient domain text events owner starttime
-                createdtime nattempts lastattempt queue);
+                createdtime nattempts lastattempt queue priority);
 
             # message is yet to be sent successfully
 use constant STATE_PENDING =>       0;
@@ -995,7 +995,8 @@ sub add ($$) {
     $msg->{queue} = $self;
     $self->{messages}->{$msg->id()} = $msg;
     # add new messages at the highest possible priority
-    $self->{queue}->add($msg, 0); # XXX this functions is sometimes called with priority as param which should be in here
+    $self->{queue}->add($msg, 0); 
+    $msg->{priority} = 0;
 }
 
 # attempt_interval MESSAGE
@@ -1045,6 +1046,7 @@ sub requeue ($$) {
             $when += attempt_interval($msg);
         }
         $self->{queue}->add($msg, $when);
+        $msg->{priority} = $when;
     }
 }
 
@@ -1271,6 +1273,7 @@ Log::print('debug', "     ... but cannot find any valid host");
     foreach (@messages_to_requeue) {
         my ($msg, $level) = @$_;
         $self->{queue}->add($msg, $level);
+        $msg->{priority} = $level;
     }
     @messages_to_requeue = ( );
 
@@ -2528,7 +2531,7 @@ $SIG{USR2} = sub {
         foreach my $message (values(%{$Q->{messages}})) {
             my $message_debug_str = "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner(); 
             $message_debug_str .= " (state: ".$Sender::statename[$message->owner()->{state}]." error: ".$message->owner()->{error}.")" if ($message->owner());
-            $message_debug_str .= " queue: " . $message->{queue}. " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
+            $message_debug_str .= " queue: " . $message->{queue}. " priority: " . $message->{priority} . " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
             if ($all_messages{$message->id()}) {
                 $found .= $message_debug_str;
             } else {
@@ -2616,4 +2619,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.131 2007-03-08 04:54:36 francis Exp $
+$Id: petemaild,v 1.132 2007-03-08 05:05:48 francis Exp $
