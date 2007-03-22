@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.90 2007-03-22 16:29:37 matthew Exp $
+ * $Id: admin-pet.php,v 1.91 2007-03-22 16:30:16 matthew Exp $
  * 
  */
 
@@ -780,12 +780,20 @@ EOF;
 
         if (get_http_var('approve')) {
             $p = new Petition($petition_id);
-            db_getOne("UPDATE petition
-                SET status='live', deadline=deadline+(ms_current_date()-date_trunc('day', laststatuschange)),
-                rejection_hidden_parts = 0,
-                laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
-                WHERE id=?", $petition_id);
-            $p->log_event("Admin approved petition", http_auth_user());
+            $status = $p->status();
+            if ($status == 'draft' || $status == 'resubmitted') {
+                db_getOne("UPDATE petition
+                    SET status='live',
+                    deadline=deadline+(ms_current_date()-date_trunc('day', laststatuschange)),
+                    rejection_hidden_parts = 0,
+                    laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
+                    WHERE id=?", $petition_id);
+                $p->log_event("Admin approved petition", http_auth_user());
+            } else {
+                $p->log_event("Bad approval", http_auth_user());
+                db_commit();
+                err("Should only be able to approve petitions in draft or resubmitted state");
+            }
             pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'approved', 'petition-approved');
             db_commit();
             print '<p><em>Petition approved!</em></p>';
