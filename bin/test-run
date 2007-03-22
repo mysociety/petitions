@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.77 2007-03-22 18:58:20 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.78 2007-03-22 19:28:30 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -864,6 +864,10 @@ sub do_resubmit_test {
     $wth->browser_check_no_contents("resubmittest");
     $wth->browser_check_contents('signForm');
     $wth->browser_check_contents("<strong>Signatures:</strong>&nbsp;1");
+
+    comment("Close petition");
+    set_pet_date('1991-01-01'); 
+    call_mark_finished();
 }
 
 sub do_early_response_test {
