@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.89 2007-03-22 13:11:00 matthew Exp $
+ * $Id: admin-pet.php,v 1.90 2007-03-22 16:29:37 matthew Exp $
  * 
  */
 
@@ -270,7 +270,7 @@ class ADMIN_PAGE_PET_MAIN {
         if ($sort=='r') $order = 'ref';
         elseif ($sort=='a') $order = 'content';
         elseif ($sort=='d') $order = 'deadline desc';
-        elseif ($sort=='e') $order = 'email';
+        elseif ($sort=='e') $order = 'name';
         elseif ($sort=='c') $order = 'petition.laststatuschange';
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
@@ -339,7 +339,7 @@ class ADMIN_PAGE_PET_MAIN {
                 }
             } elseif (!$this->cat_change && $status == 'draft') {
                 $row .= '<td><form name="petition_admin_approve" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] .
-                    '"><input type="submit" name="approve" value="Approve"> <input type="submit" name="reject" value="Reject"></form>';
+                    '"><input type="submit" name="reject" value="Reject"></form>';
                 if ($r['status'] == 'resubmitted') {
                     $row .= ' resubmitted';
                 }
@@ -449,12 +449,78 @@ class ADMIN_PAGE_PET_MAIN {
 <input type="submit" name="reject" value="Reject">
 </p>
 </form>';
-        } else {
-            if ($pdata['status'] == 'finished') {
-                print '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
-                    '"><input type="submit" name="respond" value="Write response"></form>';
+        } elseif ($pdata['status'] == 'finished') {
+            print '<form name="petition_admin_go_respond" method="post" action="'
+                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                '"><input type="submit" name="respond" value="Write response"></form>';
+        }
+
+        // Messages
+        print '<h2>Messages</h2>';
+        $q = db_query('select * from message 
+                where petition_id = ? order by whencreated', $pdata['id']);
+
+        $n = 0;
+        while ($r = db_fetch_array($q)) {
+            if ($n++)
+                print '<hr>';
+
+            $got_creator_count = db_getOne('select count(*) from message_creator_recipient where message_id = ?', $r['id']);
+            $got_signer_count = db_getOne('select count(*) from message_signer_recipient where message_id = ?', $r['id']);
+
+            $whom = array();
+            if ($r['sendtocreator'] == 't') { $whom[] = 'creator'; }
+            if ($r['sendtosigners'] == 't') { $whom[] = 'signers'; }
+            if ($r['sendtolatesigners'] == 't') { $whom[] = 'late signers'; }
+
+            print "<p>";
+            print "<strong>". $r['circumstance'] . ' ' . $r['circumstance_count'] . '</strong>';
+            print " created on ". prettify(substr($r['whencreated'], 0, 19));
+            print " to be sent from <strong>" . $r['fromaddress'] . "</strong> to <strong>";
+            print join(", ", $whom) . "</strong>";
+            print "<br>has been queued to evel for ";
+            print "<strong>$got_creator_count creators</strong>";
+            print " and <strong>$got_signer_count signers</strong>";
+            if ($r['emailtemplatename'])
+                print "<br><strong>email template:</strong> " . $r['emailtemplatename'];
+            if ($r['emailsubject'])
+                print "<br><strong>email subject:</strong> " . htmlspecialchars($r['emailsubject']);
+            if ($r['emailbody']) {
+                print '<br><strong>email body:</strong>
+                <div class="message">.'.
+                nl2br(ms_make_clickable(htmlspecialchars($r['emailbody']), array('contract'=>true)))
+                ."</div>";
             }
 
+        }
+        if ($n == 0) {
+            print "No messages yet.";
+        }
+
+        // Admin actions
+        print '<h2>Administrator events</h2>';
+        $q = db_query('select * from petition_log 
+                where petition_id = ? order by order_id', $pdata['id']);
+
+        print '<table border="1" cellpadding="3" cellspacing="0">';
+        $n = 0;
+        print "<tr><th>Date/time</th><th>Event</th><th>Administrator</th></tr>\n";
+        while ($r = db_fetch_array($q)) {
+            print "<tr>";
+            $n++;
+
+            print "<td>". prettify(substr($r['whenlogged'], 0, 19)) . "</td>";
+            print "<td>". $r['message'] . "</td>";
+            print "<td>". ($r['editor'] ? $r['editor'] : "unknown"). "</td>";
+            
+            print "</tr>\n";
+        }
+        if ($n == 0) {
+            print "<tr><td colspan=\"3\">No events yet.</td></tr>";
+        }
+        print "</table>";
+
+        if ($pdata['status'] != 'draft' && $pdata['status'] != 'resubmitted') {
             // Signers
             print "<h2>Signers (".$pdata['signers'].")</h2>";
             $query = "SELECT signer.name as signname, signer.email as signemail,
@@ -526,71 +592,6 @@ class ADMIN_PAGE_PET_MAIN {
                 print '<p>Nobody has signed up to this petition.</p>';
             }
         }
-        
-        // Messages
-        print '<h2>Messages</h2>';
-        $q = db_query('select * from message 
-                where petition_id = ? order by whencreated', $pdata['id']);
-
-        $n = 0;
-        while ($r = db_fetch_array($q)) {
-            if ($n++)
-                print '<hr>';
-
-            $got_creator_count = db_getOne('select count(*) from message_creator_recipient where message_id = ?', $r['id']);
-            $got_signer_count = db_getOne('select count(*) from message_signer_recipient where message_id = ?', $r['id']);
-
-            $whom = array();
-            if ($r['sendtocreator'] == 't') { $whom[] = 'creator'; }
-            if ($r['sendtosigners'] == 't') { $whom[] = 'signers'; }
-            if ($r['sendtolatesigners'] == 't') { $whom[] = 'late signers'; }
-
-            print "<p>";
-            print "<strong>". $r['circumstance'] . ' ' . $r['circumstance_count'] . '</strong>';
-            print " created on ". prettify(substr($r['whencreated'], 0, 19));
-            print " to be sent from <strong>" . $r['fromaddress'] . "</strong> to <strong>";
-            print join(", ", $whom) . "</strong>";
-            print "<br>has been queued to evel for ";
-            print "<strong>$got_creator_count creators</strong>";
-            print " and <strong>$got_signer_count signers</strong>";
-            if ($r['emailtemplatename'])
-                print "<br><strong>email template:</strong> " . $r['emailtemplatename'];
-            if ($r['emailsubject'])
-                print "<br><strong>email subject:</strong> " . htmlspecialchars($r['emailsubject']);
-            if ($r['emailbody']) {
-                print '<br><strong>email body:</strong>
-                <div class="message">.'.
-                nl2br(ms_make_clickable(htmlspecialchars($r['emailbody']), array('contract'=>true)))
-                ."</div>";
-            }
-
-        }
-        if ($n == 0) {
-            print "No messages yet.";
-        }
-
-        // Admin actions
-        print '<h2>Administrator events</h2>';
-        $q = db_query('select * from petition_log 
-                where petition_id = ? order by order_id', $pdata['id']);
-
-        print '<table border="1" cellpadding="3" cellspacing="0">';
-        $n = 0;
-        print "<tr><th>Date/time</th><th>Event</th><th>Administrator</th></tr>\n";
-        while ($r = db_fetch_array($q)) {
-            print "<tr>";
-            $n++;
-
-            print "<td>". prettify(substr($r['whenlogged'], 0, 19)) . "</td>";
-            print "<td>". $r['message'] . "</td>";
-            print "<td>". ($r['editor'] ? $r['editor'] : "unknown"). "</td>";
-            
-            print "</tr>\n";
-        }
-        if ($n == 0) {
-            print "<tr><td colspan=\"3\">No events yet.</td></tr>";
-        }
-        print "</table>";
     }
 
     function display_categories() {
@@ -695,10 +696,10 @@ EOF;
         $p = new Petition($id);
 
         $status = $p->status();
-        if ($status != 'finished') {
+        if ($status != 'finished' && $status != 'live') {
             $p->log_event("Bad response state", http_auth_user());
             db_commit();
-            err("Should only be able to respond to petitions in finished state");
+            err("Should only be able to respond to petitions in live or finished state");
             return;
         }
 
@@ -732,10 +733,9 @@ EOF;
             $q_message_body = str_replace("\r\n", "\n", $q_message_body);
             /* Add footer with link */
             $q_message_body .= "\n\nPetition info: " . $p->url_main();
+
             /* Got all the data we need. Just drop the announcement into the database
              * and let the send-messages script pass it to the signers. */
-
-             
             db_query("insert into message
                     (id, petition_id, circumstance, circumstance_count, fromaddress,
                     sendtocreator, sendtosigners, sendtolatesigners, sendtoadmin,
