@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.44 2007-03-02 16:39:39 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.45 2007-03-22 13:36:42 matthew Exp $';
 
 use strict;
 
@@ -113,9 +113,9 @@ sub accept_loop () {
         }
 
         $html .= Petitions::Page::display_box($q, $p, detail=>1);
+        $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
         $html .= Petitions::Page::sign_box($q, $p)
             if ($p->{status} eq 'live' && !$show_signed_box);
-        $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
         $html .= Petitions::detail($p);
         if ($p->{status} ne 'rejected') {
             $html .= Petitions::Page::signatories_box($q, $p);

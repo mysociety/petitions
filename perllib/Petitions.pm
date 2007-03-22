@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.42 2007-02-06 00:33:56 francis Exp $
+# $Id: Petitions.pm,v 1.43 2007-03-22 13:36:41 matthew Exp $
 #
 
 package Petitions::DB;
@@ -17,7 +17,7 @@ use Carp;
 use DBI;
 
 use mySociety::Config;
-use mySociety::DBHandle qw(dbh);
+use mySociety::DBHandle qw(dbh select_all);
 use mySociety::Util qw(random_bytes print_log is_valid_email);
 
 my $secret;
@@ -89,7 +89,7 @@ sub check_ref ($) {
 Return a hash of database fields to values for the petition with the given REF
 or ID, or undef if there is no such petition. Also make up a signers field
 giving the number of people who've signed the petition so far, unless NOCOUNT
-is set, and try and return the Government response if GOVTRESPONSE is set.
+is set, and try and return the Government response(s) if GOVTRESPONSE is set.
 
 =cut
 sub get ($;$$) {
@@ -97,21 +97,26 @@ sub get ($;$$) {
     return undef unless ($ref);
     my $nocount = shift;
     my $govtresponse = shift;
-    my $s = "
-            select petition.*,
+    my $s = "select petition.*,
                 ms_current_date() <= deadline as open";
-    $s .= ", message.id AS message_id, message.emailbody as response" if ($govtresponse);
+    $s .= ", message.emailbody as response" if ($govtresponse);
     $s .= ", cached_signers as signers" unless ($nocount);
-    $s .= "
-            from petition";
+    $s .= " from petition";
     $s .= " left join message on petition.id = message.petition_id and circumstance = 'government-response'"
         if ($govtresponse);
     my $p;
-    $p ||= dbh()->selectrow_hashref("$s where id = ?", {}, $ref)
+    $p ||= select_all("$s where petition.id = ?", $ref)
             if ($ref =~ /^[1-9]\d*$/);
-    $p ||= dbh()->selectrow_hashref("$s where ref = ?", {}, $ref);
-    $p ||= dbh()->selectrow_hashref("$s where ref ilike ?", {}, $ref);
-    return $p;
+    $p ||= select_all("$s where ref = ?", $ref);
+    $p ||= select_all("$s where ref ilike ?", $ref);
+    
+    return undef unless $p && @$p > 0;
+    return $p->[0] if @$p == 1;
+    my $o = shift @$p;
+    foreach (@$p) {
+        $o->{response} .= "\n\n" . $_->{response}; # XXX
+    }
+    return $o;
 }
 
 =item is_valid_to_sign PETITION EMAIL
