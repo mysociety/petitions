@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.88 2007-03-22 10:34:06 francis Exp $
+ * $Id: admin-pet.php,v 1.89 2007-03-22 13:11:00 matthew Exp $
  * 
  */
 
@@ -745,7 +745,7 @@ EOF;
                     coalesce((select max(circumstance_count)
                             from message where petition_id = ?
                                 and circumstance = 'government-response'), -1) + 1,
-                    'number10', true, true, true, true, ?, ?)",
+                    'number10', true, true, false, true, ?, ?)",
             array(
                 $q_message_id, $p->id(), $p->id(),
                 $q_message_subject, $q_message_body));
