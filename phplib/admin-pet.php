@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.87 2007-03-06 17:59:50 francis Exp $
+ * $Id: admin-pet.php,v 1.88 2007-03-22 10:34:06 francis Exp $
  * 
  */
 
@@ -34,8 +34,13 @@ class ADMIN_PAGE_PET_STATS {
     function display() {
         global $pet_today;
 
+        # Overall
         $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
+        print <<<EOF
+<p>Statistics last updated: $statsdate
+EOF;
 
+        # Petitions
         $counts = array(
             'unconfirmed'=>0, 'failedconfirm'=>0, 'sentconfirm'=>0,
             'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
@@ -46,20 +51,39 @@ class ADMIN_PAGE_PET_STATS {
             $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t' order by id desc limit 1");
         }
 
-        $signatures_confirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed' order by id desc limit 1");
-        $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent' order by id desc limit 1");
-        $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique' order by id desc limit 1");
         print <<<EOF
-<p>Statistics last updated: $statsdate
 <h2>Petitions</h2>
 <p>$counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again = <strong>$counts[all_confirmed]</strong> total with confirmed emails<br>
 With unconfirmed emails: $counts[unconfirmed] not sent, $counts[failedconfirm] failed send, $counts[sentconfirm] sent
 = <strong>$counts[all_unconfirmed]</strong> total with unconfirmed emails
 <p><img src="pet-live-creation.png" alt="Graph of petition status by creation date">
+EOF;
+
+        # Signatures
+        $signatures_confirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed' order by id desc limit 1");
+        $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent' order by id desc limit 1");
+        $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique' order by id desc limit 1");
+        print <<<EOF
 <h2>Signatures</h2>
 <p>$signatures_confirmed confirmed signatures ($signers unique emails), $signatures_unconfirmed unconfirmed
 <p><img src="pet-live-signups.png" alt="Graph of signers across whole site">
 EOF;
+
+        # Rejection reasons - TODO (probably don't try storing in stats table
+        # as can do quickly enough in real time, and data doesn't really fit
+        # stats table well)
+        #$rejection_table = "";
+        #$q = db_query("select key, value from stats where whencounted = (select max(whencounted) from stats where key like 'rejection_%') and key like 'rejection_%' order by id desc");
+        #while ($r = db_fetch_array($q)) {
+        #    $cats = str_replace('rejection_', '', $r[0]);
+        #    $counts = $r[1];
+        #    $rejection_table .= "<tr><td>".prettify_categories($cats, false)."</td><td>$counts</td></tr>"; 
+        #}
+        #print <<<EOF
+#<h2>Petition rejection reasons</h2>
+#<p><table><tr><th>Categories</th><th>Count</th></tr>$rejection_table</table>
+#EOF;
+
     }
 }
 
@@ -567,20 +591,7 @@ class ADMIN_PAGE_PET_MAIN {
             print "<tr><td colspan=\"3\">No events yet.</td></tr>";
         }
         print "</table>";
-
-#        print '<h2>Actions</h2>';
-#        print '<form name="sendannounceform" method="post" action="'.$this->self_link.'"><input type="hidden" name="send_announce_token_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="send_announce_token" value="Send announce URL to creator"></form>';
-
-#print '<form name="removepledgepermanentlyform" method="post" action="'.$this->self_link.'" style="clear:both"><strong>Caution!</strong> This really is forever, you probably don\'t want to do it: <input type="hidden" name="remove_pledge_id" value="' . $pdata['id'] . '"><input type="submit" name="remove_pledge" value="Remove pledge permanently"></form>';
-
     }
-
-/*    function remove_petition($id) {
-        petition_delete_petition($id);
-        db_commit();
-        print p(_('<em>That petition has been successfully removed, along with all its signatories.</em>'));
-    }
-*/
 
     function display_categories() {
         global $global_rejection_categories;
