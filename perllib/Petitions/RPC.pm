@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.37 2007-02-12 15:20:35 matthew Exp $
+# $Id: RPC.pm,v 1.38 2007-03-22 10:34:40 francis Exp $
 #
 
 package Petitions::RPC;
@@ -165,12 +165,16 @@ sub confirm_db ($;$) {
                 update signer set emailsent = 'confirmed'
                 where id = ? and emailsent in ('sent', 'pending')", {},
                 $r->{id});
-        #if ($signercount && $n > 0) {
-            #my $petition_id = dbh()->selectrow_array("
-            #        select petition_id from signer where id = ?", {},
-            #        $r->{id});
-            #$signercount->{$petition_id} += $n;
-        #}
+        # If the database server isn't coping with lots of writes under
+        # heavy load, then one piece of gaffer tape would be to comment out
+        # this if statement, and make the update-totals cron job run more
+        # often.
+        if ($signercount && $n > 0) {
+            my $petition_id = dbh()->selectrow_array("
+                    select petition_id from signer where id = ?", {},
+                    $r->{id});
+            $signercount->{$petition_id} += $n;
+        }
     }
 }
 
