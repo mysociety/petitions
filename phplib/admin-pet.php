@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.91 2007-03-22 16:30:16 matthew Exp $
+ * $Id: admin-pet.php,v 1.92 2007-03-22 17:07:30 matthew Exp $
  * 
  */
 
@@ -344,7 +344,7 @@ class ADMIN_PAGE_PET_MAIN {
                     $row .= ' resubmitted';
                 }
                 $row .= '</td>';
-            } elseif (!$this->cat_change && $status == 'finished') {
+            } elseif (!$this->cat_change && ($status == 'finished' || $status == 'live') {
                 $row .= '<td>';
                 if ($r['message_id']) 
                     $row .= 'Response sent';
@@ -449,7 +449,7 @@ class ADMIN_PAGE_PET_MAIN {
 <input type="submit" name="reject" value="Reject">
 </p>
 </form>';
-        } elseif ($pdata['status'] == 'finished') {
+        } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
             print '<form name="petition_admin_go_respond" method="post" action="'
                 . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
                 '"><input type="submit" name="respond" value="Write response"></form>';
