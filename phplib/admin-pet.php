@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.92 2007-03-22 17:07:30 matthew Exp $
+ * $Id: admin-pet.php,v 1.93 2007-03-22 18:58:21 matthew Exp $
  * 
  */
 
@@ -344,7 +344,7 @@ class ADMIN_PAGE_PET_MAIN {
                     $row .= ' resubmitted';
                 }
                 $row .= '</td>';
-            } elseif (!$this->cat_change && ($status == 'finished' || $status == 'live') {
+            } elseif (!$this->cat_change && ($status == 'finished' || $status == 'live')) {
                 $row .= '<td>';
                 if ($r['message_id']) 
                     $row .= 'Response sent';

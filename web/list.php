@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.46 2007-02-05 18:10:19 matthew Exp $
+// $Id: list.php,v 1.47 2007-03-22 18:58:21 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -214,7 +214,7 @@ if ($ntotal > 0) {
                 print 'more details';
             }
             print '</a>';
-            if ($q_type == 'closed' && $petition->data['message_id']) {
+            if ($petition->data['message_id']) {
                 print '<br />(with government response)';
             }
             print '</td><td>' . $petition->h_name() . '</td>';

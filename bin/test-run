@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.76 2007-03-22 17:07:29 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.77 2007-03-22 18:58:20 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -875,7 +875,7 @@ sub do_early_response_test {
     do_create_part({
         pet_content => $petition_text,
         detail => "I want to get one response before it closes, and another after it closes!",
-        rawdeadline => '30/6',
+        rawdeadline => '6 months',
         ref => 'respond-early',
         category => 521
     }, {
@@ -921,7 +921,7 @@ sub do_early_response_test {
     $wth->browser_check_contents("1 signature");
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents($petition_text);
-    $wth->browser_check_contents("30 June 1995");
+    $wth->browser_check_contents("01 July 1995");
     $wth->browser_check_contents('signForm');
 
     comment("Loop through several signers");
@@ -993,15 +993,27 @@ sub do_early_response_test {
     $wth->browser_check_contents("Your response has been recorded and will be sent out shortly");
     call_send_messages();
 
-    comment("Check everyone gets the response; non deleted signers, creator and admin");
-    foreach my $signer_no (512..515) {
+    comment("Check everyone gets the response; signers, creator and admin");
+    foreach my $signer_no (512..514) {
         $wth->email_get_containing('%Subject: Government response%To: '.email_n($signer_no).'%Thank you for your petition%');
     }
     $wth->email_get_containing('%Subject: Government response%To: '.email_n(511).'%Thank you for your petition%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     $wth->browser_get($partial_signup_confirm);
-    $wth->browser_check_no_contents("You are now signed up to this petition."); 
+    $wth->browser_check_contents("You are now signed up to this petition."); 
+    $c++;
+    comment("Check person who signed up before pre-reply was written gets the email");
+    call_send_messages();
+    $wth->email_get_containing('%Subject: Government response%To: '.email_n(515).'%Thank you for your petition%');
+
+    comment("Check early response is now on the webpage");
+    $wth->browser_get($base_url);
+    $wth->browser_follow_link(text_regex => qr/View petitions/);
+    $wth->browser_follow_link(text_regex => qr/By deadline/);
+    $wth->browser_check_contents('with government response');
+    $wth->browser_follow_link(text_regex => qr/$petition_text/);
+    $wth->browser_check_contents('Thank you for your petition');
 
     comment("Loop through several more signers");
     set_pet_date('1995-05-10');
@@ -1035,23 +1047,25 @@ sub do_early_response_test {
         $wth->browser_check_contents("$c signatures");
         $wth->browser_get($petition_uri);
     }
+    comment("Check none of these signers get the early response by email");
+    call_send_messages();
+    $wth->email_check_none_left();
+
     comment("Go forward to after petition has closed, get petition to mark itself as finished");
-    set_pet_date('1995-07-01');
+    set_pet_date('1995-07-02');
     call_mark_finished();
 
-#    comment("Check that petition now appears in closed section, and has no sign form");
-#    $wth->browser_get($base_url);
-#    $wth->browser_check_no_contents($petition_text);
-#    $wth->browser_check_contents("None");
-#    $wth->browser_follow_link(text_regex => qr/View petitions/);
-#    $wth->browser_follow_link(text_regex => qr/By deadline/);
-#    $wth->browser_check_no_contents($petition_text);
-#    $wth->browser_follow_link(text_regex => qr/Closed petitions/);
-#    $wth->browser_check_contents($petition_text);
-#    $wth->browser_follow_link(text_regex => qr/$petition_text/);
-#    $wth->browser_check_contents("This petition is now closed");
-#    $wth->browser_check_no_contents('with government response');
-#    $wth->browser_check_no_contents('signForm');
-
+    comment("Check that petition now appears in closed section, and has no sign form");
+    $wth->browser_get($base_url);
+    $wth->browser_check_no_contents($petition_text);
+    $wth->browser_check_contents("None");
+    $wth->browser_follow_link(text_regex => qr/View petitions/);
+    $wth->browser_follow_link(text_regex => qr/By deadline/);
+    $wth->browser_check_no_contents($petition_text);
+    $wth->browser_follow_link(text_regex => qr/Closed petitions/);
+    $wth->browser_check_contents($petition_text);
+    $wth->browser_follow_link(text_regex => qr/$petition_text/);
+    $wth->browser_check_contents("This petition is now closed");
+    $wth->browser_check_no_contents('signForm');
 }
 
