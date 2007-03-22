@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.73 2007-03-06 12:39:37 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.74 2007-03-22 10:37:36 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -242,7 +242,7 @@ sub do_create_part {
     my ($fields1, $fields2) = @_;
     comment("Create a new petition");
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
-    $wth->browser_check_contents("before we start");
+    $wth->browser_check_contents("before creating a new petition");
     $wth->browser_submit_form(form_name => 'pet_search',
         fields => { q => 'random words' }) or die "Failed to submit search";
     $wth->browser_check_contents("could not find any petitions");
@@ -735,7 +735,7 @@ sub do_resubmit_test {
     comment("Create a new petition");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
-    $wth->browser_check_contents("before we start");
+    $wth->browser_check_contents("before creating a new petition");
     $wth->browser_submit_form(form_name => 'pet_search',
         fields => { q => 'random words' }) or die "Failed to submit search";
     $wth->browser_check_contents("could not find any petitions");
