@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.93 2007-03-22 18:58:21 matthew Exp $
+ * $Id: admin-pet.php,v 1.94 2007-03-23 11:03:04 francis Exp $
  * 
  */
 
@@ -67,6 +67,15 @@ EOF;
 <h2>Signatures</h2>
 <p>$signatures_confirmed confirmed signatures ($signers unique emails), $signatures_unconfirmed unconfirmed
 <p><img src="pet-live-signups.png" alt="Graph of signers across whole site">
+EOF;
+
+        # Responses 
+        $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
+        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
+        print <<<EOF
+<h2>Government responses</h2>
+<p>$responses responses sent, to $unique_responses unique petitions (excluding
+the large custom responses, such as to traveltax) 
 EOF;
 
         # Rejection reasons - TODO (probably don't try storing in stats table
