@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.38 2007-03-22 10:34:40 francis Exp $
+# $Id: RPC.pm,v 1.39 2007-03-23 11:04:49 francis Exp $
 #
 
 package Petitions::RPC;
@@ -169,12 +169,12 @@ sub confirm_db ($;$) {
         # heavy load, then one piece of gaffer tape would be to comment out
         # this if statement, and make the update-totals cron job run more
         # often.
-        if ($signercount && $n > 0) {
-            my $petition_id = dbh()->selectrow_array("
-                    select petition_id from signer where id = ?", {},
-                    $r->{id});
-            $signercount->{$petition_id} += $n;
-        }
+        #if ($signercount && $n > 0) {
+        #    my $petition_id = dbh()->selectrow_array("
+        #            select petition_id from signer where id = ?", {},
+        #            $r->{id});
+        #    $signercount->{$petition_id} += $n;
+        #}
     }
 }
 

@@ -4,7 +4,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.13 2007-03-22 10:34:40 francis Exp $
+# $Id: crontab.ugly,v 1.14 2007-03-23 11:04:49 francis Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
@@ -17,8 +17,7 @@ MAILTO=team@mysociety.org
 */12 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/send-messages.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/send-messages || echo "stalled?"
 3 0 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/mark-finished
 
-# update-totals every night to be sure they are all in sync
-59 1 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals || echo "stalled?"
+1,31 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals || echo "stalled?"
 
 # Rarely, once a day after midnight
 10 1 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-stats.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-stats || echo "stalled?"
