@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.94 2007-03-23 11:03:04 francis Exp $
+ * $Id: admin-pet.php,v 1.95 2007-03-23 11:06:14 matthew Exp $
  * 
  */
 
@@ -74,8 +74,7 @@ EOF;
         $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
         print <<<EOF
 <h2>Government responses</h2>
-<p>$responses responses sent, to $unique_responses unique petitions (excluding
-the large custom responses, such as to traveltax) 
+<p>$responses responses sent, to $unique_responses unique petitions
 EOF;
 
         # Rejection reasons - TODO (probably don't try storing in stats table
