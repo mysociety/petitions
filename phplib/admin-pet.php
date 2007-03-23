@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.95 2007-03-23 11:06:14 matthew Exp $
+ * $Id: admin-pet.php,v 1.96 2007-03-23 11:13:42 matthew Exp $
  * 
  */
 
@@ -764,7 +764,7 @@ EOF;
                 print '<div id="errors"><ul><li>' . 
                     join('</li><li>' , $errors) . '</li></ul></div>';
 # XXX Next line ?>
-<p>You are responding to the petition '<?=$p->ref() ?>'. <b>Should say contents of petition here</b></p>
+<p>You are responding to the petition '<?=$p->ref() ?>'.</p>
 <form name="petition_admin_respond" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
 <input type="hidden" name="respond" value="1"><input type="hidden" name="submit" value="1">
 <input type="hidden" name="petition_id" value="<?=$id ?>">
