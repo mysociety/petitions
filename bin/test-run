@@ -23,7 +23,7 @@
 # Search by category
 # Actually test message expiry rather than use --noexpire
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.78 2007-03-22 19:28:30 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.79 2007-03-23 10:26:51 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -870,6 +870,10 @@ sub do_resubmit_test {
     call_mark_finished();
 }
 
+#############################################################################
+# Make a petition, send early government response, close petition, send late
+# response
+
 sub do_early_response_test {
     set_pet_date('1995-01-01');
 
@@ -1003,6 +1007,7 @@ sub do_early_response_test {
     }
     $wth->email_get_containing('%Subject: Government response%To: '.email_n(511).'%Thank you for your petition%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
+    $wth->email_check_none_left();
 
     $wth->browser_get($partial_signup_confirm);
     $wth->browser_check_contents("You are now signed up to this petition."); 
@@ -1010,6 +1015,7 @@ sub do_early_response_test {
     comment("Check person who signed up before pre-reply was written gets the email");
     call_send_messages();
     $wth->email_get_containing('%Subject: Government response%To: '.email_n(515).'%Thank you for your petition%');
+    $wth->email_check_none_left();
 
     comment("Check early response is now on the webpage");
     $wth->browser_get($base_url);
