@@ -1,10 +1,23 @@
 #!/usr/bin/perl -w -I../perllib -I../../perllib
 
+# create-html-email:
+# Used to create mail template for sending HTML email response
+# 
+# Create a file in the same directory, name the reference of the petition.
+# The format of this file is:
+#
+# <Subject>\n\n<Initial paragraph>\n\n\n<Paragraphs of text, separated by \n\n>
+# \n\n\n"Further information"\n\n
+# <Paragraphs of text and links, with links specified like [URL <Text for link>]>
+# 
+# Automatically adds the optout line
+
 use strict;
 use mySociety::Email;
 use File::Slurp;
 use Net::SMTP;
 use POSIX qw(strftime);
+use Text::Wrap qw();
 
 my $ref = shift;
 my $test = shift || '';
@@ -14,8 +27,14 @@ unless ($ref) {
 }
 
 # Create text and HTML parts
-my $html = File::Slurp::read_file("$ref-response");
-my $plain = remove_html($html);
+my $plain = File::Slurp::read_file($ref);
+my ($subject) = $plain =~ /^(.*)\n+/;
+$plain =~ s/^$subject\n+//;
+$plain =~ s/\n+$//;
+$plain .= "\n\nIf you would like to opt out of receiving further mail on this or any other petitions you signed, please email [optout\@petitions.pm.gov.uk]";
+my $html = create_html($plain);
+$plain =~ s/\[([^ ]*)\]/$1/g;
+$plain =~ s/\[([^ ]*) (.*?)\]/$2 - $1/g;
 $plain = construct_part($plain, 0);
 $html = construct_part($html, 1);
 
@@ -28,7 +47,7 @@ Return-Path: <$test>
 Message-ID: <$id>
 From: "10 Downing Street" <$test>
 To: $test
-Subject: E-petition: Response from the Prime Minister
+Subject: $subject
 Date: $date
 MIME-Version: 1.0
 Content-Type: multipart/alternative;
@@ -54,15 +73,47 @@ if ($test) {
     print $email;
 }
 
-sub remove_html {
+sub create_html {
     $_ = shift;
-    s/(<br>)+/\n/g;
-    s/<(title|h1)[^>]*>.*?<\/\1>//g;
-    s/<a[^>]*?href="([^m].*?)">(.*?)<\/a>/$2 - $1 -/g;
-    s/<(([^>]|\n)*)>//g;
-    s/\s+$/\n/g;
-    s/^\s+//g;
-    return $_;
+    my ($first, $text, $further) = /^(.*?)\n\n+(.*?)\n\n+Further information\n\n+(.*?)\n*$/s;
+    $first = '<p style="font-family:vera,verdana;color:#666;border:1px solid #999;display:block;padding:10px;margin:2px;background:#fff;font-weight:bold;">' . "\n" . $first . "\n</p>";
+    my $p_text = '<p style="color:#111;font-family:vera,verdana;font-size:11pt;margin-left:5px;margin-right:5px;">';
+    my $p_further = '<p style="color:#111;font-family:vera,verdana;font-size:11pt;padding-left:5px;padding-right:5px;margin-top:0;padding-top:5px">';
+    my $a_style = '<a style="color:#4a95c2;font-family:vera,verdana;font-size:11pt;font-weight:bold;text-decoration:none;"';
+    $text =~ s/\n\n/<\/p>\n\n$p_text/g;
+    $text = "$p_text$text</p>";
+    $further =~ s/\n\n/<\/p>\n\n$p_further/g;
+    $further = "$p_further$further</p>";
+    $further =~ s/\[([^ ]*\@[^ ]*)\]/$a_style href="mailto:$1">$1<\/a>/g;
+    $further =~ s/\[([^ ]*)\]/$a_style href="$1">$1<\/a>/g;
+    $further =~ s/\[([^ ]*) (.*?)\]/$a_style href="$1">$2<\/a>/g;
+    my $html = <<EOF;
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>$subject</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+<div style="background:#fff;text-align:center;font-family:verdana ! important;">
+<div style="width:80%;background-color:#f1efef;text-align:left;margin-left:auto;margin-right:auto;font-size:11pt;padding-bottom:11pt;">
+<h1 style="background:#4a95c2;color:#fff;font-family:verdana;font-size:20px;padding:5px;">$subject</h1>
+$first
+
+$text
+
+</div>
+<div style="width:80%;background-color:#c8dfed;text-align:left;margin-left:auto;margin-right:auto;font-size:11pt;margin-top:10px">
+<h2 style="background:#4a95c2;color:#fff;font-family:verdana;font-size:16px;padding:5px;margin-bottom:0">Further information</h2>
+
+$further
+
+</div>
+</div>
+</body>
+</html>
+EOF
+    return $html;
 }
 
 sub construct_part {
@@ -70,6 +121,16 @@ sub construct_part {
     $body = mySociety::Email::construct_email( { _body_ => $body, Subject => 'Subject', From => 'From' });
     $body =~ s/^(Subject|From|To|MIME-Version|Date): .*\n//mg;
     $body =~ s/text\/plain/text\/html/ if ($ishtml);
+    if ($body =~ /us-ascii/) {
+        $body =~ s/iso-8859-1/us-ascii/;
+        $body =~ s/<([^>]+?) /<$1*/g;
+        local($Text::Wrap::columns = 76);
+        local($Text::Wrap::huge = 'overflow');
+        local($Text::Wrap::unexpand = 0);
+        $body = Text::Wrap::wrap('', '', $body);
+        $body =~ s/<([^>]+?)\*/<$1 /g;
+        $body =~ s/^[ \t]+$//mg;
+    }
     return $body;
 }
 
