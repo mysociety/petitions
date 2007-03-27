@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.78 2007-03-27 16:07:16 matthew Exp $
+# $Id: Page.pm,v 1.79 2007-03-27 16:18:12 matthew Exp $
 #
 
 package Petitions::Page;
@@ -59,12 +59,12 @@ sub header ($$%) {
     my $ent_title = ent($title);
     my $js = '';
     $js = '<script type="text/javascript" src="http://www.pm.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
-    my $creator = $params->{creator} || '10 Downing Street, Web Team, webmaster@pmo.gov.uk';
-    my $description = $params->{description} || 'Petitions to the Prime Minister, 10 Downing Street';
+    my $creator = $params{creator} || '10 Downing Street, Web Team, webmaster@pmo.gov.uk';
+    my $description = $params{description} || 'Petitions to the Prime Minister, 10 Downing Street';
     my $subjects = '';
-    if ($params->{category}) {
-        $subjects = '<meta name="dc.subject" scheme="eGMS.IPSV" value="' . $params->{category} . '" />';
-	$out =~ s/(<meta name="keywords" content="[^"]*)(" \/>)/$1, $params->{category}$2/;
+    if ($params{category}) {
+        $subjects = '<meta name="dc.subject" scheme="eGMS.IPSV" value="' . $params{category} . '" />';
+	$out =~ s/(<meta name="keywords" content="[^"]*)(" \/>)/$1, $params{category}$2/;
     } else {
         $subjects = '<meta name="dc.subject" content="10 Downing Street" />
 <meta name="dc.subject" content="Petitions" />
@@ -72,9 +72,9 @@ sub header ($$%) {
 <meta name="dc.subject" content="Tony Blair" />';
     }
     my $extra = '';
-    $extra .= '<meta name="eGMS.status" content="' . $params->{status} . '" />' if $params->{status};
-    $extra .= '<meta name="quantSignatures" content="' . $params->{signers} . '" />' if $params->{signers};
-    $extra .= '<meta name="closingDate" content="' . $params->{deadline} . '" />' if $params->{deadline};
+    $extra .= '<meta name="eGMS.status" content="' . $params{status} . '" />' if $params{status};
+    $extra .= '<meta name="quantSignatures" content="' . $params{signers} . '" />' if $params{signers};
+    $extra .= '<meta name="closingDate" content="' . $params{deadline} . '" />' if $params{deadline};
     $out =~ s/PARAM_CREATOR/$creator/;
     $out =~ s/PARAM_DESCRIPTION/$description/;
     $out =~ s/PARAM_EXTRA/$extra/;
