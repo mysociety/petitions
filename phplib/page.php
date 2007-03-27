@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.22 2007-02-20 16:26:46 matthew Exp $
+// $Id: page.php,v 1.23 2007-03-27 16:07:17 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -52,6 +52,16 @@ function page_header($title, $params = array()) {
 
     global $devwarning;
     $contents = file_get_contents("../templates/website/head.html");
+    $creator = '10 Downing Street, Web Team, webmaster@pmo.gov.uk';
+    $desc = 'Petitions to the Prime Minister, 10 Downing Street';
+    $extra = '';
+    $contents = str_replace('PARAM_SUBJECTS', '<meta name="dc.subject" content="10 Downing Street" />
+<meta name="dc.subject" content="Petitions" />
+<meta name="dc.subject" content="Prime Minister" />
+<meta name="dc.subject" content="Tony Blair" />', $contents);
+    $contents = str_replace('PARAM_CREATOR', $creator, $contents);
+    $contents = str_replace('PARAM_DESCRIPTION', $desc, $contents);
+    $contents = str_replace('PARAM_EXTRA', $extra, $contents);
     $contents = str_replace("PARAM_DC_IDENTIFIER", $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], $contents);
     $contents = str_replace("PARAM_TITLE", $title, $contents);
     $contents = str_replace("PARAM_DEV_WARNING", $devwarning, $contents);

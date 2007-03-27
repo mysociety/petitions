@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.43 2007-03-22 13:36:41 matthew Exp $
+# $Id: Petitions.pm,v 1.44 2007-03-27 16:07:16 matthew Exp $
 #
 
 package Petitions::DB;
@@ -21,6 +21,26 @@ use mySociety::DBHandle qw(dbh select_all);
 use mySociety::Util qw(random_bytes print_log is_valid_email);
 
 my $secret;
+
+my %petition_categories = (
+    0 => 'None',
+    692 => 'Business and industry',
+    726 => 'Economics and finance',
+    439 => 'Education and skills',
+    981 => 'Employment, jobs and careers',
+    499 => 'Environment',
+    760 => 'Government, politics and public administration',
+    557 => 'Health, well-being and care',
+    460 => 'Housing',
+    758 => 'Information and communication',
+    911 => 'International affairs and defence',
+    616 => 'Leisure and culture',
+    642 => 'Life in the community',
+    6999 => 'People and organisations',
+    564 => 'Public order, justice and rights',
+    652 => 'Science, technology and innovation',
+    521 => 'Transport and infrastructure'
+);
 
 BEGIN {
     mySociety::DBHandle::configure(
@@ -111,6 +131,7 @@ sub get ($;$$) {
     $p ||= select_all("$s where ref ilike ?", $ref);
     
     return undef unless $p && @$p > 0;
+    $p->[0]->{category} = $petition_categories{$p->[0]->{category}};
     return $p->[0] if @$p == 1;
     my $o = shift @$p;
     foreach (@$p) {
@@ -274,12 +295,15 @@ my $petition_prefix = "We the undersigned petition the Prime Minister to";
 =item sentence PETITION [HTML]
 
 =cut
-sub sentence ($;$) {
-    my ($p, $html) = @_;
+sub sentence ($;$$) {
+    my ($p, $html, $short) = @_;
     croak("PETITION may not be undef") unless (defined($p));
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     croak("Field 'content' missing from PETITION") unless (exists($p->{content}));
     my $sentence = sprintf('%s %s', $petition_prefix, $p->{content});
+    if ($short) {
+        $sentence = 'Petition to: ' . $p->{content};
+    }
     $sentence = 'This petition cannot be shown.' unless Petitions::show_part($p, 'content');
     $sentence = ent($sentence) if ($html);
     $sentence .= '.' unless $sentence =~ /\.$/;

@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.8 2007-02-02 15:04:48 chris Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.9 2007-03-27 16:07:18 matthew Exp $';
 
 use strict;
 
@@ -47,7 +47,7 @@ sub accept_loop () {
             next;
         }
 
-        my $title = Petitions::sentence($p, 1);
+        my $title = Petitions::sentence($p, 1, 1);
         my $html =
             Petitions::Page::header($q, $title);
         $html .= $q->h1($q->span({-class => 'ltr'}, 'E-Petitions'));

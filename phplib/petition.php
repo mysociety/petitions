@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.47 2007-02-05 18:10:19 matthew Exp $
+ * $Id: petition.php,v 1.48 2007-03-27 16:07:17 matthew Exp $
  * 
  */
 
@@ -26,7 +26,7 @@ $global_rejection_categories = array(
     256 => 'Wording that is impossible to understand',
     512 => 'Statements that don\'t actually request any action',
     1024 => 'Commercial endorsement, promotion of any product, service or publication, or statements that amount to adverts',
-    2048 => 'Identical to an existing petition',
+    2048 => 'Duplicate - this is similar to and/or overlaps with an existing petition or petitions',
     4096 => 'Outside the remit or powers of the Prime Minister and Government',
     8192 => 'False name or address information',
     16384 => 'Issues for which an e-petition is not the appropriate channel',

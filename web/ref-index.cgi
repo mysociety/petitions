@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.45 2007-03-22 13:36:42 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.46 2007-03-27 16:07:18 matthew Exp $';
 
 use strict;
 
@@ -57,7 +57,7 @@ sub accept_loop () {
 
         # XXX: lastupdate is only updated when the number changes on cron now
         # People notice names changing, but not the number, so should probably
-	# add some sort of explanation that the number might be behind real-time
+        # add some sort of explanation that the number might be behind real-time
         my $lastmodified = dbh()->selectrow_array('select extract(epoch from lastupdate)
             from petition where ref = ?', {}, $ref);
         next if ($q->Maybe304($lastmodified));
@@ -83,9 +83,20 @@ sub accept_loop () {
         }
 
         my $p = Petitions::DB::get($ref, 0, 1);
-        my $title = Petitions::sentence($p, 1);
-        my $html =
-            Petitions::Page::header($q, $title);
+        my $title = Petitions::sentence($p, 1, 1);
+        # XXX: Should all the show_parts be done in the get() so I don't need to worry about remembering to do it?
+        my $name = Petitions::show_part($p, 'name') ? ent($p->{name}) : '&lt;Name cannot be shown&gt;';
+        my $detail = Petitions::show_part($p, 'detail') ? ent($p->{detail}) : 'More details cannot be shown';
+        $detail = length($detail)>100 ? substr($detail, 0, 100) . '...' : $detail;
+        my %params = (
+            status => $p->{status},
+            category => $p->{category},
+            creator => $name,
+            description => $detail
+        );
+        $params{signers} = $p->{signers} if $p->{signers};
+        $params{deadline} = Petitions::pretty_deadline($p->{deadline}, 1) if ($p->{status} ne 'rejected');
+        my $html = Petitions::Page::header($q, $title, %params);
 
         $html .= $q->h1($q->span({-class => 'ltr'}, 'E-Petitions'));
         $html .= $q->h2($q->span({-class => 'ltr'}, 'Sign a petition'));
@@ -98,8 +109,8 @@ sub accept_loop () {
                 $q->div({ -id =>'success' },
                     $q->p(
                         "You are now signed up to this petition. Thank you."),
-		    $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.pm.gov.uk/' }, 'main Downing Street homepage')),
-		    $q->p("If you'd like to tell your friends about this petition, its permanent web address is:",
+                    $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.pm.gov.uk/' }, 'main Downing Street homepage')),
+                    $q->p("If you'd like to tell your friends about this petition, its permanent web address is:",
                         $q->strong($q->a({ -href => "/$ref/" },
                             ent(mySociety::Config::get('BASE_URL') . "/$ref/"
                         ))))

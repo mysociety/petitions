@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.11 2007-03-07 12:21:14 matthew Exp $
+// $Id: terms.php,v 1.12 2007-03-27 16:07:18 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -81,7 +81,7 @@ possible to petition for anything, no matter how radical, politely).</li>
 
 <p>We reserve the right to reject:</p>
 <ul>
-<li>duplicate petitions;</li>
+<li>petitions that are similar to and/or overlap with an existing petition or petitions;</li>
 <li>petitions which ask for things outside the remit or powers of the Prime Minister and Government;</li>
 <li>statements that don't actually request any action;</li>
 <li>wording that is impossible to understand;</li>

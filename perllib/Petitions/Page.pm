@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.77 2007-02-20 16:26:45 matthew Exp $
+# $Id: Page.pm,v 1.78 2007-03-27 16:07:16 matthew Exp $
 #
 
 package Petitions::Page;
@@ -32,7 +32,7 @@ Return HTML for the top of the page, given the TITLE text and optional PARAMs.
 sub header ($$%) {
     my ($q, $title, %params) = @_;
     
-    my %permitted_params = map { $_ => 1 } qw();
+    my %permitted_params = map { $_ => 1 } qw(creator description category status signers deadline);
     foreach (keys %params) {
         croak "bad parameter '$_'" if (!exists($permitted_params{$_}));
     }
@@ -59,9 +59,29 @@ sub header ($$%) {
     my $ent_title = ent($title);
     my $js = '';
     $js = '<script type="text/javascript" src="http://www.pm.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
-    $out =~ s/PARAM_DC_IDENTIFIER/$ent_url/g;
+    my $creator = $params->{creator} || '10 Downing Street, Web Team, webmaster@pmo.gov.uk';
+    my $description = $params->{description} || 'Petitions to the Prime Minister, 10 Downing Street';
+    my $subjects = '';
+    if ($params->{category}) {
+        $subjects = '<meta name="dc.subject" scheme="eGMS.IPSV" value="' . $params->{category} . '" />';
+	$out =~ s/(<meta name="keywords" content="[^"]*)(" \/>)/$1, $params->{category}$2/;
+    } else {
+        $subjects = '<meta name="dc.subject" content="10 Downing Street" />
+<meta name="dc.subject" content="Petitions" />
+<meta name="dc.subject" content="Prime Minister" />
+<meta name="dc.subject" content="Tony Blair" />';
+    }
+    my $extra = '';
+    $extra .= '<meta name="eGMS.status" content="' . $params->{status} . '" />' if $params->{status};
+    $extra .= '<meta name="quantSignatures" content="' . $params->{signers} . '" />' if $params->{signers};
+    $extra .= '<meta name="closingDate" content="' . $params->{deadline} . '" />' if $params->{deadline};
+    $out =~ s/PARAM_CREATOR/$creator/;
+    $out =~ s/PARAM_DESCRIPTION/$description/;
+    $out =~ s/PARAM_EXTRA/$extra/;
+    $out =~ s/PARAM_SUBJECTS/$subjects/;
+    $out =~ s/PARAM_DC_IDENTIFIER/$ent_url/;
     $out =~ s/PARAM_TITLE/$ent_title/g;
-    $out =~ s/PARAM_DEV_WARNING/$devwarning/g;
+    $out =~ s/PARAM_DEV_WARNING/$devwarning/;
     $out =~ s/PARAM_STAT_JS/$js/g;
     $out =~ s/PARAM_RSS_LINKS//g;
     # Currently, no need to follow links from CGI-generated pages -
@@ -317,7 +337,7 @@ sub reject_box ($$) {
         256 => 'It contained wording that is impossible to understand',
         512 => 'It doesn\'t actually request any action',
         1024 => 'It was commercial endorsement, promotion of a product, service or publication, or statements that amounted to adverts',
-        2048 => 'It was identical to an existing petition',
+        2048 => 'It was similar to and/or overlaps with an existing petition or petitions',
         4096 => 'It was outside the remit or powers of the Prime Minister and Government',
         8192 => 'It contained false name or address information',
         16384 => 'It was an issue for which an e-petition is not the appropriate channel',
