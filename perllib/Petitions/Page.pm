@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.79 2007-03-27 16:18:12 matthew Exp $
+# $Id: Page.pm,v 1.80 2007-03-27 17:11:23 matthew Exp $
 #
 
 package Petitions::Page;
@@ -63,7 +63,7 @@ sub header ($$%) {
     my $description = $params{description} || 'Petitions to the Prime Minister, 10 Downing Street';
     my $subjects = '';
     if ($params{category}) {
-        $subjects = '<meta name="dc.subject" scheme="eGMS.IPSV" value="' . $params{category} . '" />';
+        $subjects = '<meta name="dc.subject" scheme="eGMS.IPSV" content="' . $params{category} . '" />';
 	$out =~ s/(<meta name="keywords" content="[^"]*)(" \/>)/$1, $params{category}$2/;
     } else {
         $subjects = '<meta name="dc.subject" content="10 Downing Street" />
