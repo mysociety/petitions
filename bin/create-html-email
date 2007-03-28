@@ -33,8 +33,8 @@ $plain =~ s/^$subject\n+//;
 $plain =~ s/\n+$//;
 $plain .= "\n\nIf you would like to opt out of receiving further mail on this or any other petitions you signed, please email [optout\@petitions.pm.gov.uk]";
 my $html = create_html($plain);
-$plain =~ s/\[([^ ]*)\]/$1/g;
-$plain =~ s/\[([^ ]*) (.*?)\]/$2 - $1/g;
+$plain =~ s/\[([^ ]*)\]/$1/gs;
+$plain =~ s/\[([^ ]*) (.*?)\]/$2 - $1/gs;
 $plain = construct_part($plain, 0);
 $html = construct_part($html, 1);
 
@@ -80,13 +80,13 @@ sub create_html {
     my $p_text = '<p style="color:#111;font-family:vera,verdana;font-size:11pt;margin-left:5px;margin-right:5px;">';
     my $p_further = '<p style="color:#111;font-family:vera,verdana;font-size:11pt;padding-left:5px;padding-right:5px;margin-top:0;padding-top:5px">';
     my $a_style = '<a style="color:#4a95c2;font-family:vera,verdana;font-size:11pt;font-weight:bold;text-decoration:none;"';
-    $text =~ s/\n\n/<\/p>\n\n$p_text/g;
-    $text = "$p_text$text</p>";
-    $further =~ s/\n\n/<\/p>\n\n$p_further/g;
-    $further = "$p_further$further</p>";
-    $further =~ s/\[([^ ]*\@[^ ]*)\]/$a_style href="mailto:$1">$1<\/a>/g;
-    $further =~ s/\[([^ ]*)\]/$a_style href="$1">$1<\/a>/g;
-    $further =~ s/\[([^ ]*) (.*?)\]/$a_style href="$1">$2<\/a>/g;
+    $text =~ s/\n\n/<\/p>\n\n$p_text\n/g;
+    $text = "$p_text\n$text</p>";
+    $further =~ s/\n\n/<\/p>\n\n$p_further\n/g;
+    $further = "$p_further\n$further</p>";
+    $further =~ s/\[([^ ]*\@[^ ]*)\]/$a_style\nhref="mailto:$1">$1<\/a>/gs;
+    $further =~ s/\[([^ ]*)\]/$a_style\nhref="$1">$1<\/a>/gs;
+    $further =~ s/\[([^ ]*) (.*?)\]/$a_style\nhref="$1">$2<\/a>/gs;
     my $html = <<EOF;
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html>
@@ -97,7 +97,10 @@ sub create_html {
 <body>
 <div style="background:#fff;text-align:center;font-family:verdana ! important;">
 <div style="width:80%;background-color:#f1efef;text-align:left;margin-left:auto;margin-right:auto;font-size:11pt;padding-bottom:11pt;">
-<h1 style="background:#4a95c2;color:#fff;font-family:verdana;font-size:20px;padding:5px;">$subject</h1>
+<h1 style="background:#4a95c2;color:#fff;font-family:verdana;font-size:20px;padding:5px;">
+$subject
+</h1>
+
 $first
 
 $text
@@ -118,18 +121,18 @@ EOF
 
 sub construct_part {
     my ($body, $ishtml) = @_;
+    local($Text::Wrap::columns = 76);
+    local($Text::Wrap::huge = 'overflow');
+    local($Text::Wrap::unexpand = 0);
+    $body =~ s/<([^>]+?) /<$1*/g;
+    $body = Text::Wrap::wrap('', '', $body);
+    $body =~ s/<([^>]+?)\*/<$1 /g;
+    $body =~ s/^[ \t]+$//mg;
     $body = mySociety::Email::construct_email( { _body_ => $body, Subject => 'Subject', From => 'From' });
     $body =~ s/^(Subject|From|To|MIME-Version|Date): .*\n//mg;
     $body =~ s/text\/plain/text\/html/ if ($ishtml);
     if ($body =~ /us-ascii/) {
         $body =~ s/iso-8859-1/us-ascii/;
-        $body =~ s/<([^>]+?) /<$1*/g;
-        local($Text::Wrap::columns = 76);
-        local($Text::Wrap::huge = 'overflow');
-        local($Text::Wrap::unexpand = 0);
-        $body = Text::Wrap::wrap('', '', $body);
-        $body =~ s/<([^>]+?)\*/<$1 /g;
-        $body =~ s/^[ \t]+$//mg;
     }
     return $body;
 }
