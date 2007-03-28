@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.80 2007-03-27 17:11:23 matthew Exp $
+# $Id: Page.pm,v 1.81 2007-03-28 21:49:01 matthew Exp $
 #
 
 package Petitions::Page;
@@ -392,9 +392,11 @@ sub signatories_box ($$) {
         $st = dbh()->prepare("
                 select name from signer
                 where petition_id = ? and showname = 't' and emailsent = 'confirmed'
+                    and signtime < (select deadline+1 from petition where id = ?)
                 order by signtime desc
                 limit @{[ MAX_PAGE_SIGNERS ]}");
         $reverse = 1;
+        $st->execute($p->{id}, $p->{id});
     } else {
         $html .=
             $q->p("@{[ ent($p->{name}) ]}, the Petition Creator, joined by:");
@@ -402,9 +404,8 @@ sub signatories_box ($$) {
                 select name from signer
                 where petition_id = ? and showname = 't' and emailsent = 'confirmed'
                 order by signtime");
+        $st->execute($p->{id});
     }
-
-    $st->execute($p->{id});
 
     $html .= '<ul>';
 
