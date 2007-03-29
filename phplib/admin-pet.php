@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.96 2007-03-23 11:13:42 matthew Exp $
+ * $Id: admin-pet.php,v 1.97 2007-03-29 13:31:00 matthew Exp $
  * 
  */
 
@@ -301,12 +301,17 @@ class ADMIN_PAGE_PET_MAIN {
             $status_query = "(status = 'draft' or status = 'resubmitted')";
         elseif ($status == 'rejected')
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
+        
+        $surge = '';
+        if ($status == 'live')
+            $surge = "(SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day' and emailsent = 'confirmed') AS surge,";
+
         $q = db_query("
             SELECT petition.*,
                 date_trunc('second',laststatuschange) AS laststatuschange,
                 (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
                 cached_signers AS signers,
-                (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day' and emailsent = 'confirmed') AS surge,
+                $surge
                 message.id AS message_id
             FROM petition
             LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
@@ -317,7 +322,7 @@ class ADMIN_PAGE_PET_MAIN {
         while ($r = db_fetch_array($q)) {
             $row = "";
 
-            $row .= '<td>'.$r['surge'].'</td>';
+            $row .= '<td>' . (isset($r['surge']) ? $r['surge'] : '') . '</td>';
             $row .= '<td>';
             if ($r['status']=='live' || $r['status']=='finished' || $r['status']=='rejected')
                 $row .= '<a href="' . OPTION_BASE_URL . '/' . $r['ref'] . '">';
