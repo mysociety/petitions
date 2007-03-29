@@ -78,12 +78,12 @@ sub create_html {
     my ($first, $text, $further) = /^(.*?)\n\n+(.*?)\n\n+Further information\n\n+(.*?)\n*$/s;
     $first = '<p style="font-family:vera,verdana;color:#666;border:1px solid #999;display:block;padding:10px;margin:2px;background:#fff;font-weight:bold;">' . "\n" . $first . "\n</p>";
     my $p_text = '<p style="color:#111;font-family:vera,verdana;font-size:11pt;margin-left:5px;margin-right:5px;">';
-    my $p_further = '<p style="color:#111;font-family:vera,verdana;font-size:11pt;padding-left:5px;padding-right:5px;margin-top:0;padding-top:5px">';
+    my $p_further = '<li style="color:#111;font-family:vera,verdana;font-size:11pt;padding-left:5px;padding-right:5px;margin-top:0;padding-top:5px">';
     my $a_style = '<a style="color:#4a95c2;font-family:vera,verdana;font-size:11pt;font-weight:bold;text-decoration:none;"';
     $text =~ s/\n\n/<\/p>\n\n$p_text\n/g;
     $text = "$p_text\n$text</p>";
-    $further =~ s/\n\n/<\/p>\n\n$p_further\n/g;
-    $further = "$p_further\n$further</p>";
+    $further =~ s/\n\n/<\/li>\n\n$p_further\n/g;
+    $further = "<ul>$p_further\n$further</li></ul>";
     $further =~ s/\[([^ ]*\@[^ ]*)\]/$a_style\nhref="mailto:$1">$1<\/a>/gs;
     $further =~ s/\[([^ ]*)\]/$a_style\nhref="$1">$1<\/a>/gs;
     $further =~ s/\[([^ ]*) (.*?)\]/$a_style\nhref="$1">$2<\/a>/gs;
