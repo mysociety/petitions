@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.11 2007-02-05 18:10:19 matthew Exp $
+// $Id: search.php,v 1.12 2007-03-30 22:52:35 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -58,6 +58,8 @@ function search($search) {
             print "</ul>";
             return;
         }
+    } elseif (!$search) {
+        return;
     }
        
     // Link to RSS feed

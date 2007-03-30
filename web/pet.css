@@ -5,7 +5,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: pet.css,v 1.22 2007-02-09 16:57:48 matthew Exp $
+ * $Id: pet.css,v 1.23 2007-03-30 22:52:35 matthew Exp $
  *
  */
 
@@ -87,13 +87,13 @@ div#most_popular li, div#most_recent li {
 }
 
 /* List page */
-.primeminister #content p#petition_view_tabs {
+.primeminister #content p.petition_view_tabs {
     background-color: #ffffff;
     border-bottom: solid 2px #b9adb1;
     margin: 0;
     padding: 1em 0 0.5em;
 }
-#petition_view_tabs span {
+.petition_view_tabs span {
     font-weight: bold;
     background-color: #b9adb1;
     color: #ffffff;
