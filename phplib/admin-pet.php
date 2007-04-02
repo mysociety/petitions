@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.97 2007-03-29 13:31:00 matthew Exp $
+ * $Id: admin-pet.php,v 1.98 2007-04-02 23:39:04 matthew Exp $
  * 
  */
 
@@ -703,10 +703,10 @@ EOF;
         print '<p><em>That petition has been rejected.</em></p>';
     }
 
-    function respond($id) {
-        global $q_message_id, $q_submit, $q_message_subject, $q_message_body;
-        global $q_h_message_id, $q_h_message_subject, $q_h_message_body;
-        $p = new Petition($id);
+    function respond($petition_id) {
+        global $q_message_id, $q_submit, $q_n, $q_message_subject, $q_message_body, $q_message_links, $q_html_mail;
+        global $q_h_message_id, $q_h_message_subject, $q_h_message_body, $q_h_message_links;
+        $p = new Petition($petition_id);
 
         $status = $p->status();
         if ($status != 'finished' && $status != 'live') {
@@ -716,73 +716,119 @@ EOF;
             return;
         }
 
-        $email_subject = sprintf("Government response to petition '%s'", $p->ref());
-        importparams(
-            array('message_id', '/^[1-9]\d*$/',      '',     null),
-            array('submit', '//',      '',     null),
-            array('message_subject', '//', '', $email_subject),
-            array('message_body', '//', '', '')
-        );
-        if (is_null($q_message_id))
-            $q_message_id = $q_h_message_id = db_getOne("select nextval('global_seq')");
-        elseif (!is_null(db_getOne('select id from message where id = ?', $q_message_id)))
-            $this->respond_success();
-
-        $n = db_getOne("select id from message where petition_id = ? and circumstance = 'government-response' and circumstance_count = 1", $id);
+        $n = db_getOne("select id from message where petition_id = ? and circumstance = 'government-response' and circumstance_count = 1", $petition_id);
         if (!is_null($n)) {
-            print '<p><strong>You have already sent two responses to this petition!</strong></p>';
+            print '<p><em>You have already sent two responses to this petition!</em></p>';
             return;
         }
 
-        $errors = array();
-        if ($q_submit) {
-            if (strlen($q_message_body) < 50)
-                $errors[] = 'Please enter a longer message.';
+        $email_subject = sprintf("Government response to petition '%s'", $p->ref());
+        importparams(
+            array('message_id', '/^[1-9]\d*$/',      '',     null),
+            array('message_subject', '//', '', $email_subject),
+            array('message_body', '//', '', ''),
+            array('message_links', '//', '', ''),
+            array('n', '/^[0-9]+$/',      '',     0),
+            array('submit', '//',      '',     false),
+            array('html_mail', '//', '', 0)
+        );
+        if (is_null($q_message_id)) {
+            $q_message_id = $q_h_message_id = db_getOne("select nextval('global_seq')");
+            db_commit();
         }
 
+        $errors = array();
+        if (strlen($q_message_body) < 50)
+            $errors[] = 'Please enter a longer message.';
+
+        $email = "$q_message_subject\n\n$q_message_body";
+        if ($q_message_links) {
+            $email .= "\n\n\nFurther information\n\n$q_message_links";
+        }
+        $email = str_replace("\r\n", "\n", $email);
         if ($q_submit && !sizeof($errors)) {
             $p->log_event("Admin responded to petition", http_auth_user());
-            /* User mail must be submitted with \n line endings. */
-            $q_message_body = str_replace("\r\n", "\n", $q_message_body);
-            /* Add footer with link */
-            $q_message_body .= "\n\nPetition info: " . $p->url_main();
 
+            $out = $this->respond_generate($q_html_mail ? 'email' : 'plain', $email);
             /* Got all the data we need. Just drop the announcement into the database
              * and let the send-messages script pass it to the signers. */
-            db_query("insert into message
-                    (id, petition_id, circumstance, circumstance_count, fromaddress,
-                    sendtocreator, sendtosigners, sendtolatesigners, sendtoadmin,
-                    emailsubject, emailbody)
-                values
-                    (?, ?, 'government-response',
-                    coalesce((select max(circumstance_count)
+            $id = db_getOne('select id from message where id = ? for update', $q_message_id);
+            if (is_null($id)) {
+                db_query("insert into message
+                        (id, petition_id, circumstance, circumstance_count, fromaddress,
+                        sendtocreator, sendtosigners, sendtolatesigners, sendtoadmin,
+                        emailsubject, emailbody)
+                    values (?, ?, 'government-response',
+                        coalesce((select max(circumstance_count)
                             from message where petition_id = ?
                                 and circumstance = 'government-response'), -1) + 1,
-                    'number10', true, true, false, true, ?, ?)",
-            array(
-                $q_message_id, $p->id(), $p->id(),
-                $q_message_subject, $q_message_body));
+                        'number10', true, true, false, true, ?, ?)",
+                array($q_message_id, $p->id(), $p->id(),
+                    $q_message_subject, $out)); # XXX: Need to record HTML or not somewhere!
+            }
             db_commit();
             $this->respond_success();
         } else {
-            if (sizeof($errors))
-                print '<div id="errors"><ul><li>' . 
-                    join('</li><li>' , $errors) . '</li></ul></div>';
-# XXX Next line ?>
-<p>You are responding to the petition '<?=$p->ref() ?>'.</p>
+            if ($q_n > 0) {
+                if (sizeof($errors))
+                    print '<div id="errors"><ul><li>' . 
+                        join('</li><li>' , $errors) . '</li></ul></div>';
+                print '<h2>Preview</h2>';
+                $out = $this->respond_generate($q_html_mail ? 'html' : 'plain', $email);
+                if ($q_html_mail) {
+                    $out = preg_replace('#^.*?<body>#s', '', $out);
+                    $out = preg_replace('#</body>.*$#s', '', $out);
+                    print '<div style="max-width: 50em;">' . $out . '</div>';
+                } else {
+                    print "<pre style='margin-left: 50px; padding-left: 5px; border-left: solid 10px #666666;'>$out</pre>";
+                }
+            }
+?>
+<p>You are responding to the petition '<?=$p->ref() ?>'.
+To do links, write them as e.g. <kbd>[http://www.pm.gov.uk/ Number 10 homepage]</kbd>.
+</p>
 <form name="petition_admin_respond" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
-<input type="hidden" name="respond" value="1"><input type="hidden" name="submit" value="1">
-<input type="hidden" name="petition_id" value="<?=$id ?>">
+<input type="hidden" name="respond" value="1">
+<input type="hidden" name="petition_id" value="<?=$petition_id ?>">
+<?          if ($q_h_message_id) { ?>
+<input type="hidden" name="message_id" value="<?=$q_h_message_id ?>">
+<?          } ?>
+<input type="hidden" name="n" value="<?=$q_n+1 ?>">
 <p><label for="message_subject">Subject:</label> <input name="message_subject" id="message_subject" size="40" value="<?=$q_h_message_subject ?>"></p>
-<p>Response:
-<br><textarea name="message_body" rows="20" cols="72"><?=$q_h_message_body ?></textarea></p>
-<input type="submit" name="respond" value="Respond to petition">
+<p><label for="message_body">Response:</label>
+<br><textarea id="message_body" name="message_body" rows="20" cols="72"><?=$q_h_message_body ?></textarea></p>
+<p><label for="message_links">Further Information:</label>
+<br><textarea id="message_links" name="message_links" rows="10" cols="72"><?=$q_h_message_links ?></textarea></p>
+<p><input type="checkbox" name="html_mail" value="1"<?=($q_html_mail?' checked':'')?>> Send as an HTML email?</p>
+<input type="submit" name="respond" value="Preview">
+<?          if ($q_n > 0 && !sizeof($errors)) { ?>
+<input type="submit" name="submit" value="Send">
+<?          } ?>
 </form>
+<hr>
 <?
         }
     }
+
     function respond_success() {
         print '<p><em>Your response has been recorded and will be sent out shortly.</em></p>';
+    }
+
+    function respond_generate($pp, $input) {
+        $descriptorspec = array(
+            0 => array('pipe', 'r'),
+            1 => array('pipe', 'w'),
+        );
+        $pp = proc_open("../bin/create-preview $pp", $descriptorspec, $pipes);
+        fwrite($pipes[0], $input);
+        fclose($pipes[0]);
+        $out = '';
+        while (!feof($pipes[1])) {
+            $out .= fread($pipes[1], 8192);
+        }
+        fclose($pipes[1]);
+        proc_close($pp);
+        return $out;
     }
 
     function display() {

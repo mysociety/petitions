@@ -1,0 +1,38 @@
+#!/usr/bin/perl -w -I../perllib -I../../perllib
+
+# create-html-preview:
+# Used to create HTML mail (preview)
+# 
+# Pass in, on STDIN:
+# <Subject>\n\n<Initial paragraph>\n\n\n<Paragraphs of text, separated by \n\n>
+# \n\n\n"Further information"\n\n
+# <Paragraphs of text and links, with links specified like [URL <Text for link>]>
+
+use strict;
+use Petitions::HTMLEmail;
+
+my $type = shift;
+unless ($type) {
+    print "Usage: $0 TYPE\n";
+    exit;
+}
+
+my $text = join('', <>);
+$text =~ s/\r//g;
+my ($subject) = $text =~ /^(.*)\n+/;
+$text =~ s/^$subject\n+//;
+$text =~ s/\n+$//;
+$text .= "\n\nIf you would like to opt out of receiving further mail on this or any other petitions you signed, please email [optout\@petitions.pm.gov.uk]";
+my $out;
+if ($type eq 'html') {
+    $out = Petitions::HTMLEmail::create_html($text, $subject);
+} elsif ($type eq 'plain') {
+    $out = Petitions::HTMLEmail::create_plain($text);
+} elsif ($type eq 'email') {
+    $out = Petitions::HTMLEmail::construct_email($text, $subject);
+} else {
+    die "Illegal type used!";
+}
+
+print $out;
+
