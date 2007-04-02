@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.48 2007-03-28 14:23:00 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.49 2007-04-02 10:33:26 matthew Exp $';
 
 use strict;
 
@@ -96,7 +96,7 @@ sub accept_loop () {
         );
         if ($p->{status} ne 'rejected') {
             $params{signers} = $p->{signers};
-            $params{deadline} = Petitions::pretty_deadline($p, 1);
+            $params{deadline} = $p->{deadline};
 	}
         my $html = Petitions::Page::header($q, $title, %params);
 
