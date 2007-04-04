@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# call with:
+# ./call-frobinator 2007-03-31
 
 set -e
 
@@ -11,8 +13,8 @@ mkdir -p $CACHE_DIR
 TODAY=`date +"%Y-%m-%d"`
 YESTERDAY=`date --date yesterday +"%Y-%m-%d"`
 
-#DODATE="2007-02-13"
-DODATE=$YESTERDAY
+DODATE=$1
+#DODATE=$YESTERDAY
 
 VHOST=petitions.pm.gov.uk
 LOG_FILES=`find $CACHE_DIR -type f | grep "/$VHOST-.*/" | grep $DODATE`
