@@ -6,7 +6,7 @@
 # Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: HTMLEmail.pm,v 1.1 2007-04-02 23:39:03 matthew Exp $
+# $Id: HTMLEmail.pm,v 1.2 2007-04-04 09:01:41 matthew Exp $
 #
 
 package Petitions::HTMLEmail;
@@ -118,7 +118,7 @@ sub convert_links {
 sub create_plain {
     $_ = shift;
     s/\[([^ ]*)\]/$1/gs;
-    s/\[([^ ]*) ([^]]*?)\](\.|;|,)?$/$2 - $1 $3/gsm;
+    s/\[([^ ]*) ([^]]*?)\]((?:\.|;|,)?)$/$2 - $1 $3/gsm;
     s/\[([^ ]*) (.*?)\]/$2 - $1 -/gs;
     $_ = wrap_text($_);
     return $_;

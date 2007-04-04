@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.58 2007-02-22 14:36:13 francis Exp $
+-- $Id: schema.sql,v 1.59 2007-04-04 09:01:41 matthew Exp $
 --
 
 -- global_seq
@@ -244,7 +244,7 @@ create table message (
     circumstance_count int not null default 0,
     whencreated timestamp not null default ms_current_timestamp(),
     fromaddress text not null default 'number10'
-        check (fromaddress in ('number10', 'creator')),
+        check (fromaddress in ('number10', 'number10html', 'creator')),
 
     -- who should receive it
     sendtoadmin boolean not null,

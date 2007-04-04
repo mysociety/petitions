@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.98 2007-04-02 23:39:04 matthew Exp $
+ * $Id: admin-pet.php,v 1.99 2007-04-04 09:01:42 matthew Exp $
  * 
  */
 
@@ -741,15 +741,15 @@ EOF;
         if (strlen($q_message_body) < 50)
             $errors[] = 'Please enter a longer message.';
 
-        $email = "$q_message_subject\n\n$q_message_body";
+        $email = $q_message_body;
         if ($q_message_links) {
             $email .= "\n\n\nFurther information\n\n$q_message_links";
         }
         $email = str_replace("\r\n", "\n", $email);
+
         if ($q_submit && !sizeof($errors)) {
             $p->log_event("Admin responded to petition", http_auth_user());
 
-            $out = $this->respond_generate($q_html_mail ? 'email' : 'plain', $email);
             /* Got all the data we need. Just drop the announcement into the database
              * and let the send-messages script pass it to the signers. */
             $id = db_getOne('select id from message where id = ? for update', $q_message_id);
@@ -762,9 +762,10 @@ EOF;
                         coalesce((select max(circumstance_count)
                             from message where petition_id = ?
                                 and circumstance = 'government-response'), -1) + 1,
-                        'number10', true, true, false, true, ?, ?)",
+                        ?, true, true, false, true, ?, ?)",
                 array($q_message_id, $p->id(), $p->id(),
-                    $q_message_subject, $out)); # XXX: Need to record HTML or not somewhere!
+		    $q_html_mail ? 'number10html' : 'number10',
+                    $q_message_subject, $email));
             }
             db_commit();
             $this->respond_success();
@@ -774,7 +775,8 @@ EOF;
                     print '<div id="errors"><ul><li>' . 
                         join('</li><li>' , $errors) . '</li></ul></div>';
                 print '<h2>Preview</h2>';
-                $out = $this->respond_generate($q_html_mail ? 'html' : 'plain', $email);
+                $out = $this->respond_generate($q_html_mail ? 'html' : 'plain',
+		    "$q_message_subject\n\n$email");
                 if ($q_html_mail) {
                     $out = preg_replace('#^.*?<body>#s', '', $out);
                     $out = preg_replace('#</body>.*$#s', '', $out);
