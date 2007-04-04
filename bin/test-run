@@ -24,7 +24,7 @@
 # Actually test message expiry rather than use --noexpire
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.80 2007-03-23 10:28:10 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.81 2007-04-04 09:16:43 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -54,7 +54,7 @@ Options are
     --verbose=n   Choose 0 (no progress), 1 (basic actions), 2 (full debug)
 
 Actions are a list of tests, run if present in this order:
-    main - Create petition, sign it, wait until completion, send government response
+    main - Create petition, sign it, wait until completion, send two government responses
     rejection - Make a petition, and reject it, resubmit, and reject again
     timeout - Test timeout for petitions which have been rejected once but not resubmitted
     resubmit - Make a petition, and reject it, resubmit, and approve
@@ -478,7 +478,9 @@ We are going to do exactly what you say, because obviously we would never get co
 Yours faithfully, 
 
 the PM.",
-                    }, button => 'respond') or die "Failed to submit response form";
+                    }, button => 'respond') or die "Failed to submit response preview form";
+    $wth->browser_submit_form(form_name => 'petition_admin_respond',
+                button => 'submit') or die "Failed to submit response form";
     $wth->browser_check_contents("Your response has been recorded and will be sent out shortly");
     call_send_messages();
 
@@ -488,14 +490,6 @@ the PM.",
     }
     $wth->email_get_containing('%Subject: Government response%To: '.email_n(99).'%Thank you for your petition%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
-
-    comment("Check that can't send another response");
-    $wth->browser_get($admin_url);
-    $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
-    $wth->browser_follow_link(text_regex => qr/Finished/);
-    $wth->browser_check_contents('Response sent');
-    $wth->browser_check_no_contents('petition_admin_go_respond');
-    $wth->browser_check_no_contents('petition_admin_respond');
 
     comment("Check government response is displayed on petition page");
     $wth->browser_get($base_url);
@@ -516,6 +510,57 @@ the PM.",
     $wth->browser_follow_link(text_regex => qr/Closed petitions/);
     $wth->browser_follow_link(text_regex => qr/RSS/);
     $wth->browser_check_contents($petition_text);
+
+    comment("Send 2nd response, HTML style");
+    $wth->browser_get($admin_url);
+    $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
+    $wth->browser_follow_link(text_regex => qr/Finished/);
+    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
+                fields => { }, button => 'respond') or die "Failed to submit write response button";
+    $wth->browser_submit_form(form_name => 'petition_admin_respond',
+                fields => {
+                    html_mail => 1,
+                    message_body => "Thank you for your petition. 
+
+We've changed our minds, and now we're not going to do this at all.
+
+Yours faithfully, 
+
+the PM.",
+                message_links => 'First bullet point
+
+Second bullet point'
+                    }, button => 'respond') or die "Failed to submit response preview form";
+    $wth->browser_submit_form(form_name => 'petition_admin_respond',
+                button => 'submit') or die "Failed to submit response form";
+    $wth->browser_check_contents("Your response has been recorded and will be sent out shortly");
+    call_send_messages();
+
+    comment("Check everyone gets the 2nd response; non deleted signers, creator and admin");
+    foreach my $signer_no (1488,1490) {
+        $wth->email_get_containing('%Subject: Government response%To: '.email_n($signer_no).'%Thank you for your petition%');
+    }
+    $wth->email_get_containing('%Subject: Government response%To: '.email_n(99).'%Thank you for your petition%');
+    $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
+
+    comment("Check 2nd government response is displayed on petition page");
+    $wth->browser_get($base_url);
+    $wth->browser_follow_link(text_regex => qr/View petitions/);
+    $wth->browser_follow_link(text_regex => qr/By deadline/);
+    $wth->browser_follow_link(text_regex => qr/Closed petitions/);
+    $wth->browser_check_contents('with government response');
+    $wth->browser_follow_link(text_regex => qr/$petition_text/);
+    $wth->browser_check_contents('changed our minds');
+
+    comment("Check that can't send another response");
+    $wth->browser_get($admin_url);
+    $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
+    $wth->browser_follow_link(text_regex => qr/Finished/);
+    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
+                fields => { }, button => 'respond') or die "Failed to submit write response button";
+    $wth->browser_check_contents('already sent two responses');
 }
 
 #############################################################################
@@ -645,7 +690,7 @@ sub do_timeout_test {
         detail => "Oh flip oh gosh oh golly gee. We said the word and got our knuckles rapped.",
         rawdeadline => '1 month',
         ref => 'timeouttest',
-	category => 521,
+        category => 521,
     }, {
         name => name_n(55),
         organisation => "Stiff Little Fingers",
@@ -754,7 +799,7 @@ sub do_resubmit_test {
                 detail => "If everyone did this, we'd all be much happier!",
                 rawdeadline => '2 years',
                 ref => 'resubmittest',
-		category => 521
+                category => 521
                 }, button => 'tostepyou') or die "Failed to submit step 1";
     $wth->browser_check_contents("Please change your duration so it is less than 1 year");
     $wth->browser_submit_form(form_name => 'newpetition',
@@ -998,7 +1043,9 @@ sub do_early_response_test {
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
                 fields => {
                     message_body => "Thank you for your petition. Here is my early response as requested.",
-                }, button => 'respond') or die "Failed to submit response form";
+                }, button => 'respond') or die "Failed to submit response preview form";
+    $wth->browser_submit_form(form_name => 'petition_admin_respond',
+                button => 'submit') or die "Failed to submit response form";
     $wth->browser_check_contents("Your response has been recorded and will be sent out shortly");
     call_send_messages();
 
