@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.81 2007-03-28 21:49:01 matthew Exp $
+# $Id: Page.pm,v 1.82 2007-04-12 22:18:24 matthew Exp $
 #
 
 package Petitions::Page;
@@ -85,13 +85,8 @@ sub header ($$%) {
     $out =~ s/PARAM_STAT_JS/$js/g;
     $out =~ s/PARAM_RSS_LINKS//g;
     # Currently, no need to follow links from CGI-generated pages -
-    # will also stop bots indexing showall page
-    if ($q->param('signed') || $q->param('showall')) {
-        $out =~ s/index,follow/noindex,nofollow/;
-    } else {
-        $out =~ s/index,follow/index,nofollow/;
-    }
-
+    # no need to index list of names either
+    $out =~ s/index,follow/noindex,nofollow/;
     return $out;
 }
 
