@@ -25,6 +25,7 @@ chdir $FindBin::Bin;
 
 use strict;
 require 5.8.0;
+use POSIX qw(strftime);
 use mySociety::Util;
 use mySociety::Config;
 BEGIN {
@@ -35,14 +36,21 @@ use Petitions;
 
 # print "Starting to fetch 'correct' totals at " . localtime(). "\n";
 
+# If you calculate the date, postgres will use the signtime index
+# If you use current_timestamp, it seq. scans the entire table, genius
+my @time = localtime();
+$time[1] -= 30;
+my $date = strftime("%Y-%m-%d %H:%M:%S", @time);
 my $r = dbh()->selectcol_arrayref("select id,
     (select count(*)+1 from signer 
         where petition_id=petition.id and emailsent='confirmed' and showname='t')
     from petition
     where cached_signers !=
         (select count(*)+1 from signer
-	    where petition_id=petition.id and emailsent='confirmed' and showname='t')",
-    { Columns => [1,2] } );
+            where petition_id=petition.id and emailsent='confirmed' and showname='t')
+       and id in (select distinct(petition_id) from signer
+                  where signtime > '$date')
+    ", { Columns => [1,2] } );
 my %hash = @$r;
 
 # print "Starting to update " . (@$r/2) . " cached totals at " . localtime() . "\n";
