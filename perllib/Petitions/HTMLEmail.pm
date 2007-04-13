@@ -6,7 +6,7 @@
 # Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: HTMLEmail.pm,v 1.2 2007-04-04 09:01:41 matthew Exp $
+# $Id: HTMLEmail.pm,v 1.3 2007-04-13 14:27:57 matthew Exp $
 #
 
 package Petitions::HTMLEmail;
@@ -39,8 +39,10 @@ This is a multi-part message in MIME format.
 
 --$boundary
 $plain
+
 --$boundary
 $html
+
 --$boundary--
 EOF
     return $email;
@@ -57,6 +59,7 @@ sub create_html {
     my $style_further = ' style="color:#111;font-family:vera,verdana;font-size:11pt;padding-left:5px;padding-right:5px;margin-top:0;padding-top:5px">';
     my $li_further = "<li$style_further";
     my $p_further = "<p$style_further";
+    $text =~ s/([^\n]\n)([^\n])/$1<br>$2/g;
     $text =~ s/\n\n+/<\/p>\n\n$p_text\n/g;
     $text = "$p_text\n$text</p>";
     $text = convert_links($text);

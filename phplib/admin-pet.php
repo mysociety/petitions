@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.99 2007-04-04 09:01:42 matthew Exp $
+ * $Id: admin-pet.php,v 1.100 2007-04-13 14:27:55 matthew Exp $
  * 
  */
 
@@ -101,47 +101,62 @@ class ADMIN_PAGE_PET_SEARCH {
         $this->navname = 'Search petitions';
     }
 
+    function search_petitions($q, $search) {
+        $out = '';
+        while ($r = db_fetch_array($q)) {
+            $out .= "<tr><td>$r[email]</td><td>".htmlspecialchars($r['name'])."</td><td>$r[ref]</td>";
+            $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
+            $out .= '<input type="hidden" name="confirm_petition_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm petition, move to \'draft\'">';
+            $out .= "</form></td></tr>";
+        }
+        return $out;
+    }
+
+    function search_signers($q, $search) {
+        $out = '';
+        while ($r = db_fetch_array($q)) {
+            $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td><a href=\"".OPTION_BASE_URL."/$r[ref]\">$r[ref]</a></td>";
+            $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
+            if ($r['emailsent'] == 'confirmed')
+                $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" name="remove" value="Remove signer">';
+            elseif ($r['emailsent'] == 'sent')
+                $out .= '<input type="hidden" name="confirm_signer_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm signer">';
+            $out .= "</form></td></tr>";
+        }
+        return $out;
+    }
+
     function display() {
         petition_admin_perform_actions();
-        $search = get_http_var('search');
+        $search = strtolower(get_http_var('search'));
         petition_admin_navigation(array('search'=>$search));
-        if ($search) {
-            $out = '';
-            $q = db_query("select id, ref, name, email, status
-                from petition
-                where status = 'sentconfirm'
-                and (name ilike '%'||?||'%' or email ilike '%'||?||'%')
-                order by email
-            ", array($search, $search));
-            while ($r = db_fetch_array($q)) {
-                $out .= "<tr><td>$r[email]</td><td>".htmlspecialchars($r['name'])."</td><td>$r[ref]</td>";
-                $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
-                $out .= '<input type="hidden" name="confirm_petition_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm petition, move to \'draft\'">';
-                $out .= "</form></td></tr>";
-            }
-            $q = db_query("select signer.id, ref, signer.name, signer.email, emailsent
+        $search_pet = "select id, ref, name, email, status from petition where status = 'sentconfirm' ";
+        $search_sign = "select signer.id, ref, signer.name, signer.email, emailsent
                 from signer, petition
                 where signer.petition_id = petition.id
-                and showname = 't' and emailsent in ('sent', 'confirmed')
-                and (signer.name ilike '%'||?||'%' or signer.email ilike '%'||?||'%')
-                order by signer.email
-            ", array($search, $search));
-            while ($r = db_fetch_array($q)) {
-                $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td><a href=\"".OPTION_BASE_URL."/$r[ref]\">$r[ref]</a></td>";
-                $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
-                if ($r['emailsent'] == 'confirmed')
-                        $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" name="remove" value="Remove signer">';
-                elseif ($r['emailsent'] == 'sent')
-                        $out .= '<input type="hidden" name="confirm_signer_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm signer">';
-                $out .= "</form></td></tr>";
-            }
-            if ($out) {
-                    print "<table cellpadding=3 border=0><tr><th>Email</th><th>Name</th><th>Petition</th><th>Actions</th></tr>";
-                print $out;
-                print "</table>";
-            }
-            else print '<p><em>No matches</em></p>';
+                and showname = 't' and emailsent in ('sent', 'confirmed') ";
+        $out = '';
+        if ($search && validate_email($search)) {
+            $q = db_query($search_pet . "and lower(email) = ?", array($search));
+            $out = $this->search_petitions($q, $search);
+            $q = db_query($search_sign . "and lower(signer.email) = ?", array($search));
+            $out .= $this->search_signers($q, $search);
+        } elseif ($search) {
+            $q = db_query($search_pet . "
+                and (name ilike '%'||?||'%' or lower(email) ilike '%'||?||'%')
+                order by lower(email)", array($search, $search));
+            $out = $this->search_petitions($q, $search);
+            $q = db_query($search_sign . "
+                and (signer.name ilike '%'||?||'%' or lower(signer.email) ilike '%'||?||'%')
+                order by lower(signer.email)", array($search, $search));
+            $out = $this->search_signers($q, $search);
         }
+        if ($out) {
+            print "<table cellpadding=3 border=0><tr><th>Email</th><th>Name</th><th>Petition</th><th>Actions</th></tr>";
+            print $out;
+            print "</table>";
+        }
+        else print '<p><em>No matches</em></p>';
     }
 }
 
@@ -764,7 +779,7 @@ EOF;
                                 and circumstance = 'government-response'), -1) + 1,
                         ?, true, true, false, true, ?, ?)",
                 array($q_message_id, $p->id(), $p->id(),
-		    $q_html_mail ? 'number10html' : 'number10',
+                    $q_html_mail ? 'number10html' : 'number10',
                     $q_message_subject, $email));
             }
             db_commit();
@@ -776,7 +791,7 @@ EOF;
                         join('</li><li>' , $errors) . '</li></ul></div>';
                 print '<h2>Preview</h2>';
                 $out = $this->respond_generate($q_html_mail ? 'html' : 'plain',
-		    "$q_message_subject\n\n$email");
+                    "$q_message_subject\n\n$email");
                 if ($q_html_mail) {
                     $out = preg_replace('#^.*?<body>#s', '', $out);
                     $out = preg_replace('#</body>.*$#s', '', $out);
