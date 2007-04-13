@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.100 2007-04-13 14:27:55 matthew Exp $
+ * $Id: admin-pet.php,v 1.101 2007-04-13 18:38:07 matthew Exp $
  * 
  */
 
@@ -791,7 +791,7 @@ EOF;
                         join('</li><li>' , $errors) . '</li></ul></div>';
                 print '<h2>Preview</h2>';
                 $out = $this->respond_generate($q_html_mail ? 'html' : 'plain',
-                    "$q_message_subject\n\n$email");
+		    $p->ref(), "$q_message_subject\n\n$email");
                 if ($q_html_mail) {
                     $out = preg_replace('#^.*?<body>#s', '', $out);
                     $out = preg_replace('#</body>.*$#s', '', $out);
@@ -831,12 +831,12 @@ To do links, write them as e.g. <kbd>[http://www.pm.gov.uk/ Number 10 homepage]<
         print '<p><em>Your response has been recorded and will be sent out shortly.</em></p>';
     }
 
-    function respond_generate($pp, $input) {
+    function respond_generate($pp, $ref, $input) {
         $descriptorspec = array(
             0 => array('pipe', 'r'),
             1 => array('pipe', 'w'),
         );
-        $pp = proc_open("../bin/create-preview $pp", $descriptorspec, $pipes);
+        $pp = proc_open("../bin/create-preview $pp $ref", $descriptorspec, $pipes);
         fwrite($pipes[0], $input);
         fclose($pipes[0]);
         $out = '';

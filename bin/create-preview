@@ -1,20 +1,27 @@
 #!/usr/bin/perl -w -I../perllib -I../../perllib
 
 # create-html-preview:
-# Used to create HTML mail (preview)
+# Used to create government response mail (preview)
 # 
-# Pass in, on STDIN:
+# Command line arguments are type (html, plain, or email), petition ref, and
+# optionally email address to send proof to.
+# Pass in, as STDIN or filename in 4th argument:
 # <Subject>\n\n<Initial paragraph>\n\n\n<Paragraphs of text, separated by \n\n>
 # \n\n\n"Further information"\n\n
 # <Paragraphs of text and links, with links specified like [URL <Text for link>]>
 
 use strict;
+use Net::SMTP;
 use Petitions::HTMLEmail;
 
-my $type = shift;
-unless ($type) {
-    print "Usage: $0 TYPE\n";
+my ($type, $ref, $email) = (shift, shift, shift);
+unless ($type && $ref) {
+    print "Usage: $0 TYPE REF [EMAIL] [FILENAME]\n";
     exit;
+}
+unless (!$email || $type eq 'email') {
+    print STDERR "Can only supply email address when TYPE is 'email'\n";
+    $email = undef;
 }
 
 my $text = join('', <>);
@@ -22,7 +29,11 @@ $text =~ s/\r//g;
 my ($subject) = $text =~ /^(.*)\n+/;
 $text =~ s/^$subject\n+//;
 $text =~ s/\n+$//;
-$text .= "\n\nIf you would like to opt out of receiving further mail on this or any other petitions you signed, please email [optout\@petitions.pm.gov.uk]";
+$text .= "
+
+[http://petitions.pm.gov.uk/$ref/ Petition information]
+
+If you would like to opt out of receiving further mail on this or any other petitions you signed, please email [optout\@petitions.pm.gov.uk]";
 my $out;
 if ($type eq 'html') {
     $out = Petitions::HTMLEmail::create_html($text, $subject);
@@ -34,5 +45,12 @@ if ($type eq 'html') {
     die "Illegal type used!";
 }
 
-print $out;
-
+if ($email) {
+    my $smtp = Net::SMTP->new('localhost');
+    $smtp->mail($email);
+    $smtp->to($email) or die "Could not set TO: $!";
+    $smtp->data($out) or die "Could not send DATA: $!";
+    $smtp->quit();
+} else {
+    print $out;
+}

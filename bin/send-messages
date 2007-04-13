@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.36 2007-04-11 16:21:30 matthew Exp $
+ * $Id: send-messages,v 1.37 2007-04-13 18:38:07 matthew Exp $
  *
  */
 
@@ -181,8 +181,7 @@ function send_pending_messages() {
         if ($msg['circumstance'] == 'rejected-once' || $msg['circumstance'] == 'rejected-again'
             || $msg['circumstance'] == 'rejected-timeout') {
             if ($data['rejection_reason'])
-                $data['rejection_reason'] = "\nFurther information: '" . $data['rejection_reason']
-                    . "'";
+                $data['rejection_reason'] = "\nFurther information: " . $data['rejection_reason'];
         }
 
         // Case when it is a copy sent to creator
