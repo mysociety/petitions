@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.101 2007-04-13 18:38:07 matthew Exp $
+ * $Id: admin-pet.php,v 1.102 2007-04-13 18:46:38 matthew Exp $
  * 
  */
 
@@ -105,6 +105,7 @@ class ADMIN_PAGE_PET_SEARCH {
         $out = '';
         while ($r = db_fetch_array($q)) {
             $out .= "<tr><td>$r[email]</td><td>".htmlspecialchars($r['name'])."</td><td>$r[ref]</td>";
+            $out .= '<td>' . prettify($r['creationtime']) . '</td>';
             $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
             $out .= '<input type="hidden" name="confirm_petition_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm petition, move to \'draft\'">';
             $out .= "</form></td></tr>";
@@ -116,6 +117,7 @@ class ADMIN_PAGE_PET_SEARCH {
         $out = '';
         while ($r = db_fetch_array($q)) {
             $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td><a href=\"".OPTION_BASE_URL."/$r[ref]\">$r[ref]</a></td>";
+            $out .= '<td>' . prettify($r['signtime']) . '</td>';
             $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
             if ($r['emailsent'] == 'confirmed')
                 $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" name="remove" value="Remove signer">';
@@ -130,11 +132,13 @@ class ADMIN_PAGE_PET_SEARCH {
         petition_admin_perform_actions();
         $search = strtolower(get_http_var('search'));
         petition_admin_navigation(array('search'=>$search));
-        $search_pet = "select id, ref, name, email, status from petition where status = 'sentconfirm' ";
-        $search_sign = "select signer.id, ref, signer.name, signer.email, emailsent
-                from signer, petition
-                where signer.petition_id = petition.id
-                and showname = 't' and emailsent in ('sent', 'confirmed') ";
+        $search_pet = "select id, ref, name, email, status, date_trunc('second', creationtime) as creationtime
+            from petition where status = 'sentconfirm' ";
+        $search_sign = "select signer.id, ref, signer.name, signer.email, emailsent,
+                date_trunc('second', signtime) as signtime
+            from signer, petition
+            where signer.petition_id = petition.id
+            and showname = 't' and emailsent in ('sent', 'confirmed') ";
         $out = '';
         if ($search && validate_email($search)) {
             $q = db_query($search_pet . "and lower(email) = ?", array($search));
@@ -152,7 +156,8 @@ class ADMIN_PAGE_PET_SEARCH {
             $out = $this->search_signers($q, $search);
         }
         if ($out) {
-            print "<table cellpadding=3 border=0><tr><th>Email</th><th>Name</th><th>Petition</th><th>Actions</th></tr>";
+            print "<table cellpadding=3 border=0><tr><th>Email</th><th>Name</th>
+                <th>Petition</th><th>Creation time</th><th>Actions</th></tr>";
             print $out;
             print "</table>";
         }
@@ -791,7 +796,7 @@ EOF;
                         join('</li><li>' , $errors) . '</li></ul></div>';
                 print '<h2>Preview</h2>';
                 $out = $this->respond_generate($q_html_mail ? 'html' : 'plain',
-		    $p->ref(), "$q_message_subject\n\n$email");
+                    $p->ref(), "$q_message_subject\n\n$email");
                 if ($q_html_mail) {
                     $out = preg_replace('#^.*?<body>#s', '', $out);
                     $out = preg_replace('#</body>.*$#s', '', $out);
