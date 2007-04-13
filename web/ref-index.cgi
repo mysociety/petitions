@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.49 2007-04-02 10:33:26 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.50 2007-04-13 14:39:26 matthew Exp $';
 
 use strict;
 
@@ -97,7 +97,7 @@ sub accept_loop () {
         if ($p->{status} ne 'rejected') {
             $params{signers} = $p->{signers};
             $params{deadline} = $p->{deadline};
-	}
+        }
         my $html = Petitions::Page::header($q, $title, %params);
 
         $html .= $q->h1($q->span({-class => 'ltr'}, 'E-Petitions'));
@@ -127,8 +127,11 @@ sub accept_loop () {
 
         $html .= Petitions::Page::display_box($q, $p, detail=>1);
         $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
-        $html .= Petitions::Page::sign_box($q, $p)
-            if ($p->{status} eq 'live' && !$show_signed_box);
+        if ($p->{status} eq 'live' && !$show_signed_box) {
+            $html .= $q->h2($q->span({-class => 'ltr'}, 'Sign a petition'));
+                if $p->{response};
+            $html .= Petitions::Page::sign_box($q, $p);
+        }
         $html .= Petitions::detail($p);
         if ($p->{status} ne 'rejected') {
             $html .= Petitions::Page::signatories_box($q, $p);
