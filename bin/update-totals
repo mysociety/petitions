@@ -17,6 +17,10 @@
 # This currently takes around 2 minutes for the first query.
 # And occasionally deadlocks, sigh.
 
+# Parameters:
+# all - as first parameter, does every petition.
+# Default behaviour is to do only petitions changed in last 35 minutes.
+
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
 use lib "$FindBin::Bin/../perllib";
@@ -39,8 +43,10 @@ use Petitions;
 # If you calculate the date, postgres will use the signtime index
 # If you use current_timestamp, it seq. scans the entire table, genius
 my @time = localtime();
-$time[1] -= 30;
+$time[1] -= 35;
 my $date = strftime("%Y-%m-%d %H:%M:%S", @time);
+my $date_part = " and id in (select distinct(petition_id) from signer where signtime > '$date') ";
+$date_part = "" if ($ARGV[0] && $ARGV[0] eq "all");
 my $r = dbh()->selectcol_arrayref("select id,
     (select count(*)+1 from signer 
         where petition_id=petition.id and emailsent='confirmed' and showname='t')
@@ -48,8 +54,7 @@ my $r = dbh()->selectcol_arrayref("select id,
     where cached_signers !=
         (select count(*)+1 from signer
             where petition_id=petition.id and emailsent='confirmed' and showname='t')
-       and id in (select distinct(petition_id) from signer
-                  where signtime > '$date')
+        $date_part
     ", { Columns => [1,2] } );
 my %hash = @$r;
 
