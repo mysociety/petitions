@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.37 2007-04-13 18:38:07 matthew Exp $
+ * $Id: send-messages,v 1.38 2007-04-16 09:45:19 matthew Exp $
  *
  */
 
@@ -16,8 +16,8 @@ $short_opts = '';
 $long_opts = array('verbose','help');
 
 # XXX: Roll-on doing it in code!
-# trident, IDcards, traveltax, CensusInfoFreed, Photography, SaveTheReds, DC-Stephen-Oake, SirBobPaisley
-$separate_mailout_petitions = " and (message.petition_id not in (97,138,27794,161913,2579595,1063764,568,124420))";
+# trident, IDcards, traveltax, CensusInfoFreed, Photography, SaveTheReds, DC-Stephen-Oake, SirBobPaisley, wimbledon
+$separate_mailout_petitions = " and (message.petition_id not in (97,138,27794,161913,2579595,1063764,568,124420,2786467))";
 
 chdir(dirname($_SERVER['SCRIPT_FILENAME']));
 require_once '../conf/general';
