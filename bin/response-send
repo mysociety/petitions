@@ -235,7 +235,7 @@ function fetch_message($message_id)
         0 => array('pipe', 'r'),
         1 => array('pipe', 'w'),
     );
-    $result = proc_open("../bin/create-preview $type $message_details[petition_id]", $descriptorspec, $pipes);
+    $result = proc_open("../bin/create-preview $type $message_details[ref]", $descriptorspec, $pipes);
     fwrite($pipes[0], $message_details['emailsubject']);
     fwrite($pipes[0], "\n\n");
     fwrite($pipes[0], $message_details['emailbody']);
