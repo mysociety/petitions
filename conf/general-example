@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.16 2006-11-24 15:00:12 matthew Exp $
+ * $Id: general-example,v 1.17 2007-04-18 09:35:36 keith Exp $
  * 
  */
 
@@ -24,6 +24,12 @@ define('OPTION_PET_DB_PASS', '');
 define('OPTION_PET_DB_HOST', null);
 define('OPTION_PET_DB_PORT', null);
 define('OPTION_PHP_MAINDB', 'PET');
+
+// Response-send configuration details
+define('OPTION_PET_RESPONSE_SEND_BATCH_SIZE', 250); // How many recipients we fetch and pump
+define('OPTION_PET_RESPONSE_SEND_MAX_BATCHES', 8);  // How many batchs to get at once
+define('OPTION_PET_RESPONSE_SEND_LOAD_THRESHOLD', 8); // Load above which we stop getting batches
+define('OPTION_PET_RESPONSE_SEND_MAIL_QUEUE_THRESHOLD', 6000); // Recipients on queue above which we don't put any more
 
 // Process id files for daemons
 define('OPTION_PETSIGNUPD_PIDFILE', '/var/run/petsignupd.pid');
@@ -50,11 +56,20 @@ define('OPTION_WEB_DOMAIN', 'www.---.com');
 define('OPTION_BASE_URL', 'http://www.---.com');
 define('OPTION_ADMIN_URL', 'https://secure.---.com');
 
-// Domain name for emails to current website
+// Domain name for emails to current website (email this for help etc)
 define('OPTION_EMAIL_DOMAIN', '---.com');
 define('OPTION_CONTACT_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
 define('OPTION_CONTACT_NAME', 'Name for From line');
 define('OPTION_TEST_EMAIL_PREFIX', 'petharness');
+
+// Email details for mass emails (response-send)
+define('OPTION_RESPONSE_SEND_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
+define('OPTION_RESPONSE_SEND_NAME', 'Name for From line');
+define('OPTION_RESPONSE_TO_NAME', 'Name for To line'); // Since we don't send individually
+
+// Email details for approval emails etc (send-messages)
+define('OPTION_GENERAL_SEND_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
+define('OPTION_GENERAL_SEND_NAME', 'Name for From line');
 
 // Optional originating IP and HELO name for SMTP connections
 define('OPTION_EMAIL_SOURCE_IP', '0.0.0.0');
