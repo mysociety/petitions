@@ -24,7 +24,7 @@
 # Actually test message expiry rather than use --noexpire
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.81 2007-04-04 09:16:43 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.82 2007-04-18 12:04:48 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -250,10 +250,7 @@ sub do_create_part {
     comment("Create a new petition");
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
     $wth->browser_check_contents("Before creating a new petition");
-    $wth->browser_submit_form(form_name => 'pet_search',
-        fields => { q => 'random words' }) or die "Failed to submit search";
-    $wth->browser_check_contents("could not find any petitions");
-    $wth->browser_submit_form(form_name => 'newpetition');
+    $wth->browser_get('/new?tostepmain=1'); # Search is external, so must be skipped
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => $fields1,
@@ -788,10 +785,7 @@ sub do_resubmit_test {
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/Create a Petition/);
     $wth->browser_check_contents("Before creating a new petition");
-    $wth->browser_submit_form(form_name => 'pet_search',
-        fields => { q => 'random words' }) or die "Failed to submit search";
-    $wth->browser_check_contents("could not find any petitions");
-    $wth->browser_submit_form(form_name => 'newpetition');
+    $wth->browser_get('/new?tostepmain=1'); # Search is external, so must be skipped
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => {
