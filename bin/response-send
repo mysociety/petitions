@@ -73,8 +73,8 @@ Usage: response-send [--verbose]
     $max_batches_to_fetch = OPTION_PET_RESPONSE_SEND_MAX_BATCHES;   # How many batchs to get at once
     $load_threshold = OPTION_PET_RESPONSE_SEND_LOAD_THRESHOLD;      # Load above which we stop getting batches
     $exim_recipient_threshold=OPTION_PET_RESPONSE_SEND_MAIL_QUEUE_THRESHOLD; # Exim queue recipients above which we stop getting batches
-    $from_line = OPTION_RESPONSE_SEND_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # From address for sending the emails
-    $to_line = OPTION_RESPONSE_SEND_TO_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # From address for sending the emails
+    $from_line = OPTION_RESPONSE_SEND_FROM_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # From address for sending the emails
+    $to_line = OPTION_RESPONSE_SEND_TO_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # To address for sending the emails
 
 #Initialise variables
     $queue_batches_to_fetch  = 0;
