@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.38 2007-04-16 09:45:19 matthew Exp $
+ * $Id: send-messages,v 1.39 2007-04-18 09:47:15 keith Exp $
  *
  */
 
@@ -194,12 +194,57 @@ function send_pending_messages() {
 
         // Send with template or raw appropriately
         $f = false;
-        if (isset($msg['emailtemplatename'])) {
+        if (isset($msg['emailtemplatename']))
+        {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
             $f = pet_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $headers);
-        } else {
-            verbose("sending message #${msg['id']} as raw email, subject '${msg['emailsubject']}'");
-            $f = pet_send_email($petition->creator_email(), $msg['emailsubject'], $msg['emailbody'], $headers);
+        }
+        else
+        {
+            // We assume that this is now a government response
+            $subject = "";
+
+            if ($msg['fromaddress'] == 'number10html')
+            {
+                $type = 'email';
+            }
+            else
+            {   
+                $type = 'plain';
+                $subject = "Subject: " . $msg['emailsubject'] . "\n";
+            }
+
+            $descriptorspec = array(
+                0 => array('pipe', 'r'), 
+                1 => array('pipe', 'w'),
+            );
+            $result = proc_open("./create-preview $type $msg[petition_id]", $descriptorspec, $pipes);
+
+            fwrite($pipes[0], $msg['emailsubject']);
+            fwrite($pipes[0], "\n\n");
+            fwrite($pipes[0], $msg['emailbody']);
+            fclose($pipes[0]);
+            $out = '';
+            while (!feof($pipes[1]))
+            {
+                $out .= fread($pipes[1], 8192);
+            }
+            fclose($pipes[1]);
+            proc_close($result);
+
+            verbose("sending message #${msg['id']} as raw $type to evel_send, subject '${msg['emailsubject']}'");
+
+            # Doing this manually since this will be the only case where it happens.
+            # All other HTML email cases are shifted by the response-send script which
+            # goes direct to exim instead of through EvEl.
+
+            $date = "Date: " . date("r") . "\n";
+            $from = "From: " . OPTION_GENERAL_SEND_NAME . "<" . OPTION_GENERAL_SEND_EMAIL . ">\n";
+            $to = "To: " . $petition->creator_email() . "\n";
+            $precedence = "Precedence: bulk\n";
+
+            $out = $from . $to . $date . $precedence . $subject . $out;
+            $f = evel_send($out, $petition->creator_email());
         }
 
         // Store success
@@ -229,6 +274,7 @@ function send_pending_messages() {
                     petition.id as petition_id
                 from message, petition, signer
                 where sendtosigners
+                and emailtemplatename !='' 
                     and message.petition_id = signer.petition_id
                     and message.petition_id = petition.id
                     and sendtolatesigners = 'f'
@@ -248,7 +294,6 @@ function send_pending_messages() {
          * body of the mail over the wire once for each row. Should do a
          * subquery for it and cache the result. */
 
-    $latesigners = array();
     while ($r = db_fetch_array($q)) {
         /* Grab a lock. */
         db_query("lock table message_signer_recipient in exclusive mode");
@@ -278,16 +323,9 @@ function send_pending_messages() {
             error("Unknown 'from' in message " . $r['id'] . ": " . $msg['fromaddress']);
         }
 
-        if (isset($r['emailtemplatename'])) {
-            $data = $petition->data;
-            verbose("sending message #${r['id']} using email template '${r['emailtemplatename']}'");
-            $f = pet_send_email_template($r['signer_email'], $r['emailtemplatename'], $data, $headers);
-        } else {
-            # XXX: Will currently send HTML mail as normal mail
-            $emailbody = $r['emailbody'];
-            verbose("sending message #${r['id']} as raw email, subject '${r['emailsubject']}'");
-            $f = pet_send_email($r['signer_email'], $r['emailsubject'], $emailbody, $headers);
-        }
+        $data = $petition->data;
+        verbose("sending message #${r['id']} using email template '${r['emailtemplatename']}'");
+        $f = pet_send_email_template($r['signer_email'], $r['emailtemplatename'], $data, $headers);
 
         if ($f) {
             db_query('
