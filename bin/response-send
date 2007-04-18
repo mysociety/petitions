@@ -1,0 +1,339 @@
+#!/usr/bin/php -q
+<?php
+/*
+ * response-send
+ * Run from cron regularly to send out Government responses to petitions
+ * 
+ * This script will send out messages that are marked 'government-response'
+ * and will do this by injecting them, with up to 250 recipients, directly
+ * into Exim. This means we do one db_commit per 250 signers.
+ * 
+ * It will check the load and the exim queue. If over a limit it wont
+ * batch any more.
+ *
+ * It can run from several servers at once (please ensure all servers
+ * are whitelisted) and uses the message_signer_recipient as it's
+ * lock.
+ * 
+ * To be explicit, this script does not send messages from the creator
+ * since we currently don't do that. This feature should be simple to add.
+ *
+ * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+ * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
+ *
+ * $Id: response-send
+ *
+ */
+
+# TODO
+
+# Remove excessive output in send_messages
+# Petition link (/111?)
+# Comment everything
+# Factor out the html/plain email send routine
+
+
+$short_opts = '';
+$long_opts = array('verbose','help');
+
+chdir(dirname($_SERVER['SCRIPT_FILENAME']));
+require_once '../conf/general';
+require_once "../phplib/petcli.php";
+require_once '../phplib/fns.php';
+require_once '../../phplib/db.php';
+
+$switches = $options[0];
+$args = $options[1];
+
+$verbose = 0;
+
+foreach ($switches as $switch)
+{
+    if ($switch[0]=='--verbose') $verbose = 1;
+    if ($switch[0]=='--help')
+    {
+?>
+
+No10 Petitions response sending script. This is responsible for sending
+out government responses to petitions. It should be run periodically from cron.
+
+Usage: response-send [--verbose]
+
+--help      Display this help message
+--verbose   Display more information
+
+<?
+    exit;
+    }
+}
+
+
+# Values to set to customise this script
+    $batch_size = OPTION_PET_RESPONSE_SEND_BATCH_SIZE;              # How many recipients we fetch and pump
+    $max_batches_to_fetch = OPTION_PET_RESPONSE_SEND_MAX_BATCHES;   # How many batchs to get at once
+    $load_threshold = OPTION_PET_RESPONSE_SEND_LOAD_THRESHOLD;      # Load above which we stop getting batches
+    $exim_recipient_threshold=OPTION_PET_RESPONSE_SEND_MAIL_QUEUE_THRESHOLD; # Exim queue recipients above which we stop getting batches
+    $from_line = OPTION_RESPONSE_SEND_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # From address for sending the emails
+    $to_line = OPTION_RESPONSE_SEND_TO_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # From address for sending the emails
+
+#Initialise variables
+    $queue_batches_to_fetch  = 0;
+    $load_average_one_minute = $load_threshold;
+    $exim_recipients     = $exim_recipient_threshold;
+    $batched_smtp        = "";
+
+    # This is a left-over from a previous script. Shouldn't need to change now.
+    # We extracted the lists manually and sent them manually so the message_signer_recipient
+    # was not updated.
+    # trident, IDcards, traveltax, CensusInfoFreed, Photography, SaveTheReds, DC-Stephen-Oake, SirBobPaisley, wimbledon
+    $separate_mailout_petitions = " and (message.petition_id not in (97,138,27794,161913,2579595,1063764,568,124420,2786467))";
+
+set_machine_load_values();
+set_number_of_queue_batches_to_fetch();
+db_connect();
+$message_array = fetch_list_of_messages();
+
+while((list($counter, $current_message_row) = each ($message_array)) && ($queue_batches_to_fetch > 0))
+{
+    $current_message_id = $current_message_row['id'];
+    $current_petition_id = $current_message_row['petition_id'];
+
+    verbose("main sending loop: MessageID: $current_message_id\n");
+    $current_message = fetch_message($current_message_id);
+    $message_complete=false;
+
+    # Now loop around sending batches until we reach batch
+    # limit or we run out of signers
+    while(! $message_complete && ($queue_batches_to_fetch > 0))
+    {
+        lock_recipient_table();
+        $batch_email_address_list = fetch_queue_batch($current_message_id, $current_petition_id);
+        $number_of_email_addresses = count($batch_email_address_list);
+        verbose("Doing batch $queue_batches_to_fetch - message - $current_message_id - ($number_of_email_addresses signers)\n");
+        if($number_of_email_addresses == 0)
+        {
+            $message_complete=true;
+            continue;
+        }
+        else if($number_of_email_addresses < $batch_size)
+        {
+            $message_complete=true;
+        }
+
+        $exim_succeeded = pump_batch_to_exim($batch_email_address_list, $current_message);
+
+        if($exim_succeeded)
+        {
+            update_recipient_table($batch_email_address_list, $current_message);
+            db_commit();
+        }
+        else
+        {
+            db_commit();
+            print("It's all got a bit tricky with exim\n");
+            exit();
+        }
+        $queue_batches_to_fetch--;
+    }
+}
+
+
+
+function verbose($str)
+{
+    global $verbose;
+    if ($verbose)
+        fwrite(STDERR, "send-messages: $str\n");
+}
+
+function error($str)
+{
+    fwrite(STDERR, "send-messages: ERROR: $str\n");
+}
+
+function fetch_list_of_messages()
+{
+    global $separate_mailout_petitions;
+    global $max_batches_to_fetch;
+
+    # This should produce a list of message ids that have signers
+    # waiting for an email.
+    $list_of_messages = db_getAll("
+        SELECT message.id,message.petition_id
+                FROM message, petition, signer
+        WHERE sendtosigners
+            AND message.circumstance='government-response'
+                    AND message.petition_id = signer.petition_id
+                    AND message.petition_id = petition.id
+                    AND signer.signtime < message.whencreated
+            AND sendtolatesigners = 'f'
+                    AND (select signer_id
+                        FROM message_signer_recipient
+                        WHERE message_id = message.id
+                            AND signer_id = signer.id) IS null
+                    AND signer.emailsent = 'confirmed'
+                    AND signer.showname = 't'
+                    AND lower(signer.email) NOT IN (SELECT lower(email) FROM optout)
+                    $separate_mailout_petitions
+        GROUP BY message.id,message.petition_id
+        LIMIT $max_batches_to_fetch
+        ");
+
+    return ($list_of_messages);
+}
+
+function set_machine_load_values()
+{
+    global $exim_recipients;
+    global $load_average_one_minute;
+    
+    $exim_recipients = shell_exec("exim4 -bpru | grep '^          ' | wc -l");
+    print("response-send - set_machine_load_values - Recipients on exim queue: $exim_recipients");
+
+    # And what is it's load average
+
+    $load_average_one_minute = shell_exec("uptime | cut -d ' ' -f14 | cut -d',' -f 1");
+    print("response-send - set_machine_load_values - Load average on this machine: $load_average_one_minute");
+}
+
+function set_number_of_queue_batches_to_fetch()
+{
+    global $exim_recipients;
+    global $exim_recipient_threshold;
+    global $load_average_one_minute;
+    global $load_threshold;
+    global $queue_batches_to_fetch;
+    global $max_batches_to_fetch;
+
+    if(($exim_recipients < $exim_recipient_threshold) && ($load_average_one_minute < $load_threshold))
+    {
+        $queue_batches_to_fetch = $max_batches_to_fetch;
+    }
+}
+
+function lock_recipient_table()
+{
+    db_query("lock table message_signer_recipient in exclusive mode");
+}
+
+function fetch_message($message_id)
+{
+    $message_details = db_getRow("SELECT message.* FROM message WHERE message.id=$message_id");
+    $headers = "";
+
+    if ($message_details['fromaddress'] == 'number10html')
+    {
+        $type = 'email';
+    }
+    else 
+    {
+        $type = 'plain';
+        $headers = "Subject: " . $message_details['emailsubject'] . "\n";
+    }
+
+    $descriptorspec = array(
+        0 => array('pipe', 'r'),
+        1 => array('pipe', 'w'),
+    );
+    $result = proc_open("../bin/create-preview $type $message_details[petition_id]", $descriptorspec, $pipes);
+    fwrite($pipes[0], $message_details['emailsubject']);
+    fwrite($pipes[0], "\n\n");
+    fwrite($pipes[0], $message_details['emailbody']);
+    fclose($pipes[0]);
+    $out = '';
+    while (!feof($pipes[1])) {
+        $out .= fread($pipes[1], 8192);
+    }
+    fclose($pipes[1]);
+    proc_close($result);
+    $message_details['emailoutput'] = $headers . $out;
+
+    return $message_details;
+}
+
+function fetch_queue_batch($message_id, $petition_id)
+{
+    global $batch_size;
+
+    $batch_email_addresses = db_getAll("
+        SELECT signer.id AS signer_id,
+                    signer.name AS signer_name,
+                    signer.email AS signer_email,
+                    extract(epoch FROM signer.signtime) - extract(epoch FROM message.whencreated) AS howlongago,
+                    (sendtolatesigners AND signer.signtime >= message.whencreated) AS islatesigner,
+                    petition.ref,
+                    petition.id AS petition_id
+                FROM message, petition, signer
+                WHERE signer.petition_id = $petition_id
+            AND message.id = $message_id
+                    AND message.petition_id = signer.petition_id
+                    AND message.petition_id = petition.id
+                    AND (sendtolatesigners OR signer.signtime < message.whencreated)
+                    AND (select signer_id
+                        FROM message_signer_recipient
+                        WHERE message_id = message.id
+                            AND signer_id = signer.id) IS null
+                    AND signer.emailsent = 'confirmed'
+                    AND signer.showname = 't'
+                    AND lower(signer.email) NOT IN (SELECT lower(email) FROM optout)
+        LIMIT $batch_size
+                ");
+
+    return $batch_email_addresses;
+}
+
+function pump_batch_to_exim($list_of_email_addresses, $current_message)
+{
+    global $from_line;
+    global $to_line;
+
+    $smtp_succeeded = true;
+
+    # Construct message
+    $batched_smtp = "EHLO localhost\n";
+    $batched_smtp = $batched_smtp . "MAIL FROM: $from_line\n";
+    while(list($counter, $current_signer_row) = each ($list_of_email_addresses))
+    {
+        $batched_smtp = $batched_smtp . "RCPT TO: $current_signer_row[signer_email]\n";
+    }
+
+    $batched_smtp = $batched_smtp . "DATA
+From: $from_line
+To: $to_line
+Precedence: bulk
+$current_message[emailoutput]
+.
+";
+
+    $exim_handle = popen('/usr/sbin/exim4 -bS','w') or ( log($php_errormsg) and $smtp_succeeded=false);
+    if (-1 == fputs($exim_handle,"$batched_smtp"))
+    {
+        log("Exim failed to take the batch.");
+        $smtp_succeeded = false;
+    }
+    # The line below seems to fail because exim has already taken the message
+    # and closed the connection. For the moment just attempting close and ignoring
+    # the error.
+    #pclose($exim_handle) or die("Exim failed to take the batch. Stopping.");
+
+    pclose($exim_handle);
+    return $smtp_succeeded;
+}
+
+function update_recipient_table($batch_email_address_list, $current_message)
+{
+    $current_message_id = $current_message['id'];
+    
+    while(list($counter, $current_email_row) = each ($batch_email_address_list))
+    {
+        verbose("INSERT INTO message_signer_recipient (message_id, signer_id) $current_message_id  $current_email_row[signer_id]\n");
+        db_query('
+        INSERT INTO message_signer_recipient (message_id, signer_id)
+        values (?, ?)',
+            $current_message_id,
+            $current_email_row['signer_id']
+        );
+    }
+}
+
+
