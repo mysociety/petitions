@@ -66,7 +66,7 @@ Usage: response-send [--verbose]
 
 
 # Values to set to customise this script
-    $batch_size = 3; #OPTION_PET_RESPONSE_SEND_BATCH_SIZE;              # How many recipients we pump at a time
+    $batch_size = OPTION_PET_RESPONSE_SEND_BATCH_SIZE;              # How many recipients we pump at a time
     $load_threshold = OPTION_PET_RESPONSE_SEND_LOAD_THRESHOLD;      # Load above which we stop feeding exim
     $exim_recipient_threshold=OPTION_PET_RESPONSE_SEND_MAIL_QUEUE_THRESHOLD; # Exim queue recipients above which we stop getting batches
     $from_line = OPTION_RESPONSE_SEND_FROM_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # From address for sending the emails
