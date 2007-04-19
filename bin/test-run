@@ -16,15 +16,14 @@
 #
 # TODO: 
 # Add expat testing
-# Add search
-# Add search RSS
 # Partially rejected petitions
 # Resubmit and accept a previously partially rejected petition
 # Search by category
 # Actually test message expiry rather than use --noexpire
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
+# HTML mail test could be better
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.84 2007-04-19 08:20:43 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.85 2007-04-19 10:34:51 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -536,11 +535,10 @@ Second bullet point'
     call_send_messages();
 
     comment("Check everyone gets the 2nd response; non deleted signers, creator and admin");
-    # XXX: Doesn't really check HTMLness or the like
     foreach my $signer_no (1488,1490) {
-        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
+        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%<body>%');
     }
-    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%');
+    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%<body>%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check 2nd government response is displayed on petition page");
