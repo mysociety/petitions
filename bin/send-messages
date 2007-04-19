@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.40 2007-04-19 07:52:58 matthew Exp $
+ * $Id: send-messages,v 1.41 2007-04-19 17:25:47 matthew Exp $
  *
  */
 
@@ -184,11 +184,6 @@ function send_pending_messages() {
                 $data['rejection_reason'] = "\nFurther information: " . $data['rejection_reason'];
         }
 
-        // Case when it is a copy sent to creator
-        if ($msg['sendtosigners'] == 't' && in_array($msg['circumstance'], array('general-announce') )) {
-            $msg['emailbody'] = sprintf(_("[ This is a copy of the message you have just sent to everyone who signed your petition %s ]\n\n%s"), $petition->url_main(), $msg['emailbody']);
-        }
-
         // Make any extra headers
         $headers = array();
 
@@ -231,84 +226,6 @@ function send_pending_messages() {
                     values (?, ?)', array($msg['id'], $petition->id()));
         else
             error("failed to send message #${msg['id']} to creator of petition #" . $petition->id() . " (" . $petition->ref() . ")");
-
-        db_commit();
-    }
-
-    /* Messages to signers. We grab message and recipient
-     * info for each signer-message pair which is pending on delivery. */
-    verbose("sending pending signer messages");
-     
-    $q = db_query("
-                select message.*,
-                    signer.id as signer_id,
-                    signer.name as signer_name,
-                    signer.email as signer_email,
-                    extract(epoch from signer.signtime)
-                        - extract(epoch from message.whencreated) as howlongago,
-                    petition.ref,
-                    petition.id as petition_id
-                from message, petition, signer
-                where sendtosigners
-                and emailtemplatename !='' 
-                    and message.petition_id = signer.petition_id
-                    and message.petition_id = petition.id
-                    and sendtolatesigners = 'f'
-                    and signer.signtime < message.whencreated
-                    and (select signer_id
-                        from message_signer_recipient
-                        where message_id = message.id
-                            and signer_id = signer.id) is null
-                    and signer.emailsent = 'confirmed'
-                    and signer.showname = 't'
-                    and lower(signer.email) not in (select lower(email) from optout)
-                    $separate_mailout_petitions
-                order by whencreated desc");
-        # XXX: Should optout be done like this?
-
-        /* XXX ugly. For a raw email we will transmit the (possibly large)
-         * body of the mail over the wire once for each row. Should do a
-         * subquery for it and cache the result. */
-
-    while ($r = db_fetch_array($q)) {
-        /* Grab a lock. */
-        db_query("lock table message_signer_recipient in exclusive mode");
-        db_getOne('select id from signer where id = ? for update', $r['id']);
-
-        /* Check that the message hasn't already been sent. */
-        $f = db_getOne('
-                    select message_id
-                    from message_signer_recipient
-                    where message_id = ? and signer_id = ?',
-                    array($r['id'], $r['signer_id']));
-
-        if (!is_null($f)) {
-            verbose("message #${r['id']} sent to signer #${r['signer_id']} while waiting for lock; skipping");
-            continue;
-        }
-
-        verbose("message #${r['id']} to be sent to signer #${r['signer_id']}");
-
-        // Make any extra headers
-        $petition = new Petition($r['ref']);
-
-        $headers = array();
-        if ($r['fromaddress'] == 'number10' || $r['fromaddress'] == 'number10html') {
-            // the default in pet_send_email_internal is from Number10
-        } else {
-            error("Unknown 'from' in message " . $r['id'] . ": " . $msg['fromaddress']);
-        }
-
-        $data = $petition->data;
-        verbose("sending message #${r['id']} using email template '${r['emailtemplatename']}'");
-        $f = pet_send_email_template($r['signer_email'], $r['emailtemplatename'], $data, $headers);
-
-        if ($f) {
-            db_query('
-                insert into message_signer_recipient (message_id, signer_id)
-                values (?, ?)', array($r['id'], $r['signer_id']));
-        } else
-            error("failed to send message #${r['id']} to signer #${r['signer_id']} of petition #${r['petition_id']}");
 
         db_commit();
     }

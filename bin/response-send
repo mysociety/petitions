@@ -3,13 +3,13 @@
 /*
  * response-send
  * Run from cron regularly to send out Government responses to petitions
- * 
- * This script will send out messages that are marked 'government-response'
+ *
+ * This script will send out messages that are marked for signers
  * and will do this by injecting them, with up to 250 recipients, directly
  * into Exim. This means we do one db_commit per 250 signers.
- * 
- * It will check the load and the exim queue. If over a limit it wont
- * batch any more.
+ *
+ * It will check the load and, if over a limit it wont batch any more for
+ * a while.
  *
  * Only one copy should be run at once otherwise it is quite likely that
  * duplicate messages will be sent out.
@@ -17,10 +17,10 @@
  * To be explicit, this script does not send messages from the creator
  * since we currently don't do that. This feature should be simple to add.
  *
- * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+ * Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
  * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: response-send
+ * $Id: response-send,v 1.9 2007-04-19 17:25:47 matthew Exp $
  *
  */
 
@@ -44,11 +44,9 @@ $args = $options[1];
 
 $verbose = 0;
 
-foreach ($switches as $switch)
-{
+foreach ($switches as $switch) {
     if ($switch[0]=='--verbose') $verbose = 1;
-    if ($switch[0]=='--help')
-    {
+    if ($switch[0]=='--help') {
 ?>
 
 No10 Petitions response sending script. This is responsible for sending
@@ -60,242 +58,159 @@ Usage: response-send [--verbose]
 --verbose   Display more information
 
 <?
-    exit;
+        exit;
     }
 }
 
+# Initialise variables
+$load_check_limit = 5000; # After how many signers do we check for machine load
+$iterations = $load_check_limit; # Counter to check the machine load occasionally
+$messages = array(); # Global array of message bodies
 
-# Values to set to customise this script
-    $batch_size = OPTION_PET_RESPONSE_SEND_BATCH_SIZE;              # How many recipients we pump at a time
-    $load_threshold = OPTION_PET_RESPONSE_SEND_LOAD_THRESHOLD;      # Load above which we stop feeding exim
-    $exim_recipient_threshold=OPTION_PET_RESPONSE_SEND_MAIL_QUEUE_THRESHOLD; # Exim queue recipients above which we stop getting batches
-    $from_line = OPTION_RESPONSE_SEND_FROM_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # From address for sending the emails
-    $to_line = OPTION_RESPONSE_SEND_TO_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # To address for sending the emails
-    $exim_binary = '/usr/sbin/exim4';
+$signer_result = do_signer_query();
+while($current_signer = db_fetch_array($signer_result)) {
+    if ($iterations == $load_check_limit) {
+        while(check_machine_load_values()) {
+            verbose("Machine load too high. Sleeping.");
+            sleep(10);
+        }
+        $iterations = 0;
+    } else {
+        $iterations++;
+    }
 
-#Initialise variables
-    $load_check_limit	 = 5000; # After how many signers do we check for machine load
-    $current_signer	 = array();
-    $messages		 = array();
-    $itterations=$load_check_limit; # Counter to check the machine load occasionally
+    $message_id = $current_signer['message_id'];
+    $signer_id = $current_signer['signer_id'];
 
-    # This is a left-over from a previous script. Shouldn't need to change now.
-    # We extracted the lists manually and sent them manually so the message_signer_recipient
-    # was not updated.
-    # trident, IDcards, traveltax, CensusInfoFreed, Photography, SaveTheReds, DC-Stephen-Oake, SirBobPaisley, wimbledon
-    $separate_mailout_petitions = " and (message.petition_id not in (97,138,27794,161913,2579595,1063764,568,124420,2786467))";
+    verbose("Got a signer - signer_id $signer_id for message $message_id");
 
+    if(!isset($messages[$message_id])) {
+        $messages[$message_id] = get_message_array($message_id);
+        $messages[$message_id]['signers'] = array();
+        $messages[$message_id]['message_body'] = create_message_body($messages[$message_id]);
+    }
+    $messages[$message_id]['signers'][$signer_id] = $current_signer['signer_email'];
+    if(sizeof($messages[$message_id]['signers']) >= OPTION_PET_RESPONSE_SEND_BATCH_SIZE) {
+        pump_message_to_exim($message_id);
+        $messages[$message_id]['signers'] = array();
+    }
 
-while (true)
-{
-	verbose("Starting run");
-	db_connect();
-	empty_arrays(); // Each time we finish a full run clear the arrays
-
-	$signer_result = do_signer_query();
-	
-	if(db_num_rows($signer_result) == 0)
-	{
-		verbose("Nothing to do. Sleeping.");
-		sleep(60);
-		continue;
-	}
-
-	while($current_signer = db_fetch_array($signer_result))
-	{
-		if ($itterations == $load_check_limit)
-		{
-			while(check_machine_load_values())
-			{
-				verbose("Machine load too high. Sleeping.");
-				sleep(60);
-			}
-			$itterations=0;
-		}
-		else
-		{
-			$itterations++;
-		}
-
-		$message_id = $current_signer['message_id'];
-		$signer_id = $current_signer['signer_id'];
-
-		verbose("Got a signer - signer_id $signer_id for message $message_id");
-
-		if(!isset($messages[$message_id]))
-		{
-			$messages[$message_id] = get_message_array($message_id);
-			$messages[$message_id]['signers'] = array();
-			$messages[$message_id]['message_body'] = create_message_body($message_id);
-		}
-		$messages[$message_id]['signers'][$signer_id] = $current_signer['signer_email'];
-		if(sizeof($messages[$message_id]['signers']) >= $batch_size)
-		{
-			verbose("Pumping $message_id with " . sizeof($messages[$message_id]['signers']) . " signers");
-			pump_message_to_exim($message_id);
-			$messages[$message_id]['signers'] = array();
-		}
-
-	}
-
-	foreach ($messages as $message_array)
-	{
-		$message_id = $message_array['id'];
-		verbose ("Number of signers left for $message_id : " . sizeof($messages[$message_id]['signers']));
-		if(sizeof($messages[$message_id]['signers']) > 0)
-		{
-			verbose("Pumping $message_id with " . sizeof($messages[$message_id]['signers']) . " signers");
-			pump_message_to_exim($message_id);
-		}
-	}
-
-	db_end();
 }
 
-
-
-# Clears everything out in preperation for next run.
-
-function empty_arrays()
-{
-	global $messages;
-	global $current_message;
-	global $current_signer;
-
-	$messages = array();
-	$current_message = array();
-	$current_signer = array();
+foreach ($messages as $message_id => $message_array) {
+    verbose ("Number of signers left for $message_id : " . sizeof($messages[$message_id]['signers']));
+    if(sizeof($messages[$message_id]['signers']) > 0) {
+        pump_message_to_exim($message_id);
+    }
 }
 
-function do_signer_query()
-{
-	global $separate_mailout_petitions;
+# ---
 
-	$result = db_query_literal("
-        SELECT signer.id AS signer_id,
-		signer.email AS signer_email,
-		message.id AS message_id
-                FROM message, petition, signer
-        WHERE sendtosigners
-            AND message.circumstance='government-response'
-	    AND message.petition_id = signer.petition_id
-	    AND message.petition_id = petition.id
-	    AND signer.signtime < message.whencreated
-	    AND sendtolatesigners = 'f'
-	    AND (select signer_id
-		FROM message_signer_recipient
-		WHERE message_id = message.id
-		AND signer_id = signer.id) IS null
-	    AND signer.emailsent = 'confirmed'
-	    AND signer.showname = 't'
-	    AND lower(signer.email) NOT IN (SELECT lower(email) FROM optout)
-	    $separate_mailout_petitions
-       ");
-
-	return($result);
+function do_signer_query() {
+    # Note: sendtosigners is enough, as only government responses are sent to signers
+    # Adding a circumstance check or an emailtemplatename check slows down this query
+    # ten-fold
+    $result = db_query_literal("
+        SELECT signer.id AS signer_id, signer.email AS signer_email,
+            message.id AS message_id
+        FROM message, signer
+        WHERE sendtosigners = 't'
+            AND message.petition_id = signer.petition_id
+            AND signer.signtime < message.whencreated
+            AND sendtolatesigners = 'f'
+            AND (select signer_id
+                FROM message_signer_recipient
+                WHERE message_id = message.id
+                AND signer_id = signer.id) IS null
+            AND signer.emailsent = 'confirmed'
+            AND signer.showname = 't'
+            AND lower(signer.email) NOT IN (SELECT lower(email) FROM optout)
+    ");
+    return $result;
 }
 
-function get_message_array($message_id)
-{
-	$message_array = db_getRow(
-			"SELECT message.*, petition.ref
-			FROM message, petition
-			WHERE message.petition_id = petition.id
-				AND message.id=?",  $message_id);
-	return $message_array;
+function get_message_array($message_id) {
+    $message_array = db_getRow(
+        "SELECT fromaddress, emailsubject, emailbody, ref
+        FROM message, petition
+        WHERE message.petition_id = petition.id
+            AND message.id=?",  $message_id);
+    return $message_array;
 }
 
-function pump_message_to_exim($message_id)
-{
-	global $from_line;
-	global $to_line;
-	global $messages;
+function pump_message_to_exim($message_id) {
+    global $messages;
+    $message = $messages[$message_id];
 
-	$smtp_succeeded = true;
+    verbose("Pumping $message_id with " . sizeof($message['signers']) . " signers");
 
-	# Construct message
-	$batched_smtp = "EHLO localhost\n";
-	$batched_smtp = $batched_smtp . "MAIL FROM: $from_line\n";
-	foreach ($messages[$message_id]['signers'] as $signer_id => $signer_email)
-	{
-		$batched_smtp = $batched_smtp . "RCPT TO: $signer_email\n";
-	        db_do('
-		INSERT INTO message_signer_recipient (message_id, signer_id)
-		values (?, ?)', $message_id, $signer_id);
+    # Construct message
+    $batched_smtp = "EHLO localhost\r\n";
+    $batched_smtp = $batched_smtp . "MAIL FROM:<" . OPTION_RESPONSE_SEND_EMAIL . ">\r\n";
+    foreach ($message['signers'] as $signer_id => $signer_email) {
+        $batched_smtp = $batched_smtp . "RCPT TO:<$signer_email>\r\n";
+        db_do('INSERT INTO message_signer_recipient (message_id, signer_id)
+            values (?, ?)', $message_id, $signer_id);
+    }
 
-	}
+    $batched_smtp .= "DATA\r\nFrom: " . OPTION_RESPONSE_SEND_FROM_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">\r\n";
+    $batched_smtp .= "To: " . OPTION_RESPONSE_SEND_TO_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">\r\nPrecedence: bulk\r\n";
+    $batched_smtp .= $message['message_body'];
+    $batched_smtp .= "\r\n.\r\n";
 
-	$batched_smtp = $batched_smtp . "DATA
-From: $from_line
-To: $to_line
-Precedence: bulk
-{$messages[$message_id]['message_body']}
-.
-";
-
-    $exim_handle = popen('/usr/sbin/exim4 -bS','w') or ( log($php_errormsg) and $smtp_succeeded=false);
-    if (-1 == fputs($exim_handle,"$batched_smtp"))
-    {
-        log("Exim failed to take the batch.");
+    $smtp_succeeded = true;
+    $exim_handle = popen('/usr/sbin/exim4 -bS','w') or ( error($php_errormsg) and $smtp_succeeded=false);
+    if ($smtp_succeeded && !fwrite($exim_handle, $batched_smtp)) {
+        error('Exim failed to take anything.');
         $smtp_succeeded = false;
     }
-    pclose($exim_handle);
-    if ($smtp_succeeded)
-    {
-    	db_commit();
-    }
-    else
-    {
-    	db_rollback();
+    if ($smtp_succeeded) {
+        $exim_exit = pclose($exim_handle);
+        if ($exim_exit == 2) {
+            # Everything went wrong
+            $smtp_succeeded = false;
+        } elseif ($exim_exit == 1) {
+            # XXX: Problem - some, but not all messages were accepted...
+	    # This script will currently accept these losses
+        }
     }
 
-    return $smtp_succeeded;
+    if ($smtp_succeeded) {
+        db_commit();
+    } else {
+        db_rollback();
+    }
 }
 
-function create_message_body($message_id)
-{   
-    global $messages;
-
-    $message_details = $messages[$message_id];
-    $headers = "";
-
-    if ($message_details['fromaddress'] == 'number10html')
-    {
+function create_message_body($message) {
+    if ($message['fromaddress'] == 'number10html') {
         $type = 'email';
-    }
-    else
-    {
+        $headers = '';
+    } else {
         $type = 'plain';
-        $headers = "Subject: " . $message_details['emailsubject'] . "\n";
+        $headers = "Subject: " . $message['emailsubject'] . "\r\n";
     }
-
-    $out = pet_create_response_email($type, $message_details['ref'], $message_details['emailsubject'], $message_details['emailbody']);
-    return ($headers . $out);
+    $out = pet_create_response_email($type, $message['ref'], $message['emailsubject'], $message['emailbody']);
+    return $headers . $out;
 }
 
 function check_machine_load_values() {
-
-    global $load_threshold;
-
     $load_average_one_minute = shell_exec("uptime | cut -d ' ' -f14 | cut -d',' -f 1");
-    verbose("set_machine_load_values - Load average on this machine: $load_average_one_minute (threshhold $load_threshold)");
-    if ($load_average_one_minute > $load_threshold) {
-	return true;
-    }
-    else {
-	return false;
+    verbose("check_machine_load_values - Load average on this machine: $load_average_one_minute");
+    if ($load_average_one_minute > OPTION_PET_RESPONSE_SEND_LOAD_THRESHOLD) {
+        return true;
+    } else {
+        return false;
     }
 }
 
-function verbose($str)
-{
+function verbose($str) {
     global $verbose;
     if ($verbose)
         fwrite(STDERR, "response-send: $str\n");
 }
 
-function error($str)
-{
+function error($str) {
     fwrite(STDERR, "response-send: ERROR: $str\n");
 }
 

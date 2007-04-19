@@ -44,6 +44,7 @@ if ($type eq 'html') {
 } else {
     die "Illegal type used!";
 }
+$out =~ s/\n/\r\n/g;
 
 if ($email) {
     my $smtp = Net::SMTP->new('localhost');
