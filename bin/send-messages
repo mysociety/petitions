@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.39 2007-04-18 09:47:15 keith Exp $
+ * $Id: send-messages,v 1.40 2007-04-19 07:52:58 matthew Exp $
  *
  */
 
@@ -194,43 +194,19 @@ function send_pending_messages() {
 
         // Send with template or raw appropriately
         $f = false;
-        if (isset($msg['emailtemplatename']))
-        {
+        if (isset($msg['emailtemplatename'])) {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
             $f = pet_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $headers);
-        }
-        else
-        {
+        } else {
             // We assume that this is now a government response
             $subject = "";
-
-            if ($msg['fromaddress'] == 'number10html')
-            {
+            if ($msg['fromaddress'] == 'number10html') {
                 $type = 'email';
-            }
-            else
-            {   
+            } else {   
                 $type = 'plain';
                 $subject = "Subject: " . $msg['emailsubject'] . "\n";
             }
-
-            $descriptorspec = array(
-                0 => array('pipe', 'r'), 
-                1 => array('pipe', 'w'),
-            );
-            $result = proc_open("./create-preview $type $msg[petition_id]", $descriptorspec, $pipes);
-
-            fwrite($pipes[0], $msg['emailsubject']);
-            fwrite($pipes[0], "\n\n");
-            fwrite($pipes[0], $msg['emailbody']);
-            fclose($pipes[0]);
-            $out = '';
-            while (!feof($pipes[1]))
-            {
-                $out .= fread($pipes[1], 8192);
-            }
-            fclose($pipes[1]);
-            proc_close($result);
+            $out = pet_create_response_email($type, $petition->ref(), $msg['emailsubject'], $msg['emailbody']);
 
             verbose("sending message #${msg['id']} as raw $type to evel_send, subject '${msg['emailsubject']}'");
 
@@ -239,7 +215,7 @@ function send_pending_messages() {
             # goes direct to exim instead of through EvEl.
 
             $date = "Date: " . date("r") . "\n";
-            $from = "From: " . OPTION_GENERAL_SEND_NAME . "<" . OPTION_GENERAL_SEND_EMAIL . ">\n";
+            $from = "From: " . OPTION_GENERAL_SEND_NAME . " <" . OPTION_GENERAL_SEND_EMAIL . ">\n";
             $to = "To: " . $petition->creator_email() . "\n";
             $precedence = "Precedence: bulk\n";
 

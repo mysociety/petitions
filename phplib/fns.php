@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.13 2007-04-13 18:38:07 matthew Exp $
+// $Id: fns.php,v 1.14 2007-04-19 07:52:58 matthew Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
@@ -135,3 +135,23 @@ function pet_search_form($front = false) { ?>
 <?
 }
 
+function pet_create_response_email($type, $ref, $subject, $body) {
+    if ($type == 'html')
+        $type = 'email';
+
+    $descriptorspec = array(
+        0 => array('pipe', 'r'), 
+        1 => array('pipe', 'w'),
+    );
+    $result = proc_open("./create-preview $type $ref", $descriptorspec, $pipes);
+
+    fwrite($pipes[0], "$subject\n\n$body");
+    fclose($pipes[0]);
+    $out = '';
+    while (!feof($pipes[1])) {
+        $out .= fread($pipes[1], 8192);
+    }
+    fclose($pipes[1]);
+    proc_close($result);
+    return $out;
+}

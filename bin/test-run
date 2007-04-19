@@ -24,7 +24,7 @@
 # Actually test message expiry rather than use --noexpire
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.82 2007-04-18 12:04:48 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.83 2007-04-19 07:52:58 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -230,6 +230,7 @@ sub set_pet_date {
 # Call send messages cron job
 sub call_send_messages {
      $wth->multi_spawn($multispawn, "php send-messages " . ($verbose > 1 ? qw(--verbose) : ''), $verbose);
+     $wth->multi_spawn($multispawn, "php response-send " . ($verbose > 1 ? qw(--verbose) : ''), $verbose);
 }
 
 # Call mark finished cron job
@@ -239,7 +240,7 @@ sub call_mark_finished {
 
 # Call update signature totals
 sub call_update_totals {
-     $wth->multi_spawn($multispawn, "./update-totals", $verbose);
+     $wth->multi_spawn($multispawn, "./update-totals all", $verbose);
 }
 
 #############################################################################
@@ -483,9 +484,9 @@ the PM.",
 
     comment("Check everyone gets the response; non deleted signers, creator and admin");
     foreach my $signer_no (1488,1490) {
-        $wth->email_get_containing('%Subject: Government response%To: '.email_n($signer_no).'%Thank you for your petition%');
+        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
-    $wth->email_get_containing('%Subject: Government response%To: '.email_n(99).'%Thank you for your petition%');
+    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check government response is displayed on petition page");

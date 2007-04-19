@@ -12,7 +12,7 @@
  * batch any more.
  *
  * It can run from several servers at once (please ensure all servers
- * are whitelisted) and uses the message_signer_recipient as it's
+ * are whitelisted) and uses the message_signer_recipient as its
  * lock.
  * 
  * To be explicit, this script does not send messages from the creator
@@ -26,12 +26,8 @@
  */
 
 # TODO
-
 # Remove excessive output in send_messages
-# Petition link (/111?)
 # Comment everything
-# Factor out the html/plain email send routine
-
 
 $short_opts = '';
 $long_opts = array('verbose','help');
@@ -47,11 +43,9 @@ $args = $options[1];
 
 $verbose = 0;
 
-foreach ($switches as $switch)
-{
+foreach ($switches as $switch) {
     if ($switch[0]=='--verbose') $verbose = 1;
-    if ($switch[0]=='--help')
-    {
+    if ($switch[0]=='--help') {
 ?>
 
 No10 Petitions response sending script. This is responsible for sending
@@ -63,7 +57,7 @@ Usage: response-send [--verbose]
 --verbose   Display more information
 
 <?
-    exit;
+        exit;
     }
 }
 
@@ -93,8 +87,7 @@ set_number_of_queue_batches_to_fetch();
 db_connect();
 $message_array = fetch_list_of_messages();
 
-while((list($counter, $current_message_row) = each ($message_array)) && ($queue_batches_to_fetch > 0))
-{
+while((list($counter, $current_message_row) = each ($message_array)) && ($queue_batches_to_fetch > 0)) {
     $current_message_id = $current_message_row['id'];
     $current_petition_id = $current_message_row['petition_id'];
 
@@ -110,25 +103,19 @@ while((list($counter, $current_message_row) = each ($message_array)) && ($queue_
         $batch_email_address_list = fetch_queue_batch($current_message_id, $current_petition_id);
         $number_of_email_addresses = count($batch_email_address_list);
         verbose("Doing batch $queue_batches_to_fetch - message - $current_message_id - ($number_of_email_addresses signers)\n");
-        if($number_of_email_addresses == 0)
-        {
+        if ($number_of_email_addresses == 0) {
             $message_complete=true;
             continue;
-        }
-        else if($number_of_email_addresses < $batch_size)
-        {
+        } elseif ($number_of_email_addresses < $batch_size) {
             $message_complete=true;
         }
 
         $exim_succeeded = pump_batch_to_exim($batch_email_address_list, $current_message);
 
-        if($exim_succeeded)
-        {
+        if($exim_succeeded) {
             update_recipient_table($batch_email_address_list, $current_message);
             db_commit();
-        }
-        else
-        {
+        } else {
             db_commit();
             print("It's all got a bit tricky with exim\n");
             exit();
@@ -137,22 +124,17 @@ while((list($counter, $current_message_row) = each ($message_array)) && ($queue_
     }
 }
 
-
-
-function verbose($str)
-{
+function verbose($str) {
     global $verbose;
     if ($verbose)
         fwrite(STDERR, "send-messages: $str\n");
 }
 
-function error($str)
-{
+function error($str) {
     fwrite(STDERR, "send-messages: ERROR: $str\n");
 }
 
-function fetch_list_of_messages()
-{
+function fetch_list_of_messages() {
     global $separate_mailout_petitions;
     global $max_batches_to_fetch;
 
@@ -182,22 +164,21 @@ function fetch_list_of_messages()
     return ($list_of_messages);
 }
 
-function set_machine_load_values()
-{
+function set_machine_load_values() {
     global $exim_recipients;
     global $load_average_one_minute;
     
-    $exim_recipients = shell_exec("exim4 -bpru | grep '^          ' | wc -l");
-    print("response-send - set_machine_load_values - Recipients on exim queue: $exim_recipients");
+    #$exim_recipients = shell_exec("exim4 -bpru | grep '^          ' | wc -l");
+    #print("response-send - set_machine_load_values - Recipients on exim queue: $exim_recipients");
+    $exim_recipients = 0;
 
-    # And what is it's load average
+    # And what is its load average
 
     $load_average_one_minute = shell_exec("uptime | cut -d ' ' -f14 | cut -d',' -f 1");
     print("response-send - set_machine_load_values - Load average on this machine: $load_average_one_minute");
 }
 
-function set_number_of_queue_batches_to_fetch()
-{
+function set_number_of_queue_batches_to_fetch() {
     global $exim_recipients;
     global $exim_recipient_threshold;
     global $load_average_one_minute;
@@ -211,56 +192,37 @@ function set_number_of_queue_batches_to_fetch()
     }
 }
 
-function lock_recipient_table()
-{
+function lock_recipient_table() {
     db_query("lock table message_signer_recipient in exclusive mode");
 }
 
-function fetch_message($message_id)
-{
-    $message_details = db_getRow("SELECT message.* FROM message WHERE message.id=$message_id");
+function fetch_message($message_id) {
+    $message_details = db_getRow("
+        SELECT message.*, petition.ref
+        FROM message, petition
+        WHERE message.petition_id = petition.id and message.id = ?", $message_id);
     $headers = "";
 
-    if ($message_details['fromaddress'] == 'number10html')
-    {
+    if ($message_details['fromaddress'] == 'number10html') {
         $type = 'email';
-    }
-    else 
-    {
+    } else {
         $type = 'plain';
         $headers = "Subject: " . $message_details['emailsubject'] . "\n";
     }
 
-    $descriptorspec = array(
-        0 => array('pipe', 'r'),
-        1 => array('pipe', 'w'),
-    );
-    $result = proc_open("../bin/create-preview $type $message_details[ref]", $descriptorspec, $pipes);
-    fwrite($pipes[0], $message_details['emailsubject']);
-    fwrite($pipes[0], "\n\n");
-    fwrite($pipes[0], $message_details['emailbody']);
-    fclose($pipes[0]);
-    $out = '';
-    while (!feof($pipes[1])) {
-        $out .= fread($pipes[1], 8192);
-    }
-    fclose($pipes[1]);
-    proc_close($result);
+    $out = pet_create_response_email($type, $message_details['ref'], $message_details['emailsubject'], $message_details['emailbody']);
     $message_details['emailoutput'] = $headers . $out;
 
     return $message_details;
 }
 
-function fetch_queue_batch($message_id, $petition_id)
-{
+function fetch_queue_batch($message_id, $petition_id) {
     global $batch_size;
 
     $batch_email_addresses = db_getAll("
         SELECT signer.id AS signer_id,
                     signer.name AS signer_name,
                     signer.email AS signer_email,
-                    extract(epoch FROM signer.signtime) - extract(epoch FROM message.whencreated) AS howlongago,
-                    (sendtolatesigners AND signer.signtime >= message.whencreated) AS islatesigner,
                     petition.ref,
                     petition.id AS petition_id
                 FROM message, petition, signer
@@ -282,8 +244,7 @@ function fetch_queue_batch($message_id, $petition_id)
     return $batch_email_addresses;
 }
 
-function pump_batch_to_exim($list_of_email_addresses, $current_message)
-{
+function pump_batch_to_exim($list_of_email_addresses, $current_message) {
     global $from_line;
     global $to_line;
 
@@ -292,8 +253,7 @@ function pump_batch_to_exim($list_of_email_addresses, $current_message)
     # Construct message
     $batched_smtp = "EHLO localhost\n";
     $batched_smtp = $batched_smtp . "MAIL FROM: $from_line\n";
-    while(list($counter, $current_signer_row) = each ($list_of_email_addresses))
-    {
+    foreach ($list_of_email_addresses as $current_signer_row) {
         $batched_smtp = $batched_smtp . "RCPT TO: $current_signer_row[signer_email]\n";
     }
 
@@ -320,8 +280,7 @@ $current_message[emailoutput]
     return $smtp_succeeded;
 }
 
-function update_recipient_table($batch_email_address_list, $current_message)
-{
+function update_recipient_table($batch_email_address_list, $current_message) {
     $current_message_id = $current_message['id'];
     
     while(list($counter, $current_email_row) = each ($batch_email_address_list))
