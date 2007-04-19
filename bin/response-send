@@ -20,7 +20,7 @@
  * Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
  * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: response-send,v 1.10 2007-04-19 19:00:59 matthew Exp $
+ * $Id: response-send,v 1.11 2007-04-19 20:01:16 matthew Exp $
  *
  */
 
@@ -146,9 +146,9 @@ function pump_message_to_exim($message_id) {
 
     # Construct message
     $batched_smtp = "EHLO localhost\r\n";
-    $batched_smtp = $batched_smtp . "MAIL FROM:<" . OPTION_RESPONSE_SEND_EMAIL . ">\r\n";
+    $batched_smtp .= "MAIL FROM:<>\r\n";
     foreach ($message['signers'] as $signer_id => $signer_email) {
-        $batched_smtp = $batched_smtp . "RCPT TO:<$signer_email>\r\n";
+        $batched_smtp .= "RCPT TO:<$signer_email>\r\n";
         db_do('INSERT INTO message_signer_recipient (message_id, signer_id)
             values (?, ?)', $message_id, $signer_id);
     }
