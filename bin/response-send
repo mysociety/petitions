@@ -26,6 +26,10 @@
 
 # TODO
 
+# Look at load on multiple servers
+# Use multiple servers
+# Check availability of servers
+
 $short_opts = '';
 $long_opts = array('verbose','help');
 
@@ -63,18 +67,17 @@ Usage: response-send [--verbose]
 
 # Values to set to customise this script
     $batch_size = OPTION_PET_RESPONSE_SEND_BATCH_SIZE;              # How many recipients we pump at a time
-    $max_batches_to_fetch = OPTION_PET_RESPONSE_SEND_MAX_BATCHES;   # How many batchs to get at once
-    $load_threshold = OPTION_PET_RESPONSE_SEND_LOAD_THRESHOLD;      # Load above which we stop getting batches
+    $load_threshold = OPTION_PET_RESPONSE_SEND_LOAD_THRESHOLD;      # Load above which we stop feeding exim
     $exim_recipient_threshold=OPTION_PET_RESPONSE_SEND_MAIL_QUEUE_THRESHOLD; # Exim queue recipients above which we stop getting batches
     $from_line = OPTION_RESPONSE_SEND_FROM_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # From address for sending the emails
     $to_line = OPTION_RESPONSE_SEND_TO_NAME . " <" . OPTION_RESPONSE_SEND_EMAIL . ">"; # To address for sending the emails
     $exim_binary = '/usr/sbin/exim4';
 
 #Initialise variables
-    $load_average_one_minute = $load_threshold;
-    $exim_recipients     = $exim_recipient_threshold;
+    $load_check_limit	 = 5000; # After how many signers do we check for machine load
     $current_signer	 = array();
     $messages		 = array();
+    $itterations=0; # Counter to check the machine load occasionally
 
     # This is a left-over from a previous script. Shouldn't need to change now.
     # We extracted the lists manually and sent them manually so the message_signer_recipient
@@ -83,41 +86,66 @@ Usage: response-send [--verbose]
     $separate_mailout_petitions = " and (message.petition_id not in (97,138,27794,161913,2579595,1063764,568,124420,2786467))";
 
 
-
 while (true)
 {
+	verbose("Starting run");
 	db_connect();
 	empty_arrays(); // Each time we finish a full run clear the arrays
 
-#	XXX This should be periodic during the run
-#	update_exim_server_array(); // Check load/queue/availability of exim servers
-
 	$signer_result = do_signer_query();
+	
+	if(db_num_rows($signer_result) == 0)
+	{
+		verbose("Nothing to do. Sleeping.");
+		sleep(60);
+		continue;
+	}
 
 	while($current_signer = db_fetch_array($signer_result))
 	{
-		$message_id = $signer['message_id'];
-		$signer_id = $signer['id'];
+#		var_dump($current_signer);
+		$message_id = $current_signer['message_id'];
+		$signer_id = $current_signer['signer_id'];
 
-		verbose("Got a signer - id $signer_id for message $message_id\n");
+		verbose("Got a signer - signer_id $signer_id for message $message_id");
 
 		if(!isset($messages[$message_id]))
 		{
 			$messages[$message_id] = get_message_array($message_id);
 			$messages[$message_id]['signers'] = array();
-			$messages[$message_id]['messagebody'] = create_message_body($message_id);
+			$messages[$message_id]['message_body'] = create_message_body($message_id);
 		}
-		$messages[$message_id][$signer_id] = $signer['email_address'];
+		$messages[$message_id]['signers'][$signer_id] = $current_signer['signer_email'];
 		if(sizeof($messages[$message_id]['signers']) >= $batch_size)
 		{
+			verbose("Pumping $message_id with " . sizeof($messages[$message_id]['signers']) . " signers");
 			pump_message_to_exim($message_id);
+			$messages[$message_id]['signers'] = array();
 		}
+		if ($itterations == $load_check_limit)
+		{
+			if(check_machine_load_values())
+			{
+				verbose("Machine load too high. Sleeping.");
+				sleep(60);
+				continue;
+			}
+			$itterations=0;
+		}
+		else
+		{
+			$itterations++;
+		}
+
 	}
 
-	foreach ($messages as $message_id)
+	foreach ($messages as $message_array)
 	{
-		if (sizeof($messages[$message_id]['signers]) > 0)
+		$message_id = $message_array['id'];
+		verbose ("Number of signers left for $message_id : " . sizeof($messages[$message_id]['signers']));
+		if(sizeof($messages[$message_id]['signers']) > 0)
 		{
+			verbose("Pumping $message_id with " . sizeof($messages[$message_id]['signers']) . " signers");
 			pump_message_to_exim($message_id);
 		}
 	}
@@ -145,7 +173,9 @@ function do_signer_query()
 	global $separate_mailout_petitions;
 
 	$result = db_query_literal("
-        SELECT signer.id,signer.email,message.id
+        SELECT signer.id AS signer_id,
+		signer.email AS signer_email,
+		message.id AS message_id
                 FROM message, petition, signer
         WHERE sendtosigners
             AND message.circumstance='government-response'
@@ -171,7 +201,8 @@ function get_message_array($message_id)
 	$message_array = db_getRow(
 			"SELECT message.*, petition.ref
 			FROM message, petition
-			WHERE message.petition_id = petition.id, message.id=?", $message_id");
+			WHERE message.petition_id = petition.id
+				AND message.id=?",  $message_id);
 	return $message_array;
 }
 
@@ -199,7 +230,7 @@ function pump_message_to_exim($message_id)
 From: $from_line
 To: $to_line
 Precedence: bulk
-{$messages[$message_id][message_body]}
+{$messages[$message_id]['message_body']}
 .
 ";
 
@@ -224,7 +255,7 @@ Precedence: bulk
 
 function create_message_body($message_id)
 {   
-    $global $messages;
+    global $messages;
 
     $message_details = $messages[$message_id];
     $headers = "";
@@ -243,16 +274,29 @@ function create_message_body($message_id)
     return ($headers . $out);
 }
 
+function check_machine_load_values() {
+
+    global $load_threshold;
+
+    $load_average_one_minute = shell_exec("uptime | cut -d ' ' -f14 | cut -d',' -f 1");
+    verbose("set_machine_load_values - Load average on this machine: $load_average_one_minute (threshhold $load_threshold)");
+    if ($load_average_one_minute > $load_threshold) {
+	return true;
+    }
+    else {
+	return false;
+    }
+}
 
 function verbose($str)
 {
     global $verbose;
     if ($verbose)
-        fwrite(STDERR, "send-messages: $str\n");
+        fwrite(STDERR, "response-send: $str\n");
 }
 
 function error($str)
 {
-    fwrite(STDERR, "send-messages: ERROR: $str\n");
+    fwrite(STDERR, "response-send: ERROR: $str\n");
 }
 
