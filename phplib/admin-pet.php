@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.102 2007-04-13 18:46:38 matthew Exp $
+ * $Id: admin-pet.php,v 1.103 2007-04-19 22:36:13 matthew Exp $
  * 
  */
 
@@ -511,7 +511,7 @@ class ADMIN_PAGE_PET_MAIN {
             print " created on ". prettify(substr($r['whencreated'], 0, 19));
             print " to be sent from <strong>" . $r['fromaddress'] . "</strong> to <strong>";
             print join(", ", $whom) . "</strong>";
-            print "<br>has been queued to evel for ";
+            print "<br>has been queued for ";
             print "<strong>$got_creator_count creators</strong>";
             print " and <strong>$got_signer_count signers</strong>";
             if ($r['emailtemplatename'])
