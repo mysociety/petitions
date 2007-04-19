@@ -1,0 +1,95 @@
+#!/usr/bin/perl -w -I../../../perllib
+#
+# handlemail:
+# Handle an individual incoming mail message.
+#
+# This script is used to process bounces and optouts. It's
+# based on the bounce-processing code in FYR.
+#
+# Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
+# Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
+#
+
+my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.1 2007-04-19 23:29:46 matthew Exp $';
+
+use strict;
+require 5.8.0;
+
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+
+use Mail::Address;
+use Mail::Internet;
+
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../../conf/general");
+}
+use mySociety::DBHandle qw(dbh);
+use mySociety::Util qw(print_log);
+
+my @lines = ( );
+
+my $is_bounce_message = 0;
+
+while (defined($_ = STDIN->getline())) {
+    chomp();
+    # Skip any From_ line-- we don't need it. BUT, on some systems (e.g.
+    # FreeBSD with default exim config), there will be no Return-Path in a
+    # message even at final delivery time. So use the insanely ugly
+    # "From MAILER-DAEMON ..." thing to distinguish bounces, if it is present.
+    if (@lines == 0 and m#^From #) {
+        $is_bounce_message = 1 if (m#^From MAILER-DAEMON #);
+    } else {
+        push(@lines, $_);
+    }
+}
+
+if (STDIN->error()) {
+    # Failed to read it; should defer.
+    print_log('err', "read message from standard input: $!; deferring");
+    exit(75);   # EX_TEMPFAIL
+}
+
+my $m = new Mail::Internet(\@lines);
+if (!defined($m)) {
+    # Unable to parse message; should drop.
+    print_log('err', "unable to parse message from standard input; discarding");
+    exit(1);
+}
+
+if (!$is_bounce_message) {
+    # RFC2822: 'The "Return-Path:" header field contains a pair of angle
+    # brackets that enclose an optional addr-spec.'
+    my $return_path = $m->head()->get("Return-Path");
+
+    if (!defined($return_path)) {
+        # No Return-Path; we're screwed.
+        print_log('err', "message had no Return-Path and was not a bounce according to any From_ line; discarding");
+        print_log('err', "configure your MDA to add a Return-Path to messages at delivery time");
+        exit(0);
+    } elsif ($return_path =~ m#<>#) {
+        $is_bounce_message = 1;
+    } else {
+        # This is not a bounce message. Assume it's someone opting out
+        print_log('info', "message was not a bounce message");
+        
+        my $from = $m->header()->get('From');
+        if (!defined($from)) {
+            print_log('err', 'received message had no From: header; discarding');
+            exit(0);
+        }
+        my ($a) = Mail::Address->parse($from);
+        if (!defined($a)) {
+            print_log('err', "unable to pass address from From: header '$from' in received bounce message; discarding");
+            exit(0);
+        }
+        dbh()->do('insert into optout (email) values (?)', {}, $a->address());
+        exit(0);
+    }
+}
+
+print_log('info', "discarding bounce message");
+exit(0);
