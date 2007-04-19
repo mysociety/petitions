@@ -8,16 +8,12 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.42 2007-04-19 19:00:59 matthew Exp $
+ * $Id: send-messages,v 1.43 2007-04-19 20:14:28 matthew Exp $
  *
  */
 
 $short_opts = '';
 $long_opts = array('verbose','help');
-
-# XXX: Roll-on doing it in code!
-# trident, IDcards, traveltax, CensusInfoFreed, Photography, SaveTheReds, DC-Stephen-Oake, SirBobPaisley, wimbledon
-$separate_mailout_petitions = " and (message.petition_id not in (97,138,27794,161913,2579595,1063764,568,124420,2786467))";
 
 chdir(dirname($_SERVER['SCRIPT_FILENAME']));
 require_once '../conf/general';
@@ -66,8 +62,6 @@ send_pending_messages();
  * Dispatch messages to petition signers and creators which have not yet been
  * sent. */
 function send_pending_messages() {
-    global $separate_mailout_petitions;
-
     /* Messages to the administrators. */
     verbose("sending pending admin messages");
     
@@ -77,7 +71,6 @@ function send_pending_messages() {
                     and (select message_id
                         from message_admin_recipient
                         where message_id = id) is null
-                    $separate_mailout_petitions
                 order by random()");
 
     while ($msg = db_fetch_array($q)) {
@@ -133,7 +126,6 @@ function send_pending_messages() {
                         where message_id = id
                             and message_creator_recipient.petition_id
                                 = message.petition_id) is null
-                    $separate_mailout_petitions
                 order by random()");
 
     while ($msg = db_fetch_array($q)) {
