@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.41 2007-04-19 17:25:47 matthew Exp $
+ * $Id: send-messages,v 1.42 2007-04-19 19:00:59 matthew Exp $
  *
  */
 
@@ -210,7 +210,7 @@ function send_pending_messages() {
             # goes direct to exim instead of through EvEl.
 
             $date = "Date: " . date("r") . "\n";
-            $from = "From: " . OPTION_GENERAL_SEND_NAME . " <" . OPTION_GENERAL_SEND_EMAIL . ">\n";
+            $from = 'From: "' . OPTION_CONTACT_NAME . '" <' . OPTION_CONTACT_EMAIL . ">\n";
             $to = "To: " . $petition->creator_email() . "\n";
             $precedence = "Precedence: bulk\n";
 

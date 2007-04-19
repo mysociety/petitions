@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.14 2007-04-19 07:52:58 matthew Exp $
+// $Id: fns.php,v 1.15 2007-04-19 19:01:00 matthew Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
@@ -106,7 +106,7 @@ function pet_send_email_internal($to, $spec) {
 
     // Add standard header
     if (!array_key_exists("From", $spec)) {
-        $spec['From'] = '"10 Downing Street" <' . OPTION_CONTACT_EMAIL . ">";
+        $spec['From'] = '"' . OPTION_CONTACT_NAME . '" <' . OPTION_CONTACT_EMAIL . ">";
     }
 
     // With one recipient, put in header.  Otherwise default to undisclosed recip.
