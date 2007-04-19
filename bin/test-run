@@ -24,7 +24,7 @@
 # Actually test message expiry rather than use --noexpire
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.83 2007-04-19 07:52:58 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.84 2007-04-19 08:20:43 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -536,10 +536,11 @@ Second bullet point'
     call_send_messages();
 
     comment("Check everyone gets the 2nd response; non deleted signers, creator and admin");
+    # XXX: Doesn't really check HTMLness or the like
     foreach my $signer_no (1488,1490) {
-        $wth->email_get_containing('%Subject: Government response%To: '.email_n($signer_no).'%Thank you for your petition%');
+        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
-    $wth->email_get_containing('%Subject: Government response%To: '.email_n(99).'%Thank you for your petition%');
+    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check 2nd government response is displayed on petition page");
@@ -1046,9 +1047,9 @@ sub do_early_response_test {
 
     comment("Check everyone gets the response; signers, creator and admin");
     foreach my $signer_no (512..514) {
-        $wth->email_get_containing('%Subject: Government response%To: '.email_n($signer_no).'%Thank you for your petition%');
+        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
-    $wth->email_get_containing('%Subject: Government response%To: '.email_n(511).'%Thank you for your petition%');
+    $wth->email_get_containing('%To: '.email_n(511).'%Subject: Government response%Thank you for your petition%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
     $wth->email_check_none_left();
 
@@ -1057,7 +1058,7 @@ sub do_early_response_test {
     $c++;
     comment("Check person who signed up before pre-reply was written gets the email");
     call_send_messages();
-    $wth->email_get_containing('%Subject: Government response%To: '.email_n(515).'%Thank you for your petition%');
+    $wth->email_get_containing('%Envelope-to: '.email_n(515).'%Subject: Government response%Thank you for your petition%');
     $wth->email_check_none_left();
 
     comment("Check early response is now on the webpage");
