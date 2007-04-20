@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.4 2007-04-20 00:51:25 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.5 2007-04-20 00:52:13 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -88,6 +88,7 @@ if (!$is_bounce_message) {
             print_log('err', "unable to pass address from From: header '$from' in received bounce message; discarding");
             exit(0);
         }
+        print_log('info', $a->address() . " inserted into optout table");
         dbh()->do('insert into optout (email) values (?)', {}, $a->address());
         dbh()->commit();
         exit(0);
