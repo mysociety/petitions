@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -I../../../perllib
+#!/usr/bin/perl -w
 #
 # handlemail:
 # Handle an individual incoming mail message.
@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.2 2007-04-20 00:39:07 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.3 2007-04-20 00:50:33 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -29,6 +29,8 @@ BEGIN {
 }
 use mySociety::DBHandle qw(dbh);
 use mySociety::Util qw(print_log);
+
+use Petitions; # to force DB config
 
 my @lines = ( );
 
@@ -87,6 +89,7 @@ if (!$is_bounce_message) {
             exit(0);
         }
         dbh()->do('insert into optout (email) values (?)', {}, $a->address());
+        dbh()->commit();
         exit(0);
     }
 }
