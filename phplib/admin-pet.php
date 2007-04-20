@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.103 2007-04-19 22:36:13 matthew Exp $
+ * $Id: admin-pet.php,v 1.104 2007-04-20 09:12:58 matthew Exp $
  * 
  */
 
@@ -807,7 +807,7 @@ EOF;
             }
 ?>
 <p>You are responding to the petition '<?=$p->ref() ?>'.
-To do links, write them as e.g. <kbd>[http://www.pm.gov.uk/ Number 10 homepage]</kbd>.
+To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Number 10 homepage]</kbd>.
 </p>
 <form name="petition_admin_respond" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
 <input type="hidden" name="respond" value="1">
