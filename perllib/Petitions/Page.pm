@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.82 2007-04-12 22:18:24 matthew Exp $
+# $Id: Page.pm,v 1.83 2007-04-20 10:49:04 matthew Exp $
 #
 
 package Petitions::Page;
@@ -301,6 +301,10 @@ sub response_box ($$) {
     my ($q, $p) = @_;
     my $full_response = $p->{response};
     $full_response =~ s#\n\nPetition info: http://.*$##;
+    # XXX: Should be in HTMLEmail.pm, copied from there
+    $full_response =~ s/\[([^ ]*)\]/$1/gs;
+    $full_response =~ s/\[([^ ]*) ([^]]*?)\]((?:\.|;|,)?)$/"$2 - $1".($3?" $3":'')/egsm;
+    $full_response =~ s/\[([^ ]*) (.*?)\]/$2 - $1 -/gs;
     my $out = $q->div({-id => 'response'},
         $q->h2($q->span({-class => 'ltr'}, 'Government Response')),
         mySociety::Util::nl2br(mySociety::Util::ms_make_clickable(ent($full_response)))
