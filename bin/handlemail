@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.1 2007-04-19 23:29:46 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.2 2007-04-20 00:39:07 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -76,7 +76,7 @@ if (!$is_bounce_message) {
         # This is not a bounce message. Assume it's someone opting out
         print_log('info', "message was not a bounce message");
         
-        my $from = $m->header()->get('From');
+        my $from = $m->head()->get('From');
         if (!defined($from)) {
             print_log('err', 'received message had no From: header; discarding');
             exit(0);
