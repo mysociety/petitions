@@ -1,0 +1,22 @@
+#!/usr/bin/perl -w -I../../perllib -I../perllib
+
+# Found this on one of the servers, looked useful.
+
+use strict;
+require 5.8.0;
+use mySociety::Util;
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file('../conf/general');
+}
+use mySociety::DBHandle qw(dbh select_all);
+use Petitions;
+
+print "ref? ";
+while (<STDIN>) {
+    chomp;
+    my $r = select_all('select status from petition where ref ilike ?', $_);
+    print @$r ? $r->[0]->{status} : "NONE";
+    print "\nref? ";
+}
+
