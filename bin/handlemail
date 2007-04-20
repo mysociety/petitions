@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.5 2007-04-20 00:52:13 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.6 2007-04-20 00:52:56 francis Exp $';
 
 use strict;
 require 5.8.0;
@@ -89,6 +89,7 @@ if (!$is_bounce_message) {
             exit(0);
         }
         print_log('info', $a->address() . " inserted into optout table");
+        dbh()->do('delete from optout where email = ?', {}, $a->address());
         dbh()->do('insert into optout (email) values (?)', {}, $a->address());
         dbh()->commit();
         exit(0);
