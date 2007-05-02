@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.83 2007-04-20 10:49:04 matthew Exp $
+# $Id: Page.pm,v 1.84 2007-05-02 12:02:47 matthew Exp $
 #
 
 package Petitions::Page;
@@ -341,7 +341,7 @@ sub reject_box ($$) {
         8192 => 'It contained false name or address information',
         16384 => 'It was an issue for which an e-petition is not the appropriate channel',
         32768 => 'It was intended to be humorous, or have no point about government policy',
-        65536 => 'It contained links to other websites',
+        65536 => 'It contained links to websites',
         # XXX also change in phplib/petition.php
     );
 
