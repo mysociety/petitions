@@ -23,7 +23,7 @@
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 # HTML mail test could be better
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.85 2007-04-19 10:34:51 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.86 2007-05-08 17:10:02 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -520,7 +520,7 @@ the PM.",
                     html_mail => 1,
                     message_body => "Thank you for your petition. 
 
-We've changed our minds, and now we're not going to do this at all.
+We've changed our minds, and now we\xe2\x80\x99re not going to do this at all.
 
 Yours faithfully, 
 
