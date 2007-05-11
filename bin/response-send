@@ -20,7 +20,7 @@
  * Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
  * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: response-send,v 1.12 2007-04-19 23:11:51 matthew Exp $
+ * $Id: response-send,v 1.13 2007-05-11 13:33:40 matthew Exp $
  *
  */
 
@@ -153,8 +153,8 @@ function pump_message_to_exim($message_id) {
             values (?, ?)', $message_id, $signer_id);
     }
 
-    $batched_smtp .= "DATA\r\nFrom: \"" . OPTION_RESPONSE_SEND_FROM_NAME . "\" <" . OPTION_RESPONSE_SEND_EMAIL . ">\r\n";
-    $batched_smtp .= "To: \"" . OPTION_RESPONSE_SEND_TO_NAME . "\" <" . OPTION_RESPONSE_SEND_EMAIL . ">\r\nPrecedence: bulk\r\n";
+    $batched_smtp .= "DATA\r\nFrom: \"" . OPTION_CONTACT_NAME . "\" <" . OPTION_CONTACT_EMAIL . ">\r\n";
+    $batched_smtp .= "To: \"" . OPTION_RESPONSE_SEND_TO_NAME . "\" <" . OPTION_CONTACT_EMAIL . ">\r\nPrecedence: bulk\r\n";
     $batched_smtp .= $message['message_body'];
     $batched_smtp .= "\r\n.\r\n";
 

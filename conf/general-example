@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.19 2007-04-19 19:00:59 matthew Exp $
+ * $Id: general-example,v 1.20 2007-05-11 13:33:41 matthew Exp $
  * 
  */
 
@@ -61,8 +61,6 @@ define('OPTION_CONTACT_NAME', 'Name for From line');
 define('OPTION_TEST_EMAIL_PREFIX', 'petharness');
 
 // Email details for mass emails (response-send)
-define('OPTION_RESPONSE_SEND_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
-define('OPTION_RESPONSE_SEND_FROM_NAME', 'Name for From line');
 define('OPTION_RESPONSE_SEND_TO_NAME', 'Name for To line'); // Since we don't send individually
 
 // Optional originating IP and HELO name for SMTP connections

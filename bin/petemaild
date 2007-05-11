@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.133 2007-03-08 05:10:12 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.134 2007-05-11 13:33:40 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1685,6 +1685,7 @@ sub make_signer_email ($$) {
     $h{detail} = $petition->{detail};
     $h{content} = $petition->{content};
     $h{content} =~ s/\r|\n/ /g;
+    ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
     $h{user_name} = $signer->{name};
 
     $h{url} = mySociety::Config::get('BASE_URL')
@@ -1722,6 +1723,7 @@ sub make_petition_email ($) {
                 . Petitions::Token::make('p', $petition->{id});
     $h{content} = $petition->{content};
     $h{content} =~ s/\r|\n/ /g;
+    ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
 
     $h{signature} = '[ This email has been automatically sent by the Number 10 petitions system ]';
 
@@ -1862,7 +1864,7 @@ sub database_child_process ($) {
                         Source::Packet::TYPE_NEWMESSAGE,
                         new Queue::Message(
                             $id,
-                            mySociety::Config::get('CONTACT_EMAIL'),
+                            'bounces@' . mySociety::Config::get('EMAIL_DOMAIN'),
                             $s->{email},
                             make_signer_email($s, $p),
                             $s->{t},
@@ -1888,7 +1890,7 @@ sub database_child_process ($) {
                         Source::Packet::TYPE_NEWMESSAGE,
                         new Queue::Message(
                             $id,
-                            mySociety::Config::get('CONTACT_EMAIL'),
+                            'bounces@' . mySociety::Config::get('EMAIL_DOMAIN'),
                             $p->{email},
                             make_petition_email($p),
                             $p->{t},
@@ -2622,4 +2624,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.133 2007-03-08 05:10:12 francis Exp $
+$Id: petemaild,v 1.134 2007-05-11 13:33:40 matthew Exp $
