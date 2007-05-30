@@ -1,4 +1,4 @@
-o?php
+<?php
 /*
  * general-example:
  * Example values for the "general" config file.
@@ -14,7 +14,7 @@ o?php
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.21 2007-05-30 14:48:21 francis Exp $
+ * $Id: general-example,v 1.22 2007-05-30 14:53:56 francis Exp $
  * 
  */
 
