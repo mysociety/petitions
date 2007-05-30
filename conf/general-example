@@ -1,4 +1,4 @@
-<?php
+o?php
 /*
  * general-example:
  * Example values for the "general" config file.
@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.20 2007-05-11 13:33:41 matthew Exp $
+ * $Id: general-example,v 1.21 2007-05-30 14:48:21 francis Exp $
  * 
  */
 
@@ -39,9 +39,6 @@ define('OPTION_PETEMAILD_PIDFILE', '/var/run/petemaild.pid');
 // listen.
 define('OPTION_PETSIGNUPD_HOST', '192.168.1.42');
 define('OPTION_PETSIGNUPD_PORT', 12345);
-
-// How many ref-sign.cgi processes to fork.
-define('OPTION_NUM_SIGN_PROCESSES', 20);    // higher than this for production
 
 // Time for which we collect signup requests to batch insert.
 define('OPTION_MAX_SIGNUP_TIME', 0.25);
