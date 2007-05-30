@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.85 2007-05-30 14:19:53 francis Exp $
+# $Id: Page.pm,v 1.86 2007-05-30 14:30:12 francis Exp $
 #
 
 package Petitions::Page;
@@ -30,7 +30,7 @@ sub do_fastcgi {
 
     try {
         my $W = new mySociety::WatchUpdate();
-        while (my $q = new CGI::Fast()) {
+        while (my $q = new mySociety::Web()) {
             &$func($q);
             $W->exit_if_changed();
         }
