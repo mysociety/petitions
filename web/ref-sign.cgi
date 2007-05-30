@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.46 2007-03-08 06:05:08 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.47 2007-05-30 14:19:53 francis Exp $';
 
 use strict;
 
@@ -22,14 +22,11 @@ BEGIN {
 }
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
-use mySociety::WatchUpdate;
 use mySociety::Util;
 
 use Petitions;
 use Petitions::Page;
 use Petitions::RPC;
-
-my $W = new mySociety::WatchUpdate();
 
 sub i_check_email ($) {
     my $email = shift;
@@ -230,52 +227,46 @@ sub confirm_page ($$$) {
     print $q->header(-content_length => length($html)), $html;
 }
 
-my $foad = 0;
-$SIG{TERM} = sub { $foad = 1; };
-
-# accept_loop
-# Accept and handle FastCGI requests.
-sub accept_loop () {
-    while (!$foad && (my $q = new mySociety::Web())) {
-        my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
-        if (!defined($qp_ref)) {
-            print $q->redirect("/");
-            next;
-        }
-
-        # Confirm page.
-        my $qp_token = $q->ParamValidate(token => qr/^[A-Za-z0-9_\$'\/-]+$/);
-        if (defined($qp_token)) {
-            confirm_page($q, $qp_ref, $qp_token);
-            next;
-        }
-
-        # This page is only ever invoked for a POST form, so redirect to the
-        # petition page if this is a GET.
-        if ($q->request_method() ne 'POST') {
-            #warn "bad method";
-            print $q->redirect("/$qp_ref/");
-            next;
-        }
-
-        # Get the serialised petition data from the query and check it.
-        my $qp_ser = $q->ParamValidate(ser => qr#^[A-za-z0-9/+=]+$#);
-        if (!defined($qp_ser)) {
-            warn "missing/invalid serialised data in POST request";
-            print $q->redirect("/$qp_ref/");
-            next;
-        }
-        my $ser = decode_base64($qp_ser);
-        if (substr($ser, -20) ne hmac_sha1(substr($ser, 0, length($ser) - 20), Petitions::DB::secret())) {
-            warn "bad signature in serialised data '$qp_ser'";
-            print $q->redirect("/$qp_ref/");
-            next;
-        }
-
-        my $p = RABX::unserialise(substr($ser, 0, length($ser) - 20));
-
-        signup_page($q, $p);
+# main
+sub main () {
+    my $q = shift;
+    my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
+    if (!defined($qp_ref)) {
+        print $q->redirect("/");
+        return;
     }
+
+    # Confirm page.
+    my $qp_token = $q->ParamValidate(token => qr/^[A-Za-z0-9_\$'\/-]+$/);
+    if (defined($qp_token)) {
+        confirm_page($q, $qp_ref, $qp_token);
+        return;
+    }
+
+    # This page is only ever invoked for a POST form, so redirect to the
+    # petition page if this is a GET.
+    if ($q->request_method() ne 'POST') {
+        #warn "bad method";
+        print $q->redirect("/$qp_ref/");
+        return;
+    }
+
+    # Get the serialised petition data from the query and check it.
+    my $qp_ser = $q->ParamValidate(ser => qr#^[A-za-z0-9/+=]+$#);
+    if (!defined($qp_ser)) {
+        warn "missing/invalid serialised data in POST request";
+        print $q->redirect("/$qp_ref/");
+        return;
+    }
+    my $ser = decode_base64($qp_ser);
+    if (substr($ser, -20) ne hmac_sha1(substr($ser, 0, length($ser) - 20), Petitions::DB::secret())) {
+        warn "bad signature in serialised data '$qp_ser'";
+        print $q->redirect("/$qp_ref/");
+        return;
+    }
+
+    my $p = RABX::unserialise(substr($ser, 0, length($ser) - 20));
+    signup_page($q, $p);
 }
 
 # Awful. We need lots of processes to handle lots of concurrent signups (since
@@ -286,13 +277,7 @@ sub accept_loop () {
 my $secret = Petitions::DB::secret();
 dbh()->disconnect();
 
-# We launch child processes here, so we can have more ref-sign.cgi processes
-# without having to alter the global FastCGI server number config parameter
-# NB: This doesn't run well in a cgi environment, only in fastcgi
-mySociety::Util::manage_child_processes({
-                web => [mySociety::Config::get("NUM_SIGN_PROCESSES", 20),
-                        \&accept_loop]
-            });
+Petitions::Page::do_fastcgi(\&main);
 
 exit(0);
 

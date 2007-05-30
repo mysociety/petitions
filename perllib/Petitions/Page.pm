@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.84 2007-05-02 12:02:47 matthew Exp $
+# $Id: Page.pm,v 1.85 2007-05-30 14:19:53 francis Exp $
 #
 
 package Petitions::Page;
@@ -21,8 +21,36 @@ use File::Slurp qw(read_file);
 
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
+use mySociety::WatchUpdate;
 
 use Petitions;
+
+sub do_fastcgi {
+    my $func = shift;
+
+    try {
+        my $W = new mySociety::WatchUpdate();
+        while (my $q = new CGI::Fast()) {
+            &$func($q);
+            $W->exit_if_changed();
+        }
+    } catch Error::Simple with {
+        my $E = shift;
+        my $msg = sprintf('%s:%d: %s', $E->file(), $E->line(), $E->text());
+        warn "caught fatal exception: $msg";
+        warn "aborting";
+        ent($msg);
+        print "Status: 500\nContent-Type: text/html; charset=iso-8859-1\n\n",
+                q(<html><head><title>Sorry! Something's gone wrong.</title></head></html>),
+                q(<body>),
+                q(<h1>Sorry! Something's gone wrong.</h1>),
+                q(<p>Please try again later, or <a href="mailto:team@mysociety.org">email us</a> to let us know.</p>),
+                q(<hr>),
+                q(<p>The text of the error was:</p>),
+                qq(<blockquote class="errortext">$msg</blockquote>),
+                q(</body></html);
+    };
+}
 
 =item header Q TITLE [PARAM VALUE ...]
 

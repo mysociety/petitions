@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.9 2007-03-27 16:07:18 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.10 2007-05-30 14:19:53 francis Exp $';
 
 use strict;
 
@@ -21,61 +21,52 @@ BEGIN {
 }
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
-use mySociety::WatchUpdate;
 
 use Petitions;
 use Petitions::Page;
 
-my $W = new mySociety::WatchUpdate();
-
-my $foad = 0;
-$SIG{TERM} = sub { $foad = 1; };
-
 # accept_loop
 # Accept and handle FastCGI requests.
-sub accept_loop () {
-    while (!$foad && (my $q = new mySociety::Web())) {
-        my $qp_id = $q->ParamValidate(id => qr/^[1-9]\d*$/);
-        my $p = Petitions::DB::get($qp_id);
-        if (!defined($p)) {
-            Petitions::Page::bad_ref_page($q, '');
-            next;
-        }
+sub main () {
+    my $q = shift;
 
-        if ($p->{status} ne 'rejected') {
-            print $q->redirect('/' . $p->{ref} . '/');
-            next;
-        }
-
-        my $title = Petitions::sentence($p, 1, 1);
-        my $html =
-            Petitions::Page::header($q, $title);
-        $html .= $q->h1($q->span({-class => 'ltr'}, 'E-Petitions'));
-        $html .= $q->h2($q->span({-class => 'ltr'}, 'Rejected petition'));
-        $html .= Petitions::Page::display_box($q, $p);
-        $html .= $q->start_div({-id => 'signatories'})
-            . $q->h2($q->span({-class => 'ltr'}, 'Petition Rejected'));
-        $html .= Petitions::Page::reject_box($q, $p);
-        $html .= $q->end_div();
-        $html .= Petitions::detail($p);
-        my $stat = 'View.' . $p->{ref};
-        $html .= Petitions::Page::footer($q, $stat);
-        utf8::encode($html);
-        print $q->header(
-                    -content_length => length($html),
-    #                -last_modified => HTTP::Date::time2str($lastmodified),
-    #                -cache_control => 'max-age=1',
-    #                -expires => '+1s'),
-            ), $html;
-        $W->exit_if_changed();
-        dbh()->rollback();
+    my $qp_id = $q->ParamValidate(id => qr/^[1-9]\d*$/);
+    my $p = Petitions::DB::get($qp_id);
+    if (!defined($p)) {
+        Petitions::Page::bad_ref_page($q, '');
+        next;
     }
+
+    if ($p->{status} ne 'rejected') {
+        print $q->redirect('/' . $p->{ref} . '/');
+        next;
+    }
+
+    my $title = Petitions::sentence($p, 1, 1);
+    my $html =
+        Petitions::Page::header($q, $title);
+    $html .= $q->h1($q->span({-class => 'ltr'}, 'E-Petitions'));
+    $html .= $q->h2($q->span({-class => 'ltr'}, 'Rejected petition'));
+    $html .= Petitions::Page::display_box($q, $p);
+    $html .= $q->start_div({-id => 'signatories'})
+        . $q->h2($q->span({-class => 'ltr'}, 'Petition Rejected'));
+    $html .= Petitions::Page::reject_box($q, $p);
+    $html .= $q->end_div();
+    $html .= Petitions::detail($p);
+    my $stat = 'View.' . $p->{ref};
+    $html .= Petitions::Page::footer($q, $stat);
+    utf8::encode($html);
+    print $q->header(
+                -content_length => length($html),
+#                -last_modified => HTTP::Date::time2str($lastmodified),
+#                -cache_control => 'max-age=1',
+#                -expires => '+1s'),
+        ), $html;
+    $W->exit_if_changed();
+    dbh()->rollback();
 }
 
-# as in ref-sign, handle process-management ourselves
-mySociety::Util::manage_child_processes({
-                web => [mySociety::Config::get("NUM_REJECT_PROCESSES", 10),
-                        \&accept_loop]
-            });
+# Start FastCGI
+Petitions::Page::do_fastcgi(\&main);
 
 exit(0);
