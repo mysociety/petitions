@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.22 2007-05-30 14:53:56 francis Exp $
+ * $Id: general-example,v 1.23 2007-06-05 10:52:08 francis Exp $
  * 
  */
 
@@ -53,7 +53,8 @@ define('OPTION_ADMIN_URL', 'https://secure.---.com');
 
 // Domain name for emails to current website (email this for help etc)
 define('OPTION_EMAIL_DOMAIN', '---.com');
-define('OPTION_CONTACT_EMAIL', 'team@'.OPTION_EMAIL_DOMAIN);
+// The address team@ OPTION_EMAIL_DOMAIN is also used, in error messages
+define('OPTION_CONTACT_EMAIL', 'number10@'.OPTION_EMAIL_DOMAIN);
 define('OPTION_CONTACT_NAME', 'Name for From line');
 define('OPTION_TEST_EMAIL_PREFIX', 'petharness');
 
