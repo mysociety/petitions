@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.61 2007-04-13 18:38:06 matthew Exp $
+// $Id: new.php,v 1.62 2007-06-08 13:25:06 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -539,35 +539,54 @@ here:</p>
 <h3>Terms and Conditions</h3>
 <p>
 The information in a petition must be submitted in good faith. In
-order for the for the petition service to comply with the law and with
+order for the petition service to comply with the law and with
 the Civil Service Code, you must not include: </p>
 
 <ul>
 <li>Party political material. The Downing Street website is a
-Government site. Party political content is not appropriate, under the
-normal rules governing the Civil Service.  The Civil Service Code can
-be viewed at <a href="http://www.civilservice.gov.uk/civilservicecode">www.civilservice.gov.uk/civilservicecode</a>.</li>
-<li>false or defamatory statements;</li>
-<li>information protected by an injunction or court order (for
+Government site. Party political content cannot be published, under the
+<a href="http://www.civilservice.gov.uk/civilservicecode">normal rules governing the Civil Service</a>.
+Please note, this does not mean it is not permissible to petition on
+controversial issues. For example, this party political petition
+would not be permitted: "We petition the PM to change his party's policy on education",
+but this non-party political version would be:
+"We petition the PM to change the government's policy on education".</li>
+<li>potentially libellous, false, or defamatory statements;</li>
+<li>information which may be protected by an injunction or court order (for
 example, the identities of children in custody disputes);</li>
-<li>material which is commercially sensitive, confidential or which
+<li>material which is potentially confidential, commercially sensitive, or which
 may cause personal distress or loss;</li>
+<li>any commercial endorsement, promotion of any product, service or publication;</li>
+<li>URLs or web links (we cannot vet the content of external sites, and
+therefore cannot link to them from this site);</li>
 <li>the names of individual officials of public bodies, unless they
 are part of the senior management of those organisations;</li>
 <li>the names of family members of elected representatives or
 officials of public bodies;</li>
 <li>the names of individuals, or information where they may be
 identified, in relation to criminal accusations;</li>
-<li>offensive language, such as obvious swear words or language that
-is intemperate, inflammatory, or provocative, or to which people
-reading it could reasonably take offence.</li>
+<li>language which is offensive, intemperate, or provocative. This not
+only includes obvious swear words and insults, but any language to which
+people reading it could reasonably take offence (we believe it is
+possible to petition for anything, no matter how radical, politely).</li>
 </ul>
 
-<p>Lastly, to prevent spam problems, we reserve the right to reject:</p>
+<p>We reserve the right to reject:</p>
 <ul>
+<li>petitions that are similar to and/or overlap with an existing petition or petitions;</li>
+<li>petitions which ask for things outside the remit or powers of the Prime Minister and Government;</li>
 <li>statements that don't actually request any action;</li>
 <li>wording that is impossible to understand;</li>
-<li>statements that are simply advertisements with no petition aim.</li>
+<li>statements that amount to advertisements;</li>
+<li>petitions which are intended to be humorous, or which
+have no point about government policy (however witty these
+are, it is not appropriate to use a publically-funded website
+for purely frivolous purposes);</li>
+<li>issues for which an e-petition is not the appropriate channel
+(for example, correspondence about a personal issue);</li>
+<li>Freedom of Information requests. This is not the right channel
+for FOI requests; information about the appropriate procedure can be
+found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
 </ul>
 
 <p>Petitioners may freely disagree with the Government or call for
