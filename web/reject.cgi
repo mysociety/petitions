@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.10 2007-05-30 14:19:53 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.11 2007-06-10 22:38:59 francis Exp $';
 
 use strict;
 
@@ -62,7 +62,6 @@ sub main () {
 #                -cache_control => 'max-age=1',
 #                -expires => '+1s'),
         ), $html;
-    $W->exit_if_changed();
     dbh()->rollback();
 }
 
