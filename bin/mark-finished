@@ -7,7 +7,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: mark-finished,v 1.6 2007-02-05 18:10:18 matthew Exp $
+ * $Id: mark-finished,v 1.7 2007-07-09 13:39:42 matthew Exp $
  *
  */
 
@@ -72,7 +72,8 @@ function find_newly_finished_petitions() {
                 for update");
     while ($petition = db_fetch_array($q)) {
         verbose("petition #${petition['id']} (${petition['ref']}) has finished");
-        db_query("update petition set status='finished' where id=?", $petition['id']);
+        db_query("update petition set status='finished', lastupdate = ms_current_timestamp()
+            where id=?", $petition['id']);
     }
     db_commit();
     verbose("finished newly finished petitions");
