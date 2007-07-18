@@ -463,6 +463,9 @@ html>body #navigation li {
 }
 #footer a:link, #footer a:visited { color: #000;}
 
+#footer ul {margin:0; padding: 0 0 3px 0;} 
+
+#footer li {list-style:none; display:inline;}
 
 
 /* RIGHT SIDE */
