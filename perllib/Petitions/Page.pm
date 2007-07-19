@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.87 2007-07-19 10:21:30 matthew Exp $
+# $Id: Page.pm,v 1.88 2007-07-19 10:39:04 matthew Exp $
 #
 
 package Petitions::Page;
@@ -334,11 +334,14 @@ sub response_box ($$) {
     $responses =~ s/\[([^ ]*) ([^]]*?)\]((?:\.|;|,)?)$/"$2 - $1".($3?" $3":'')/egsm;
     $responses =~ s/\[([^ ]*) (.*?)\]/$2 - $1 -/gs;
     my @responses = split /\|\|\|/, $responses;
+    my @responsetimes = split /\|\|\|/, $p->{responsetime};
     my $out = '<div id="response">';
-    my $c = 1;
-    foreach my $response (@responses) {
+    for (my $i=0; $i<@responses; $i++) {
+        my $response = $responses[$i];
+        my $responsetime = $responsetimes[$i];
         my $title = 'Government Response';
-        $title .= ' ' . ($c++) if @responses > 1;
+        $title .= ' ' . ($i+1) if @responses > 1;
+        $title .= ', ' . $responsetime;
         $out .= $q->h2($q->span({-class => 'ltr'}, $title)),
             mySociety::Util::nl2br(mySociety::Util::ms_make_clickable(ent($response)));
     }

@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.45 2007-07-19 10:21:30 matthew Exp $
+# $Id: Petitions.pm,v 1.46 2007-07-19 10:39:04 matthew Exp $
 #
 
 package Petitions::DB;
@@ -119,7 +119,7 @@ sub get ($;$$) {
     my $govtresponse = shift;
     my $s = "select petition.*,
                 ms_current_date() <= deadline as open";
-    $s .= ", message.emailbody as response" if ($govtresponse);
+    $s .= ", message.emailbody as response, date_trunc('day', message.whencreated) as responsetime" if ($govtresponse);
     $s .= ", cached_signers as signers" unless ($nocount);
     $s .= " from petition";
     $s .= " left join message on petition.id = message.petition_id and circumstance = 'government-response'"
@@ -342,6 +342,18 @@ sub show_part ($$) {
     return 1;
 }
 
+=item pretty_date DATE [HTML]
+
+=cut
+sub pretty_date ($;$) {
+    my ($date, $html) = @_;
+    my ($Y, $m, $d) = split(/-/, $date);
+    my @months = qw(x January February March April May June July August September October November December);   # XXX lazy
+    my $monthyear = "$months[$m] $Y";
+    $monthyear = ent($monthyear) if ($html);
+    return "$d $monthyear";
+}
+
 =item pretty_deadline PETITION [HTML]
 
 =cut
@@ -349,13 +361,7 @@ sub pretty_deadline ($;$) {
     my ($p, $html) = @_;
     croak("PETITION may not be undef") unless (defined($p));
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
-    my ($Y, $m, $d) = split(/-/, $p->{deadline});
-
-    my @months = qw(x January February March April May June July August September October November December);   # XXX lazy
-    my $monthyear = "$months[$m] $Y";
-    $monthyear = ent($monthyear) if ($html);
-    
-    return "$d $monthyear";
+    return pretty_date($p->{deadline}, $html);
 }
 
 use constant MSG_ADMIN => 1;
