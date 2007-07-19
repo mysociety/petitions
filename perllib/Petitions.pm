@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.48 2007-07-19 11:07:16 matthew Exp $
+# $Id: Petitions.pm,v 1.49 2007-07-19 14:07:23 matthew Exp $
 #
 
 package Petitions::DB;
@@ -125,10 +125,12 @@ sub get ($;$$) {
     $s .= " left join message on petition.id = message.petition_id and circumstance = 'government-response'"
         if ($govtresponse);
     my $p;
-    $p ||= select_all("$s where petition.id = ?", $ref)
+    my $order = '';
+    $order = ' order by responsetime desc' if $govtresponse;
+    $p ||= select_all("$s where petition.id = ?$order", $ref)
             if ($ref =~ /^[1-9]\d*$/);
-    $p ||= select_all("$s where ref = ?", $ref);
-    $p ||= select_all("$s where ref ilike ?", $ref);
+    $p ||= select_all("$s where ref = ?$order", $ref);
+    $p ||= select_all("$s where ref ilike ?$order", $ref);
     
     return undef unless $p && @$p > 0;
     $p->[0]->{category} = $petition_categories{$p->[0]->{category}};
