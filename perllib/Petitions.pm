@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.44 2007-03-27 16:07:16 matthew Exp $
+# $Id: Petitions.pm,v 1.45 2007-07-19 10:21:30 matthew Exp $
 #
 
 package Petitions::DB;
@@ -135,7 +135,7 @@ sub get ($;$$) {
     return $p->[0] if @$p == 1;
     my $o = shift @$p;
     foreach (@$p) {
-        $o->{response} .= "\n\n" . $_->{response}; # XXX
+        $o->{response} .= "|||" . $_->{response}; # XXX
     }
     return $o;
 }

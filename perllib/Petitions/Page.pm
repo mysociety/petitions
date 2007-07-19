@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.86 2007-05-30 14:30:12 francis Exp $
+# $Id: Page.pm,v 1.87 2007-07-19 10:21:30 matthew Exp $
 #
 
 package Petitions::Page;
@@ -92,7 +92,7 @@ sub header ($$%) {
     my $subjects = '';
     if ($params{category}) {
         $subjects = '<meta name="dc.subject" scheme="eGMS.IPSV" content="' . $params{category} . '" />';
-	$out =~ s/(<meta name="keywords" content="[^"]*)(" \/>)/$1, $params{category}$2/;
+        $out =~ s/(<meta name="keywords" content="[^"]*)(" \/>)/$1, $params{category}$2/;
     } else {
         $subjects = '<meta name="dc.subject" content="10 Downing Street" />
 <meta name="dc.subject" content="Petitions" />
@@ -327,16 +327,22 @@ the Armed Forces without a postcode, please select from this list:</label>',
 
 sub response_box ($$) {
     my ($q, $p) = @_;
-    my $full_response = $p->{response};
-    $full_response =~ s#\n\nPetition info: http://.*$##;
+    my $responses = $p->{response};
+    $responses =~ s#\n\nPetition info: http://.*##;
     # XXX: Should be in HTMLEmail.pm, copied from there
-    $full_response =~ s/\[([^ ]*)\]/$1/gs;
-    $full_response =~ s/\[([^ ]*) ([^]]*?)\]((?:\.|;|,)?)$/"$2 - $1".($3?" $3":'')/egsm;
-    $full_response =~ s/\[([^ ]*) (.*?)\]/$2 - $1 -/gs;
-    my $out = $q->div({-id => 'response'},
-        $q->h2($q->span({-class => 'ltr'}, 'Government Response')),
-        mySociety::Util::nl2br(mySociety::Util::ms_make_clickable(ent($full_response)))
-    );
+    $responses =~ s/\[([^ ]*)\]/$1/gs;
+    $responses =~ s/\[([^ ]*) ([^]]*?)\]((?:\.|;|,)?)$/"$2 - $1".($3?" $3":'')/egsm;
+    $responses =~ s/\[([^ ]*) (.*?)\]/$2 - $1 -/gs;
+    my @responses = split /\|\|\|/, $responses;
+    my $out = '<div id="response">';
+    my $c = 1;
+    foreach my $response (@responses) {
+        my $title = 'Government Response';
+        $title .= ' ' . ($c++) if @responses > 1;
+        $out .= $q->h2($q->span({-class => 'ltr'}, $title)),
+            mySociety::Util::nl2br(mySociety::Util::ms_make_clickable(ent($response)));
+    }
+    $out .= '</div>';
     return $out;
 }
 
