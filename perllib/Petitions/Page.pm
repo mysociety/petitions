@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.92 2007-07-19 14:13:07 matthew Exp $
+# $Id: Page.pm,v 1.93 2007-08-02 11:45:09 matthew Exp $
 #
 
 package Petitions::Page;
@@ -20,6 +20,7 @@ use RABX;
 use File::Slurp qw(read_file);
 
 use mySociety::DBHandle qw(dbh);
+use mySociety::HTMLUtil;
 use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
 
@@ -344,7 +345,7 @@ sub response_box ($$) {
         $title .= ', ' . Petitions::pretty_date($responsedate);
         $title .= ', while petition was still open' if ($responsedate lt $p->{deadline});
         $out .= $q->h2($q->span({-class => 'ltr'}, $title)) .
-            mySociety::Util::nl2br(mySociety::Util::ms_make_clickable(ent($response)));
+            mySociety::HTMLUtil::nl2br(mySociety::HTMLUtil::ms_make_clickable(ent($response)));
     }
     $out .= '</div>';
     return $out;

@@ -20,7 +20,7 @@ chdir $FindBin::Bin;
 
 use File::Slurp;
 
-use mySociety::Util qw(print_log);
+# use mySociety::SystemMisc qw(print_log);
 use mySociety::Config;
 mySociety::Config::set_file('../conf/general');
 use mySociety::WebTestHarness;

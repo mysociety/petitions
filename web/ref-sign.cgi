@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.47 2007-05-30 14:19:53 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.48 2007-08-02 11:45:08 matthew Exp $';
 
 use strict;
 
@@ -22,7 +22,8 @@ BEGIN {
 }
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
-use mySociety::Util;
+use mySociety::PostcodeUtil;
+use mySociety::EmailUtil;
 
 use Petitions;
 use Petitions::Page;
@@ -32,11 +33,11 @@ sub i_check_email ($) {
     my $email = shift;
     $email =~ s/^\s+//;
     $email =~ s/\s+$//;
-    $email = undef unless mySociety::Util::is_valid_email($email);
+    $email = undef unless mySociety::EmailUtil::is_valid_email($email);
     return $email;
 }
 
-use Data::Dumper;
+# use Data::Dumper;
 
 # signup_page Q REF
 # Generate the signup page for REF.
@@ -66,7 +67,7 @@ sub signup_page ($$) {
     my $qp_address = $q->param('address');
     my $qp_postcode = $q->param('postcode');
     $qp_postcode =~ s/[^a-z0-9]//ig;
-    $qp_postcode = undef unless mySociety::Util::is_valid_postcode($qp_postcode);
+    $qp_postcode = undef unless mySociety::PostcodeUtil::is_valid_postcode($qp_postcode);
     my $qp_overseas = $q->param('overseas');
     $qp_overseas = undef if $qp_overseas eq '-- Select --';
 

@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.34 2007-02-07 15:56:34 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.35 2007-08-02 11:45:05 matthew Exp $';
 
 use strict;
 
@@ -66,7 +66,7 @@ sub stderronly ($) {
     $stderronly = shift;
 }
 
-use mySociety::Util qw(open_log print_log);
+use mySociety::SystemMisc qw(open_log print_log);
 
 sub do_output ($$) {
     my ($prio, $str) = @_;
@@ -182,15 +182,15 @@ if ($help) {
     exit(0);
 }
 
-mySociety::Util::log_to_stderr(0) if (!$debug);
-mySociety::Util::daemon() unless ($debug);
+mySociety::SystemMisc::log_to_stderr(0) if (!$debug);
+mySociety::SystemMisc::daemon() unless ($debug);
 
 if ($debug) {
     Log::verbose($verbose);
     Log::stderronly(1);
 } else {
     Log::verbose($verbose);
-    mySociety::Util::daemon();
+    mySociety::SystemMisc::daemon();
 }
 
 my $pidfile;
@@ -355,5 +355,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.34 2007-02-07 15:56:34 francis Exp $
+$Id: petsignupd,v 1.35 2007-08-02 11:45:05 matthew Exp $
 

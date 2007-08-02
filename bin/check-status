@@ -4,7 +4,6 @@
 
 use strict;
 require 5.8.0;
-use mySociety::Util;
 use mySociety::Config;
 BEGIN {
     mySociety::Config::set_file('../conf/general');

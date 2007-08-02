@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.50 2007-07-21 14:59:39 matthew Exp $
+# $Id: Petitions.pm,v 1.51 2007-08-02 11:45:05 matthew Exp $
 #
 
 package Petitions::DB;
@@ -18,7 +18,7 @@ use DBI;
 
 use mySociety::Config;
 use mySociety::DBHandle qw(dbh select_all);
-use mySociety::Util qw(random_bytes print_log is_valid_email);
+use mySociety::Random qw(random_bytes);
 
 my $secret;
 
@@ -167,7 +167,7 @@ use MIME::Base64;
 use mySociety::BaseN;
 
 use mySociety::DBHandle ();
-use mySociety::Util qw(random_bytes);
+use mySociety::Random qw(random_bytes);
 
 use constant TOKEN_LENGTH => 15;
 use constant TOKEN_LENGTH_B64 => 20;
@@ -290,7 +290,6 @@ use Carp;
 use POSIX qw();
 
 use mySociety::DBHandle qw(dbh);
-use mySociety::Util;
 use mySociety::Web qw(ent);
 
 my $petition_prefix = "We the undersigned petition the Prime Minister to";

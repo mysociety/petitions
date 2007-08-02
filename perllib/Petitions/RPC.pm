@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.39 2007-03-23 11:04:49 francis Exp $
+# $Id: RPC.pm,v 1.40 2007-08-02 11:45:09 matthew Exp $
 #
 
 package Petitions::RPC;
@@ -26,7 +26,7 @@ use Time::HiRes qw(time alarm sleep);
 
 use mySociety::Config;
 use mySociety::DBHandle qw(dbh);
-use mySociety::Util qw(random_bytes);
+use mySociety::Random qw(random_bytes);
 
 use Petitions;
 

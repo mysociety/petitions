@@ -23,12 +23,12 @@
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 # HTML mail test could be better
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.86 2007-05-08 17:10:02 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.87 2007-08-02 11:45:05 matthew Exp $';
 
 use strict;
 require 5.8.0;
 
-use mySociety::Util;
+use mySociety::SystemMisc;
 use mySociety::Config;
 mySociety::Config::set_file('../conf/general');
 use mySociety::DBHandle qw(dbh);
@@ -110,7 +110,7 @@ my $named_fcgi_processes = '"^(ref-index.cgi|ref-sign.cgi|reject.cgi)\$"';
 # Main code
 
 # Kill FastCGI processes
-mySociety::Util::kill_named_processes(SIGKILL, $named_fcgi_processes);
+mySociety::SystemMisc::kill_named_processes(SIGKILL, $named_fcgi_processes);
 
 # Configure test harness class
 date_print("Set up web test harness...") if $verbose > 0;
@@ -121,7 +121,7 @@ $wth->browser_credentials("$1:80", "$web_domain admin pages", $auth_user, $auth_
 $wth->database_connect('PET_');
 $wth->database_drop_reload('../db/schema.sql');
 $wth->database_cycle_sequences(200);
-mySociety::Util::kill_named_processes(SIGKILL, $named_fcgi_processes);
+mySociety::SystemMisc::kill_named_processes(SIGKILL, $named_fcgi_processes);
 $wth->log_watcher_setup($httpd_error_log);
 $wth->log_watcher_self_test($base_url . "/test.php?error=1", "deliberate_error_to_test_error_handling");
 my $eveld_bin = "$FindBin::Bin/../../services/EvEl/bin/eveld";
