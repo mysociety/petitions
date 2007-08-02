@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.136 2007-08-02 11:45:05 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.137 2007-08-02 11:47:55 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2453,6 +2453,7 @@ if ($help) {
 }
 
 mySociety::SystemMisc::log_to_stderr(0) if (!$debug);
+# XXX: We call daemon() here AND call it again a few lines later??
 mySociety::SystemMisc::daemon() unless ($debug);
 
 $SIG{TERM} = $SIG{INT} = sub { $foad = 1; };
@@ -2626,4 +2627,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.136 2007-08-02 11:45:05 matthew Exp $
+$Id: petemaild,v 1.137 2007-08-02 11:47:55 matthew Exp $
