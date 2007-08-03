@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.49 2007-08-03 14:20:19 matthew Exp $
+// $Id: list.php,v 1.50 2007-08-03 17:20:54 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -77,9 +77,9 @@ $sql_params[] = PAGE_SIZE;
 $qrows = db_query("
         SELECT petition.*, '$pet_today' <= petition.deadline AS open,
             cached_signers as signers,
-                message.id as message_id
+                (select count(*) from message where petition.id = message.petition_id
+                    and circumstance = 'government-response') as responses
             FROM petition
-            left join message on petition.id = message.petition_id and circumstance = 'government-response'
             WHERE status = ?".
             ($open ? " AND deadline $open '$pet_today' " : ""). 
             ($q_cat ? "AND category = ? " : "") .
@@ -193,12 +193,8 @@ if ($ntotal > 0) {
 <?      } ?>
 </tr>
 <?  }
-    $done = array();
     while ($row = db_fetch_array($qrows)) {
         $petition = new Petition($row);
-        if (array_key_exists($petition->id(), $done))
-            continue;
-        $done[$petition->id()] = true;
         #$arr = array('class'=>"petition-".$c%2, 'href' => $petition->url_main() );
         #if ($q_type == 'succeeded_closed' || $q_type == 'failed') $arr['closed'] = true;
         if ($rss) {
@@ -218,8 +214,10 @@ if ($ntotal > 0) {
                 print 'more details';
             }
             print '</a>';
-            if ($petition->data['message_id']) {
-                print '<br />(with government response)';
+            if ($petition->data['responses']) {
+                print '<br />(with government response'
+                if ($petition->data['responses'] > 1) print 's';
+                print ')';
             }
             print '</td><td>' . $petition->h_name() . '</td>';
             if ($q_type != 'rejected') {
