@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.51 2007-08-03 17:23:03 matthew Exp $
+// $Id: list.php,v 1.52 2007-08-15 17:23:05 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -23,7 +23,7 @@ $err = importparams(
             array('type', '/^[a-z_]*$/', '', 'default')
         );
 if ($err) {
-    err(_('Illegal offset or sort parameter passed'));
+    err(_('Illegal offset or sort parameter passed'), E_USER_NOTICE);
 }
 
 $rss = get_http_var('rss') ? true : false;
