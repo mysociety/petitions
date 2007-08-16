@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.62 2007-06-08 13:25:06 matthew Exp $
+// $Id: new.php,v 1.63 2007-08-16 16:03:28 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -58,7 +58,7 @@ function check_edited_petition(&$data) {
     $petition = db_getRow('select * from petition where id = ?', $id);
 
     if ($petition['status'] != 'rejectedonce')
-        err("Cannot edit a petition with status \"${petition['status']}\"");
+        err("I'm afraid you cannot edit a petition in status \"${petition['status']}\"", E_USER_NOTICE);
  
     /* Fill out data with data from database. */
     $petition['pet_content'] = $petition['content'];
