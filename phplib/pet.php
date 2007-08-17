@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.15 2007-05-11 13:33:42 matthew Exp $
+ * $Id: pet.php,v 1.16 2007-08-17 10:33:24 matthew Exp $
  * 
  */
 
@@ -46,9 +46,13 @@ function pet_handle_error($num, $message, $file, $line, $context) {
         while (ob_get_level()) {
             ob_end_clean();
         }
-        /* Message will be in log file, don't display it for cleanliness */
-        $err = '<p>' . sprintf(_('Please try again later, or <a href="mailto:%s">email us</a> for help resolving the problem.'), htmlspecialchars('team@' . OPTION_EMAIL_DOMAIN)) . '</p>';
-        if ($num & E_USER_ERROR) {
+        if ($num & E_USER_NOTICE)
+            # Assume we've said everything we need to
+            $err = "<p><em>$message</em></p>";
+        else
+            # Message will be in log file, don't display it for cleanliness
+            $err = '<p>' . sprintf(_('Please try again later, or <a href="mailto:%s">email us</a> for help resolving the problem.'), htmlspecialchars('team@' . OPTION_EMAIL_DOMAIN)) . '</p>';
+        if ($num & (E_USER_ERROR | E_USER_WARNING)) {
             $err = "<p><em>$message</em></p> $err";
         }
         ob_start(); // since page header writes content length, must be in ob_
@@ -68,6 +72,6 @@ function pet_show_error($message) {
     header('HTTP/1.0 500 Internal Server Error');
     page_header(_("Sorry! Something's gone wrong."), array('override'=>true));
     print _('<h2><span class="ltr">Sorry!  Something\'s gone wrong.</span></h2>') .
-        "\n<p>" . $message . '</p>';
+        "\n" . $message;
     page_footer('Error');
 }
