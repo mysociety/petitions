@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.12 2007-03-27 16:07:18 matthew Exp $
+// $Id: terms.php,v 1.13 2007-08-23 08:17:14 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -88,7 +88,7 @@ possible to petition for anything, no matter how radical, politely).</li>
 <li>statements that amount to advertisements;</li>
 <li>petitions which are intended to be humorous, or which
 have no point about government policy (however witty these
-are, it is not appropriate to use a publically-funded website
+are, it is not appropriate to use a publicly-funded website
 for purely frivolous purposes);</li>
 <li>issues for which an e-petition is not the appropriate channel
 (for example, correspondence about a personal issue);</li>
