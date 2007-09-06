@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.137 2007-08-02 11:47:55 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.138 2007-09-06 11:25:44 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2491,8 +2491,24 @@ $SIG{USR2} = sub {
         print FH "\nQueue info:\n";
         print FH "messages count: " . scalar(keys(%{$Q->{messages}})) . "\n";
         print FH "finished count: " . scalar(@{$Q->{finished}}) . "\n";
-        print FH "badhosts count: " . scalar(keys(%{$Q->{badhosts}})) . "\n";
+        print FH "badhosts count: " . scalar(keys(%{$Q->{badhosts}})) . ", they are:\n";
+        foreach my $badhost_key (keys(%{$Q->{badhosts}})) {
+            my $l = $Q->{badhosts}->{$badhost_key};
+            print FH "\t$badhost_key times: ";
+            foreach my $attempt (@$l) {
+                print FH "$attempt ";
+            }
+            print FH "\n";
+        }
         print FH "baddomains count: " . scalar(keys(%{$Q->{baddomains}})) . "\n";
+        foreach my $baddomain_key (keys(%{$Q->{baddomains}})) {
+            my $l = $Q->{baddomains}->{$baddomain_key};
+            print FH "\t$baddomain_key times: ";
+            foreach my $attempt (@$l) {
+                print FH "$attempt ";
+            }
+            print FH "\n";
+        }
         print FH "domain resolver\n";
         print FH "\tmaxrequests: " . $Q->{r}->{maxrequests} . "\n";
         print FH "\tqueue count: " . scalar(@{$Q->{r}->{queue}}) . "\n";
@@ -2627,4 +2643,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.137 2007-08-02 11:47:55 matthew Exp $
+$Id: petemaild,v 1.138 2007-09-06 11:25:44 francis Exp $
