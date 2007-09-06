@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.139 2007-09-06 12:05:52 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.140 2007-09-06 12:07:05 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2530,10 +2530,10 @@ $SIG{USR2} = sub {
                 print FH "M" . $one_message->id() . " ";
             }
             print FH "state: " . $smtp_client->{state};
-            print FH "delivered: " . $smtp_client->{delivered};
-            print FH "tempfailed: " . $smtp_client->tempfailed();
-            print FH "permfailed: " . $smtp_client->permfailed();
-            print FH "lastactivity: " . $smtp_client->lastactivity();
+            print FH " delivered: " . $smtp_client->{delivered};
+            print FH " tempfailed: " . $smtp_client->{tempfailed};
+            print FH " permfailed: " . $smtp_client->{permfailed};
+            print FH " lastactivity: " . $smtp_client->{lastactivity};
             if ($smtp_client->{error}) {
                 print FH " error: " . $smtp_client->{error};
             } else {
@@ -2662,4 +2662,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.139 2007-09-06 12:05:52 francis Exp $
+$Id: petemaild,v 1.140 2007-09-06 12:07:05 francis Exp $
