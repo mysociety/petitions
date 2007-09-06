@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.138 2007-09-06 11:25:44 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.139 2007-09-06 12:05:52 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -261,7 +261,7 @@ use IO::Socket;
 use Regexp::Common;
 use Time::HiRes qw(time);
 
-use fields qw(id target messages message state s tried sendbuf recvbuf
+use fields qw(id target messages message state s sendbuf recvbuf
                 lastactivity error delivered tempfailed permfailed);
 
 #
@@ -2514,13 +2514,32 @@ $SIG{USR2} = sub {
         print FH "\tqueue count: " . scalar(@{$Q->{r}->{queue}}) . "\n";
         print FH "\tstate count: " . scalar(keys(%{$Q->{r}->{state}})) . "\n";
         print FH "\tresults count: " . scalar(keys(%{$Q->{r}->{results}})) . "\n";
-        print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . "\n";
+        print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . ", they are:\n";
         my $total_messages_in_smtp = 0;
-        print FH "\tthey are: ";
         foreach my $smtp_client (@{$Q->{ss}}) {
             $total_messages_in_smtp ++ if ($smtp_client->{message});
             $total_messages_in_smtp += scalar(@{$smtp_client->{messages}});
-            print FH $smtp_client . " ";
+            print FH "\tS".$smtp_client->id()." target: ".$smtp_client->target();
+            if ($smtp_client->{message}) {
+                print FH " msg: M" . $smtp_client->{message}->id();
+            } else {
+                print FH " msg: none";
+            }
+            print FH " msgs: ";
+            foreach my $one_message (@{$smtp_client->{messages}}) {
+                print FH "M" . $one_message->id() . " ";
+            }
+            print FH "state: " . $smtp_client->{state};
+            print FH "delivered: " . $smtp_client->{delivered};
+            print FH "tempfailed: " . $smtp_client->tempfailed();
+            print FH "permfailed: " . $smtp_client->permfailed();
+            print FH "lastactivity: " . $smtp_client->lastactivity();
+            if ($smtp_client->{error}) {
+                print FH " error: " . $smtp_client->{error};
+            } else {
+                print FH " error: none";
+            }
+            print FH "\n";
         }
         print FH "\n";
         print FH "\ttotal messages in SMTP: " . $total_messages_in_smtp . "\n";
@@ -2643,4 +2662,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.138 2007-09-06 11:25:44 francis Exp $
+$Id: petemaild,v 1.139 2007-09-06 12:05:52 francis Exp $
