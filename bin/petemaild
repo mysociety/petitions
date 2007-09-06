@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.140 2007-09-06 12:07:05 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.141 2007-09-06 12:08:30 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2541,7 +2541,6 @@ $SIG{USR2} = sub {
             }
             print FH "\n";
         }
-        print FH "\n";
         print FH "\ttotal messages in SMTP: " . $total_messages_in_smtp . "\n";
         print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . "\n";
         print FH "lastcheckedqueue: " . $Q->{lastcheckedqueue} . "\n";
@@ -2662,4 +2661,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.140 2007-09-06 12:07:05 francis Exp $
+$Id: petemaild,v 1.141 2007-09-06 12:08:30 francis Exp $
