@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.141 2007-09-06 12:08:30 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.142 2007-09-06 12:17:50 francis Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2571,7 +2571,7 @@ $SIG{USR2} = sub {
         my $found = "";
         my $lost = "";
         foreach my $message (values(%{$Q->{messages}})) {
-            my $message_debug_str = "\tid: " . $message->id() . " state: " . $message->state() . " owner: " . $message->owner(); 
+            my $message_debug_str = "\tid: M" . $message->id() . " state: " . $message->state() . " owner: " . ($message->owner() ? "S".$message->owner()->id() : "none");
             $message_debug_str .= " (state: ".$Sender::statename[$message->owner()->{state}]." error: ".$message->owner()->{error}.")" if ($message->owner());
             $message_debug_str .= " queue: " . $message->{queue}. " priority: " . $message->{priority} . " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
             if ($all_messages{$message->id()}) {
@@ -2661,4 +2661,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.141 2007-09-06 12:08:30 francis Exp $
+$Id: petemaild,v 1.142 2007-09-06 12:17:50 francis Exp $
