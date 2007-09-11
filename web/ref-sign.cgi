@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.48 2007-08-02 11:45:08 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.49 2007-09-11 10:52:42 matthew Exp $';
 
 use strict;
 
@@ -69,7 +69,7 @@ sub signup_page ($$) {
     $qp_postcode =~ s/[^a-z0-9]//ig;
     $qp_postcode = undef unless mySociety::PostcodeUtil::is_valid_postcode($qp_postcode);
     my $qp_overseas = $q->param('overseas');
-    $qp_overseas = undef if $qp_overseas eq '-- Select --';
+    $qp_overseas = undef if $qp_overseas && $qp_overseas eq '-- Select --';
 
     my %errors;
     $errors{name} = 'Please enter your name'
