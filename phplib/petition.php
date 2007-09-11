@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.50 2007-09-11 10:52:42 matthew Exp $
+ * $Id: petition.php,v 1.51 2007-09-11 10:55:13 matthew Exp $
  * 
  */
 
@@ -167,7 +167,7 @@ class Petition {
             return 'Cannot be shown';
         $content = $this->data['content'];
         if ($long)
-            $content = preg_replace('/\S{60}/', '$0 ', $text);
+            $content = preg_replace('/\S{60}/', '$0 ', $content);
         return htmlspecialchars($content);
     }
 
