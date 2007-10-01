@@ -23,7 +23,7 @@
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 # HTML mail test could be better
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.88 2007-10-01 16:05:46 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.89 2007-10-01 16:10:49 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -909,6 +909,7 @@ sub do_resubmit_test {
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Live/);
+    $wth->browser_follow_link(text_regex => qr/admin/);
     $wth->browser_submit_form(form_name => 'petition_admin_change_deadline',
                 fields => { deadline => '1st January 1991' }) or die "Failed to submit too high deadline change";
     $wth->browser_check_contents('less than 1 year');
