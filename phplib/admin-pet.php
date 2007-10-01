@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.104 2007-04-20 09:12:58 matthew Exp $
+ * $Id: admin-pet.php,v 1.105 2007-10-01 16:05:46 matthew Exp $
  * 
  */
 
@@ -15,6 +15,7 @@ require_once "../phplib/petition.php";
 require_once "../../phplib/db.php";
 require_once "../../phplib/utility.php";
 require_once "../../phplib/importparams.php";
+require_once '../../phplib/datetime.php';
 
 class ADMIN_PAGE_PET_SUMMARY {
     function ADMIN_PAGE_PET_SUMMARY() {
@@ -459,19 +460,34 @@ class ADMIN_PAGE_PET_MAIN {
             $petition_obj->ref() . '/">' . $pdata['ref'] . "</a>'";
         print "</h2>";
 
-        print "<p>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
-        print '<br>Organisation: ';
+        print "<ul><li>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
+        print '<li>Organisation: ';
         print $pdata['organisation'] ? htmlspecialchars($pdata['organisation']) : 'None given';
         if ($pdata['org_url'])
             print ', <a href="' . htmlspecialchars($pdata['org_url']) . '">' . htmlspecialchars($pdata['org_url']) . '</a>';
-        print "<br>Created: " . prettify($pdata['creationtime']);
-        print "<br>Last status change: " . prettify($pdata['laststatuschange']);
-        print "<br>Deadline: <b>" . prettify($pdata['deadline']) . "</b> (" . htmlspecialchars($pdata['rawdeadline']) . ')';
-        print '<br>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
-        print '<br>Title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
-        print '<br>Details of petition: ';
+        print "<li>Created: " . prettify($pdata['creationtime']);
+        print "<li>Last status change: " . prettify($pdata['laststatuschange']);
+        print '<li>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
+        print '<li><form name="petition_admin_change_deadline" method="post" action="' . $this->self_link . '">
+<input type="hidden" name="deadline_change" value="1">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+Deadline: ';
+        if ($pdata['status'] == 'live')
+            print '<input type="text" name="deadline" value="';
+        else
+            print '<b>';
+        print trim(prettify($pdata['deadline']));
+        if ($pdata['status'] == 'live')
+            print '">';
+        else
+            print '</b>';
+        print ' <input type="submit" value="Change">
+ (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")
+</form>';
+        print '<li>Title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
+        print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
-        print '</p>';
+        print '</ul>';
 
         if ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted') {
             print '
@@ -853,6 +869,38 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
         return $out;
     }
 
+    function change_deadline($petition_id) {
+        global $pet_today;
+        $new_deadline = get_http_var('deadline');
+
+        $p = new Petition($petition_id);
+        $current_deadline = $p->data['deadline'];
+        $went_live = $p->data['laststatuschange'];
+        $went_live_epoch = strtotime($went_live);
+        $new_deadline = datetime_parse_local_date($new_deadline, $went_live_epoch, 'en', 'GB');
+        preg_match('#^(\d\d\d\d)-(\d\d)-(\d\d)#', $went_live, $m);
+        $deadline_limit_years = 1; # in years
+        $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $m[2], $m[3], $m[1] + $deadline_limit_years));
+
+        $error = null;
+        if (!$new_deadline)
+            $error = 'Please enter a new duration or deadline';
+        elseif ($new_deadline['iso'] < $pet_today)
+            $error = 'The resultant deadline must be in the future';
+        elseif ($deadline_limit < $new_deadline['iso'])
+            $error = 'Please change the duration so it is less than 1 year from when the petition was first approved.';
+
+        if ($error) {
+            print "<p><em>$error</em></p>";
+        } else {
+            db_getOne('update petition set deadline=?, lastupdate = ms_current_timestamp()
+                where id=?', $new_deadline['iso'], $petition_id);
+            $p->log_event("Admin altered deadline of petition from $current_deadline to $new_deadline[iso]", http_auth_user());
+            db_commit();
+            print '<p><em>Deadline updated</em></p>';
+        }
+    }
+
     function display() {
         db_connect();
         $petition_id = petition_admin_perform_actions();
@@ -892,6 +940,8 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
             }
         } elseif (get_http_var('respond')) {
             $this->respond($petition_id);
+        } elseif (get_http_var('deadline_change')) {
+            $this->change_deadline($petition_id);
         }
 
         // Display page

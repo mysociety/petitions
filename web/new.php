@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.63 2007-08-16 16:03:28 matthew Exp $
+// $Id: new.php,v 1.64 2007-10-01 16:05:47 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -431,12 +431,6 @@ function step_main_error_check($data) {
     $pet_today_arr = explode('-', $pet_today);
     $deadline_limit_years = 1; # in years
     $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $pet_today_arr[1], $pet_today_arr[2], $pet_today_arr[0] + $deadline_limit_years));
-    if (!$data['rawdeadline'] || !$data['deadline'])
-        $errors['rawdeadline'] = _('Please enter a deadline');
-    if ($data['deadline'] < $pet_today)
-        $errors['rawdeadline'] = _('The deadline must be in the future');
-    if ($data['deadline_details']['error'])
-        $errors['rawdeadline'] = _('Please enter a valid date for the deadline');
     if (!$data['rawdeadline'] || !$data['deadline'])
         $errors['rawdeadline'] = _('Please enter a duration');
     if ($data['deadline'] < $pet_today)
