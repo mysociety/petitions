@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.105 2007-10-01 16:05:46 matthew Exp $
+ * $Id: admin-pet.php,v 1.106 2007-10-04 11:40:15 matthew Exp $
  * 
  */
 
@@ -366,11 +366,16 @@ class ADMIN_PAGE_PET_MAIN {
             $late = false;
             if ($status == 'draft' && $r['late'] == 't') $late = true;
             if ($status == 'rejected') {
+                $row .= '<td>';
                 if ($r['status'] == 'rejectedonce') {
-                    $row .= '<td>Rejected once</td>';
+                    $row .= 'Rejected once';
                 } elseif ($r['status'] == 'rejected') {
-                    $row .= '<td>Rejected twice</td>';
+                    $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . '">';
+                    $row .= 'Rejected twice';
+                    $row .= ' <input type="submit" name="remove" value="Remove petition">';
+                    $row .= '</form>';
                 }
+                $row .= '</td>';
             } elseif (!$this->cat_change && $status == 'draft') {
                 $row .= '<td><form name="petition_admin_approve" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] .
                     '"><input type="submit" name="reject" value="Reject"></form>';
@@ -382,9 +387,15 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '<td>';
                 if ($r['message_id']) 
                     $row .= 'Response sent';
-                else 
+                else {
                     $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
-                        '"><input type="submit" name="respond" value="Write response"></form>';
+                        '"><input type="submit" name="respond" value="Write response">';
+                    if ($status == 'live') {
+                        $row .= ' <input type="submit" name="redraft" value="Move back to draft">';
+                    }
+                    $row .= ' <input type="submit" name="remove" value="Remove petition">';
+                    $row .= '</form>';
+                }
                 $row .= '</td>';
             }
             $found[] = array($late, $row);
@@ -501,7 +512,11 @@ Deadline: ';
         } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
             print '<form name="petition_admin_go_respond" method="post" action="'
                 . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
-                '"><input type="submit" name="respond" value="Write response"></form>';
+                '"><input type="submit" name="respond" value="Write response">';
+            if ($pdata['status'] == 'live')
+                print ' <input type="submit" name="redraft" value="Move back to draft">';
+            print ' <input type="submit" name="remove" value="Remove petition">';
+            print '</form>';
         }
 
         // Messages
@@ -739,6 +754,7 @@ EOF;
         print '<p><em>That petition has been rejected.</em></p>';
     }
 
+    # Admin function to send government response
     function respond($petition_id) {
         global $q_message_id, $q_submit, $q_n, $q_message_subject, $q_message_body, $q_message_links, $q_html_mail;
         global $q_h_message_id, $q_h_message_subject, $q_h_message_body, $q_h_message_links;
@@ -869,11 +885,15 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
         return $out;
     }
 
+    # Admin function to change the deadline of a petition, up to the 1 year limit
     function change_deadline($petition_id) {
         global $pet_today;
         $new_deadline = get_http_var('deadline');
 
         $p = new Petition($petition_id);
+        $status = $p->status();
+        if ($status != 'live') return;
+
         $current_deadline = $p->data['deadline'];
         $went_live = $p->data['laststatuschange'];
         $went_live_epoch = strtotime($went_live);
@@ -901,6 +921,91 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
         }
     }
 
+    # Approve a petition. Note the approval might have been a few days later,
+    # so take account of that and calculate a new deadline
+    function approve($petition_id) {
+        $p = new Petition($petition_id);
+        $status = $p->status();
+        if ($status == 'draft' || $status == 'resubmitted') {
+            db_getOne("UPDATE petition
+                SET status='live',
+                deadline=deadline+(ms_current_date()-date_trunc('day', laststatuschange)),
+                rejection_hidden_parts = 0,
+                laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
+                WHERE id=?", $petition_id);
+            $p->log_event("Admin approved petition", http_auth_user());
+        } else {
+            $p->log_event("Bad approval", http_auth_user());
+            db_commit();
+            err("Should only be able to approve petitions in draft or resubmitted state");
+        }
+        pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'approved', 'petition-approved');
+        db_commit();
+        print '<p><em>Petition approved!</em></p>';
+    }
+
+    # Admin function to move live petitions back to draft state
+    # Mistaken approval, creator request, or similar
+    function redraft($petition_id, $type) {
+        $p = new Petition($petition_id);
+        $status = $p->status();
+        if ($type == 'redraft' && $status != 'live') return;
+        if ($type == 'remove' && $status != 'live' && $status != 'finished' && $status != 'rejected') return;
+
+        $reason = get_http_var('reason');
+        $errors = array();
+        if (!$reason)
+            $errors[] = 'Please give a reason!';
+
+        if (get_http_var('submit') && !sizeof($errors)) {
+            if ($type == 'remove') {
+                $p->log_event("Admin removed petition with reason '$reason'", http_auth_user());
+                db_query("update petition set status='sentconfirm', laststatuschange=current_timestamp,
+                    lastupdate=current_timestamp where id=?", $p->id());
+                $message = 'That petition has been removed from the site';
+            } elseif ($type == 'redraft') {
+                $p->log_event("Admin redrafted petition with reason '$reason'", http_auth_user());
+                db_query("update petition set status='draft', laststatuschange=current_timestamp,
+                    lastupdate=current_timestamp where id=?", $p->id());
+                db_query('delete from signer where petition_id=?', $p->id());
+                $message = 'That petition has been moved back into the draft state';
+            }
+            db_commit();
+            print "<p><em>$message</em></p>";
+        } else {
+            if (get_http_var('submit') && sizeof($errors))
+                print '<div id="errors"><ul><li>' . 
+                    join('</li><li>' , $errors) . '</li></ul></div>';
+?>
+<form name="petition_admin_redraft" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
+<input type="hidden" name="<?=$type?>" value="1">
+<input type="hidden" name="petition_id" value="<?=$petition_id ?>">
+<?
+            if ($type == 'redraft') {
+?>
+<p>You are moving the <em><?=$p->ref() ?></em> petition back into its draft state.
+<br>This will remove the petition from the site, and it can then be
+rejected through the admin interface as normal.
+<br>All current signatories will be deleted.</p>
+<p><label for="reason">Please give the reason for moving this petition back to draft, for audit purposes:</label>
+<br><textarea id="reason" name="reason" rows="5" cols="40"></textarea></p>
+<input type="submit" name="submit" value="Move petition">
+<? } elseif ($type == 'remove') { ?>
+<p>You are removing the <em><?=$p->ref() ?></em> petition from the petition site.
+<br>This should only be done if the petition creator has asked for it to be
+removed.
+<br>Otherwise, use the "Move back to draft" button, so that the petition
+can be rejected properly.</p>
+<p><label for="reason">Please give the reason for removing this petition, for audit purposes. For example, provide a copy of the request email from the petition creator:</label>
+<br><textarea id="reason" name="reason" rows="10" cols="40"></textarea></p>
+<input type="submit" name="submit" value="Remove petition">
+<? } ?>
+</form>
+<hr><hr>
+<?
+        }
+    }
+
     function display() {
         db_connect();
         $petition_id = petition_admin_perform_actions();
@@ -908,24 +1013,7 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
             $petition_id = get_http_var('petition_id') + 0; # id
 
         if (get_http_var('approve')) {
-            $p = new Petition($petition_id);
-            $status = $p->status();
-            if ($status == 'draft' || $status == 'resubmitted') {
-                db_getOne("UPDATE petition
-                    SET status='live',
-                    deadline=deadline+(ms_current_date()-date_trunc('day', laststatuschange)),
-                    rejection_hidden_parts = 0,
-                    laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
-                    WHERE id=?", $petition_id);
-                $p->log_event("Admin approved petition", http_auth_user());
-            } else {
-                $p->log_event("Bad approval", http_auth_user());
-                db_commit();
-                err("Should only be able to approve petitions in draft or resubmitted state");
-            }
-            pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'approved', 'petition-approved');
-            db_commit();
-            print '<p><em>Petition approved!</em></p>';
+            $this->approve($petition_id);
         } elseif (get_http_var('reject')) {
             $this->reject_form($petition_id);
         } elseif (get_http_var('reject_form_submit')) {
@@ -942,6 +1030,10 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
             $this->respond($petition_id);
         } elseif (get_http_var('deadline_change')) {
             $this->change_deadline($petition_id);
+        } elseif (get_http_var('redraft')) {
+            $this->redraft($petition_id, 'redraft');
+        } elseif (get_http_var('remove')) {
+            $this->redraft($petition_id, 'remove');
         }
 
         // Display page
@@ -959,4 +1051,3 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
     }
 }
 
-?>
