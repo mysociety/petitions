@@ -22,8 +22,9 @@
 # Actually test message expiry rather than use --noexpire
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 # HTML mail test could be better
+# Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.89 2007-10-01 16:10:49 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.90 2007-10-04 12:44:25 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -56,7 +57,7 @@ Actions are a list of tests, run if present in this order:
     main - Create petition, sign it, wait until completion, send two government responses
     rejection - Make a petition, and reject it, resubmit, and reject again
     timeout - Test timeout for petitions which have been rejected once but not resubmitted
-    resubmit - Make a petition, and reject it, resubmit, and approve. Also test admin deadline changing
+    resubmit - Make a petition, and reject it, resubmit, and approve. Also test admin deadline changing and removal
     early - Create petition, sign it, send government response, sign it some more
 If you specify no actions, it will run all of them.
 
@@ -920,6 +921,16 @@ sub do_resubmit_test {
                 fields => { deadline => '1st June 1990' }) or die "Failed to submit OK deadline change";
     $wth->browser_check_contents('Deadline updated');
 
+    comment("Admin remove petition, after creator request");
+    $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
+        fields => {}, button => 'remove') or die "Failed to submit remove button";
+    $wth->browser_submit_form(form_name => 'petition_admin_redraft',
+        fields => { reason => 'Petition creator asked us to take it down'}, button => 'submit') or die "Failed to submit removal request";
+    $wth->browser_check_contents('petition has been removed');
+    $wth->browser_get($base_url);
+    $wth->browser_check_no_contents($petition_text_resubmitted);
+    $wth->browser_check_no_contents("lovetheworld");
+    
     comment("Close petition");
     set_pet_date('1990-06-02'); 
     call_mark_finished();
