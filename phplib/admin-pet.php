@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.106 2007-10-04 11:40:15 matthew Exp $
+ * $Id: admin-pet.php,v 1.107 2007-10-08 13:03:25 matthew Exp $
  * 
  */
 
@@ -467,8 +467,8 @@ class ADMIN_PAGE_PET_MAIN {
         $petition_obj = new Petition($pdata);
 #        $petition_obj->render_box(array('showdetails' => true));
 
-        print "<h2>Petition '<a href=\"" . OPTION_BASE_URL . '/' .
-            $petition_obj->ref() . '/">' . $pdata['ref'] . "</a>'";
+        print "<h2>Petition &lsquo;<a href=\"" . OPTION_BASE_URL . '/' .
+            $pdata['ref'] . '/">' . $pdata['ref'] . '</a>&rsquo;';
         print "</h2>";
 
         print "<ul><li>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
@@ -479,6 +479,22 @@ class ADMIN_PAGE_PET_MAIN {
         print "<li>Created: " . prettify($pdata['creationtime']);
         print "<li>Last status change: " . prettify($pdata['laststatuschange']);
         print '<li>Current status: <b>' . htmlspecialchars($pdata['status']) . '</b>';
+        if ($pdata['status'] == 'rejectedonce' || $pdata['status'] == 'rejected') {
+            # Why rejected?
+            if ($pdata['status'] == 'rejectedonce') {
+                $category = $pdata['rejection_first_categories'];
+                $reason = $pdata['rejection_first_reason'];
+            } else {
+                $category = $pdata['rejection_second_categories'];
+                $reason = $pdata['rejection_second_reason'];
+            }
+            $cats_pretty = prettify_categories($category, false);
+            print '<ul><li><form method="post" action="' . $this->self_link
+                . '"><input type="hidden" name="petition_id" value="' . $pdata['id']
+                . '"><input type="hidden" name="change_criteria" value="1">For being in the following categories: '
+                . $cats_pretty . ' &mdash; <input type="submit" value="Change"></form>';
+            print '<li>Extra reason provided by admin: ' . $reason . '</li></ul>';
+        }
         print '<li><form name="petition_admin_change_deadline" method="post" action="' . $this->self_link . '">
 <input type="hidden" name="deadline_change" value="1">
 <input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
@@ -492,8 +508,9 @@ Deadline: ';
             print '">';
         else
             print '</b>';
-        print ' <input type="submit" value="Change">
- (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")
+        if ($pdata['status'] == 'live')
+            print ' <input type="submit" value="Change">';
+        print ' (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")
 </form>';
         print '<li>Title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
         print '<li>Details of petition: ';
@@ -658,10 +675,13 @@ Deadline: ';
         }
     }
 
-    function display_categories() {
+    function display_categories($current = 0) {
         global $global_rejection_categories;
         foreach ($global_rejection_categories as $n => $category) {
-            print '<br><input type="checkbox" name="rejection_cats[]" value="' . $n;
+            print '<br><input type="checkbox" name="rejection_cats[]"';
+            if ($current & $n)
+                print ' checked';
+            print ' value="' . $n;
             print '" id="cat' . $n . '"> <label for="cat' . $n . '">';
             print $category . '</label>';
         }
@@ -960,13 +980,13 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
         if (get_http_var('submit') && !sizeof($errors)) {
             if ($type == 'remove') {
                 $p->log_event("Admin removed petition with reason '$reason'", http_auth_user());
-                db_query("update petition set status='sentconfirm', laststatuschange=current_timestamp,
-                    lastupdate=current_timestamp where id=?", $p->id());
+                db_query("update petition set status='sentconfirm', laststatuschange=ms_current_timestamp(),
+                    lastupdate=ms_current_timestamp() where id=?", $p->id());
                 $message = 'That petition has been removed from the site';
             } elseif ($type == 'redraft') {
                 $p->log_event("Admin redrafted petition with reason '$reason'", http_auth_user());
-                db_query("update petition set status='draft', laststatuschange=current_timestamp,
-                    lastupdate=current_timestamp where id=?", $p->id());
+                db_query("update petition set status='draft', laststatuschange=ms_current_timestamp(),
+                    lastupdate=ms_current_timestamp() where id=?", $p->id());
                 db_query('delete from signer where petition_id=?', $p->id());
                 $message = 'That petition has been moved back into the draft state';
             }
@@ -1006,6 +1026,63 @@ can be rejected properly.</p>
         }
     }
 
+    function change_criteria($petition_id) {
+        $p = new Petition($petition_id);
+        $status = $p->status();
+        if ($status != 'rejected' && $status != 'rejectedonce') {
+            $p->log_event('Changing criteria of non-rejected petition', http_auth_user());
+            db_commit();
+            err("Should only be able to change criteria of rejected petitions");
+            return;
+        }
+
+        if ($status == 'rejectedonce')
+            $column = 'rejection_first_categories';
+        else
+            $column = 'rejection_second_categories';
+        $criteria = $p->data[$column];
+
+        $errors = array();
+
+        $reason = get_http_var('reason');
+        if (!$reason) $errors[] = 'Please give a reason!';
+
+        $criteria_new = get_http_var('rejection_cats');
+        if (is_array($criteria_new)) $criteria_new = array_sum($criteria_new);
+        else $criteria_new = 0;
+        if (!$criteria_new) $errors[] = 'Please give some rejection categories';
+
+        if (get_http_var('submit') && !sizeof($errors)) {
+            db_getOne("UPDATE petition SET $column=?, lastupdate=ms_current_timestamp()
+                where id=?", $criteria_new, $petition_id);
+            $p->log_event("Admin changed rejection criteria from $criteria to $criteria_new, reason '$reason'", http_auth_user());
+            db_commit();
+            print '<p><em>Petition criteria changed</em></p>';
+        } else {
+            if (get_http_var('submit') && sizeof($errors))
+                print '<div id="errors"><ul><li>' . 
+                    join('</li><li>' , $errors) . '</li></ul></div>';
+?>
+<form method="post" name="admin_change_rejection_criteria" action="<?=$this->self_link?>">
+<input type="hidden" name="submit" value="1">
+<input type="hidden" name="change_criteria" value="1">
+<input type="hidden" name="petition_id" value="<?=$petition_id ?>">
+<p>Category or categories for rejection: <small>
+<?
+            if (!get_http_var('submit')) $criteria_new = $criteria;
+            $this->display_categories($criteria_new);
+?>
+</small></p>
+<p>Reason for changing criteria:
+<br><textarea name="reason" rows="5" cols="40"></textarea></p>
+
+<p><input type="submit" value="Change criteria"></p>
+
+</form>
+<?
+        }
+    }
+
     function display() {
         db_connect();
         $petition_id = petition_admin_perform_actions();
@@ -1034,6 +1111,8 @@ can be rejected properly.</p>
             $this->redraft($petition_id, 'redraft');
         } elseif (get_http_var('remove')) {
             $this->redraft($petition_id, 'remove');
+        } elseif (get_http_var('change_criteria')) {
+            $this->change_criteria($petition_id);
         }
 
         // Display page
