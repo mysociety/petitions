@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.107 2007-10-08 13:03:25 matthew Exp $
+ * $Id: admin-pet.php,v 1.108 2007-10-10 08:43:42 matthew Exp $
  * 
  */
 
@@ -997,7 +997,8 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
                 print '<div id="errors"><ul><li>' . 
                     join('</li><li>' , $errors) . '</li></ul></div>';
 ?>
-<form name="petition_admin_redraft" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
+<form name="petition_admin_redraft" action="<?=$this->self_link?>" accept-charset="utf-8" method="post"
+onsubmit="this.submit.disabled=true">
 <input type="hidden" name="<?=$type?>" value="1">
 <input type="hidden" name="petition_id" value="<?=$petition_id ?>">
 <?
