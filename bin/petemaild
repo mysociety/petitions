@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.142 2007-09-06 12:17:50 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.143 2007-10-14 14:08:50 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -220,7 +220,7 @@ sub state ($;$) {
     my Queue::Message $self = shift;
     if (@_) {
         $self->{state} = $_[0];
-        $self->log('debug', "-> $statename[$_[0]]");
+        $self->log('noise', "-> $statename[$_[0]]");
     }
     return $self->{state};
 }
@@ -381,7 +381,7 @@ sub state ($;$) {
     my Sender $self = shift;
     if (@_) {
         $self->{state} = $_[0];
-        $self->log('debug', "-> $statename[$_[0]]");
+        $self->log('noise', "-> $statename[$_[0]]");
 
         # Once we're finished, relinquish ownership of the messages, regarding
         # each as having undergone a temporary failure.
@@ -486,12 +486,12 @@ sub get_smtp_response ($) {
             my $rawmsg = "$message";
             $rawmsg =~ s/\r\n$//s;
             foreach (split(/\r\n/, $rawmsg)) {
-                $self->log('debug', "<< $_");
+                $self->log('noise', "<< $_");
             }
         } else {
             my $rawmsg = "$message";
             $rawmsg =~ s/\r\n$//s;
-            $self->log('debug', "<< $rawmsg");
+            $self->log('noise', "<< $rawmsg");
         }
         # Shift the contents of the receive buffer.
         $$recvbuf = substr($$recvbuf, length($message));
@@ -517,7 +517,7 @@ sub send ($$) {
     my Sender $self = shift;
     my $line = shift;
     ${$self->{sendbuf}} .= "$line\r\n";
-    $self->log('debug', ">> $line");
+    $self->log('noise', ">> $line");
 }
 
 #
@@ -746,7 +746,7 @@ sub parse_smtp_response ($$$) {
             } else {
                 $msg .= "\r\n.\r\n";
             }
-            $self->log('debug', ">> [ $len bytes of message data ]");
+            $self->log('noise', ">> [ $len bytes of message data ]");
             $self->{sendbuf} = \$msg;
             $self->state(STATE_MESSAGE);
         } else {
@@ -1150,12 +1150,12 @@ sub pre_select ($$$) {
             # the message has now been popped off the queue; if it is not
             # assigned to a sender and there are to be any further attempts it
             # must be requeued later
-Log::print('noise', "considering ", $msg->id());
+Log::print('debug', "considering ", $msg->id());
 
         # If this message has already been delivered, or has failed
         # permanently, retire it from the queue.
         if ($msg->state() != Queue::Message::STATE_PENDING) {
-Log::print('noise', "  -> already delivered/failed, retiring");
+Log::print('debug', "  -> already delivered/failed, retiring");
             # if it isn't pending, it's been dealt with
             $self->finish($msg);
             next;
@@ -1164,19 +1164,21 @@ Log::print('noise', "  -> already delivered/failed, retiring");
         # If the message is too old, fail it.
         if (!$self->{noexpire}
             && $msg->createdtime() < time() - MAX_MESSAGE_AGE) {
-Log::print('noise', "  -> too old; failing");
+Log::print('debug', "  -> too old; failing");
             $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
             next;
         }
         
-Log::print('noise', " ... not already delivered");
         # Skip if a sender is already handling this message.
-        next if (defined($msg->owner()));
+        if (defined($msg->owner())) {
+Log::print('debug', "  -> already being delivered");
+            next;
+        }
 Log::print('noise', " ... not presently being delivered");
 
         my $domain = $msg->domain();
         if ($self->domain_bad($domain)) {
-Log::print('noise', "  -> but domain $domain is not resolving, holding off");
+Log::print('debug', "  -> but domain $domain is not resolving, holding off");
             # have another go at the message later
             push(@messages_to_requeue, [$msg, $now + MIN_DOMAIN_BAD_INTERVAL]);
             next;
@@ -1185,14 +1187,14 @@ Log::print('noise', "  -> but domain $domain is not resolving, holding off");
         # See if we have resolved the domain.
         my $r = $self->r()->get($domain);
         if (!$r) {
-Log::print('noise', "  -> domain $domain not resolved, adding to resolver queue");
+Log::print('debug', "  -> domain $domain not resolved, adding to resolver queue");
             $self->r()->add($domain);
             push(@messages_to_requeue, [$msg, $level]);   # or $now?
             next;
         }
         # If domain resolution failed, mark the domain as failing and hold off.
         if ($r->failed()) {
-Log::print('noise', "  -> resolution of $domain failed, holding off");
+Log::print('debug', "  -> resolution of $domain failed, holding off");
             push(@{$self->{baddomains}->{$domain}}, $now);
             # have another go at the message later
             push(@messages_to_requeue, [$msg, $now + MIN_DOMAIN_BAD_INTERVAL]);
@@ -1202,7 +1204,7 @@ Log::print('noise', "  -> resolution of $domain failed, holding off");
 Log::print('noise', " ... domain $domain has been resolved");
         # If the domain is unroutable, then the message should be failed.
         if ($r->unroutable()) {
-Log::print('noise', "  -> and is unroutable; failing message");
+Log::print('debug', "  -> domain $domain is unroutable; failing message");
             $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
             next;
         }
@@ -1220,11 +1222,11 @@ Log::print('debug', "  -> will attempt delivery of ", $msg->id());
             my $name = $mx->exchange();
             foreach my $a (@{$r->a($name)}) {
                 my $h = $a->address();
-Log::print('noise', "      host is bad") if ($self->host_bad($a->address));
-Log::print('noise', "      already have @{[ $numsessions{$h} or 0 ]} sessions to host") if (($numsessions{$h} or 0) >= MAX_HOST_SESSIONS);
-Log::print('noise', "      already queued up a full session for host") if (exists($newsessions{$h}) && @{$newsessions{$h}} >= MAX_PER_SESSION);
-
                 $numsessions{$h} ||= 0;
+Log::print('debug', "      host is bad") if $self->host_bad($a->address);
+Log::print('debug', "      already have @{[$numsessions{$h}]} sessions to host") if $numsessions{$h} >= MAX_HOST_SESSIONS;
+Log::print('debug', "      already queued up a full session for host") if exists($newsessions{$h}) && @{$newsessions{$h}} >= MAX_PER_SESSION;
+
                         # conditions:
                         # host is not bad
                 if (!$self->host_bad($a->address())
@@ -1327,7 +1329,7 @@ sub post_select ($$$) {
 
     # Record some current state info to the log, and also put it in the process
     # title so it is visible to administrators.
-    Log::printf('noise', 'currently have %d SMTP sessions, %d mails on queue',
+    Log::printf('debug', 'currently have %d SMTP sessions, %d mails on queue',
                     scalar(@ss), scalar(keys(%{$self->{messages}})));
     $0 = sprintf('petemaild (main process; %d SMTP sessions, %d mails on queue)',
                     scalar(@ss), scalar(keys(%{$self->{messages}})));
@@ -1835,9 +1837,9 @@ sub database_child_process ($) {
         if ($last_full_scan < time() - 300) {
             $fullscan = 1;
             $last_full_scan = time();
-            Log::print('noise', "doing full scan of database");
+            Log::print('debug', "doing full scan of database");
         } else {
-            Log::print('noise', "doing incremental scan of database");
+            Log::print('debug', "doing incremental scan of database");
         }
 
         # See if there are any new signers...
@@ -1880,8 +1882,8 @@ sub database_child_process ($) {
         }
 
         my $nsigners = $nmessages;
-        Log::print('noise', "have $nsigners new signature mails to send");
-        Log::print('noise', "now max signer_id = $max_signer_id");
+        Log::print('debug', "have $nsigners new signature mails to send");
+        Log::print('debug', "now max signer_id = $max_signer_id");
 
         # ... or any new petitions.
         $st_p->execute($fullscan ? 0 : $max_petition_id);
@@ -1906,8 +1908,8 @@ sub database_child_process ($) {
         }
 
         my $npetitions = $nmessages - $nsigners;
-        Log::print('noise', "have $npetitions new petition confirmation mails to send");
-        Log::print('noise', "now max petition_id = $max_petition_id");
+        Log::print('debug', "have $npetitions new petition confirmation mails to send");
+        Log::print('debug', "now max petition_id = $max_petition_id");
     }
 }
 
@@ -2661,4 +2663,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.142 2007-09-06 12:17:50 francis Exp $
+$Id: petemaild,v 1.143 2007-10-14 14:08:50 matthew Exp $
