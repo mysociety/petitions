@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.143 2007-10-14 14:08:50 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.144 2007-10-15 15:21:51 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1218,6 +1218,8 @@ Log::print('noise', " ... and is routable");
         # already being made. Not clear how important this is in practice.
 Log::print('debug', "  -> will attempt delivery of ", $msg->id());
         # Iterate over MXs in order.
+        my $max_per_session = MAX_PER_SESSION;
+        $max_per_session = 5 if $domain =~ /yahoo/;
         foreach my $mx (@{$r->mx()}) {
             my $name = $mx->exchange();
             foreach my $a (@{$r->a($name)}) {
@@ -1225,7 +1227,7 @@ Log::print('debug', "  -> will attempt delivery of ", $msg->id());
                 $numsessions{$h} ||= 0;
 Log::print('debug', "      host is bad") if $self->host_bad($a->address);
 Log::print('debug', "      already have @{[$numsessions{$h}]} sessions to host") if $numsessions{$h} >= MAX_HOST_SESSIONS;
-Log::print('debug', "      already queued up a full session for host") if exists($newsessions{$h}) && @{$newsessions{$h}} >= MAX_PER_SESSION;
+Log::print('debug', "      already queued up a full session for host") if exists($newsessions{$h}) && @{$newsessions{$h}} >= $max_per_session;
 
                         # conditions:
                         # host is not bad
@@ -1236,7 +1238,7 @@ Log::print('debug', "      already queued up a full session for host") if exists
                         # and we haven't already queued up too many messages
                         # for that host
                     && (!exists($newsessions{$h})
-                        || @{$newsessions{$h}} < MAX_PER_SESSION)) {
+                        || @{$newsessions{$h}} < $max_per_session)) {
                     ++$numsessions{$h} if (!exists($newsessions{$h}));
                     $host = $h;
                     last;
@@ -1250,7 +1252,7 @@ Log::print('debug', "      already queued up a full session for host") if exists
             $newsessions{$host} ||= [ ];
             push(@{$newsessions{$host}}, $msg);
 
-            if (@{$newsessions{$host}} == MAX_PER_SESSION) {
+            if (@{$newsessions{$host}} == $max_per_session) {
                 my $s = new Sender($host, $newsessions{$host});
                 Log::printf('info',
                             'created sender S%s for %s to send %d messages',
@@ -2663,4 +2665,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.143 2007-10-14 14:08:50 matthew Exp $
+$Id: petemaild,v 1.144 2007-10-15 15:21:51 matthew Exp $
