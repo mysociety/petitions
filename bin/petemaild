@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.144 2007-10-15 15:21:51 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.145 2007-10-16 15:09:52 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -353,7 +353,7 @@ sub new ($$$) {
 
     $self->{lastactivity} = time();
 
-    $self->log('debug', "delivering ", scalar(@$msgs), " messages to $self->{target}");
+    $self->log('noise', "delivering ", scalar(@$msgs), " messages to $self->{target}");
 
     return $self;
 }
@@ -853,7 +853,7 @@ sub post_select ($$$) {
         
         # Now connected, if we haven't noticed that yet.
         if ($self->state() == STATE_CONNECT) {
-            $self->log('debug', "now connected (readable)");
+            $self->log('noise', "now connected (readable)");
             $self->state(STATE_BANNER);
         }
 
@@ -875,7 +875,7 @@ sub post_select ($$$) {
     if (exists($wrs->{$self->s()})) {
         if ($self->state() == STATE_CONNECT) {
             # We are now connected.
-            $self->log('debug', "now connected (writable)");
+            $self->log('noise', "now connected (writable)");
             $self->state(STATE_BANNER);
         }
         
@@ -1130,7 +1130,7 @@ sub pre_select ($$$) {
     my $now = time();
     return if ($self->{lastcheckedqueue} > $now - 1);
     $self->{lastcheckedqueue} = $now;
-    Log::print('debug', "iterating over queue");
+    Log::print('noise', "iterating over queue");
 
     #
     # The queue allows us to find the nominal retry time for the
@@ -1273,7 +1273,7 @@ Log::print('debug', "      already queued up a full session for host") if exists
             $self->requeue($msg, 5); # XXX
         }
     }
-    Log::print('debug', 'finished iterating over queue');
+    Log::print('noise', 'finished iterating over queue');
 
     # now put any relevant messages back on the queue
     foreach (@messages_to_requeue) {
@@ -1331,7 +1331,7 @@ sub post_select ($$$) {
 
     # Record some current state info to the log, and also put it in the process
     # title so it is visible to administrators.
-    Log::printf('debug', 'currently have %d SMTP sessions, %d mails on queue',
+    Log::printf('noise', 'currently have %d SMTP sessions, %d mails on queue',
                     scalar(@ss), scalar(keys(%{$self->{messages}})));
     $0 = sprintf('petemaild (main process; %d SMTP sessions, %d mails on queue)',
                     scalar(@ss), scalar(keys(%{$self->{messages}})));
@@ -2665,4 +2665,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.144 2007-10-15 15:21:51 matthew Exp $
+$Id: petemaild,v 1.145 2007-10-16 15:09:52 matthew Exp $
