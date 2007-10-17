@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.108 2007-10-10 08:43:42 matthew Exp $
+ * $Id: admin-pet.php,v 1.109 2007-10-17 11:29:15 matthew Exp $
  * 
  */
 
@@ -533,6 +533,11 @@ Deadline: ';
             if ($pdata['status'] == 'live')
                 print ' <input type="submit" name="redraft" value="Move back to draft">';
             print ' <input type="submit" name="remove" value="Remove petition">';
+            print '</form>';
+        } elseif ($pdata['status'] == 'rejected') {
+            print '<form name="petition_admin_go_respond" method="post" action="'
+                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                '"><input type="submit" name="remove" value="Remove petition">';
             print '</form>';
         }
 
