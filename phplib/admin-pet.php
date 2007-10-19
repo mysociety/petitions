@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.109 2007-10-17 11:29:15 matthew Exp $
+ * $Id: admin-pet.php,v 1.110 2007-10-19 15:37:42 matthew Exp $
  * 
  */
 
@@ -1003,8 +1003,9 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
                     join('</li><li>' , $errors) . '</li></ul></div>';
 ?>
 <form name="petition_admin_redraft" action="<?=$this->self_link?>" accept-charset="utf-8" method="post"
-onsubmit="this.submit.disabled=true">
+onsubmit="this.submit_button.disabled=true">
 <input type="hidden" name="<?=$type?>" value="1">
+<input type="hidden" name="submit" value="1">
 <input type="hidden" name="petition_id" value="<?=$petition_id ?>">
 <?
             if ($type == 'redraft') {
@@ -1024,7 +1025,7 @@ removed.
 can be rejected properly.</p>
 <p><label for="reason">Please give the reason for removing this petition, for audit purposes. For example, provide a copy of the request email from the petition creator:</label>
 <br><textarea id="reason" name="reason" rows="10" cols="40"></textarea></p>
-<input type="submit" name="submit" value="Remove petition">
+<input type="submit" name="submit_button" value="Remove petition">
 <? } ?>
 </form>
 <hr><hr>
