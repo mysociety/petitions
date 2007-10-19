@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.110 2007-10-19 15:37:42 matthew Exp $
+ * $Id: admin-pet.php,v 1.111 2007-10-19 19:13:37 matthew Exp $
  * 
  */
 
@@ -280,9 +280,11 @@ class ADMIN_PAGE_PET_MAIN {
         );
         foreach ($cols as $s => $col) {
             print '<th>';
-            if ($sort != $s) print '<a href="'.$this->self_link.'&amp;s='.$s.'&amp;o='.$status.'">';
+            if ($sort != $s && ($s != 'z' || $status == 'live'))
+                print '<a href="'.$this->self_link.'&amp;s='.$s.'&amp;o='.$status.'">';
             print $col;
-            if ($sort != $s) print '</a>';
+            if ($sort != $s && ($s != 'z' || $status == 'live'))
+                print '</a>';
             print '</th>';
         }
         if (!$this->cat_change && ($status == 'finished' || $status == 'draft'))
