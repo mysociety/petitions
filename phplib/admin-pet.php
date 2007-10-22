@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.111 2007-10-19 19:13:37 matthew Exp $
+ * $Id: admin-pet.php,v 1.112 2007-10-22 09:11:20 matthew Exp $
  * 
  */
 
@@ -457,6 +457,8 @@ class ADMIN_PAGE_PET_MAIN {
             $list_limit = 100;
 
         $q = db_query("SELECT petition.*,
+                date_trunc('second', laststatuschange) AS laststatuschange,
+                date_trunc('second', creationtime) AS creationtime,
                 (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
                     emailsent in ('sent', 'confirmed')) AS signers
             FROM petition
