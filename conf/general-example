@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.23 2007-06-05 10:52:08 francis Exp $
+ * $Id: general-example,v 1.24 2007-11-22 16:43:04 angie Exp $
  * 
  */
 
@@ -78,4 +78,10 @@ define('OPTION_HTTPD_ERROR_LOG', '/var/log/apache/error.log');
 define('OPTION_AUTH_USER', undef);
 define('OPTION_AUTH_PASSWORD', undef);
 
+// SMS alert parameters
+define('OPTION_SMS_ALERTS', 0);
+define('OPTION_SMS_ALERT_FROM', 'xxx@xxx.xxx');
+define('OPTION_SMS_ALERT_SUBJECT_SEARCH', 'urgent');
+define('OPTION_SMS_ALERT_NUMBER', '0000000'); // can be a comma separated list of numbers.
+define('OPTION_SMS_C360_OUTGOING_URL', 'http://www.c360uk.com/...blah...');
 
