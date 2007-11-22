@@ -1,0 +1,148 @@
+#!/usr/bin/perl -w
+#
+# emailtosms:
+# Send an SMS alert
+#
+# If OPTION_SMS_ALERTS is set to true in the config send an SMS alert
+# if the incoming email matches the parameters in the config
+#
+# Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
+# Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
+#
+
+my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.1 2007-11-22 16:06:13 angie Exp $';
+
+use strict;
+require 5.8.0;
+
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+
+use Mail::Address;
+use Mail::Internet;
+use mySociety::SMS;
+
+use mySociety::SystemMisc qw(print_log);
+
+# Don't print diagnostics to standard error, as this can result in bounce
+# messages being generated (only in response to non-bounce input, obviously).
+mySociety::SystemMisc::log_to_stderr(0);
+
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
+use mySociety::SystemMisc qw(print_log);
+
+my $sms_alerts_on = mySociety::Config::get('SMS_ALERTS') || 0;
+
+# if sms alerts aren't on just exit right now.
+unless ($sms_alerts_on) {exit(0);}
+
+# sms alerts are on so setup the config hash.
+
+# check the sms alerts don't just contain default values
+
+if (mySociety::Config::get('SMS_ALERT_FROM') =~ /xxx\@xxx.xxx/ || mySociety::Config::get('SMS_ALERT_NUMBER') =~ /0{5}/) {
+    print_log('err', "please enter values for OPTION_SMS_ALERT_FROM and SMS_ALERT_NUMBER in the conf/general file \n");
+    exit(0);
+}
+
+my ($from, $subject) = read_email();
+
+if ($from && $subject) {
+    my ($sendalert) = test_values($from, $subject);
+    if ($sendalert) {
+        my ($messagesent) = send_sms($from, $subject);
+    }
+}
+
+sub read_email {
+    my $from = '';
+    my $subject = '';
+    
+    my @lines = ( );
+    my $is_bounce_message = 0;
+    while (defined($_ = STDIN->getline())) {
+        chomp();
+        # Skip any From_ line-- we don't need it. BUT, on some systems (e.g.
+        # FreeBSD with default exim config), there will be no Return-Path in a
+        # message even at final delivery time. So use the insanely ugly
+        # "From MAILER-DAEMON ..." thing to distinguish bounces, if it is present.
+        if (@lines == 0 and m#^From #) {
+            $is_bounce_message = 1 if (m#^From MAILER-DAEMON #);
+        } else {
+            push(@lines, $_);
+        }    
+    }
+
+    if (STDIN->error()) {
+        # Failed to read it; should defer.
+        print_log('err', "read message from standard input: $!; deferring");
+        exit(75);   # EX_TEMPFAIL
+    }
+
+    my $m = new Mail::Internet(\@lines);
+    if (!defined($m)) {
+        # Unable to parse message; should drop.
+        print_log('err', "unable to parse message from standard input; discarding");
+        exit(1);
+    }
+    
+    if (!$is_bounce_message)  {
+        my $return_path = $m->head()->get("Return-Path");
+    
+        if (!defined($return_path)) {
+        # No Return-Path; we're screwed.
+        print_log('err', "message had no Return-Path and was not a bounce according to any From_ line; discarding");
+        print_log('err', "configure your MDA to add a Return-Path to messages at delivery time");
+        exit(0);
+        } elsif ($return_path =~ m#<>#) {
+            $is_bounce_message = 1;
+        } else {
+            $from = $m->head()->get('From');
+            $subject = $m->head()->get('Subject');
+            
+        }
+
+    }
+    return ($from, $subject);
+}
+
+sub test_values {
+    my ($from, $subject) = @_;
+    my $SMS_ALERT_SUBJECT_SEARCH = mySociety::Config::get('SMS_ALERT_SUBJECT_SEARCH') || '';
+    my $SMS_ALERT_FROM = mySociety::Config::get('SMS_ALERT_FROM') || '';
+    if ($SMS_ALERT_SUBJECT_SEARCH && $SMS_ALERT_FROM) {
+        if ($subject && $subject =~ /$SMS_ALERT_SUBJECT_SEARCH/i 
+            && $from =~ /<$SMS_ALERT_FROM>/i) {
+            # subject and sender match the settings in the config so return true
+            return 1;
+        }
+    }
+    return 0;
+}
+
+sub send_sms {
+    my ($from, $subject)    = @_;
+    unless (mySociety::Config::get('SMS_ALERT_NUMBER')) {
+        return 0;
+    }
+    my $smsmessage = $subject;
+    if ($from) {
+        $smsmessage .= " from: $from";
+    }
+    my $sms = mySociety::SMS->new('url' => mySociety::Config::get('SMS_C360_OUTGOING_URL'));
+
+    $sms->send('to' => mySociety::Config::get('SMS_ALERT_NUMBER'), 'message' => $smsmessage);
+    
+    if ($sms->error) {
+        print_log('err', 'could not send SMS to ' . $sms->to . ': ' . $sms->error);
+    }
+    if ($sms->request_error) {
+        print_log('err', 'could not send SMS to ' . $sms->to . ': ' . $sms->request_error);
+    }
+    #print     $sms->request_content; 
+}
