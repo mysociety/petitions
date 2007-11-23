@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.2 2007-11-23 12:08:17 angie Exp $';
+my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.3 2007-11-23 17:29:48 angie Exp $';
 
 use strict;
 require 5.8.0;
@@ -44,6 +44,8 @@ unless ($sms_alerts_on) {exit(0);}
 # sms alerts are on so setup the config hash.
 
 # check the sms alerts don't just contain default values
+
+if 
 
 if (mySociety::Config::get('SMS_ALERT_FROM') =~ /xxx\@xxx.xxx/ || mySociety::Config::get('SMS_ALERT_NUMBER') =~ /0{5}/) {
     print_log('err', "please enter values for OPTION_SMS_ALERT_FROM and SMS_ALERT_NUMBER in the conf/general file \n");
@@ -143,4 +145,8 @@ sub send_sms {
     if ($sms->request_error) {
         print_log('err', 'could not send SMS to ' . $sms->to . ': ' . $sms->request_error);
     }
+    if ($sms->request_content) {
+        print_log('err', 'SMS response ' . request_content);
+    }
+    
 }
