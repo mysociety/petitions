@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.1 2007-11-22 16:06:13 angie Exp $';
+my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.2 2007-11-23 12:08:17 angie Exp $';
 
 use strict;
 require 5.8.0;
@@ -115,9 +115,8 @@ sub test_values {
     my ($from, $subject) = @_;
     my $SMS_ALERT_SUBJECT_SEARCH = mySociety::Config::get('SMS_ALERT_SUBJECT_SEARCH') || '';
     my $SMS_ALERT_FROM = mySociety::Config::get('SMS_ALERT_FROM') || '';
-    if ($SMS_ALERT_SUBJECT_SEARCH && $SMS_ALERT_FROM) {
-        if ($subject && $subject =~ /$SMS_ALERT_SUBJECT_SEARCH/i 
-            && $from =~ /<$SMS_ALERT_FROM>/i) {
+        if ($SMS_ALERT_SUBJECT_SEARCH && $subject && $subject =~ /$SMS_ALERT_SUBJECT_SEARCH/i ) {
+            if (!$SMS_ALERT_FROM || $from =~ /$SMS_ALERT_FROM/i) {
             # subject and sender match the settings in the config so return true
             return 1;
         }
@@ -144,5 +143,4 @@ sub send_sms {
     if ($sms->request_error) {
         print_log('err', 'could not send SMS to ' . $sms->to . ': ' . $sms->request_error);
     }
-    #print     $sms->request_content; 
 }
