@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.6 2007-11-23 17:50:14 angie Exp $';
+my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.7 2007-11-27 15:34:45 angie Exp $';
 
 use strict;
 require 5.8.0;
@@ -43,10 +43,22 @@ unless ($sms_alerts_on) {exit(0);}
 
 # sms alerts are on so setup the config hash.
 
+my $smsrecips = mySociety::Config::get_list('startswith' => 'SMS_ALERT_NUMBER');
+
+my @smsusers = ();
+foreach my $smsrecip (keys %$smsrecips) {
+    my $userdefs = {};
+    my ($mobno, $st, $et) = split '\|', $smsrecips->{$smsrecip};
+    my $sendnow = time_test($st, $et);
+    if ($sendnow) {
+        push @smsusers, $mobno;
+    }
+}
+
 # check the sms alerts don't just contain default values
 
-if (mySociety::Config::get('SMS_ALERT_FROM') =~ /xxx\@xxx.xxx/ || mySociety::Config::get('SMS_ALERT_NUMBER') =~ /0{5}/) {
-    print_log('err', "please enter values for OPTION_SMS_ALERT_FROM and SMS_ALERT_NUMBER in the conf/general file \n");
+if (mySociety::Config::get('SMS_ALERT_FROM') =~ /xxx\@xxx.xxx/ || !@smsusers) {
+    print_log('err', "no one receiving alerts at this time: please enter an SMS_ALERT_NUMBER in the conf/general file \n");
     exit(0);
 }
 
@@ -55,7 +67,7 @@ my ($from, $subject) = read_email();
 if ($from && $subject) {
     my ($sendalert) = test_values($from, $subject);
     if ($sendalert) {
-        my ($messagesent) = send_sms($from, $subject);
+        my ($messagesent) = send_sms($from, $subject, \@smsusers);
     }
 }
 
@@ -125,26 +137,51 @@ sub test_values {
 }
 
 sub send_sms {
-    my ($from, $subject)    = @_;
-    unless (mySociety::Config::get('SMS_ALERT_NUMBER')) {
-        return 0;
-    }
+    my ($from, $subject, $users)    = @_;
+    
     my $smsmessage = $subject;
     if ($from) {
         $smsmessage .= " from: $from";
     }
     my $sms = mySociety::SMS->new('url' => mySociety::Config::get('SMS_C360_OUTGOING_URL'));
 
-    $sms->send('to' => mySociety::Config::get('SMS_ALERT_NUMBER'), 'message' => $smsmessage);
+    $sms->message($smsmessage);
+    foreach my $smsno (@$users) {
+        $sms->to($smsno);
+        $sms->send();
+        if ($sms->error) {
+            print_log('err', 'could not send SMS to ' . $sms->to . ': ' . $sms->error);
+        }
+        if ($sms->request_error) {
+            print_log('err', 'could not send SMS to ' . $sms->to . ': ' . $sms->request_error);
+        }
+        if ($sms->request_content) {
+            print_log('err', 'SMS response ' . $sms->request_content);
+        }    
+    }
     
-    if ($sms->error) {
-        print_log('err', 'could not send SMS to ' . $sms->to . ': ' . $sms->error);
-    }
-    if ($sms->request_error) {
-        print_log('err', 'could not send SMS to ' . $sms->to . ': ' . $sms->request_error);
-    }
-    if ($sms->request_content) {
-        print_log('err', 'SMS response ' . $sms->request_content);
-    }    
+    
 }
 
+sub time_test {
+    my ($st, $et) = @_;
+    $st ||= '00';
+    $et ||= '23';
+    
+    my @start = split ':', $st;
+    $start[0] ||= '00'; $start[1] ||= '00'; $start[2] ||= '00'; 
+    
+    my @end = split ':', $et;
+    $end[0] ||= '23'; $end[1] ||= '59'; $end[2] ||= '59'; 
+
+    my $start = join    '', @start;
+    my $end = join    '', @end;
+    
+    my ($sec,$min,$hour)=localtime(time);
+    my $currtime = $hour . $min . $sec;
+    
+    if ($start <=  $currtime && $currtime <= $end) {
+        return 1;
+    }
+    return 0;    
+}
