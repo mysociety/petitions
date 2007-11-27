@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.7 2007-11-27 15:34:45 angie Exp $';
+my $rcsid = ''; $rcsid .= '$Id: emailtosms,v 1.8 2007-11-27 16:28:31 angie Exp $';
 
 use strict;
 require 5.8.0;
@@ -48,6 +48,7 @@ my $smsrecips = mySociety::Config::get_list('startswith' => 'SMS_ALERT_NUMBER');
 my @smsusers = ();
 foreach my $smsrecip (keys %$smsrecips) {
     my $userdefs = {};
+    unless ($smsrecips->{$smsrecip}) {next;}
     my ($mobno, $st, $et) = split '\|', $smsrecips->{$smsrecip};
     my $sendnow = time_test($st, $et);
     if ($sendnow) {
