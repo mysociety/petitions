@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.53 2007-09-11 10:52:42 matthew Exp $
+// $Id: list.php,v 1.54 2008-01-16 15:18:12 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -36,13 +36,10 @@ if (!$rss && $q_type == 'default' && $q_sort == 'default' && $q_cat == 'default'
 // Strip any trailing '/'.
 $q_sort = preg_replace("#/$#", "", $q_sort);
 if ($q_type == 'closed') {
-    $open = '<';
     $status = 'finished';
 } elseif ($q_type == 'rejected') {
-    $open = null;
     $status = 'rejected';
 } else {
-    $open = '>=';
     $status = 'live';
     $q_type = 'open';
 }
@@ -54,18 +51,10 @@ if ($q_sort == "creationtime" || $q_sort == 'laststatuschange')
 if ($q_cat == 'default') $q_cat = null;
 if (!array_key_exists($q_cat, $global_petition_categories)) $q_cat = null;
 
-$sql_params = array($status);
-if ($q_cat) $sql_params[] = $q_cat;
-$query = "SELECT count(petition.id) FROM petition
-                WHERE status = ? " .
-                ($open ? "AND deadline $open '$pet_today' " : '') .
-                ($q_cat ? 'AND category = ? ' : '');
-$ntotal = db_getOne($query , $sql_params);
-if ($ntotal < $q_offset) {
-    $q_offset = $ntotal - PAGE_SIZE;
-    if ($q_offset < 0)
-        $q_offset = 0;
-}
+# count() is far too slow - many seconds for a count of live petitions :-/
+$key = $status;
+if ($q_cat) $key .= "_$q_cat";
+$ntotal = db_getOne("select value from stats where key='cached_petitions_$key'");
 
 $sort_phrase = $q_sort;
 if ($q_sort == 'date')
@@ -73,6 +62,9 @@ if ($q_sort == 'date')
 if ($q_sort == 'date' || $q_sort == 'signers') {
     $sort_phrase .= " DESC";
 }
+
+$sql_params = array($status);
+if ($q_cat) $sql_params[] = $q_cat;
 $sql_params[] = PAGE_SIZE;
 $qrows = db_query("
         SELECT petition.*, '$pet_today' <= petition.deadline AS open,
@@ -81,7 +73,6 @@ $qrows = db_query("
                     and circumstance = 'government-response') as responses
             FROM petition
             WHERE status = ?".
-            ($open ? " AND deadline $open '$pet_today' " : ""). 
             ($q_cat ? "AND category = ? " : "") .
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
 /* PG bug: mustn't quote parameter of offset */
@@ -113,9 +104,7 @@ else {
 }
 
 if (!$rss) {
-?>
-<h1><span dir="ltr">E-Petitions</span></h1>
-<?
+    echo '<h1><span dir="ltr">E-Petitions</span></h1>';
 
     $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
         'rejected' => 'Rejected petitions');

@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.114 2008-01-16 12:29:45 matthew Exp $
+ * $Id: admin-pet.php,v 1.115 2008-01-16 15:18:12 matthew Exp $
  * 
  */
 
@@ -748,7 +748,7 @@ EOF;
         if (is_array($hide)) $hide = array_sum($hide);
         else $hide = 0;
         if ($status == 'draft') {
-            db_getOne("
+            db_query("
                     UPDATE petition
                     SET status = 'rejectedonce',
                         rejection_first_categories = ?,
@@ -761,7 +761,7 @@ EOF;
             $template = 'admin-rejected-once';
             $circumstance = 'rejected-once';
         } elseif ($status == 'resubmitted') {
-            db_getOne("
+            db_query("
                     UPDATE petition
                     SET status = 'rejected',
                         rejection_second_categories = ?,
@@ -770,6 +770,8 @@ EOF;
                         laststatuschange = ms_current_timestamp(),
                         lastupdate = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
+            db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected'");
+            # db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected_$cat'");
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason", http_auth_user());
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
@@ -942,7 +944,7 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
         if ($error) {
             print "<p><em>$error</em></p>";
         } else {
-            db_getOne('update petition set deadline=?, lastupdate = ms_current_timestamp()
+            db_query('update petition set deadline=?, lastupdate = ms_current_timestamp()
                 where id=?', $new_deadline['iso'], $petition_id);
             $p->log_event("Admin altered deadline of petition from $current_deadline to $new_deadline[iso]", http_auth_user());
             db_commit();
@@ -956,12 +958,14 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
         $p = new Petition($petition_id);
         $status = $p->status();
         if ($status == 'draft' || $status == 'resubmitted') {
-            db_getOne("UPDATE petition
+            db_query("UPDATE petition
                 SET status='live',
                 deadline=deadline+(ms_current_date()-date_trunc('day', laststatuschange)),
                 rejection_hidden_parts = 0,
                 laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
+            db_query("update stats set value = value + 1 where key = 'cached_petitions_live'");
+            #db_query("update stats set value = value + 1 where key = 'cached_petitions_live_$cat'");
             $p->log_event("Admin approved petition", http_auth_user());
         } else {
             $p->log_event("Bad approval", http_auth_user());
@@ -991,11 +995,13 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
                 $p->log_event("Admin removed petition with reason '$reason'", http_auth_user());
                 db_query("update petition set status='sentconfirm', laststatuschange=ms_current_timestamp(),
                     lastupdate=ms_current_timestamp() where id=?", $p->id());
+                db_query("update stats set value = value - 1 where key = 'cached_petitions_$status'");
                 $message = 'That petition has been removed from the site';
             } elseif ($type == 'redraft') {
                 $p->log_event("Admin redrafted petition with reason '$reason'", http_auth_user());
                 db_query("update petition set status='draft', laststatuschange=ms_current_timestamp(),
                     lastupdate=ms_current_timestamp() where id=?", $p->id());
+                db_query("update stats set value = value - 1 where key = 'cached_petitions_$status'");
                 db_query('delete from signer where petition_id=?', $p->id());
                 $message = 'That petition has been moved back into the draft state';
             }
@@ -1064,7 +1070,7 @@ can be rejected properly.</p>
         if (!$criteria_new) $errors[] = 'Please give some rejection categories';
 
         if (get_http_var('submit') && !sizeof($errors)) {
-            db_getOne("UPDATE petition SET $column=?, lastupdate=ms_current_timestamp()
+            db_query("UPDATE petition SET $column=?, lastupdate=ms_current_timestamp()
                 where id=?", $criteria_new, $petition_id);
             $p->log_event("Admin changed rejection criteria from $criteria to $criteria_new, reason '$reason'", http_auth_user());
             db_commit();

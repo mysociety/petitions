@@ -56,6 +56,12 @@ dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timest
     (SELECT COUNT(*) FROM petition WHERE status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')))");
 dbh()->commit();
  
+# Cached petition totals
+dbh()->do("delete from stats where key like 'cached\_petitions\_%'");
+dbh()->do("insert into stats (whencounted, key, value) select current_timestamp, 'cached_petitions_'||status, count(*) from petition where status in ('live','finished','rejected') group by status");
+dbh()->do("insert into stats (whencounted, key, value) select current_timestamp, 'cached_petitions_'||status||'_'||category, count(*) from petition where status in ('live','finished','rejected') group by category,status");
+dbh()->commit();
+
 # Most prolific signers
 # fun but probably pointless (unless maybe helps with antispamming)
 # select count(*) as c, email from signer group by signer.email order by c desc limit 20;
