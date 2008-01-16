@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.116 2008-01-16 15:23:52 matthew Exp $
+ * $Id: admin-pet.php,v 1.117 2008-01-16 19:30:17 matthew Exp $
  * 
  */
 
@@ -770,8 +770,10 @@ EOF;
                         laststatuschange = ms_current_timestamp(),
                         lastupdate = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
-            db_query("update stats set value = value::integer + 1 where key = 'cached_petitions_rejected'");
+            if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_rejected'")) {
+                db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_rejected', '1')");
             # db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected_$cat'");
+            }
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason", http_auth_user());
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
@@ -964,7 +966,9 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Numb
                 rejection_hidden_parts = 0,
                 laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
-            db_query("update stats set value = value::integer + 1 where key = 'cached_petitions_live'");
+            if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_live'")) {
+                db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_live', '1')");
+            }
             #db_query("update stats set value = value + 1 where key = 'cached_petitions_live_$cat'");
             $p->log_event("Admin approved petition", http_auth_user());
         } else {

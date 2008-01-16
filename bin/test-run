@@ -24,7 +24,7 @@
 # HTML mail test could be better
 # Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.90 2007-10-04 12:44:25 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.91 2008-01-16 19:30:17 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -925,7 +925,7 @@ sub do_resubmit_test {
     $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
         fields => {}, button => 'remove') or die "Failed to submit remove button";
     $wth->browser_submit_form(form_name => 'petition_admin_redraft',
-        fields => { reason => 'Petition creator asked us to take it down'}, button => 'submit') or die "Failed to submit removal request";
+        fields => { reason => 'Petition creator asked us to take it down'}, button => 'submit_button') or die "Failed to submit removal request";
     $wth->browser_check_contents('petition has been removed');
     $wth->browser_get($base_url);
     $wth->browser_check_no_contents($petition_text_resubmitted);
