@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.64 2007-10-01 16:05:47 matthew Exp $
+// $Id: new.php,v 1.65 2008-01-16 12:29:46 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -408,7 +408,7 @@ function step_main_error_check($data) {
     }
     
     if ($check_ref) {
-        $dupe = db_getOne('select id from petition where ref ilike ?', $data['ref']);
+        $dupe = db_getOne('select id from petition where lower(ref) = ?', strtolower($data['ref']));
         if ($dupe)
             $errors['ref'] = _('That short name is already taken');
     }

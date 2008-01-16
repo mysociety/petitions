@@ -14,7 +14,7 @@ use Petitions;
 print "ref? ";
 while (<STDIN>) {
     chomp;
-    my $r = select_all('select status from petition where ref ilike ?', $_);
+    my $r = select_all('select status from petition where lower(ref) = ?', lc $_);
     print @$r ? $r->[0]->{status} : "NONE";
     print "\nref? ";
 }

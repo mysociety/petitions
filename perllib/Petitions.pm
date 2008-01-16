@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.51 2007-08-02 11:45:05 matthew Exp $
+# $Id: Petitions.pm,v 1.52 2008-01-16 12:29:45 matthew Exp $
 #
 
 package Petitions::DB;
@@ -91,11 +91,7 @@ sub check_ref ($) {
     if (dbh()->selectrow_array("
                 select ref from petition
                 where status in ('live', 'rejected', 'finished')
-                and ref = ?", {}, $ref)
-        || defined($ref = dbh()->selectrow_array("
-                select ref from petition
-                where status in ('live', 'rejected', 'finished')
-                and ref ilike ?", {}, $ref))) {
+                and lower(ref) = ?", {}, lc $ref)) {
         return $ref;
     } else {
         return undef;
@@ -129,8 +125,7 @@ sub get ($;$$) {
     $order = ' order by responsetime desc' if $govtresponse;
     $p ||= select_all("$s where petition.id = ?$order", $ref)
             if ($ref =~ /^[1-9]\d*$/);
-    $p ||= select_all("$s where ref = ?$order", $ref);
-    $p ||= select_all("$s where ref ilike ?$order", $ref);
+    $p ||= select_all("$s where lower(ref) = ?$order", lc $ref);
     
     return undef unless $p && @$p > 0;
     $p->[0]->{category} = $petition_categories{$p->[0]->{category}};

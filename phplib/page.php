@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.24 2007-07-18 15:24:23 matthew Exp $
+// $Id: page.php,v 1.25 2008-01-16 12:29:45 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -98,11 +98,9 @@ function page_footer($stat_code = '') {
  * it does, return. Otherwise, fuzzily find possibly matching petitions and
  * show the user a set of possible pages. */
 function page_check_ref($ref) {
-    if (!is_null(db_getOne("select ref from petition where status in ('live','rejected','finished') and ref = ?", $ref)))
-        return;
-    else if (!is_null(db_getOne("select ref from petition where status in ('live','rejected','finished') and ref ilike ?", $ref)))
-        /* XXX should redirect to the page with the correctly-capitalised
-         * ref so that we never do the slow query */
+    if (!is_null(db_getOne("select ref from petition
+        where status in ('live','rejected','finished')
+            and lower(ref) = ?", $ref)))
         return;
     page_header(_("We couldn't find that petition"));
 #    $s = db_query('select pledge_id from pledge_find_fuzzily(?) limit 5', $ref);

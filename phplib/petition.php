@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.51 2007-09-11 10:55:13 matthew Exp $
+ * $Id: petition.php,v 1.52 2008-01-16 12:29:45 matthew Exp $
  * 
  */
 
@@ -88,7 +88,7 @@ class Petition {
                 err(_('Petition short name not known'));
             $this->data = db_fetch_array($q);
         } elseif (gettype($ref) == "string") {
-            $q = db_query("$main_query_part WHERE ref ILIKE ?", array($ref));
+            $q = db_query("$main_query_part WHERE lower(ref) = ?", array(strtolower($ref)));
             if (!db_num_rows($q)) {
                 err(_('We couldn\'t find that petition.  Please check the URL again carefully.'));
             }
