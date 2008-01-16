@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.54 2008-01-16 15:18:12 matthew Exp $
+// $Id: list.php,v 1.55 2008-01-16 23:52:45 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -72,7 +72,7 @@ $qrows = db_query("
                 (select count(*) from message where petition.id = message.petition_id
                     and circumstance = 'government-response') as responses
             FROM petition
-            WHERE status = ?".
+            WHERE status = ? " .
             ($q_cat ? "AND category = ? " : "") .
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
 /* PG bug: mustn't quote parameter of offset */
