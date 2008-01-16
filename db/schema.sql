@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.61 2007-07-05 21:57:18 matthew Exp $
+-- $Id: schema.sql,v 1.62 2008-01-16 12:32:56 matthew Exp $
 --
 
 -- global_seq
@@ -138,11 +138,14 @@ create table petition (
 ALTER TABLE petition CLUSTER ON petition_pkey;
 
 create unique index petition_ref_idx on petition(ref);
+create unique index petition_lower_ref_idx on petition(lower(ref));
 create index petition_status_idx on petition(status);
 create index petition_category_idx on petition(category);
 create index petition_laststatuschange_idx on petition(laststatuschange);
 create index petition_lastupdate_idx on petition(lastupdate);
 create index petition_deadline_idx on petition(deadline);
+create index petition_cached_signers_idx on petition(cached_signers);
+create index petition_cached_signers_status_deadline_idx on petition(cached_signers, status, deadline); -- Not sure about this one, but it's currently there
 
 -- History of things which have happened to a petition
 create table petition_log (
