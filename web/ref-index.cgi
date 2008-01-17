@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.52 2007-05-30 14:19:53 francis Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.53 2008-01-17 00:13:30 matthew Exp $';
 
 use strict;
 
@@ -43,8 +43,9 @@ sub main () {
     # Perhaps redirect to canonical ref if non-canonical was given.
     if ($qp_ref ne $ref && $q->request_method() =~ /^(GET|HEAD)$/) {
         my $url = "/$ref/";
-        $url .= '?' . $q->query_string() if ($q->query_string());
-        print $q->redirect($url);   # ugh -- will add ?ref=$ref
+        (my $qs = $q->query_string()) =~ s/ref=[A-Za-z0-9-]*//;
+        $url .= '?' . $qs if $qs;
+        print $q->redirect($url);
         return;
     }
 
