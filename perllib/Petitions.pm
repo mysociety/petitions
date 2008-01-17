@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.52 2008-01-16 12:29:45 matthew Exp $
+# $Id: Petitions.pm,v 1.53 2008-01-17 00:08:10 matthew Exp $
 #
 
 package Petitions::DB;
@@ -88,10 +88,10 @@ is none.
 sub check_ref ($) {
     my $ref = shift;
     return undef if (!defined($ref) || $ref !~ /^[A-Za-z0-9-]{6,16}$/);
-    if (dbh()->selectrow_array("
+    if (defined($ref = dbh()->selectrow_array("
                 select ref from petition
                 where status in ('live', 'rejected', 'finished')
-                and lower(ref) = ?", {}, lc $ref)) {
+                and lower(ref) = ?", {}, lc $ref))) {
         return $ref;
     } else {
         return undef;

@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.25 2008-01-16 12:29:45 matthew Exp $
+// $Id: page.php,v 1.26 2008-01-17 00:08:10 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -100,7 +100,7 @@ function page_footer($stat_code = '') {
 function page_check_ref($ref) {
     if (!is_null(db_getOne("select ref from petition
         where status in ('live','rejected','finished')
-            and lower(ref) = ?", $ref)))
+            and lower(ref) = ?", strtolower($ref))))
         return;
     page_header(_("We couldn't find that petition"));
 #    $s = db_query('select pledge_id from pledge_find_fuzzily(?) limit 5', $ref);
