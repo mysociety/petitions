@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.145 2007-10-16 15:09:52 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.146 2008-01-23 12:41:12 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1219,7 +1219,7 @@ Log::print('noise', " ... and is routable");
 Log::print('debug', "  -> will attempt delivery of ", $msg->id());
         # Iterate over MXs in order.
         my $max_per_session = MAX_PER_SESSION;
-        $max_per_session = 5 if $domain =~ /yahoo/;
+        $max_per_session = 5 if $domain =~ /yahoo/i;
         foreach my $mx (@{$r->mx()}) {
             my $name = $mx->exchange();
             foreach my $a (@{$r->a($name)}) {
@@ -2665,4 +2665,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.145 2007-10-16 15:09:52 matthew Exp $
+$Id: petemaild,v 1.146 2008-01-23 12:41:12 matthew Exp $
