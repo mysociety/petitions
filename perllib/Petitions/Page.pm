@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.93 2007-08-02 11:45:09 matthew Exp $
+# $Id: Page.pm,v 1.94 2008-02-01 13:40:49 matthew Exp $
 #
 
 package Petitions::Page;
@@ -26,14 +26,27 @@ use mySociety::WatchUpdate;
 
 use Petitions;
 
+# FastCGI signal handling
+
+my $exit_requested = 0;
+my $handling_request = 0;
+
+$SIG{TERM} = $SIG{USR1} = sub {
+    $exit_requested = 1;
+    exit(0) unless $handling_request;
+}
+
 sub do_fastcgi {
     my $func = shift;
 
     try {
         my $W = new mySociety::WatchUpdate();
         while (my $q = new mySociety::Web()) {
+            $handling_request = 1;
             &$func($q);
             $W->exit_if_changed();
+            $handling_request = 0;
+            last if $exit_requested;
         }
     } catch Error::Simple with {
         my $E = shift;
@@ -51,6 +64,7 @@ sub do_fastcgi {
                 qq(<blockquote class="errortext">$msg</blockquote>),
                 q(</body></html);
     };
+    exit(0);
 }
 
 =item header Q TITLE [PARAM VALUE ...]
