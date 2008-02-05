@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.98 2008-02-04 22:50:31 matthew Exp $
+# $Id: Page.pm,v 1.99 2008-02-05 01:14:54 matthew Exp $
 #
 
 package Petitions::Page;
@@ -15,6 +15,7 @@ use strict;
 
 use Carp;
 use Digest::HMAC_SHA1 qw(hmac_sha1);
+use Error qw(:try);
 use MIME::Base64;
 use RABX;
 use File::Slurp qw(read_file);
