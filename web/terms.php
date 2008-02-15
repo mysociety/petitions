@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.13 2007-08-23 08:17:14 matthew Exp $
+// $Id: terms.php,v 1.14 2008-02-15 11:10:28 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -50,7 +50,7 @@ The information in a petition must be submitted in good faith. In
 order for the petition service to comply with the law and with
 the Civil Service Code, you must not include: </p>
 
-<ul>
+<ul style="line-height:1.4">
 <li>Party political material. The Downing Street website is a
 Government site. Party political content cannot be published, under the
 <a href="http://www.civilservice.gov.uk/civilservicecode">normal rules governing the Civil Service</a>.
@@ -80,10 +80,10 @@ possible to petition for anything, no matter how radical, politely).</li>
 </ul>
 
 <p>We reserve the right to reject:</p>
-<ul>
+<ul style="line-height:1.4">
 <li>petitions that are similar to and/or overlap with an existing petition or petitions;</li>
 <li>petitions which ask for things outside the remit or powers of the Prime Minister and Government;</li>
-<li>statements that don't actually request any action;</li>
+<li>statements that don't actually request any action - ideally start the title of your petition with a verb;</li>
 <li>wording that is impossible to understand;</li>
 <li>statements that amount to advertisements;</li>
 <li>petitions which are intended to be humorous, or which
@@ -95,6 +95,37 @@ for purely frivolous purposes);</li>
 <li>Freedom of Information requests. This is not the right channel
 for FOI requests; information about the appropriate procedure can be
 found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
+</ul>
+
+<h3><span dir="ltr">Common causes for rejection</span></h3>
+<p>Running the petition site, we see a lot of people having petitions
+rejected for a handful of very similar reasons. In order to help you
+avoid common problems, we've produced this list:
+
+<ul style="line-height:1.4">
+<li>We don't accept petitions on individual legal cases such as
+deportations because we can never ascertain whether the individual
+involved has given permission for their details to be made publicly
+known. We advise petitioners to take their concerns on such matters
+directly to the Home Office.
+
+<li>Please don't use 'shouting' capital letters excessively as they
+can make petitions fall foul of our 'impossible to read' criteria.
+
+<li>We receive a lot of petitions on devolved matters. If your
+petition relates to the powers devolved to parts of the UK, such as
+the Welsh Assembly or Scottish Parliament, you should approach those
+bodies directly as these things are outside the remit of the Prime
+Minister.
+
+<li>We also receive petitions about decisions that are clearly private
+sector decisions, such as whether to re-introduce a brand of breakfast
+cereal. These are also outside the remit of the Prime Minister.
+
+<li>We cannot accept petitions which call upon the PM to "recognize" or
+"acknowledge" something, as they do not clearly call for a
+recognizable action.
+
 </ul>
 
 <p>Petitions that do not follow these guidelines cannot be accepted. In

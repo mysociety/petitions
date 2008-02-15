@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.17 2008-02-08 17:30:13 francis Exp $
+// $Id: faq.php,v 1.18 2008-02-15 11:10:28 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -53,11 +53,14 @@ To sign a petition, you will need to give your name, address and email on the fo
 
 <dd>
 <p>
-Nothing, unless you expressly ask to sign up for other services available on the Downing
-Street website (e.g. email updates). We will use your email address to confirm your signature
-and, unless you ask us not to, we will also send you a maximum of two responses to the issues
-raised in the petition and a maximum of two emails from the creator of the petition.
-See our <a href="/privacy">privacy policy</a> for more information. The data themselves are held by mySociety and not by the Prime Minister's Office or any other government bodies or agencies.
+Nothing, unless you expressly ask to sign up for other services available on
+the Downing Street website (e.g. email updates). We will use your email address
+to confirm your signature and, unless you ask us not to, we will also send you
+a maximum of two responses to the issues raised in the petition. In the future
+we may introduce a facility to enable the creator of the petition to send you a
+maximum of two emails as well.  See our <a href="/privacy">privacy policy</a>
+for more information. The data themselves are held by mySociety and not by the
+Prime Minister's Office or any other government bodies or agencies.
 </p>
 </dd>
 
