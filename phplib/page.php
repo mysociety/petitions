@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.27 2008-03-05 11:44:26 matthew Exp $
+// $Id: page.php,v 1.28 2008-03-05 11:50:21 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -255,31 +255,31 @@ sign the petition.</p>
 
 <p>Running the petition site, we see a lot of people having petitions
 rejected for a handful of very similar reasons. In order to help you
-avoid common problems, we've produced this list:
+avoid common problems, we've produced this list:</p>
 
 <ul style="line-height:1.4">
 <li>We don't accept petitions on individual legal cases such as
 deportations because we can never ascertain whether the individual
 involved has given permission for their details to be made publicly
 known. We advise petitioners to take their concerns on such matters
-directly to the Home Office.
+directly to the Home Office.</li>
 
 <li>Please don't use 'shouting' capital letters excessively as they
-can make petitions fall foul of our 'impossible to read' criteria.
+can make petitions fall foul of our 'impossible to read' criteria.</li>
 
 <li>We receive a lot of petitions on devolved matters. If your
 petition relates to the powers devolved to parts of the UK, such as
 the Welsh Assembly or Scottish Parliament, you should approach those
 bodies directly as these things are outside the remit of the Prime
-Minister.
+Minister.</li>
 
 <li>We also receive petitions about decisions that are clearly private
 sector decisions, such as whether to re-introduce a brand of breakfast
-cereal. These are also outside the remit of the Prime Minister.
+cereal. These are also outside the remit of the Prime Minister.</li>
 
 <li>We cannot accept petitions which call upon the PM to "recognize" or
 "acknowledge" something, as they do not clearly call for a
-recognizable action.
+recognizable action.</li>
 
 </ul>
 
