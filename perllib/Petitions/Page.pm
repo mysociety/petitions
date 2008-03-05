@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.99 2008-02-05 01:14:54 matthew Exp $
+# $Id: Page.pm,v 1.100 2008-03-05 11:18:35 matthew Exp $
 #
 
 package Petitions::Page;
@@ -342,7 +342,7 @@ sub response_box ($$) {
     for (my $i=0; $i<@responses; $i++) {
         my $response = $responses[$i];
         (my $responsedate = $responsetimes[$i]) =~ s/ .*//;
-        my $title = 'Government Response';
+        my $title = 'Petition update';
         $title .= ' ' . (@responses-$i) if @responses > 1;
         $title .= ', ' . Petitions::pretty_date($responsedate);
         $title .= ', while petition was still open' if ($responsedate lt $p->{deadline});
