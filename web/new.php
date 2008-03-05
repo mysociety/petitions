@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.66 2008-02-15 11:10:28 matthew Exp $
+// $Id: new.php,v 1.67 2008-03-05 11:44:29 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -531,89 +531,8 @@ here:</p>
 </p>
 
 <h3>Terms and Conditions</h3>
-<p>
-The information in a petition must be submitted in good faith. In
-order for the petition service to comply with the law and with
-the Civil Service Code, you must not include: </p>
 
-<ul>
-<li>Party political material. The Downing Street website is a
-Government site. Party political content cannot be published, under the
-<a href="http://www.civilservice.gov.uk/civilservicecode">normal rules governing the Civil Service</a>.
-Please note, this does not mean it is not permissible to petition on
-controversial issues. For example, this party political petition
-would not be permitted: "We petition the PM to change his party's policy on education",
-but this non-party political version would be:
-"We petition the PM to change the government's policy on education".</li>
-<li>potentially libellous, false, or defamatory statements;</li>
-<li>information which may be protected by an injunction or court order (for
-example, the identities of children in custody disputes);</li>
-<li>material which is potentially confidential, commercially sensitive, or which
-may cause personal distress or loss;</li>
-<li>any commercial endorsement, promotion of any product, service or publication;</li>
-<li>URLs or web links (we cannot vet the content of external sites, and
-therefore cannot link to them from this site);</li>
-<li>the names of individual officials of public bodies, unless they
-are part of the senior management of those organisations;</li>
-<li>the names of family members of elected representatives or
-officials of public bodies;</li>
-<li>the names of individuals, or information where they may be
-identified, in relation to criminal accusations;</li>
-<li>language which is offensive, intemperate, or provocative. This not
-only includes obvious swear words and insults, but any language to which
-people reading it could reasonably take offence (we believe it is
-possible to petition for anything, no matter how radical, politely).</li>
-</ul>
-
-<p>We reserve the right to reject:</p>
-<ul>
-<li>petitions that are similar to and/or overlap with an existing petition or petitions;</li>
-<li>petitions which ask for things outside the remit or powers of the Prime Minister and Government;</li>
-<li>statements that don't actually request any action;</li>
-<li>wording that is impossible to understand;</li>
-<li>statements that amount to advertisements;</li>
-<li>petitions which are intended to be humorous, or which
-have no point about government policy (however witty these
-are, it is not appropriate to use a publically-funded website
-for purely frivolous purposes);</li>
-<li>issues for which an e-petition is not the appropriate channel
-(for example, correspondence about a personal issue);</li>
-<li>Freedom of Information requests. This is not the right channel
-for FOI requests; information about the appropriate procedure can be
-found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
-</ul>
-
-<h3><span dir="ltr">Common causes for rejection</span></h3>
-
-<p>Running the petition site, we see a lot of people having petitions
-rejected for a handful of very similar reasons. In order to help you
-avoid common problems, we've produced this list:
-
-<ul style="line-height:1.4">
-<li>We don't accept petitions on individual legal cases such as
-deportations because we can never ascertain whether the individual
-involved has given permission for their details to be made publicly
-known. We advise petitioners to take their concerns on such matters
-directly to the Home Office.
-
-<li>Please don't use 'shouting' capital letters excessively as they
-can make petitions fall foul of our 'impossible to read' criteria.
-
-<li>We receive a lot of petitions on devolved matters. If your
-petition relates to the powers devolved to parts of the UK, such as
-the Welsh Assembly or Scottish Parliament, you should approach those
-bodies directly as these things are outside the remit of the Prime
-Minister.
-
-<li>We also receive petitions about decisions that are clearly private
-sector decisions, such as whether to re-introduce a brand of breakfast
-cereal. These are also outside the remit of the Prime Minister.
-
-<li>We cannot accept petitions which call upon the PM to "recognize" or
-"acknowledge" something, as they do not clearly call for a
-recognizable action.
-
-</ul>
+<? terms_and_conditions(); ?>
 
 <p>Petitioners may freely disagree with the Government or call for
 changes of policy. There will be no attempt to exclude critical views
