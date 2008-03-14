@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.67 2008-03-05 11:44:29 matthew Exp $
+// $Id: new.php,v 1.68 2008-03-14 13:52:15 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -378,7 +378,7 @@ function step_main_error_check($data) {
     $errors = array();
 
     $disallowed_refs = array('contact', 'translate', 'posters', 'graphs', 'privacy', 'reject');
-    if (!$data['ref'])
+    if (!array_key_exists('ref', $data) || !$data['ref'])
         $errors['ref'] = _('Please enter a short name for your petition');
     elseif (strlen($data['ref']) < 6)
         $errors['ref'] = _('The short name must be at least six characters long');
