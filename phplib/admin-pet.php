@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.117 2008-01-16 19:30:17 matthew Exp $
+ * $Id: admin-pet.php,v 1.118 2008-03-25 12:46:53 matthew Exp $
  * 
  */
 
@@ -704,8 +704,41 @@ Deadline: ';
 <p>Category or categories for rejection: <small>
 <?      $this->display_categories(); ?>
 </small></p>
+
+<script type="text/javascript">
+function rejection_text(obj) {
+    var s = obj.innerHTML;
+    var box = document.getElementById('reject_reason');
+    box.value = box.value + s;
+}
+</script>
+
+<table>
+<tr valign="top">
+<td width="50%">
 <p>Reason for rejection (this will be emailed to the creator and available on the website):
-<br><textarea name="reject_reason" rows="10" cols="70"></textarea></p>
+<br><textarea name="reject_reason" id="reject_reason" rows="10" cols="50"></textarea></p>
+
+</td><td width="50%">
+<ul>
+
+<?
+        $autotext = array(
+'Please supply full name and address information.',
+'Please address the excessive use of capital letters; they make your petition hard to read.',
+'Your title should be a clear call for action, preferably starting with a verb, and not a name or statement.',
+'Comments about the petitions system should be sent to team@petitions.pm.gov.uk.',
+'Individual legal cases are a matter for direct communication with the Home Office.',
+'This is a devolved matter and should be directed to the Scottish Executive / Welsh Assembly / Northern Ireland Executive as appropriate.',
+'This is a matter for direct communication with Parliament.',
+'The Cabinet Office is actively seeking nominations for honours from the public. Please go to http://www.honours.gov.uk/',
+        );
+        foreach ($autotext as $t) {
+            echo '<li><a style="cursor:pointer;" onclick="rejection_text(this);">', $t, '</a>';
+        }
+?>
+</ul>
+</td></tr></table>
 
 <p>Please now select the parts of this petition that <strong>cannot</strong> be shown on the website for legal reasons:</p>
 <table>
