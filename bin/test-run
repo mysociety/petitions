@@ -23,8 +23,9 @@
 # Partially sign up, closure happens, a response is sent, complete sign up, check get response
 # HTML mail test could be better
 # Redrafting from admin interface
+# Deletion/scrubbing of old signatures
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.91 2008-01-16 19:30:17 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.92 2008-03-25 17:33:13 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -241,6 +242,10 @@ sub call_mark_finished {
 # Call update signature totals
 sub call_update_totals {
      $wth->multi_spawn($multispawn, "./update-totals all", $verbose);
+}
+
+sub call_remove_old {
+    $wth->multi_spawn($multispawn, './remove-old-signers', $verbose);
 }
 
 #############################################################################
@@ -559,6 +564,22 @@ Second bullet point'
     $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
                 fields => { }, button => 'respond') or die "Failed to submit write response button";
     $wth->browser_check_contents('already sent two responses');
+
+    comment("Check to see signatures are scrubbed");
+    set_pet_date('1989-12-31');
+    call_remove_old(); # Should do nothing
+    $wth->browser_get($admin_url);
+    $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
+    $wth->browser_follow_link(text_regex => qr/Finished/);
+    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_check_contents(email_n(1490));
+    set_pet_date('1990-01-01');
+    call_remove_old(); # Should remove 1501 row completely, 1488-1490 scrubbed
+    $wth->browser_get($admin_url);
+    $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
+    $wth->browser_follow_link(text_regex => qr/Finished/);
+    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_check_no_contents(email_n(1490));
 }
 
 #############################################################################

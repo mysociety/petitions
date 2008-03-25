@@ -1,0 +1,41 @@
+#!/usr/bin/perl -w
+
+# Remove old data from the petitions database
+
+use strict;
+require 5.8.0;
+
+# Horrible boilerplate to set up appropriate library paths.
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../../perllib";
+
+use POSIX qw(strftime);
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
+use mySociety::DBHandle qw(dbh);
+use Petitions;
+
+my @time = localtime();
+$time[5]--; # One year ago
+my $date = strftime("%Y-%m-%d", @time);
+
+# Get all petitions that closed over a year ago
+my $ids = dbh()->selectcol_arrayref("select id from petition where deadline < '$date'");
+my ($unconfirmed, $confirmed) = (0,0);
+foreach my $id (@$ids) {
+    # Remove all unconfirmed signatures
+    $unconfirmed += dbh()->do("delete from signer
+        where petition_id = ? and signtime < ? and emailsent in ('failed', 'sent')",
+        undef, $id, $date);
+
+    # Remove personal information except name from confirmed signatures
+    $confirmed += dbh()->do("update signer set address=null, email=null, postcode=null, overseas=null
+        where petition_id = ? and signtime < ? and emailsent = 'confirmed'",
+        undef, $id, $date);
+}
+
+print "$unconfirmed deleted from database, $confirmed scrubbed\n";
+

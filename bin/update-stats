@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -I../../perllib -I../perllib
+#!/usr/bin/perl -w
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -8,12 +8,17 @@ chdir $FindBin::Bin;
 
 use strict;
 require 5.8.0;
+use POSIX qw(strftime);
 use mySociety::Config;
 BEGIN {
     mySociety::Config::set_file("$FindBin::Bin/../conf/general");
 }
 use mySociety::DBHandle qw(dbh);
 use Petitions;
+
+my @time = localtime();
+$time[5]--; # One year ago
+my $date = strftime("%Y-%m-%d %H:%M:%S", @time);
 
 # Signatures counts
 dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_pending', 
@@ -25,7 +30,7 @@ dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timest
 dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_confirmed', 
     (SELECT COUNT(*) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'))");
 dbh()->do("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'signatures_confirmed_unique', 
-    (SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed'))");
+    (SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed' AND signtime > '$date'))");
 dbh()->commit();
 
 # Petition counts

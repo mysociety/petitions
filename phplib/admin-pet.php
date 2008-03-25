@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.118 2008-03-25 12:46:53 matthew Exp $
+ * $Id: admin-pet.php,v 1.119 2008-03-25 17:33:14 matthew Exp $
  * 
  */
 
@@ -66,7 +66,7 @@ EOF;
         $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique' order by id desc limit 1");
         print <<<EOF
 <h2>Signatures</h2>
-<p>$signatures_confirmed confirmed signatures ($signers unique emails), $signatures_unconfirmed unconfirmed
+<p>$signatures_confirmed confirmed signatures ($signers unique emails in past year), $signatures_unconfirmed unconfirmed
 <p><img src="pet-live-signups.png" alt="Graph of signers across whole site">
 EOF;
 
@@ -333,6 +333,7 @@ class ADMIN_PAGE_PET_MAIN {
             SELECT petition.*,
                 date_trunc('second',laststatuschange) AS laststatuschange,
                 (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
+		(deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 cached_signers AS signers,
                 $surge
                 message.id AS message_id
@@ -391,7 +392,10 @@ class ADMIN_PAGE_PET_MAIN {
                     $row .= 'Response sent';
                 else {
                     $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
-                        '"><input type="submit" name="respond" value="Write response">';
+                        '">';
+                    if ($r['response_possible'] == 't') {
+                        $row .= '<input type="submit" name="respond" value="Write response">';
+                    }
                     if ($status == 'live') {
                         $row .= ' <input type="submit" name="redraft" value="Move back to draft">';
                     }
@@ -459,6 +463,7 @@ class ADMIN_PAGE_PET_MAIN {
         $sel_query_part = "SELECT petition.*,
                 date_trunc('second', laststatuschange) AS laststatuschange,
                 date_trunc('second', creationtime) AS creationtime,
+		(deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
                     emailsent in ('sent', 'confirmed')) AS signers
             FROM petition";
@@ -533,7 +538,10 @@ Deadline: ';
         } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
             print '<form name="petition_admin_go_respond" method="post" action="'
                 . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
-                '"><input type="submit" name="respond" value="Write response">';
+                '">';
+            if ($pdata['response_possible'] == 't') {
+                print '<input type="submit" name="respond" value="Write response">';
+            }
             if ($pdata['status'] == 'live')
                 print ' <input type="submit" name="redraft" value="Move back to draft">';
             print ' <input type="submit" name="remove" value="Remove petition">';
