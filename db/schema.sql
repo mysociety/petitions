@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.63 2008-03-25 17:33:14 matthew Exp $
+-- $Id: schema.sql,v 1.64 2008-03-25 17:40:52 matthew Exp $
 --
 
 -- global_seq
@@ -183,7 +183,7 @@ create table signer (
         'failed',           -- permanent failure
         'confirmed'         -- confirm link clicked
         )
-    ),
+    )
 );
 ALTER TABLE signer CLUSTER ON signer_pkey;
 
