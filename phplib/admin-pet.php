@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.119 2008-03-25 17:33:14 matthew Exp $
+ * $Id: admin-pet.php,v 1.120 2008-03-26 00:46:21 matthew Exp $
  * 
  */
 
@@ -585,7 +585,7 @@ Deadline: ';
                 print "<br><strong>email subject:</strong> " . htmlspecialchars($r['emailsubject']);
             if ($r['emailbody']) {
                 print '<br><strong>email body:</strong>
-                <div class="message">.'.
+                <div class="message">' .
                 nl2br(ms_make_clickable(htmlspecialchars($r['emailbody']), array('contract'=>true)))
                 ."</div>";
             }

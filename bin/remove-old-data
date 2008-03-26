@@ -18,9 +18,7 @@ BEGIN {
 use mySociety::DBHandle qw(dbh);
 use Petitions;
 
-my @time = localtime();
-$time[5]--; # One year ago
-my $date = strftime("%Y-%m-%d", @time);
+my $date = dbh()->selectrow_array("select ms_current_date() - interval '1 year'");
 
 # Get all petitions that closed over a year ago
 my $ids = dbh()->selectcol_arrayref("select id from petition where deadline < '$date'");
@@ -35,6 +33,7 @@ foreach my $id (@$ids) {
     $confirmed += dbh()->do("update signer set address=null, email=null, postcode=null, overseas=null
         where petition_id = ? and signtime < ? and emailsent = 'confirmed'",
         undef, $id, $date);
+    dbh()->commit();
 }
 
 print "$unconfirmed deleted from database, $confirmed scrubbed\n";
