@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.29 2008-03-05 12:37:43 matthew Exp $
+// $Id: page.php,v 1.30 2008-04-04 14:20:23 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -145,6 +145,7 @@ function page_check_ref($ref) {
  */
 function rss_header($title, $description, $params) {
     $main_page = OPTION_BASE_URL . str_replace('rss/', '', $_SERVER['REQUEST_URI']);
+    $main_page = htmlspecialchars($main_page);
     header('Content-Type: application/xml; charset=utf-8');
     print '<?xml version="1.0" encoding="UTF-8"?>';
     print '<?xml-stylesheet type="text/css" href="http://www.pm.gov.uk/rss/rss.css"?>';
