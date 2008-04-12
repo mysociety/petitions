@@ -10,7 +10,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.9 2008-04-11 22:33:16 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: handlemail,v 1.10 2008-04-12 11:01:29 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -38,7 +38,7 @@ my %data = mySociety::HandleMail::get_message();
 
 if (!$data{is_bounce_message}) {
     # This is not a bounce message. Assume it's someone opting out
-    my $a = mySociety::HandleMail::get_bounce_from($m);
+    my $a = mySociety::HandleMail::get_bounce_from($data{message});
     print_log('info', $a->address() . " inserted into optout table");
     dbh()->do('delete from optout where email = ?', {}, $a->address());
     dbh()->do('insert into optout (email) values (?)', {}, $a->address());
