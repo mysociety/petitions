@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.9 2007-03-07 12:21:14 matthew Exp $
+// $Id: steps.php,v 1.10 2008-04-24 16:07:15 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
@@ -41,11 +41,12 @@ be delivered to the Downing Street inbox.</p>
 the basic requirements set out in our <a href="/terms">acceptable use policy</a> and the
 Civil Service code.</p>
 
-<p>If for any reason we cannot accept petition, we will write to you to explain
+<p>If for any reason we cannot accept the petition, we will write to you to explain
 why. You will be able to edit and resubmit your petition if you wish.</p>
 
-<p>Once your petition is approved, we will email you to confirm a date for it to
-appear on the website, usually within three working days.</p>
+<p>Once your petition is approved, we will email you to let you know;
+this will usually happen within five working days, although during busy
+periods this may take longer.</p>
 
 <p>If we cannot approve your amended petition, we will write to you again to
 explain our reason(s). </p>

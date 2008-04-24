@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.30 2008-04-04 14:20:23 matthew Exp $
+// $Id: page.php,v 1.31 2008-04-24 16:07:14 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -272,7 +272,9 @@ can make petitions fall foul of our 'impossible to read' criteria.</li>
 petition relates to the powers devolved to parts of the UK, such as
 the Welsh Assembly or Scottish Parliament, you should approach those
 bodies directly as these things are outside the remit of the Prime
-Minister.</li>
+Minister. This also applies to matters relating to London, such as
+the Underground, which should be directed to the Greater London
+Assembly and the Mayor's Office.</li>
 
 <li>We also receive petitions about decisions that are clearly private
 sector decisions, such as whether to re-introduce a brand of breakfast

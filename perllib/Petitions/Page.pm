@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.100 2008-03-05 11:18:35 matthew Exp $
+# $Id: Page.pm,v 1.101 2008-04-24 16:07:14 matthew Exp $
 #
 
 package Petitions::Page;
@@ -379,7 +379,7 @@ sub reject_box ($$) {
         1024 => 'It was commercial endorsement, promotion of a product, service or publication, or statements that amounted to adverts',
         2048 => 'It was similar to and/or overlaps with an existing petition or petitions',
         4096 => 'It was outside the remit or powers of the Prime Minister and Government',
-        8192 => 'It contained false name or address information',
+        8192 => 'It contained false or incomplete name or address information',
         16384 => 'It was an issue for which an e-petition is not the appropriate channel',
         32768 => 'It was intended to be humorous, or have no point about government policy',
         65536 => 'It contained links to websites',

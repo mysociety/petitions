@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.15 2008-03-05 11:44:29 matthew Exp $
+// $Id: terms.php,v 1.16 2008-04-24 16:07:15 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -72,7 +72,8 @@ this in our <a href="/privacy">privacy policy</a>.
 
 <p>
 It will usually take up to five working days from the time a petition
-proposal is received for it to appear on the website. For more
+proposal is received for it to appear on the website, although during
+busy periods it may take longer. For more
 information on the process, read our <a href="/steps">step-by-step guide</a>.
 </p>
 

@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.18 2008-02-15 11:10:28 matthew Exp $
+// $Id: faq.php,v 1.19 2008-04-24 16:07:15 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -110,7 +110,7 @@ disagree with a particular petition.</p>
 <dt>How do I start an e-petition?
 <dd>
 <p>
-You can start a petition using our <a href="/new">e-petition form</a>. You will be asked to provide some basic information about yourself and your petition. We aim to make your petition live on the website within five working days.
+You can start a petition using our <a href="/new">e-petition form</a>. You will be asked to provide some basic information about yourself and your petition. We aim to make your petition live on the website within five working days, although during busy periods it may take longer.
 </p>
 </dd>
 
