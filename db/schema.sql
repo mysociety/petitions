@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.64 2008-03-25 17:40:52 matthew Exp $
+-- $Id: schema.sql,v 1.65 2008-05-29 10:28:48 matthew Exp $
 --
 
 -- global_seq
@@ -161,9 +161,9 @@ create table signer (
     petition_id integer not null references petition(id),
 
     -- Who has signed the petition.
-    email text,
+    email text not null,
     name text not null,
-    address text,
+    address text not null,
     postcode text,
     overseas text,
 
@@ -183,18 +183,22 @@ create table signer (
         'failed',           -- permanent failure
         'confirmed'         -- confirm link clicked
         )
+    ),
+    check (
+        (postcode is not null and overseas is null)
+        or (postcode is null and overseas is not null)
     )
 );
 ALTER TABLE signer CLUSTER ON signer_pkey;
 
 create index signer_petition_id_idx on signer(petition_id);
-create unique index signer_petition_id_email_idx on signer(petition_id, email) where email is not null;
+create unique index signer_petition_id_email_idx on signer(petition_id, email) where email != '';
 create index signer_emailsent_idx on signer(emailsent);
 create index signer_showname_idx on signer(showname);
 create index signer_petition_id_emailsent_showname on signer(petition_id, emailsent, showname);
 create index signer_emailsent_showname_idx on signer(emailsent, showname);
 create index signer_signtime_idx on signer(signtime);
-create index signer_email_idx on signer(lower(email)) where email is not null;
+create index signer_email_idx on signer(lower(email)) where email != '';
 
 -- petition_is_valid_to_sign PETITION EMAIL
 -- Check whether the PETITION is valid for EMAIL to sign.
