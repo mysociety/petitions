@@ -21,23 +21,26 @@ use Petitions;
 my $date = dbh()->selectrow_array("select ms_current_date() - interval '1 year'");
 
 # Get all petitions that closed over a year ago
-my $ids = dbh()->selectcol_arrayref("select id from petition where deadline < '$date'");
+my $ids = dbh()->selectcol_arrayref("select id from petition where deadline < '$date' and status='finished'");
 my ($unconfirmed, $confirmed) = (0,0);
 foreach my $id (@$ids) {
     # Remove all unconfirmed signatures
-    $unconfirmed += dbh()->do("delete from signer
+    my $un = dbh()->do("delete from signer
         where petition_id = ? and signtime < ? and emailsent in ('failed', 'sent')",
         undef, $id, $date);
 
     # Remove personal information except name from confirmed signatures
-    $confirmed += dbh()->do("update signer set address='', email='', postcode=''
+    my $c = dbh()->do("update signer set address='', email='', postcode=''
         where petition_id = ? and signtime < ? and emailsent = 'confirmed' and overseas is null",
         undef, $id, $date);
-    $confirmed += dbh()->do("update signer set address='', email='', overseas=''
+    $c += dbh()->do("update signer set address='', email='', overseas=''
         where petition_id = ? and signtime < ? and emailsent = 'confirmed' and postcode is null",
         undef, $id, $date);
     dbh()->commit();
+    print "Petition id $id, $un unconfirmed deleted, $c scrubbed\n";
+    $unconfirmed += $un;
+    $confirmed += $c;
 }
 
-print "$unconfirmed deleted from database, $confirmed scrubbed\n";
+print "\n$unconfirmed deleted from database, $confirmed scrubbed\n";
 
