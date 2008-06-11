@@ -20,7 +20,7 @@
  * Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
  * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: response-send,v 1.13 2007-05-11 13:33:40 matthew Exp $
+ * $Id: response-send,v 1.14 2008-06-11 23:18:19 matthew Exp $
  *
  */
 
@@ -124,6 +124,7 @@ function do_signer_query() {
                 AND signer_id = signer.id) IS null
             AND signer.emailsent = 'confirmed'
             AND signer.showname = 't'
+            AND signer.email != ''
             AND lower(signer.email) NOT IN (SELECT lower(email) FROM optout)
     ");
     return $result;
@@ -171,7 +172,7 @@ function pump_message_to_exim($message_id) {
             $smtp_succeeded = false;
         } elseif ($exim_exit == 1) {
             # XXX: Problem - some, but not all messages were accepted...
-	    # This script will currently accept these losses
+            # This script will currently accept these losses
         }
     }
 
