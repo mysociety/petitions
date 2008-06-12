@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.120 2008-03-26 00:46:21 matthew Exp $
+ * $Id: admin-pet.php,v 1.121 2008-06-12 09:48:56 matthew Exp $
  * 
  */
 
@@ -139,7 +139,7 @@ class ADMIN_PAGE_PET_SEARCH {
                 date_trunc('second', signtime) as signtime
             from signer, petition
             where signer.petition_id = petition.id
-            and showname = 't' and emailsent in ('sent', 'confirmed') ";
+            and showname = 't' and emailsent in ('sent', 'confirmed') and signer.email!='' ";
         $out = '';
         if ($search && validate_email($search)) {
             $q = db_query($search_pet . "and lower(email) = ?", array($search));
