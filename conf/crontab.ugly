@@ -4,7 +4,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.21 2008-01-23 12:37:30 matthew Exp $
+# $Id: crontab.ugly,v 1.22 2008-06-12 07:48:05 matthew Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
@@ -26,6 +26,9 @@ MAILTO=team@mysociety.org
 
 # Rarely, once a day after midnight
 10 1 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-stats.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-stats || echo "stalled?"
+
+# Once a week, scrub some data
+0 2 * * Sun !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/remove-old-data.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/remove-old-data || echo "stalled?"
 
 !!(* } else { *)!!
 
