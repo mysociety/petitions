@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.101 2008-04-24 16:07:14 matthew Exp $
+# $Id: Page.pm,v 1.102 2008-07-28 21:53:31 matthew Exp $
 #
 
 package Petitions::Page;
@@ -471,7 +471,7 @@ sub signatories_box ($$) {
             $q->p("Because there are so many signatories, only the most recent",
                 MAX_PAGE_SIGNERS, "are shown on this page.");
         $html .= $q->p($q->a({ -href => "?showall=1" }, "Show all signatories"))
-            unless $p->{ref} eq 'traveltax';
+            unless $p->{ref} eq 'traveltax' || $p->{ref} eq 'RedArrows2012' || $p->{ref} eq 'Lowerduty30';
     }
 
     $html .= "</div>";
