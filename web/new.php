@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.68 2008-03-14 13:52:15 matthew Exp $
+// $Id: new.php,v 1.69 2008-07-28 21:18:57 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -28,7 +28,8 @@ if (get_http_var('tostepmain')
         check_edited_petition($data);
         petition_form_main($data);
     } else {
-        petition_search_first();
+        # petition_search_first();
+        page_closed_message();
     }
 }
 $contents = ob_get_contents();
@@ -93,6 +94,10 @@ function petition_form_submitted() {
     }
 
     $isedited = check_edited_petition($data);
+    if (!$isedited) {
+        page_closed_message();
+        return;
+    }
 
     # Step 1 fixes
     if (!array_key_exists('rawdeadline', $data)) $data['rawdeadline'] = '';
