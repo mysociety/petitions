@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.102 2008-07-28 21:53:31 matthew Exp $
+# $Id: Page.pm,v 1.103 2008-08-04 10:48:05 matthew Exp $
 #
 
 package Petitions::Page;
@@ -33,6 +33,13 @@ sub do_fastcgi {
     try {
         my $W = new mySociety::WatchUpdate();
         while (my $q = new mySociety::Web()) {
+            my $web_domain = mySociety::Config::get('WEB_DOMAIN');
+            if ($q->virtual_host() =~ /^(.*?)\.$web_domain/) {
+                $q->{scratch}{site_type} = 'council';
+                $q->{scratch}{site_name} = $1;
+            } else {
+                $q->{scratch}{site_type} = 'pm';
+            }
             &$func($q);
             $W->exit_if_changed();
         }
@@ -72,7 +79,7 @@ sub header ($$%) {
     if (mySociety::Config::get('PET_STAGING')) {
         my @d = (
                 'This is a test site for web developers only.',
-                q(You probably want <a href="http://www.pm.gov.uk">the Prime Minister's official site</a>.)
+                q(You probably want <a href="http://www.number10.gov.uk">the Prime Minister's official site</a>.)
             );
         my $today = Petitions::DB::today();
         push(@d, "Note: on this test site, the date is faked to be $today")
@@ -81,7 +88,13 @@ sub header ($$%) {
     }
 
     # html header shared with PHP
-    my $out = read_file("../templates/website/head.html");
+    my $out;
+    if ($q->{scratch}{site_type} eq 'pm') {
+        $out = read_file("../templates/website/head.html");
+    } else {
+        $out = read_file('../templates/' . $q->{scratch}{site_name} . '/head.html');
+	utf8::decode($out); # binmode argument on read_file simply just sets O_BINARY
+    }
     if (!$out) {
         warn "Couldn't find ../templates/website/head.html";
         return "";
@@ -89,8 +102,8 @@ sub header ($$%) {
     my $ent_url = ent($q->url());
     my $ent_title = ent($title);
     my $js = '';
-    $js = '<script type="text/javascript" src="http://www.pm.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
-    my $creator = $params{creator} || '10 Downing Street, Web Team, webmaster@pmo.gov.uk';
+    $js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
+    my $creator = $params{creator} || '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
     my $description = $params{description} || 'Petitions to the Prime Minister, 10 Downing Street';
     my $subjects = '';
     if ($params{category}) {
@@ -100,7 +113,7 @@ sub header ($$%) {
         $subjects = '<meta name="dc.subject" content="10 Downing Street" />
 <meta name="dc.subject" content="Petitions" />
 <meta name="dc.subject" content="Prime Minister" />
-<meta name="dc.subject" content="Tony Blair" />';
+<meta name="dc.subject" content="Gordon Brown" />';
     }
     my $extra = '';
     $extra .= '<meta name="eGMS.status" content="' . $params{status} . '" />' if $params{status};
@@ -138,7 +151,13 @@ sub footer ($$) {
         $site_stats = read_file("../templates/website/site-stats.html");# || die "couldn't open site-stats.html: $!";
         $site_stats =~ s/PARAM_STAT_CODE/$stat_code/g;
     }
-    my $out = read_file("../templates/website/foot.html");# || die("couldn't open foot.html: $!");
+    my $out;
+    if ($q->{scratch}{site_type} eq 'pm') {
+        $out = read_file("../templates/website/foot.html");
+    } else {
+        $out = read_file('../templates/' . $q->{scratch}{site_name} . '/foot.html');
+	utf8::decode($out);
+    }
     $out =~ s/PARAM_SITE_STATS/$site_stats/g;
 
     return $out;
@@ -227,7 +246,7 @@ sub display_box ($$%) {
         $q->div({ -class => 'petition_box' },
             $q->p({ -style => 'margin-top: 0' },
                 (exists($params{href}) ? qq(<a href="@{[ ent($params{href}) ]}">) : ''),
-                Petitions::sentence($p, 1),
+                Petitions::sentence($q, $p, 1),
                 (exists($params{href}) ? '</a>' : ''),
                 $details
             ),
@@ -270,22 +289,21 @@ sub sign_box ($$) {
         . qq(<input type="hidden" name="add_signatory" value="1" />)
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
-#        . $q->h2($q->span({-class => 'ltr'}, 'Sign up now'))
         . $q->div({ -id => 'signFormLeft' }, 
+          $q->p( 'You must be a British citizen or resident to sign the petition.'),
           $q->p("I, ",
                 $q->textfield(
                     -name => 'name', -id => 'name', -size => 20
                 ),
-                " sign up to the petition."
+                ", sign up to the petition."
             )
         . $q->p( '<label for="email">Your email:</label>',
-                $q->textfield(-name => 'email', -size => 25, -id => 'email'))
+                $q->textfield(-name => 'email', -size => 20, -id => 'email'))
         . $q->p( '<label for="email2">Confirm email:</label>',
-                $q->textfield(-name => 'email2', -size => 25, -id => 'email2'))
-        . $q->p($q->small($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.'))
+                $q->textfield(-name => 'email2', -size => 20, -id => 'email2'))
+        . $q->p($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
         )
         . $q->div({-id => 'signFormRight' },
-          $q->p( 'You must be a British citizen or resident to sign the petition.'),
           $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
                 $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:100%') ),
           $q->p( '<label for="postcode">UK postcode:</label>', 
@@ -346,7 +364,7 @@ sub response_box ($$) {
         $title .= ' ' . (@responses-$i) if @responses > 1;
         $title .= ', ' . Petitions::pretty_date($responsedate);
         $title .= ', while petition was still open' if ($responsedate lt $p->{deadline});
-        $out .= $q->h2($q->span({-class => 'ltr'}, $title)) .
+        $out .= $q->h3({ -class => 'page_title_border' }, $title) .
             mySociety::HTMLUtil::nl2br(mySociety::HTMLUtil::ms_make_clickable(ent($response)));
     }
     $out .= '</div>';
@@ -413,7 +431,7 @@ sub signatories_box ($$) {
 
     my $html =
         $q->start_div({-id => 'signatories'})
-            . $q->h2($q->span({-class => 'ltr'}, '<a name="signers"></a>Current signatories'));
+            . $q->h3({-class => 'page_title_border' }, '<a name="signers"></a>Current signatories');
 
     if ($p->{signers} == 1) {
         $html .=

@@ -16,7 +16,7 @@ YESTERDAY=`date --date yesterday +"%Y-%m-%d"`
 DODATE=$1
 #DODATE=$YESTERDAY
 
-VHOST=petitions.pm.gov.uk
+VHOST=petitions.number10.gov.uk
 LOG_FILES=`find $CACHE_DIR -type f | grep "/$VHOST-.*/" | grep $DODATE`
 echo $LOG_FILES
 /usr/bin/zmergelog $LOG_FILES | /data/mysociety/pet/bin/pet-log-frobinator > /tmp/out-$DODATE

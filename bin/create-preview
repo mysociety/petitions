@@ -31,7 +31,7 @@ $text =~ s/^$subject\n+//;
 $text =~ s/\n+$//;
 $text .= "
 
-[http://petitions.pm.gov.uk/$ref/ Petition information]
+[http://petitions.number10.gov.uk/$ref/ Petition information]
 
 If you would like to opt out of receiving further mail on this or any other petitions you signed, please email [optout\@petitions.pm.gov.uk]";
 my $out;

@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.48 2008-07-28 21:18:57 matthew Exp $
+// $Id: index.php,v 1.49 2008-08-04 10:48:07 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -19,37 +19,45 @@ page_header('Introduction to e-petitions', array(
         'Latest Petitions' => '/rss/list'
     )
 ));
-?>
 
-<h1><span dir="ltr">E-Petitions</span></h1>
-
-<div id="content_clipboard">
-
+echo '<div id="content_clipboard">
 <div id="petition_actions">
-<ul>
-<!-- <li id="action_create"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
-/><br />Create a Petition</a></li> -->
-<li id="action_view"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
+<ul>';
+
+if (OPTION_SITE_TYPE != 'pm') {
+    echo '<li id="action_create"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
+/><br />Create a Petition</a></li>';
+}
+
+echo '<li id="action_view"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
 /><br />View Petitions</a></li>
 </ul>
-</div>
+</div>';
 
-<p><em>Petitions have long been sent to the Prime Minister by post or delivered to
+if (OPTION_SITE_TYPE == 'pm') {
+    $sent_to = 'Prime Minister';
+    echo '<p><em>Petitions have long been sent to the Prime Minister by post or delivered to
 the Number 10 door in person. You can now both create and sign petitions on
 this website too, giving you the opportunity to reach a potentially wider audience
-and to deliver your petition directly to Downing Street.</em></p>
+and to deliver your petition directly to Downing Street.</em></p>';
+} elseif (OPTION_SITE_TYPE == 'council') {
+    $sent_to = 'council';
+    echo '<p><em>You can now both create and sign petitions to your council on this website,
+giving you the opportunity to reach a potentially wider audience and to deliver your petition
+directly to the council.</em></p>';
+}
 
-<?
 pet_search_form(true);
-page_closed_message(true);
-?>
+if (OPTION_SITE_TYPE == 'pm') {
+    page_closed_message(true);
+}
 
-</div>
-<div id="most_recent">
-<h2><span class="ltr">Five most recent petitions</span></h2>
-<p>We the undersigned petition the Prime Minister to&hellip;</p>
-<ul>
-<?
+echo "</div>
+<div id='most_recent'>
+<h3 class='page_title_border'>Five most recent petitions</h3>
+<p>We the undersigned petition the $sent_to to&hellip;</p>
+<ul>";
+
 $recent = db_getAll("select ref, content from petition
     where status = 'live'
     order by laststatuschange desc limit 5");
@@ -69,8 +77,8 @@ if (!count($recent)) {
 <p align="right"><a href="/list/open?sort=date" title="More recent petitions">More</a></p>
 </div>
 <div id="most_popular">
-<h2><span class="ltr">Five most popular open petitions</span></h2>
-<p>We the undersigned petition the Prime Minister to&hellip;</p>
+<h3 class="page_title_border">Five most popular open petitions</h3>
+<p>We the undersigned petition the <?=$sent_to?> to&hellip;</p>
 <ul>
 <?
 $recent = db_getAll("
@@ -95,7 +103,7 @@ if (!count($recent)) {
 </ul>
 <p align="right"><a href="/list/open?sort=signers" title="More popular petitions">More</a></p>
 </div>
-<h2 style="clear: both"><span class="ltr">How it works</span></h2>
+<h3 class="page_title_border" style="clear: both">How it works</h3>
 
 <!-- <p>This service has been set up in partnership with <a
 href="http://www.mysociety.org/">mySociety</a>, a non-partisan charitable

@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: privacy.php,v 1.6 2008-02-15 11:10:28 matthew Exp $
+// $Id: privacy.php,v 1.7 2008-08-04 10:48:07 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -13,12 +13,14 @@ require_once "../phplib/pet.php";
 page_header('E-petitions Privacy Policy');
 ?>
 
-<h1><span dir="ltr">Privacy policy</span></h1>
+<h2 class="page_title_border">Privacy policy</h2>
 
-In addition to the <a href="http://www.pm.gov.uk/output/Page52.asp">normal
-privacy policy</a> we have the following:
+<? if (OPTION_SITE_TYPE == 'pm') { ?>
 
-<h2><span dir="ltr">E-petitions</span></h2>
+<p>In addition to the <a href="http://www.number10.gov.uk/output/Page52.asp">normal
+privacy policy</a> we have the following:</p>
+
+<h3>E-petitions</h3>
 
 <p>If you create an e-petition on the Downing Street website, you will be
 required to provide us with basic personal information so that we can contact
@@ -26,7 +28,17 @@ you about your petition. The information will only be used for this purpose,
 although we may need to pass your details to the relevant Government department
 to enable them to respond to the issues you raise.</p>
 
-<p>If you sign an e-petition on the Downing Street website, you will be
+<? } elseif (OPTION_SITE_TYPE == 'council') { ?>
+
+<p>If you create an e-petition on this website, you will be
+required to provide us with basic personal information so that we can contact
+you about your petition. The information will only be used for this purpose,
+although we may need to pass your details to the relevant department
+to enable them to respond to the issues you raise.</p>
+
+<? } ?>
+
+<p>If you sign an e-petition on this website, you will be
 required to provide us with basic personal information to enable us to verify
 that "signatures" collected are genuine.  Your name (but no other details) will
 be published on the petition on the website.</p>

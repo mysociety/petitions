@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.32 2008-07-28 21:18:56 matthew Exp $
+// $Id: page.php,v 1.33 2008-08-04 10:48:06 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -28,7 +28,7 @@ function page_header($title, $params = array()) {
     $devwarning = array();
     if (OPTION_PET_STAGING) {
         $devwarning[] = _('This is a test site for web developers only.');
-        $devwarning[] = _('You probably want <a href="http://www.pm.gov.uk">the Prime Minister\'s official site</a>.');
+        $devwarning[] = _('You probably want <a href="http://www.number10.gov.uk">the Prime Minister\'s official site</a>.');
     }
     global $pet_today;
     if ($pet_today != date('Y-m-d')) {
@@ -47,18 +47,24 @@ function page_header($title, $params = array()) {
     // Display header
     $stat_js = '';
     if (!OPTION_PET_STAGING) {
-        $stat_js = '<script type="text/javascript" src="http://www.pm.gov.uk/include/js/nedstat.js"></script>';
+        $stat_js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>';
     }
 
     global $devwarning;
-    $contents = file_get_contents("../templates/website/head.html");
-    $creator = '10 Downing Street, Web Team, webmaster@pmo.gov.uk';
-    $desc = 'Petitions to the Prime Minister, 10 Downing Street';
-    $extra = '';
-    $contents = str_replace('PARAM_SUBJECTS', '<meta name="dc.subject" content="10 Downing Street" />
+    if (OPTION_SITE_TYPE == 'pm') {
+        $contents = file_get_contents("../templates/website/head.html");
+        $creator = '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
+        $desc = 'Petitions to the Prime Minister, 10 Downing Street';
+        $contents = str_replace('PARAM_SUBJECTS', '<meta name="dc.subject" content="10 Downing Street" />
 <meta name="dc.subject" content="Petitions" />
 <meta name="dc.subject" content="Prime Minister" />
-<meta name="dc.subject" content="Tony Blair" />', $contents);
+<meta name="dc.subject" content="Gordon Brown" />', $contents);
+    } elseif (OPTION_SITE_TYPE == 'council') {
+        $contents = file_get_contents("../templates/" . OPTION_SITE_NAME . '/head.html');
+	$creator = OPTION_SITE_NAME;
+	$desc = 'Petitions to ' . OPTION_SITE_NAME;
+    }
+    $extra = '';
     $contents = str_replace('PARAM_CREATOR', $creator, $contents);
     $contents = str_replace('PARAM_DESCRIPTION', $desc, $contents);
     $contents = str_replace('PARAM_EXTRA', $extra, $contents);
@@ -80,16 +86,19 @@ function page_footer($stat_code = '') {
         $stat_code = 'Petitions';
     }
 
-    $site_stats = '';
-    if (!OPTION_PET_STAGING) {
-        $site_stats = file_get_contents('../templates/website/site-stats.html');
-        $site_stats = str_replace("PARAM_STAT_CODE", $stat_code, $site_stats);
+    if (OPTION_SITE_TYPE == 'pm') {
+        $site_stats = '';
+        if (!OPTION_PET_STAGING) {
+            $site_stats = file_get_contents('../templates/website/site-stats.html');
+            $site_stats = str_replace("PARAM_STAT_CODE", $stat_code, $site_stats);
+        }
+        $contents = file_get_contents("../templates/website/foot.html");
+        $contents = str_replace("PARAM_SITE_STATS", $site_stats, $contents);
+    } elseif (OPTION_SITE_TYPE == 'council') {
+        $contents = file_get_contents('../templates/' . OPTION_SITE_NAME . '/foot.html');
     }
 
-    $contents = file_get_contents("../templates/website/foot.html");
-    $contents = str_replace("PARAM_SITE_STATS", $site_stats, $contents);
     print $contents;
-
     header('Content-Length: ' . ob_get_length());
 }
 
@@ -148,7 +157,7 @@ function rss_header($title, $description, $params) {
     $main_page = htmlspecialchars($main_page);
     header('Content-Type: application/xml; charset=utf-8');
     print '<?xml version="1.0" encoding="UTF-8"?>';
-    print '<?xml-stylesheet type="text/css" href="http://www.pm.gov.uk/rss/rss.css"?>';
+    print '<?xml-stylesheet type="text/css" href="http://www.number10.gov.uk/rss/rss.css"?>';
 ?>
 
 <rdf:RDF
@@ -194,15 +203,16 @@ The information in a petition must be submitted in good faith. In
 order for the petition service to comply with the law and with
 the Civil Service Code, you must not include: </p>
 
-<ul style="line-height:1.4">
-<li>Party political material. The Downing Street website is a
+<ul>
+<li>Party political material. This website is a
 Government site. Party political content cannot be published, under the
 <a href="http://www.civilservice.gov.uk/civilservicecode">normal rules governing the Civil Service</a>.
 Please note, this does not mean it is not permissible to petition on
 controversial issues. For example, this party political petition
-would not be permitted: "We petition the PM to change his party's policy on education",
+would not be permitted: "We petition the <?=OPTION_SITE_TYPE=='pm'?"PM to change his party's policy on education"
+:"council to change the Labour executive's policy on education" ?>,
 but this non-party political version would be:
-"We petition the PM to change the government's policy on education".</li>
+"We petition the <?=OPTION_SITE_TYPE=='pm'?"PM to change the government's":'council to change their'?> policy on education".</li>
 <li>potentially libellous, false, or defamatory statements;</li>
 <li>information which may be protected by an injunction or court order (for
 example, the identities of children in custody disputes);</li>
@@ -224,9 +234,14 @@ possible to petition for anything, no matter how radical, politely).</li>
 </ul>
 
 <p>We reserve the right to reject:</p>
-<ul style="line-height:1.4">
+<ul>
 <li>petitions that are similar to and/or overlap with an existing petition or petitions;</li>
-<li>petitions which ask for things outside the remit or powers of the Prime Minister and Government;</li>
+<li>petitions which ask for things outside the remit or powers of the <?
+
+if (OPTION_SITE_TYPE == 'pm') echo 'Prime Minister and Government';
+else echo 'council';
+
+?>;</li>
 <li>statements that don't actually request any action - ideally start the title of your petition with a verb;</li>
 <li>wording that is impossible to understand;</li>
 <li>statements that amount to advertisements;</li>
@@ -252,13 +267,13 @@ contains misleading information we reserve the right to post an
 interim response to highlight this point to anyone visiting to 
 sign the petition.</p>
 
-<h3><span dir="ltr">Common causes for rejection</span></h3>
+<h3>Common causes for rejection</h3>
 
 <p>Running the petition site, we see a lot of people having petitions
 rejected for a handful of very similar reasons. In order to help you
 avoid common problems, we've produced this list:</p>
 
-<ul style="line-height:1.4">
+<ul>
 <li>We don't accept petitions on individual legal cases such as
 deportations because we can never ascertain whether the individual
 involved has given permission for their details to be made publicly
@@ -267,6 +282,8 @@ directly to the Home Office.</li>
 
 <li>Please don't use 'shouting' capital letters excessively as they
 can make petitions fall foul of our 'impossible to read' criteria.</li>
+
+<? if (OPTION_SITE_TYPE == 'pm') { ?>
 
 <li>We receive a lot of petitions on devolved matters. If your
 petition relates to the powers devolved to parts of the UK, such as
@@ -280,7 +297,9 @@ Assembly and the Mayor's Office.</li>
 sector decisions, such as whether to re-introduce a brand of breakfast
 cereal. These are also outside the remit of the Prime Minister.</li>
 
-<li>We cannot accept petitions which call upon the PM to "recognize" or
+<? } ?>
+
+<li>We cannot accept petitions which call upon the <?=OPTION_SITE_TYPE=='pm'?'PM':'council'?> to "recognize" or
 "acknowledge" something, as they do not clearly call for a
 recognizable action.</li>
 

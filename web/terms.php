@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.16 2008-04-24 16:07:15 matthew Exp $
+// $Id: terms.php,v 1.17 2008-08-04 10:48:07 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -13,18 +13,22 @@ require_once "../phplib/pet.php";
 page_header('E-petitions Terms and Conditions');
 ?>
 
-<h1><span dir="ltr">Terms and Conditions</span></h1>
+<h2 class="page_title_border">Terms and Conditions</h2>
 
 <p>The purpose of the
 e-petition service is to enable as many people as possible to make
-their views known. All petitions will be accepted and published on the
-Downing Street website, providing they meet the criteria below.</p>
+their views known. All petitions will be accepted and published on this
+website, providing they meet the criteria below.</p>
 
-<p>Petitions have long been sent to the Prime Minister by post, or
+<?
+if (OPTION_SITE_TYPE == 'pm') {
+    echo '<p>Petitions have long been sent to the Prime Minister by post, or
 delivered to the Number 10 door in person. E-petitions are welcome in
-the same way.</p>
+the same way.</p>';
+}
+?>
 
-<p>Petitioners may freely disagree with the Government or call for
+<p>Petitioners may freely disagree with the <?=OPTION_SITE_TYPE=='pm'?'Government':'council'?> or call for
 changes of policy. There will be no attempt to exclude critical views
 and decisions to accept or reject will not be made on a party political basis.</p>
 
@@ -36,8 +40,8 @@ some basic conditions.</p>
 <ul>
 <li>the title or subject of the petition;</li>
 <li>a clear and concise statement covering the subject of the
-petition. It should state what action the petitioner wishes the PM or
-the Government to take. The petition will be returned to you to edit
+petition. It should state what action the petitioner wishes the <?=OPTION_SITE_TYPE=='pm'
+?'PM or the Government':'council' ?> to take. The petition will be returned to you to edit
 if it is unclear what action is being sought;</li>
 <li>the petition author's contact address (in case we need to
 contact you about the petition. This
@@ -60,7 +64,7 @@ full text of your petition, unless the content is illegal or offensive.
 </p>
 
 <p>
-Once accepted, petitions will be made available on the Downing Street
+Once accepted, petitions will be made available on this
 website for anyone to sign.  Anyone signing the petition must provide
 their name, address and a verifiable email address. No personal
 details other than their name will be published on the site.

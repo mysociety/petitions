@@ -6,12 +6,18 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.53 2008-04-24 16:07:14 matthew Exp $
+ * $Id: petition.php,v 1.54 2008-08-04 10:48:06 matthew Exp $
  * 
  */
 
 // Textual content
-$petition_prefix = 'We the undersigned petition the Prime Minister to';
+if (OPTION_SITE_TYPE == 'council') {
+    $petition_prefix = 'We the undersigned petition the council to';
+} elseif (OPTION_SITE_TYPE == 'pm') {
+    $petition_prefix = 'We the undersigned petition the Prime Minister to';
+} else {
+    $petition_prefix = 'We the undersigned petition someone to';
+}
 
 /* Must keep this synchronised with constraint in schema. */
 $global_rejection_categories = array(

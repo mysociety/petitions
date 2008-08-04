@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.121 2008-06-12 09:48:56 matthew Exp $
+ * $Id: admin-pet.php,v 1.122 2008-08-04 10:48:06 matthew Exp $
  * 
  */
 
@@ -735,7 +735,7 @@ function rejection_text(obj) {
 'Please supply full name and address information.',
 'Please address the excessive use of capital letters; they make your petition hard to read.',
 'Your title should be a clear call for action, preferably starting with a verb, and not a name or statement.',
-'Comments about the petitions system should be sent to team@petitions.pm.gov.uk.',
+'Comments about the petitions system should be sent to number10@petitions.pm.gov.uk.',
 'Individual legal cases are a matter for direct communication with the Home Office.',
 'This is a devolved matter and should be directed to the Scottish Executive / Welsh Assembly / Northern Ireland Executive as appropriate.',
 'This is a matter for direct communication with Parliament.',
@@ -913,7 +913,7 @@ EOF;
             }
 ?>
 <p>You are responding to the petition '<?=$p->ref() ?>'.
-To do links in an HTML mail, write them as e.g. <kbd>[http://www.pm.gov.uk/ Number 10 homepage]</kbd>.
+To do links in an HTML mail, write them as e.g. <kbd>[http://www.number10.gov.uk/ Number 10 homepage]</kbd>.
 </p>
 <form name="petition_admin_respond" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
 <input type="hidden" name="respond" value="1">

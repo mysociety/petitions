@@ -1,0 +1,228 @@
+#content, #sidebar { overflow: hidden; }
+
+.sidebar{ width: 170px; }
+
+.leftbar{ width: 180px; }
+
+#searchform{
+
+      margin: 0px;
+      padding: 0px;
+
+}
+
+.header{
+	margin: 0 0 0 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+	height: 119px;
+}
+
+.header h1{
+	margin: 0 0 0 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+	height: 119px;
+}
+
+.header h1 img{
+	margin: 0 0 0 0;
+	padding-bottom: 0;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+		
+}
+
+.feed_title_history{
+	background-color: #976431;
+	 margin-right: 24px;
+	 margin-bottom: 0px
+	 
+}  
+
+
+
+.sidebar_history_topics_body{
+padding-left:5px;
+padding-right:5px;
+padding-top:0px;
+padding-bottom:5px;
+
+margin-top:0px;
+font-family:Arial;
+font-weight:bold;
+font-size:0.9em;
+color:#fff;
+background-color:#976431;
+width:188px;
+}
+
+.sidebar_newsletter_panel
+{
+width:198px;
+height:6px;
+font-size: 0em;
+background-image:url(http://www.number10.gov.uk/files/images/newsletter_panel.gif);
+background-repeat:no-repeat;
+margin: 0 0 0 0;
+padding: 0 0 0 0;
+}
+
+.sidebar_newsletter_topics_body{
+padding-left:5px;
+padding-right:5px;
+padding-top:0;
+padding-bottom:5px;
+
+margin-top:0;
+font-family:Arial;
+font-weight:bold;
+font-size:1.1em;
+color:white;
+background-color:#5A798B;
+width:188px;
+}
+
+.feed_holder_history{
+	padding: 0 0 0 0;
+	margin: 0 0 0 0;
+    font-weight:normal;
+}
+
+#top-menu{
+    float:left;
+	width: 80%;
+	font-family:Georgia, "Times New Roman", Times, serif;
+	text-align: left;
+	border: none;
+	height: 30px;
+    
+	background-color: #5a798b;
+    display:inline;
+    padding-left: 17px;   
+    margin: 0 0 0 0;
+    vertical-align: baseline;
+}
+
+#s{
+ margin-top: 2px;
+}
+
+.form_title{
+	float:left;
+	font-family: "Times New Roman", Arial, Sans serif;
+	color:#fff;
+	font-size:1.4em;
+	padding-top:2px;
+	margin-right:5px;
+	margin-left: 3px;
+	margin-top: 0px;
+}
+
+
+
+.search_text{
+
+}
+
+.searchbtn{
+
+}
+
+.textnews
+{
+font-family:Georgia, "Times New Roman", Times, serif;
+font-size:2.4em;
+color:#1d7a7a;
+font-weight:normal;
+letter-spacing:-0.03cm;
+margin-top:10px;
+margin-left:11px;
+padding-bottom:2px;
+width: 535px;
+border-bottom:1px dashed #000;
+float:left;
+}
+
+
+
+
+.leftbar{
+	float: right;
+	width: 216px;
+	margin: 0;
+	padding-top: 0px;
+	padding-bottom: 15px;
+	display: inline;
+	overflow: hidden;
+	background: #FFF;
+}
+
+.pages_sidenav_communicate {
+color:#4f8718;
+float:left;
+width:200px;
+margin-left: 13px;
+}
+
+.pages_sidenav_news {
+color:#1d7a7a;
+float:left;
+width:200px;
+margin-left: 13px;
+}
+
+.pages_sidenav_meet {
+color:#c2604b;
+width:200px;
+float:left;
+margin-left: 13px;
+}
+
+.pages_sidenav_history  {
+color:#a06c28;
+float:left;
+width:200px;
+margin-left: 13px;
+height: 100%;
+}
+
+.post h2{
+	text-transform: none;
+font-family:Georgia, "Times New Roman", Times, serif;
+	
+        color:black;
+        font-weight:normal;
+        padding: 0 0 0 0;
+        margin: 0;
+}
+
+.menu_home {
+        padding-bottom:0;
+        margin-bottom: 0;
+        height:25px;
+}
+
+.menu_home:hover{
+        padding-bottom:0;
+        margin-bottom: 0;
+        height:25px;
+}
+
+.current_home {
+        padding-bottom:0;
+        margin-bottom: 0;
+        height:25px;
+}
+
+#footer_links
+{
+float:left;
+
+
+}

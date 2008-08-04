@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.55 2008-01-16 23:52:45 matthew Exp $
+// $Id: list.php,v 1.56 2008-08-04 10:48:07 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -104,8 +104,6 @@ else {
 }
 
 if (!$rss) {
-    echo '<h1><span dir="ltr">E-Petitions</span></h1>';
-
     $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
         'rejected' => 'Rejected petitions');
     $views = '';
@@ -123,7 +121,7 @@ if (!$rss) {
     pet_search_form();
 
     if ($q_cat) {
-        print '<h2><span class="ltr">You are viewing petitions in the "' . $global_petition_categories[$q_cat] . '" category</span></h2>';
+        print '<h3>You are viewing petitions in the "' . $global_petition_categories[$q_cat] . '" category</h3>';
     }
 
     $first = '<span class="greyed">First</span>';
@@ -204,7 +202,7 @@ if ($ntotal > 0) {
             }
             print '</a>';
             if ($petition->data['responses']) {
-                print '<br />(with government response';
+                print ' (with response';
                 if ($petition->data['responses'] > 1) print 's';
                 print ')';
             }
@@ -241,14 +239,14 @@ function list_front() {
     global $global_petition_categories;
     page_header('List petitions');
 ?>
-<h2><span class="ltr">List petitions...</span></h2>
+<h2 class="page_title_border">List petitions...</h2>
 <ul style="font-size:150%;">
 <li><a href="/list/open?sort=deadline">By deadline</a></li>
 <li><a href="/list/open?sort=signers">By size</a></li>
 <li><a href="/list/open?sort=date">By start date</a></li>
 </ul>
 
-<h2><span class="ltr">By category</span></h2>
+<h2 class="page_title_border">By category</h2>
 <?
     print '<ul style="font-size:125%">';
     foreach ($global_petition_categories as $id => $cat) {

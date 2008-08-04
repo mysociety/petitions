@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.14 2008-07-28 21:53:32 matthew Exp $
+// $Id: search.php,v 1.15 2008-08-04 10:48:07 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -16,7 +16,7 @@ require_once '../../phplib/importparams.php';
 $search = trim(get_http_var('q', true));
 if (!$search) $search = trim(get_http_var('s', true));
 
-header('Location: http://search.petitions.pm.gov.uk/kbroker/number10/petitions/search.lsim?ha=1157&sc=number10&qt=' . urlencode($search));
+header('Location: http://search.petitions.number10.gov.uk/kbroker/number10/petitions/search.lsim?ha=1157&sc=number10&qt=' . urlencode($search));
 exit; # TEMP MPS 2008-06-14 - IS THIS USED???
 
 $rss = get_http_var('rss') ? true : false;
@@ -199,10 +199,10 @@ function search($search) {
 <input type="submit" value="Create petition" />
 </p>
 </form>
-<h2><span class="ltr">Search again</span></h2>
+<h2>Search again</h2>
 EOF;
     } else {
-        print '<h2><span class="ltr">Search E-Petitions</span></h2>';
+        print '<h2>Search E-Petitions</h2>';
     }
     pet_search_form();
 }

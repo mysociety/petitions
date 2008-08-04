@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.49 2007-09-11 10:52:42 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.50 2008-08-04 10:48:07 matthew Exp $';
 
 use strict;
 
@@ -54,7 +54,7 @@ sub signup_page ($$) {
     $today = Petitions::DB::today() if (mySociety::Config::get('PET_STAGING')); # XXX not sure staging is best check for this
     #warn "today is $today";
     if ($today gt $p->{deadline}) {
-        Petitions::Page::error_page($q, sprintf("Sorry, but that petition is now closed. %s gt %s.", $today, $p->{deadline}));
+        Petitions::Page::error_page($q, sprintf("Sorry, but that petition is now closed. %s is later than %s!", $today, $p->{deadline}));
         return;
     }
     
@@ -89,7 +89,7 @@ sub signup_page ($$) {
     $errors{address} = 'Please enter your address'
         if (!$qp_address);
     $errors{postcode}
-        = 'Please enter a valid postcode, such as OX1 3DR, or choose an overseas territory'
+        = 'Please enter a valid postcode, such as OX1 3DR, or choose from the drop-down'
         if (!$qp_postcode && !$qp_overseas);
     $errors{postcode} = 'You can\'t both put a postcode and pick an option from the drop-down.'
         if (defined($qp_postcode) && defined($qp_overseas));
@@ -117,13 +117,13 @@ sub signup_page ($$) {
                             overseas => $qp_overseas
                         })) {
                 $html .=
-                    $q->h1({-class => 'ltr'}, "Now check your email!")
-                    . $q->p({-class => 'noprint loudmessage', -align => 'center'},
+                    $q->h2({-class => 'page_title_border'}, 'Now check your email!')
+                    . $q->p({-class => 'noprint loudmessage'},
                         "Thank you. We have sent you an email. To add your signature to the petition, you need to click the link in this email."
                     )
-                    . $q->p({-class => 'noprint loudmessage', -align => 'center'},
-                        "For more news about the Prime Minister's work and agenda, and other information including speeches, web chats, history and a virtual tour of No.10, visit the ", $q->a({-href => 'http://www.pm.gov.uk/'}, 'main Downing Street homepage'))
-                    . $q->p({-class => 'noprint loudmessage', -align => 'center'},
+                    . $q->p({-class => 'noprint loudmessage'},
+                        "For more news about the Prime Minister's work and agenda, and other information including speeches, web chats, history and a virtual tour of No.10, visit the ", $q->a({-href => 'http://www.number10.gov.uk/'}, 'main Downing Street homepage'))
+                    . $q->p({-class => 'noprint loudmessage'},
                     q(If you don't receive the email and you use web-based
                     email or have "junk mail" filters, please check
                     your bulk/spam mail folders, in case the message

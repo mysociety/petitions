@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.69 2008-07-28 21:18:57 matthew Exp $
+// $Id: new.php,v 1.70 2008-08-04 10:48:07 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -27,6 +27,8 @@ if (get_http_var('tostepmain')
         $data = array('token' => $token);
         check_edited_petition($data);
         petition_form_main($data);
+    } elseif (OPTION_SITE_TYPE == 'council') { # No search step
+        petition_form_main();
     } else {
         # petition_search_first();
         page_closed_message();
@@ -35,9 +37,6 @@ if (get_http_var('tostepmain')
 $contents = ob_get_contents();
 ob_end_clean();
 page_header($page_title, array());
-?>
-<h1><span dir="ltr">E-Petitions</span></h1>
-<?
 print $contents;
 page_footer('Create');
 
@@ -94,7 +93,7 @@ function petition_form_submitted() {
     }
 
     $isedited = check_edited_petition($data);
-    if (!$isedited) {
+    if (OPTION_SITE_TYPE=='pm' && !$isedited) {
         page_closed_message();
         return;
     }
@@ -210,9 +209,9 @@ function textfield($name, $val, $size, $errors, $after = '') {
 /* petition_search_first
  * Make people search before creating a petition */
 function petition_search_first() { ?>
-<p>Welcome to the petition creation page.</p>
+<p><big>Welcome to the petition creation page.</big></p>
 
-<p>There are over 7,000 petitions on this site.
+<p>There are over 6,000 petitions on this site.
 Before creating a new petition, please use this box to check whether a petition already exists which makes your point.
 If so, please add your name to that petition. We will not create duplicate petitions making identical points.</p>
 
@@ -226,18 +225,15 @@ If so, please add your name to that petition. We will not create duplicate petit
  * Display the first stage of the petitions form. */
 function petition_form_main($data = array(), $errors = array()) {
     global $pet_time, $petition_prefix;
-?>
-There are 5 stages to the petition process:
-<?=petition_breadcrumbs(0); ?>
-<a href="/steps">More detailed description of these steps</a>
-<?
-
+    echo 'There are 5 stages to the petition process:';
+    echo petition_breadcrumbs(0);
+    echo '<p><a href="/steps">More detailed description of these steps</a></p>';
     foreach (array('pet_content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
     startform();
     ?>
-<h2><span dir="ltr"><?=_('New petition &#8211; Part 1 of 3 &#8211; Your petition') ?></span></h2>
+<h2 class="page_title_border">New petition &#8211; Part 1 of 3 &#8211; Your petition</h2>
 <?  errorlist($errors); ?>
 
 <p>Please note that you must be a British citizen or resident to create a petition.</p>
@@ -262,7 +258,7 @@ There are 5 stages to the petition process:
     <?
     textfield('ref', $data['ref'], 16, $errors);
     ?>
-<br /><small>This gives your petition an easy web address. e.g. http://petitions.pm.gov.uk/badgers</small>
+<br /><small>This gives your petition an easy web address. e.g. http://<?=OPTION_WEB_DOMAIN ?>/badgers</small>
 </p>
 
 <p>Please select a category for your petition:
@@ -289,7 +285,7 @@ function petition_form_you($data = array(), $errors = array()) {
     errorlist($errors);
     startform();
     ?>
-<h2><span dir="ltr"><?=_('New petition &#8211; Part 2 of 3 &#8211; About you') ?></span></h2>
+<h2 class="page_title_border">New petition &#8211; Part 2 of 3 &#8211; About you</h2>
 <div>
 <p>Please note that you must be a British citizen or resident to create a petition.</p><?
 
@@ -486,7 +482,7 @@ function preview_error_check($data) {
 function preview_petition($data, $errors) {
     errorlist($errors);
 ?>
-<h2><span dir="ltr"><?=_('New petition &#8211; Part 3 of 3')?></span></h2>
+<h2 class="page_title_border">New petition &#8211; Part 3 of 3</h2>
 <p>Your petition, with short name <em><?=$data['ref'] ?></em>, will look like this:</p>
 <?
     $partial_petition = new Petition($data);
@@ -523,9 +519,9 @@ longer be valid.
 </p>
 
 <p>When you're happy with your petition, <strong>click "Create"</strong> to
-confirm that you wish petitions.pm.gov.uk to display the petition at the top
+confirm that you wish this site to display the petition at the top
 of this page in your name, and that you agree to the terms and conditions below.
-<br />If you have any special requests for the Number 10 web team, please include them
+<br />If you have any special requests for the web team concerning your petition, please include them
 here:</p>
 <p>
 <textarea name="comments" rows="7" cols="40"><? if (isset($data['comments'])) print htmlspecialchars($data['comments']) ?></textarea>
@@ -535,7 +531,7 @@ here:</p>
 <input type="submit" name="tocreate" value="Create" />
 </p>
 
-<h3>Terms and Conditions</h3>
+<h3 class="page_title_border">Terms and Conditions</h3>
 
 <? terms_and_conditions(); ?>
 
@@ -649,11 +645,11 @@ function petition_create($data) {
  * number of the step to hilight. */
 function petition_breadcrumbs($num) {
     $steps = array(
-                'Create your petition',
-                'Submit your petition',
-                'Petition approval',
-                'Petition live',
-                'Petition close'
+                'Create&nbsp;your&nbsp;petition',
+                'Submit&nbsp;your&nbsp;petition',
+                'Petition&nbsp;approval',
+                'Petition&nbsp;live',
+                'Petition&nbsp;close'
     );
     /* Ideally we'd like the numbers to appear as a result of this being a
      * list, but that's beyond CSS's tiny capabilities, so put them in
@@ -662,12 +658,12 @@ function petition_breadcrumbs($num) {
     $str = '<ol id="breadcrumbs">';
     for ($i = 0; $i < sizeof($steps); ++$i) {
         if ($i == $num - 1)
-            $str .= "<li class=\"hilight\">";
+            $str .= '<li class=\hilight">';
         else
-            $str .= "<li>";
-        $str .= ($i + 1) . ". " . htmlspecialchars($steps[$i]) . "</li>";
+            $str .= '<li>';
+        $str .= ($i + 1) . '.&nbsp;' . $steps[$i] . '</li> ';
     }
-    $str .= "</ol>";
+    $str .= "</ol>\n";
     return $str;
 }
 

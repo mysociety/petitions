@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.53 2008-01-17 00:13:30 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.54 2008-08-04 10:48:07 matthew Exp $';
 
 use strict;
 
@@ -80,7 +80,7 @@ sub main () {
     }
 
     my $p = Petitions::DB::get($ref, 0, 1);
-    my $title = Petitions::sentence($p, 1, 1);
+    my $title = Petitions::sentence($q, $p, 1, 1);
     # XXX: Should all the show_parts be done in the get() so I don't need to worry about remembering to do it?
     my $name = Petitions::show_part($p, 'name') ? ent($p->{name}) : '&lt;Name cannot be shown&gt;';
     my $detail = Petitions::show_part($p, 'detail') ? ent($p->{detail}) : 'More details cannot be shown';
@@ -97,8 +97,7 @@ sub main () {
     }
     my $html = Petitions::Page::header($q, $title, %params);
 
-    $html .= $q->h1($q->span({-class => 'ltr'}, 'E-Petitions'));
-    $html .= $q->h2($q->span({-class => 'ltr'}, 'Sign a petition'));
+    #$html .= $q->h2({ -class => 'page_title_border' }, 'Sign a petition');
 
     $html .= $q->p({ -id => 'finished' }, "This petition is now closed, as its deadline has passed.")
         if ($p->{status} eq 'finished');
@@ -108,7 +107,7 @@ sub main () {
             $q->div({ -id =>'success' },
                 $q->p(
                     "You are now signed up to this petition. Thank you."),
-                $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.pm.gov.uk/' }, 'main Downing Street homepage')),
+                $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.number10.gov.uk/' }, 'main Downing Street homepage')),
                 $q->p("If you'd like to tell your friends about this petition, its permanent web address is:",
                     $q->strong($q->a({ -href => "/$ref/" },
                         ent(mySociety::Config::get('BASE_URL') . "/$ref/"
@@ -125,7 +124,7 @@ sub main () {
     $html .= Petitions::Page::display_box($q, $p, detail=>1);
     $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
     if ($p->{status} eq 'live' && !$show_signed_box) {
-        $html .= $q->h2($q->span({-class => 'ltr'}, 'Sign a petition'))
+        $html .= $q->h3('Sign a petition')
             if $p->{response};
         $html .= Petitions::Page::sign_box($q, $p);
     }
@@ -134,7 +133,7 @@ sub main () {
         $html .= Petitions::Page::signatories_box($q, $p);
     } else {
         $html .= $q->start_div({-id => 'signatories'})
-            . $q->h2($q->span({-class => 'ltr'}, 'Petition Rejected'));
+            . $q->h3('Petition Rejected');
         $html .= Petitions::Page::reject_box($q, $p);
         $html .= $q->end_div();
     }

@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.16 2007-08-17 10:33:24 matthew Exp $
+ * $Id: pet.php,v 1.17 2008-08-04 10:48:06 matthew Exp $
  * 
  */
 
@@ -19,6 +19,18 @@ require_once "../../phplib/error.php";
 require_once "../../phplib/db.php";
 require_once 'page.php';
 require_once 'fns.php';
+
+err_set_handler_display('pet_handle_error');
+
+# What type of site are we?
+$councils = array('bromley', 'haringey', 'brighton');
+if (preg_match('#^(.*?)\.' . OPTION_WEB_DOMAIN . '#', $_SERVER['HTTP_HOST'], $m)) {
+    define('OPTION_SITE_TYPE', 'council');
+    if (!in_array($m[1], $councils)) err("Unknown subdomain!");
+    define('OPTION_SITE_NAME', $m[1]);
+} else {
+    define('OPTION_SITE_TYPE', 'pm');
+}
 
 /* Output buffering: PHP's output buffering is broken, because it does not
  * affect headers. However, it's worth using it anyway, because in the common
@@ -59,7 +71,6 @@ function pet_handle_error($num, $message, $file, $line, $context) {
         pet_show_error($err);
     }
 }
-err_set_handler_display('pet_handle_error');
 
 /* Date which petition application believes it is */
 $pet_today = db_getOne('select ms_current_date()');
@@ -71,7 +82,7 @@ $pet_time = strtotime($pet_timestamp);
 function pet_show_error($message) {
     header('HTTP/1.0 500 Internal Server Error');
     page_header(_("Sorry! Something's gone wrong."), array('override'=>true));
-    print _('<h2><span class="ltr">Sorry!  Something\'s gone wrong.</span></h2>') .
+    print _('<h2>Sorry!  Something\'s gone wrong.</h2>') .
         "\n" . $message;
     page_footer('Error');
 }

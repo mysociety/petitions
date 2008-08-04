@@ -5,18 +5,18 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.19 2008-04-24 16:07:15 matthew Exp $
+// $Id: faq.php,v 1.20 2008-08-04 10:48:07 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
 
 header('Cache-Control: max-age=300');
-page_header('E-petitions Questions and Answers');
+page_header('Questions and Answers');
 ?>
 
-<h1><span dir="ltr">E-petitions Questions and Answers</span></h1>
+<h2 class="page_title_border">Questions and Answers</h2>
 
-<h2><span dir="ltr">General questions</span></h2>
+<h3>General questions</h3>
 
 <dl>
 <dt>What is an e-petition?</dt>
@@ -33,12 +33,12 @@ page_header('E-petitions Questions and Answers');
 <dt>How do I get in touch with the team behind the website?</dt>
 <dd>
 <p>If you have any comments on the functioning of the petitions system, please contact
-<a href="mailto:team&#64;petitions.pm.gov.uk">team&#64;petitions.pm.gov.uk</a>.
+<a href="mailto:number10&#64;petitions.pm.gov.uk">number10&#64;petitions.pm.gov.uk</a>.
 </p>
 </dd>
 </dl>
 
-<h2><span dir="ltr">Petition signing questions</span></h2>
+<h3>Petition signing questions</h3>
 
 <dl>
 <dt>How do I sign a petition?</dt>
@@ -103,7 +103,7 @@ disagree with a particular petition.</p>
 
 </dl>
 
-<h2><span dir="ltr">Petition creation questions</span></h2>
+<h3>Petition creation questions</h3>
 
 <dl>
 
@@ -163,7 +163,7 @@ Street, or sent to the relevant Government department for a response.</p>
 Government's response to the issues raised.</p>
 </dd>
 
-<h2><span dir="ltr">Organisational questions</span></h2>
+<h3>Organisational questions</h3>
 
 <dt>Who are mySociety and what is their involvement in the e-petition service?</dt>
 

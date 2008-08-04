@@ -5,34 +5,45 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: pet.css,v 1.25 2008-07-28 21:18:57 matthew Exp $
+ * $Id: pet.css,v 1.26 2008-08-04 10:48:07 matthew Exp $
  *
  */
 
-.primeminister #content a:visited, #ilinks .primeminister a:visited, #rel_links .primeminister a:visited {
-    color: #846e74;
-    color: #543e44;
+/* Various yucky stuff to make it work */
+
+.pages_post_communicate {
+    line-height: 22px;
 }
-.primeminister #content h1 {
-    background-color: #876E74;
-    background-image: url("/images/clipboard-background-top.jpg");
-    background-repeat: no-repeat;
-    background-position: 100% 100%;
-    font-size: 200%;
+.pages_post_communicate h2 {
+    line-height: normal;
+}
+.pages_post_communicate p {
+    margin: 0 0 15px 0;
+}
+.pages_post_communicate li {
+    margin: 0 0 5px 0;
+}
+.pages_post_communicate a:link, .pages_post_communicate a:visited, .pages_post_communicate a:active {
+    color: #4f8718;
+    text-decoration: none;
 }
 
-#content div.petition_box {
-    border: solid 1px #B4B0B1;
-    background-color: #ffffff;
-    margin: 1em;
-    padding: 10px;
+.pages_post_communicate a:hover {
+    color: #4f8718;
+    text-decoration: underline;
+}
+.pages_post_communicate h3 {
+    padding-left: 0;
 }
 
-.primeminister #content div#content_clipboard {
-    border: none;
+/* Petition specific styles */
+
+/* Front page */
+
+div#content_clipboard {
+    border: solid 1px #cccccc;
     padding: 10px;
-    margin: 0;
-    background: url(images/clipboard-background-bottom.jpg) no-repeat 100% 0;
+    background: #f1efef url(images/clipboard-background-bottom.jpg) no-repeat 100% 0;
 }
 /* div#content_clipboard p {
     margin: 0;
@@ -50,6 +61,10 @@ div#petition_actions {
     font-size: 150%;
     margin: 0 1em 0 0;
     padding: 5px;
+}
+
+div#petition_actions a {
+    font-weight: bold;
 }
 
 div#petition_actions ul {
@@ -72,6 +87,16 @@ div#petition_actions ul li#action_view {
     float: right;
 }
 
+#search_front {
+    clear: both;
+}
+div#content_clipboard #search_front p {
+    margin-top: 1em;
+}
+#search_front label {
+    font-weight: bold;
+}
+
 div#most_recent {
     float: left;
     width: 45%;
@@ -81,54 +106,44 @@ div#most_popular {
     float: right;
     width: 45%;
 }
-div#most_popular li, div#most_recent li {
-    background-position: 0 10px;
-    padding-top: 0.5em;
-    padding-bottom: 0.5em;
-}
 
 /* List page */
-.primeminister #content p.petition_view_tabs {
-    background-color: #ffffff;
-    border-bottom: solid 2px #b9adb1;
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #4F8718; /* b9adb1; */
     margin: 0;
-    padding: 1em 0 0.5em;
+    padding: 1em 0 0.2em;
 }
 .petition_view_tabs span {
     font-weight: bold;
-    background-color: #b9adb1;
+    background-color: #4F8718;
     color: #ffffff;
     padding: 0.6em;
 }
 
-tr.a, #content li.a {
-    background-color: #ffffff;
+tr.a, li.a {
+    background-color: #f1efef;
     color: #000000;
 }
 
-div#success {
-    font-size: 125%;
-    border: solid 2px #009900;
-    color: #000000;
-    background-color: #eeffee;
-    padding: 5px;
-    margin: 0.5em auto 0;
-    width: 80%;
-}
-div#success p {
-    margin: 0 0 0.5em 0;
+.greyed {
+    color: #999999;
 }
 
 /* Errors */
+
 div#errors {
     margin: 0 auto 1em;
     color: #000000;
     background-color: #ffcccc; 
     border: solid 2px #990000;
+    padding: 4px;
 }
-#content ul.errors {
-    padding: 4px 0;
+div#errors ul {
+    margin: 0;
+    padding: 0 0 0 1.5em;
 }
+
 input.error, input[type=text].error, select.error, input[type=radio].error, textarea.error {
     border: solid 2px #990000;
     background-color: #ffdddd;
@@ -136,6 +151,8 @@ input.error, input[type=text].error, select.error, input[type=radio].error, text
 .errortext {
     color: #ff0000;
 }
+
+/* Creation */
 
 ol#breadcrumbs {
     font-size: 80%;
@@ -165,9 +182,18 @@ ol#breadcrumbs li.hilight {
     font-size: 150%;
 }
 
+/* Viewing/ Signing */
+
+div.petition_box {
+    border: solid 1px #B4B0B1;
+    background-color: #eeffdd;
+    margin: 1em 0;
+    padding: 10px;
+}
+
 form#signForm label {
     float: left;
-    width: 8em;
+    width: 7em;
 }
 
 form#signForm label.wide {
@@ -179,38 +205,35 @@ div#signFormLeft {
     float: left;
     width: 50%;
     border: none;
-    border-right: dotted 1px black;
 }
 div#signFormRight {
     float: right;
-    width: 45%;
+    width: 47%;
     border: none;
 }
 
 div#signatories {
    float: left;
-   width: 45%;
-}
-
-#beta {
-    font-size: 150%;
-}
-
-.greyed {
-    color: #999999;
+   width: 47%;
 }
 
 #detail {
     float: right;
-    width: 45%;
+    width: 47%;
 }
 
-/* #search_front {
-    clear: both;
-} */
-#search_front p {
-    padding-top: 1em;
+div#success {
+    font-size: 125%;
+    border: solid 2px #009900;
+    color: #000000;
+    background-color: #eeffee;
+    padding: 5px;
+    margin: 0.5em auto 0;
 }
-#search_front label {
-    font-weight: bold;
+div#success p {
+    margin: 0 0 0.5em 0;
+}
+
+.noborder {
+    border: none;
 }

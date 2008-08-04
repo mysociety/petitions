@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.53 2008-01-17 00:08:10 matthew Exp $
+# $Id: Petitions.pm,v 1.54 2008-08-04 10:48:05 matthew Exp $
 #
 
 package Petitions::DB;
@@ -287,17 +287,18 @@ use POSIX qw();
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
 
-my $petition_prefix = "We the undersigned petition the Prime Minister to";
-
 =item sentence PETITION [HTML]
 
 =cut
-sub sentence ($;$$) {
-    my ($p, $html, $short) = @_;
+sub sentence ($$;$$) {
+    my ($q, $p, $html, $short) = @_;
     croak("PETITION may not be undef") unless (defined($p));
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     croak("Field 'content' missing from PETITION") unless (exists($p->{content}));
-    my $sentence = sprintf('%s %s', $petition_prefix, $p->{content});
+    my $petitionee = '';
+    $petitionee = 'Prime Minister' if $q->{scratch}{site_type} eq 'pm';
+    $petitionee = 'council' if $q->{scratch}{site_type} eq 'council';
+    my $sentence = sprintf('We the undersigned petition the %s to %s', $petitionee, $p->{content});
     if ($short) {
         $sentence = 'Petition to: ' . $p->{content};
     }
@@ -321,7 +322,7 @@ sub detail ($) {
     if ($detail) {
         $detail = <<EOF;
 <div id="detail"><a name="detail"></a>
-<h2><span dir="ltr">More details from petition creator</span></h2>
+<h3 class="page_title_border">More details from petition creator</h3>
 <p>$detail</p></div>
 EOF
     }
