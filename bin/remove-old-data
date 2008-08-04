@@ -32,13 +32,16 @@ foreach my $id (@$ids) {
 
     # Remove personal information except name from confirmed signatures
     my $c = dbh()->do("update signer set address='', email='', postcode=''
-        where petition_id = ? and signtime < ? and emailsent = 'confirmed' and overseas is null",
+        where petition_id = ? and email != '' and signtime < ?
+            and emailsent = 'confirmed' and overseas is null",
         undef, $id, $date);
     $c += dbh()->do("update signer set address='', email='', overseas=''
-        where petition_id = ? and signtime < ? and emailsent = 'confirmed' and postcode is null",
+        where petition_id = ? and email != '' and signtime < ?
+            and emailsent = 'confirmed' and postcode is null",
         undef, $id, $date);
     dbh()->commit();
-    print "Petition id $id, $un unconfirmed deleted, $c scrubbed\n";
+    print "Petition id $id, $un unconfirmed deleted, $c scrubbed\n"
+        if $un || $c;
     $unconfirmed += $un;
     $confirmed += $c;
 }
