@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.103 2008-08-04 10:48:05 matthew Exp $
+# $Id: Page.pm,v 1.104 2008-08-11 14:13:42 matthew Exp $
 #
 
 package Petitions::Page;
@@ -93,7 +93,7 @@ sub header ($$%) {
         $out = read_file("../templates/website/head.html");
     } else {
         $out = read_file('../templates/' . $q->{scratch}{site_name} . '/head.html');
-	utf8::decode($out); # binmode argument on read_file simply just sets O_BINARY
+        utf8::decode($out); # binmode argument on read_file simply just sets O_BINARY
     }
     if (!$out) {
         warn "Couldn't find ../templates/website/head.html";
@@ -156,7 +156,7 @@ sub footer ($$) {
         $out = read_file("../templates/website/foot.html");
     } else {
         $out = read_file('../templates/' . $q->{scratch}{site_name} . '/foot.html');
-	utf8::decode($out);
+        utf8::decode($out);
     }
     $out =~ s/PARAM_SITE_STATS/$site_stats/g;
 
@@ -447,14 +447,23 @@ sub signatories_box ($$) {
         $html .=
             $q->p("Because there are so many signatories, only the most recent",
                 MAX_PAGE_SIGNERS, "are shown on this page.");
-        $st = dbh()->prepare("
+        $reverse = 1;
+        if ($p->{open}) {
+            $st = dbh()->prepare("
+                select name from signer
+                where petition_id = ? and showname = 't' and emailsent = 'confirmed'
+                order by signtime desc
+                limit @{[ MAX_PAGE_SIGNERS ]}");
+            $st->execute($p->{id});
+        } else {
+            $st = dbh()->prepare("
                 select name from signer
                 where petition_id = ? and showname = 't' and emailsent = 'confirmed'
                     and signtime < (select deadline+1 from petition where id = ?)
                 order by signtime desc
                 limit @{[ MAX_PAGE_SIGNERS ]}");
-        $reverse = 1;
-        $st->execute($p->{id}, $p->{id});
+            $st->execute($p->{id}, $p->{id});
+        }
     } else {
         $html .=
             $q->p("@{[ ent($p->{name}) ]}, the Petition Creator, joined by:");
