@@ -88,11 +88,11 @@ width: 1000px;
 }
 
 .loader{
-background-image:url(http://www.number10.gov.uk/files/images/news_hover.gif);
-background-image:url(http://www.number10.gov.uk/files/images/home_hover.gif);
-background-image:url(http://www.number10.gov.uk/files/images/communicate_hover.gif);
-background-image:url(http://www.number10.gov.uk/files/images/history_hover.gif);
-background-image:url(http://www.number10.gov.uk/files/images/meet_hover.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/home_hover.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/communicate_hover.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/history_hover.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/meet_hover.gif);
 display:none;
 }
 
@@ -168,7 +168,7 @@ text-decoration:underline;
 .searchbtn
 {
 border-width: 0;
-background-image:url(http://www.number10.gov.uk/files/images/search_btn.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/search_btn.gif);
 background-repeat:repeat;
 border:none;
 color:#FFF;
@@ -434,7 +434,7 @@ margin-top:10px;
 	height: 119px;
 	margin: 0;
 	padding: 0;
-	background-image:url(http://www.number10.gov.uk/files/images/header_bg.gif);
+	background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/header_bg.gif);
 	background-color:#000;
 	color: #000;
 	clear: both;
@@ -524,7 +524,7 @@ margin-top:10px;
 
 
 .current_home_left {
-	background-image: url(http://www.number10.gov.uk/files/images/news_hover_left.gif);
+	background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_left.gif);
 	background-color: #f00;
 	background-repeat:no-repeat;
 	background-position: top left;
@@ -553,7 +553,7 @@ margin-top:10px;
 
 .current_home:hover{
 	color: #000;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;   
@@ -561,7 +561,7 @@ margin-top:10px;
 
 .current_home:active{
 	color: #000;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right; 
@@ -577,7 +577,7 @@ margin-top:10px;
     height: 25px;
 
     color: #000;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right; 
@@ -629,7 +629,7 @@ margin-top:10px;
 
 .current_home_news:hover{
 	color: #1d7a7a;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;   
@@ -644,7 +644,7 @@ margin-top:10px;
     padding: 3px 8px 0px 8px;
     margin: 2px 0 0 0;
     height: 25px;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right; 
@@ -659,7 +659,7 @@ margin-top:10px;
     padding: 3px 8px 0px 8px;
     margin: 2px 0 0 0;
     height: 25px;  
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right; 
@@ -706,7 +706,7 @@ margin-top:10px;
 
 .current_home_nr10tv:hover{
 	color: #660066;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;   
@@ -721,7 +721,7 @@ margin-top:10px;
     padding: 3px 8px 0px 8px;
     margin: 2px 0 0 0;
     height: 25px; 
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right; 
@@ -736,7 +736,7 @@ margin-top:10px;
     padding: 3px 8px 0px 8px;
     margin: 2px 0 0 0;
     height: 25px;  
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right; 
@@ -784,7 +784,7 @@ margin-top:10px;
 
 .current_home_communicate:hover{
 	color: #4f8718;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;   
@@ -799,7 +799,7 @@ margin-top:10px;
     margin: 2px 0 0 0;
     height: 25px;
 	color: #4f8718;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;     
@@ -845,7 +845,7 @@ margin-top:10px;
 
 .current_home_meet:hover{
 	color: #c2604b;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;   
@@ -861,7 +861,7 @@ margin-top:10px;
     margin: 2px 0 0 0;
     height: 25px;
 	color: #c2604b;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;   
@@ -876,7 +876,7 @@ margin-top:10px;
     margin: 2px 0 0 0;
     height: 25px;
 	color: #c2604b;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;   
@@ -930,7 +930,7 @@ margin-top:10px;
     margin: 2px 0 0 0;
     height: 25px;
 	color: #976431;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;   
@@ -945,7 +945,7 @@ margin-top:10px;
     margin: 2px 0 0 0;
     height: 25px;
 	color: #976431;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;  
@@ -960,7 +960,7 @@ margin-top:10px;
     margin: 2px 0 0 0;
     height: 25px;
 	color: #976431;
-    background-image: url(http://www.number10.gov.uk/files/images/news_hover_right.gif);
+    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
 	background-color: #fff;
 	background-repeat:no-repeat;
 	background-position: top right;  
@@ -1087,7 +1087,7 @@ margin-top:15px;
 .page_title1{
 margin-top:10px;
 margin-left:22px;
-background-image:url(http://www.number10.gov.uk/files/images/video_news.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/video_news.gif);
 background-repeat:no-repeat;
 height:24px;
 padding-bottom:10px;
@@ -1100,7 +1100,7 @@ border-bottom:1px dashed #000;
 margin-top:10px;
 margin-left:22px;
 padding-bottom:10px;
-background-image:url(http://www.number10.gov.uk/files/images/recent_news.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/recent_news.gif);
 background-repeat:no-repeat;
 float:left;
 width:182px;
@@ -1225,7 +1225,7 @@ h3.archive_head{
 {
 width:117px;
 height:16px;
-background-image:url(http://www.number10.gov.uk/files/images/newsletter_title.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/newsletter_title.gif);
 background-repeat:no-repeat;
 margin-top:35px;
 margin-bottom:15px;
@@ -1254,7 +1254,7 @@ text-decoration:underline;
 {
 width:198px;
 height:7px;
-background-image:url(http://www.number10.gov.uk/files/images/newsletter_panel.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/newsletter_panel.gif);
 background-repeat:no-repeat;
 margin-bottom:0px;
 margin-top: 0px;
@@ -1264,7 +1264,7 @@ margin-top: 0px;
 {
 width:167px;
 height:19px;
-background-image:url(http://www.number10.gov.uk/files/images/around_the_web_title.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/around_the_web_title.gif);
 background-repeat:no-repeat;
 margin-bottom:5px;
 }
@@ -1281,7 +1281,7 @@ font-weight:bold;
 font-size:0.9em;
 color:#fff;
 
-background-image:url(http://www.number10.gov.uk/files/images/aroundtheweb_panel.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/aroundtheweb_panel.gif);
 background-repeat:no-repeat;
 }
 
@@ -1404,7 +1404,7 @@ padding:10px;
 
 #main_panel
 {
-background-image:url(http://www.number10.gov.uk/files/images/main_panel.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/main_panel.gif);
 width:746px;
 height:414px;
 margin-top:10px;
@@ -1496,7 +1496,7 @@ background-repeat:no-repeat;
 .page_title1{
 margin-top:10px;
 margin-left:22px;
-background-image:url(http://www.number10.gov.uk/files/images/video_news.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/video_news.gif);
 background-repeat:no-repeat;
 height:24px;
 padding-bottom:10px;
@@ -1509,7 +1509,7 @@ border-bottom:1px dashed #000;
 margin-top:10px;
 margin-left:22px;
 padding-bottom:10px;
-background-image:url(http://www.number10.gov.uk/files/images/recent_news.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/recent_news.gif);
 background-repeat:no-repeat;
 float:left;
 width:182px;
@@ -1628,7 +1628,7 @@ h3.archive_head{
 {
 width:117px;
 height:16px;
-background-image:url(http://www.number10.gov.uk/files/images/newsletter_title.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/newsletter_title.gif);
 background-repeat:no-repeat;
 margin-top:35px;
 
@@ -1659,7 +1659,7 @@ text-decoration:underline;
 {
 width:167px;
 height:19px;
-background-image:url(http://www.number10.gov.uk/files/images/around_the_web_title.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/around_the_web_title.gif);
 background-repeat:no-repeat;
 margin-bottom:5px;
 }
@@ -1723,14 +1723,14 @@ padding-bottom: 0;
 {
 width:80px;
 height:21px;
-background-image:url(http://www.number10.gov.uk/files/images/history_title.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/history_title.gif);
 background-repeat:no-repeat;
 margin-top:40px;
 }
 
 .sidebar_history_panel
 {
-background-image:url(http://www.number10.gov.uk/files/images/history_panel.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/history_panel.gif);
 background-repeat:no-repeat;
 padding-top:5px;
 padding-left:5px;
@@ -1789,7 +1789,7 @@ width:101px;
 margin-top:10px;
 padding-bottom:10px;
 height:16px;
-background-image:url(http://www.number10.gov.uk/files/images/features_title.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/features_title.gif);
 background-repeat:no-repeat;
 }
 
@@ -1831,7 +1831,7 @@ width:198px;
 float:right;
 margin-bottom:10px;
 height:234px;
-background-image:url(http://www.number10.gov.uk/files/images/features_panel.gif);
+background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/features_panel.gif);
 background-repeat:no-repeat;
 }
 
@@ -1876,7 +1876,7 @@ background-repeat:no-repeat;
 	padding: 0;
 	margin: 0 0 0 13px;
 	line-height: 24px;
-	list-style: url(http://www.number10.gov.uk/files/images/bullet.gif);
+	list-style: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/bullet.gif);
 	font-size: 1em;
 }
 
@@ -1888,7 +1888,7 @@ background-repeat:no-repeat;
 }
 
 .rightbar .syndication .rss span{
-	background: url(http://www.number10.gov.uk/files/images/sub_rss.gif) no-repeat;
+	background: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/sub_rss.gif) no-repeat;
 	position: absolute;
 	width: 100%;
 	height: 100%;
@@ -1944,7 +1944,7 @@ table#wp-calendar{
 	padding: 2px 0;
 	margin: 0 3px 0 10px;
 	line-height: 18px;
-	list-style: url(http://www.number10.gov.uk/files/images/bullet.gif);
+	list-style: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/bullet.gif);
 	font-size: 0.9em;
 	border-bottom: 1px dotted #CCC;
 }
@@ -2112,7 +2112,7 @@ table#wp-calendar{
         float:left;
 	color: #1d7a7a;
 	font-size: 1.3em;
-        background-image: url(http://www.number10.gov.uk/files/images/home_hover.gif);
+        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/home_hover.gif);
         background-repeat:no-repeat;
         height:30px;
         padding-top:5px;
@@ -2138,7 +2138,7 @@ table#wp-calendar{
 	color: #4f8718;
 	font-size: 1.3em;
         height:30px;
-        background-image: url(http://www.number10.gov.uk/files/images/communicate_hover.gif);
+        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/communicate_hover.gif);
         vertical-align:bottom;
         background-repeat:no-repeat;
         width:123px;
@@ -2165,7 +2165,7 @@ table#wp-calendar{
 	color: #d2806b;
 	font-size: 1.3em;
         height:30px;
-        background-image: url(http://www.number10.gov.uk/files/images/meet_hover.gif);
+        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/meet_hover.gif);
         vertical-align:bottom;
         background-repeat:no-repeat;
         width:116px;
@@ -2190,7 +2190,7 @@ table#wp-calendar{
 	color: #976431;
         height:30px;
 	font-size: 1.3em;
-        background-image: url(http://www.number10.gov.uk/files/images/history_hover.gif);
+        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/history_hover.gif);
         vertical-align:bottom;
         background-repeat:no-repeat;
         width:145px;
@@ -2218,7 +2218,7 @@ table#wp-calendar{
         float:left;
 	color: #000000;
 	font-size: 1.3em;
-        background-image: url(http://www.number10.gov.uk/files/images/news_hover.gif);
+        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover.gif);
         vertical-align:bottom;
         background-repeat:no-repeat;
         width:72px;
