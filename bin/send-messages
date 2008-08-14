@@ -8,12 +8,14 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.43 2007-04-19 20:14:28 matthew Exp $
+ * $Id: send-messages,v 1.44 2008-08-14 09:00:28 keith Exp $
  *
  */
 
 $short_opts = '';
 $long_opts = array('verbose','help');
+
+define('OPTION_SITE_TYPE', 'pm');
 
 chdir(dirname($_SERVER['SCRIPT_FILENAME']));
 require_once '../conf/general';
