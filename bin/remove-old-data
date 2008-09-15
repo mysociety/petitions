@@ -41,7 +41,7 @@ foreach my $id (@$ids) {
         undef, $id, $date);
     dbh()->commit();
     print "Petition id $id, $un unconfirmed deleted, $c scrubbed\n"
-        if $un || $c;
+        if $un>0 || $c>0;
     $unconfirmed += $un;
     $confirmed += $c;
 }
