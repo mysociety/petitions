@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.50 2008-08-04 10:48:07 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.51 2008-09-18 10:13:20 matthew Exp $';
 
 use strict;
 
@@ -90,7 +90,9 @@ sub signup_page ($$) {
         if (!$qp_address);
     $errors{postcode}
         = 'Please enter a valid postcode, such as OX1 3DR, or choose from the drop-down'
-        if (!$qp_postcode && !$qp_overseas);
+        if !$qp_postcode && !$qp_overseas && $q->{scratch}{site_type} eq 'pm';
+    $errors{postcode} = 'Please enter a valid postcode'
+        if !$qp_postcode && $q->{scratch}{site_type} eq 'council';
     $errors{postcode} = 'You can\'t both put a postcode and pick an option from the drop-down.'
         if (defined($qp_postcode) && defined($qp_overseas));
 

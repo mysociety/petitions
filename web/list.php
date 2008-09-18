@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.56 2008-08-04 10:48:07 matthew Exp $
+// $Id: list.php,v 1.57 2008-09-18 10:13:20 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -172,7 +172,7 @@ if ($ntotal > 0) {
     $c = 1;
     if (!$rss) { ?>
 <table cellpadding="3" cellspacing="0" border="0">
-<tr><th align="left">We the undersigned petition the Prime Minister to&hellip;</th>
+<tr><th align="left">We the undersigned petition the <?=OPTION_SITE_TYPE=='pm'?'Prime Minister':'council'?> to&hellip;</th>
 <th>Submitted by</th>
 <?      if ($q_type != 'rejected') { ?>
 <th>Deadline to sign by</th>
