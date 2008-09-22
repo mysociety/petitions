@@ -1,6 +1,12 @@
 #!/usr/bin/perl -w
 
-# Remove old data from the petitions database
+# remove-old-data:
+# Remove old personal data from the petitions database, either by deleting
+# rows (for unconfirmed signatures), or scrubbing the email and address
+# fields (as we need the names to show on the site).
+#
+# Copyright (c) 2008 UK Citizens Online Democracy. All rights reserved.
+# Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 
 use strict;
 require 5.8.0;
@@ -10,6 +16,7 @@ use FindBin;
 use lib "$FindBin::Bin/../perllib";
 use lib "$FindBin::Bin/../../perllib";
 
+use Getopt::Long;
 use POSIX qw(strftime);
 use mySociety::Config;
 BEGIN {
@@ -17,6 +24,11 @@ BEGIN {
 }
 use mySociety::DBHandle qw(dbh);
 use Petitions;
+
+my $verbose = 0;
+if (!GetOptions( 'verbose=i' =>  \$verbose)) {
+    exit(1);
+}
 
 my $date = dbh()->selectrow_array("select ms_current_date() - interval '1 year'");
 my $dateS = dbh()->selectrow_array("select ms_current_date() - interval '1 year' - interval '1 month'");
@@ -41,10 +53,11 @@ foreach my $id (@$ids) {
         undef, $id, $date);
     dbh()->commit();
     print "Petition id $id, $un unconfirmed deleted, $c scrubbed\n"
-        if $un>0 || $c>0;
+        if $verbose>0 && ($un>0 || $c>0);
     $unconfirmed += $un;
     $confirmed += $c;
 }
 
-print "\n$unconfirmed deleted from database, $confirmed scrubbed\n";
+print "\n$unconfirmed deleted from database, $confirmed scrubbed\n"
+    if $verbose>0;
 
