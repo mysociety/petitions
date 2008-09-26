@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.104 2008-08-11 14:13:42 matthew Exp $
+# $Id: Page.pm,v 1.105 2008-09-26 15:23:37 matthew Exp $
 #
 
 package Petitions::Page;
@@ -101,8 +101,6 @@ sub header ($$%) {
     }
     my $ent_url = ent($q->url());
     my $ent_title = ent($title);
-    my $js = '';
-    $js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>' unless (mySociety::Config::get('PET_STAGING'));
     my $creator = $params{creator} || '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
     my $description = $params{description} || 'Petitions to the Prime Minister, 10 Downing Street';
     my $subjects = '';
@@ -126,7 +124,6 @@ sub header ($$%) {
     $out =~ s/PARAM_DC_IDENTIFIER/$ent_url/;
     $out =~ s/PARAM_TITLE/$ent_title/g;
     $out =~ s/PARAM_DEV_WARNING/$devwarning/;
-    $out =~ s/PARAM_STAT_JS/$js/g;
     $out =~ s/PARAM_RSS_LINKS//g;
     # Currently, no need to follow links from CGI-generated pages -
     # no need to index list of names either

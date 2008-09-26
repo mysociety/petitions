@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.33 2008-08-04 10:48:06 matthew Exp $
+// $Id: page.php,v 1.34 2008-09-26 15:23:37 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -45,11 +45,6 @@ function page_header($title, $params = array()) {
     }
 
     // Display header
-    $stat_js = '';
-    if (!OPTION_PET_STAGING) {
-        $stat_js = '<script type="text/javascript" src="http://www.number10.gov.uk/include/js/nedstat.js"></script>';
-    }
-
     global $devwarning;
     if (OPTION_SITE_TYPE == 'pm') {
         $contents = file_get_contents("../templates/website/head.html");
@@ -71,7 +66,6 @@ function page_header($title, $params = array()) {
     $contents = str_replace("PARAM_DC_IDENTIFIER", $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], $contents);
     $contents = str_replace("PARAM_TITLE", $title, $contents);
     $contents = str_replace("PARAM_DEV_WARNING", $devwarning, $contents);
-    $contents = str_replace("PARAM_STAT_JS", $stat_js, $contents);
     $contents = str_replace("PARAM_RSS_LINKS", $rss_links, $contents);
     print $contents;
 }
