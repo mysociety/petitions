@@ -19,6 +19,7 @@
 
 # Parameters:
 # all - as first parameter, does every petition.
+# NUMBER - as first parameter, do petitions changed in last NUMBER minutes.
 # Default behaviour is to do only petitions changed in last 35 minutes.
 
 # Horrible boilerplate to set up appropriate library paths.
@@ -37,15 +38,25 @@ BEGIN {
 use mySociety::DBHandle qw(dbh);
 use Petitions;
 
+if (!$ARGV[0]) {
+    die "Please specify a first parameter; 'all' to update all petitions, or a number of minutes to do only those changed that recently"
+}
+
 # print "Starting to fetch 'correct' totals at " . localtime(). "\n";
 
-# If you calculate the date, postgres will use the signtime index
-# If you use current_timestamp, it seq. scans the entire table, genius
-my @time = localtime();
-$time[1] -= 35;
-my $date = strftime("%Y-%m-%d %H:%M:%S", @time);
-my $date_part = " and id in (select distinct(petition_id) from signer where signtime > '$date') ";
-$date_part = "" if ($ARGV[0] && $ARGV[0] eq "all");
+my $date_part;
+if ($ARGV[0] eq "all") {
+    $date_part = "";
+} elsif ($ARGV[0] =~ /^[0-9]+$/) {
+    # If you calculate the date, postgres will use the signtime index
+    # If you use current_timestamp, it seq. scans the entire table, genius
+    my @time = localtime();
+    $time[0] -= $ARGV[0];
+    my $date = strftime("%Y-%m-%d %H:%M:%S", @time);
+    $date_part = " and id in (select distinct(petition_id) from signer where signtime > '$date') ";
+} else {
+    die "First parameter must be either 'all' to update all petitions, or a number of minutes to do only those changed that recently"
+}
 my $r = dbh()->selectcol_arrayref("select id,
     (select count(*)+1 from signer 
         where petition_id=petition.id and emailsent='confirmed' and showname='t')

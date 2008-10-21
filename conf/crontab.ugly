@@ -4,7 +4,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.22 2008-06-12 07:48:05 matthew Exp $
+# $Id: crontab.ugly,v 1.23 2008-10-21 07:52:15 francis Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
@@ -18,8 +18,12 @@ MAILTO=team@mysociety.org
 6,18,30,42,54 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/response-send.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/response-send || echo "stalled?"
 1 0 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/mark-finished
 
-1,31 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals || echo "stalled?"
-10 3 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock "/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals all" || echo "stalled?"
+# Every half hour, except during the hours of 3am and 4am, update just petitions changed in last 35 minutes (extra 5 mins to be sure we catch it all).
+1,31 0-2,5-23 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals 35 || echo "stalled?"
+# Do a full update of all petitions at 3:01am. That might take a while (hence skipping 3am/4am above).
+1 3 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock "/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals all" || echo "stalled?"
+# Now at 4:31am, catch up with everything changed in last hour and a half (plus 5 mins so there is some overlap)
+31 4 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock "/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals 95" || echo "stalled?"
 
 # Every hour restart petemaild to work around obtuse bug XXX
 # 23 * * * * root /etc/init.d/petemaild stop && /etc/init.d/petemaild start
