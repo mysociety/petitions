@@ -4,7 +4,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.23 2008-10-21 07:52:15 francis Exp $
+# $Id: crontab.ugly,v 1.24 2008-10-21 23:25:44 francis Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
@@ -19,7 +19,7 @@ MAILTO=team@mysociety.org
 1 0 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/mark-finished
 
 # Every half hour, except during the hours of 3am and 4am, update just petitions changed in last 35 minutes (extra 5 mins to be sure we catch it all).
-1,31 0-2,5-23 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals 35 || echo "stalled?"
+1,31 0-2,5-23 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock "/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals 35" || echo "stalled?"
 # Do a full update of all petitions at 3:01am. That might take a while (hence skipping 3am/4am above).
 1 3 * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock "/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/update-totals all" || echo "stalled?"
 # Now at 4:31am, catch up with everything changed in last hour and a half (plus 5 mins so there is some overlap)
