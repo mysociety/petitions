@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.71 2008-09-01 07:51:54 matthew Exp $
+// $Id: new.php,v 1.72 2008-11-05 20:32:23 root Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -30,7 +30,8 @@ if (get_http_var('tostepmain')
     } elseif (OPTION_SITE_TYPE == 'council') { # No search step
         petition_form_main();
     } else {
-        petition_search_first();
+        # petition_search_first();
+        petition_form_main();   
         # page_closed_message();
     }
 }
