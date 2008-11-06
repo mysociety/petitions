@@ -4,12 +4,12 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.24 2008-10-21 23:25:44 francis Exp $
+# $Id: crontab.ugly,v 1.25 2008-11-06 23:14:03 root Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
 
-!!(* if ($hostname eq "peas") { *)!!
+!!(* if ($hostname eq "steak") { *)!!
 
 # On just the database/daemon machine
 
