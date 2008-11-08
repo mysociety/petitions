@@ -20,7 +20,7 @@
  * Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
  * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: response-send,v 1.15 2008-11-08 00:34:48 matthew Exp $
+ * $Id: response-send,v 1.16 2008-11-08 15:54:09 matthew Exp $
  *
  */
 
@@ -151,14 +151,21 @@ function pump_message_to_exim($message_id) {
     verbose("Pumping $message_id with " . sizeof($message['signers']) . " signers");
 
     # Construct message
+    $any_to_send = false;
     $batched_smtp = "EHLO localhost\r\n";
     $batched_smtp .= "MAIL FROM:<bounces@" . OPTION_EMAIL_DOMAIN . ">\r\n";
     foreach ($message['signers'] as $signer_id => $signer_email) {
         if (!in_array(strtolower($signer_email), $optout)) {
             $batched_smtp .= "RCPT TO:<$signer_email>\r\n";
+            $any_to_send = true;
         }
         db_do('INSERT INTO message_signer_recipient (message_id, signer_id)
             values (?, ?)', $message_id, $signer_id);
+    }
+    if (!$any_to_send) {
+        # All opted out, store them as sent
+        db_commit();
+        return;
     }
 
     $batched_smtp .= "DATA\r\nFrom: \"" . OPTION_CONTACT_NAME . "\" <" . OPTION_CONTACT_EMAIL . ">\r\n";
