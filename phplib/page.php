@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.34 2008-09-26 15:23:37 matthew Exp $
+// $Id: page.php,v 1.35 2008-11-08 00:34:48 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -248,11 +248,13 @@ for purely frivolous purposes);</li>
 <li>Freedom of Information requests. This is not the right channel
 for FOI requests; information about the appropriate procedure can be
 found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
+<? if (OPTION_SITE_TYPE == 'pm') { ?>
 <li>nominations for Honours. These have been accepted in the past but
 this is not the appropriate channel; accordingly, from 6 March 2008 we
 are rejecting such petitions and directing petitioners to the
 <a href="http://www.honours.gov.uk/">Cabinet Office website</a> where
 nominations for Honours can be made directly to the appropriate department.</li>
+<? } ?>
 </ul>
 
 <p>We will strive to ensure that petitions that do not meet our

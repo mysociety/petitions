@@ -20,7 +20,7 @@
  * Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
  * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: response-send,v 1.14 2008-06-11 23:18:19 matthew Exp $
+ * $Id: response-send,v 1.15 2008-11-08 00:34:48 matthew Exp $
  *
  */
 
@@ -66,6 +66,12 @@ Usage: response-send [--verbose]
 $load_check_limit = 5000; # After how many signers do we check for machine load
 $iterations = $load_check_limit; # Counter to check the machine load occasionally
 $messages = array(); # Global array of message bodies
+
+$optout = array();
+$query = db_getAll('SELECT lower(email) FROM optout');
+foreach ($query as $r) {
+        $optout[] = $r['lower'];
+}
 
 $signer_result = do_signer_query();
 while($current_signer = db_fetch_array($signer_result)) {
@@ -125,7 +131,6 @@ function do_signer_query() {
             AND signer.emailsent = 'confirmed'
             AND signer.showname = 't'
             AND signer.email != ''
-            AND lower(signer.email) NOT IN (SELECT lower(email) FROM optout)
     ");
     return $result;
 }
@@ -140,7 +145,7 @@ function get_message_array($message_id) {
 }
 
 function pump_message_to_exim($message_id) {
-    global $messages;
+    global $messages, $optout;
     $message = $messages[$message_id];
 
     verbose("Pumping $message_id with " . sizeof($message['signers']) . " signers");
@@ -149,7 +154,9 @@ function pump_message_to_exim($message_id) {
     $batched_smtp = "EHLO localhost\r\n";
     $batched_smtp .= "MAIL FROM:<bounces@" . OPTION_EMAIL_DOMAIN . ">\r\n";
     foreach ($message['signers'] as $signer_id => $signer_email) {
-        $batched_smtp .= "RCPT TO:<$signer_email>\r\n";
+        if (!in_array(strtolower($signer_email), $optout)) {
+            $batched_smtp .= "RCPT TO:<$signer_email>\r\n";
+        }
         db_do('INSERT INTO message_signer_recipient (message_id, signer_id)
             values (?, ?)', $message_id, $signer_id);
     }
