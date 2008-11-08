@@ -24,7 +24,7 @@
 # HTML mail test could be better
 # Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.95 2008-08-13 23:23:03 keith Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.96 2008-11-08 15:55:59 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -254,8 +254,8 @@ sub do_create_part {
     my ($fields1, $fields2) = @_;
     comment("Create a new petition");
     $wth->browser_follow_link(text_regex => qr/Create a petition/);
-    $wth->browser_check_contents("Before creating a new petition");
-    $wth->browser_get('/new?tostepmain=1'); # Search is external, so must be skipped
+    #$wth->browser_check_contents("Before creating a new petition");
+    #$wth->browser_get('/new?tostepmain=1'); # Search is external, so must be skipped
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => $fields1,
@@ -805,8 +805,8 @@ sub do_resubmit_test {
     comment("Create a new petition");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/Create a petition/);
-    $wth->browser_check_contents("Before creating a new petition");
-    $wth->browser_get('/new?tostepmain=1'); # Search is external, so must be skipped
+    #$wth->browser_check_contents("Before creating a new petition");
+    #$wth->browser_get('/new?tostepmain=1'); # Search is external, so must be skipped
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => {
