@@ -6,3 +6,4 @@ php-html-quickform
 php-html-common
 php-pear
 libmailtools-perl
+libmime-perl
