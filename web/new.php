@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.73 2008-11-05 20:41:27 root Exp $
+// $Id: new.php,v 1.74 2008-11-17 13:39:37 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -561,6 +561,9 @@ function petition_create($data) {
     # One of postcode and overseas must be null, but normally passed around as empty strings
     if ($data['postcode']) $data['overseas'] = null;
     else $data['postcode'] = null;
+
+    $data['detail'] = str_replace("\t", ' ', $data['detail']);
+    $data['pet_content'] = str_replace("\t", ' ', $data['pet_content']);
 
     if (array_key_exists('token', $data)) {
         /* Resubmitted petition. */
