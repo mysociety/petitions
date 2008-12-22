@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.51 2008-09-18 10:13:20 matthew Exp $
+// $Id: index.php,v 1.52 2008-12-22 20:34:39 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -22,20 +22,24 @@ page_header('Introduction to e-petitions', array(
 
 echo '<div id="content_clipboard">
 <div id="petition_actions">
-<ul>
-<li id="action_create"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
-/><br />Create a Petition</a></li>
-<li id="action_view"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
+<ul>';
+
+if (OPTION_SITE_TYPE != 'pm') {
+    echo '<li id="action_create"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
+/><br />Create a Petition</a></li>';
+}
+
+echo '<li id="action_view"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
 /><br />View Petitions</a></li>
 </ul>
 </div>';
 
 if (OPTION_SITE_TYPE == 'pm') {
     $sent_to = 'Prime Minister';
-    echo '<p>Petitions have long been sent to the Prime Minister by post or delivered to
+    echo '<p><em>Petitions have long been sent to the Prime Minister by post or delivered to
 the Number 10 door in person. You can now both create and sign petitions on
 this website too, giving you the opportunity to reach a potentially wider audience
-and to deliver your petition directly to Downing Street.</p>';
+and to deliver your petition directly to Downing Street.</em></p>';
 } elseif (OPTION_SITE_TYPE == 'council') {
     $sent_to = 'council';
     echo '<p><em>You can now both create and sign petitions to your council on this website,
@@ -44,9 +48,9 @@ directly to the council.</em></p>';
 }
 
 pet_search_form(true);
-# if (OPTION_SITE_TYPE == 'pm') {
-#     page_closed_message(true);
-# }
+if (OPTION_SITE_TYPE == 'pm') {
+    page_closed_message(true);
+}
 
 echo "</div>
 <div id='most_recent'>

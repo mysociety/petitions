@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.35 2008-11-08 00:34:48 matthew Exp $
+// $Id: page.php,v 1.36 2008-12-22 20:34:38 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -306,12 +306,9 @@ recognizable action.</li>
 
 function page_closed_message($front = false) {
     if ($front) echo '<br style="clear:both" />';
-    echo "<p>The e-Petitions service will be closed to new submissions during
-the Prime Minster's time away from Number 10. It will remain open as normal for
-the searching and signing of petitions.</p>";
-    echo "<p>This temporary closure will allow the Digital Communications team to deal
-more effectively with the large number of submissions that have built up due to
-the huge popularity of the service.</p>";
-    echo "<p>The e-Petitions system will re-open to new submissions when the Prime
-Minister returns to Downing Street after his summer break around 1 September.</p>";
+    echo '<p>Notice: Submission of new petitions will be closed from 23rd December
+to 5th January while the Prime Minister is away from Number 10. This
+will allow the Number 10 e-petitions team to progress with recently
+submitted e-petitions and to prevent a backlog of unprocessed petitions.
+You can still sign any petition during this time.</p>';
 }
