@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.53 2008-12-23 00:42:15 matthew Exp $
+// $Id: index.php,v 1.54 2009-01-05 11:54:47 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -24,10 +24,10 @@ echo '<div id="content_clipboard">
 <div id="petition_actions">
 <ul>';
 
-if (OPTION_SITE_TYPE != 'pm') {
+#if (OPTION_SITE_TYPE != 'pm') {
     echo '<li id="action_create"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
 /><br />Create a Petition</a></li>';
-}
+#}
 
 echo '<li id="action_view"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
 /><br />View Petitions</a></li>
@@ -48,9 +48,9 @@ directly to the council.</em></p>';
 }
 
 pet_search_form(true);
-if (OPTION_SITE_TYPE == 'pm') {
-    page_closed_message(true);
-}
+#if (OPTION_SITE_TYPE == 'pm') {
+#    page_closed_message(true);
+#}
 
 echo "</div>
 <div id='most_recent'>
