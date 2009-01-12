@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.106 2009-01-12 22:34:47 matthew Exp $
+# $Id: Page.pm,v 1.107 2009-01-12 23:00:29 matthew Exp $
 #
 
 package Petitions::Page;
@@ -287,7 +287,7 @@ sub sign_box ($$) {
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
         . $q->div({ -id => 'signFormLeft' }, 
-          $q->p( 'You must be a British citizen or resident to sign the petition. Please enter your name only; signatures containing other information may be removed by the petitions team.'),
+          $q->p( 'You must be a British citizen or resident to sign the petition. Please enter your name only; signatures containing other text may be removed by the petitions team.'),
           $q->p("I, ",
                 $q->textfield(
                     -name => 'name', -id => 'name', -size => 20
@@ -332,7 +332,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
                 'Turks and Caicos Islands',
                 ])
         ),
-        $q->p( {-style => 'clear: both', -align => 'right'},
+        $q->p( { -id => 'signatureSubmit', -align => 'right' },
             $q->submit(-name => 'submit', -value => 'Sign')
         )
         )
