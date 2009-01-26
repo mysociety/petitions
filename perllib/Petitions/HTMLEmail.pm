@@ -6,7 +6,7 @@
 # Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: HTMLEmail.pm,v 1.4 2007-04-16 10:09:42 matthew Exp $
+# $Id: HTMLEmail.pm,v 1.5 2009-01-26 12:54:08 matthew Exp $
 #
 
 package Petitions::HTMLEmail;
@@ -129,9 +129,9 @@ sub create_plain {
 
 sub wrap_text {
     $_ = shift;
-    local($Text::Wrap::columns = 76);
-    local($Text::Wrap::huge = 'overflow');
-    local($Text::Wrap::unexpand = 0);
+    local($Text::Wrap::columns) = 76;
+    local($Text::Wrap::huge) = 'overflow';
+    local($Text::Wrap::unexpand) = 0;
     s/<([^>]+?) /<$1*/g;
     $_ = Text::Wrap::wrap('', '', $_);
     s/<([^>]+?)\*/<$1 /g;
