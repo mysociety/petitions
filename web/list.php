@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.59 2009-02-17 13:44:56 matthew Exp $
+// $Id: list.php,v 1.60 2009-02-17 13:47:50 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -27,9 +27,6 @@ if ($err) {
 }
 
 $rss = get_http_var('rss') ? true : false;
-if ($rss) {
-	$q_offset = 0;
-}
 
 if (!$rss && $q_type == 'default' && $q_sort == 'default' && $q_cat == 'default') {
     list_front();
@@ -58,6 +55,12 @@ if (!array_key_exists($q_cat, $global_petition_categories)) $q_cat = null;
 $key = $status;
 if ($q_cat) $key .= "_$q_cat";
 $ntotal = db_getOne("select value from stats where key='cached_petitions_$key'");
+
+# Don't want offset on RSS feeds
+if ($rss && $q_offset) {
+	header('Location: ' . url_new("/rss/list/$q_type", true, 'type', null, 'offset', null));
+	exit;
+}
 
 $sort_phrase = $q_sort;
 if ($q_sort == 'date')
