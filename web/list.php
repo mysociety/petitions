@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.58 2009-02-17 13:43:40 matthew Exp $
+// $Id: list.php,v 1.59 2009-02-17 13:44:56 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -101,7 +101,7 @@ if ($rss)
 else {
     page_header($heading, array('id'=>'all',
             'rss'=> array(
-                    $heading => url_new("/rss/list/$q_type", true, 'offest', null)
+                    $heading => url_new("/rss/list/$q_type", true, 'offset', null, 'type', null)
              ),
     ));
 }
@@ -232,7 +232,7 @@ if ($rss)
     rss_footer($rss_items);
 else {
 ?>
-<p align="right"><a href="<?=url_new("/rss/list/$q_type", true, 'offset', null) ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $heading ?>" /> RSS</a>
+<p align="right"><a href="<?=url_new("/rss/list/$q_type", true, 'offset', null, 'type', null) ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $heading ?>" /> RSS</a>
 | <a href="http://news.bbc.co.uk/1/hi/help/3223484.stm">What is RSS?</a></p>
 <?
     page_footer('List.' . $q_type);
