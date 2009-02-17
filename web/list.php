@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.60 2009-02-17 13:47:50 matthew Exp $
+// $Id: list.php,v 1.61 2009-02-17 17:16:08 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -58,7 +58,7 @@ $ntotal = db_getOne("select value from stats where key='cached_petitions_$key'")
 
 # Don't want offset on RSS feeds
 if ($rss && $q_offset) {
-	header('Location: ' . url_new("/rss/list/$q_type", true, 'type', null, 'offset', null));
+	header('Location: ' . url_new("/rss/list/$q_type", true, 'type', null, 'offset', null, 'rss', null));
 	exit;
 }
 
