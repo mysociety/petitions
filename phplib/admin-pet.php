@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.123 2009-04-21 16:18:49 matthew Exp $
+ * $Id: admin-pet.php,v 1.124 2009-04-21 16:54:44 matthew Exp $
  * 
  */
 
@@ -192,26 +192,28 @@ function petition_admin_perform_actions() {
     if (get_http_var('delete_all') || get_http_var('confirm_all')) {
         $ids = get_http_var('update_signer');
         $sigs_by_petition = array();
-	$clean_ids = array();
+        $clean_ids = array();
         foreach ($ids as $signer_id) {
             if (!$signer_id || !ctype_digit($signer_id)) continue;
-	    $clean_ids[] = $signer_id;
+            $clean_ids[] = $signer_id;
             $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
-	    $sigs_by_petition[$petition_id][] = $signer_id;
-	}
-	$ids = $clean_ids;
-        if (get_http_var('delete_all')) {
-            db_query('UPDATE signer set showname = false where id in (' . join(',', $ids) . ')');
-	    $change = '-';
-	    $log = 'Admin hid signers ';
-            print '<p><em>Those signers have been removed.</em></p>';
-	} else {
-            db_query("UPDATE signer set emailsent = 'confirmed' where id = ?", $signer_id);
-	    $change = '+';
-	    $log = 'Admin confirmed signers ';
-            print '<p><em>Those signers have been confirmed.</em></p>';
-	}
-	foreach ($sigs_by_petition as $petition_id => $sigs) {
+            $sigs_by_petition[$petition_id][] = $signer_id;
+        }
+        $ids = $clean_ids;
+        if (count($ids)) {
+            if (get_http_var('delete_all')) {
+                db_query('UPDATE signer set showname = false where id in (' . join(',', $ids) . ')');
+                $change = '-';
+                $log = 'Admin hid signers ';
+                print '<p><em>Those signers have been removed.</em></p>';
+            } else {
+                db_query("UPDATE signer set emailsent = 'confirmed' where id in (" . join(',', $ids) . ')');
+                $change = '+';
+                $log = 'Admin confirmed signers ';
+                print '<p><em>Those signers have been confirmed.</em></p>';
+            }
+        }
+        foreach ($sigs_by_petition as $petition_id => $sigs) {
             db_query("update petition set cached_signers = cached_signers $change " . count($sigs) . ',
                 lastupdate = ms_current_timestamp() where id = ?', $petition_id);
             $p = new Petition($petition_id);

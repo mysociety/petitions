@@ -24,7 +24,7 @@
 # HTML mail test could be better
 # Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.98 2009-04-21 16:18:49 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.99 2009-04-21 16:54:44 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -364,13 +364,9 @@ sub do_main_test {
             $wth->browser_check_contents($petition_text);
             $wth->browser_submit_form(form_name => 'petition_admin_search',
                 fields => { 'search' => '1490' } ) or die 'Failed to submit admin search form';
-            $wth->browser_form_name('petition_admin_signature_confirmation');
-            my $id_1490 = $wth->value('update_signer[]');
-            comment("Signer 1490 has database ID $id_1490");
             $wth->browser_submit_form(form_name => 'petition_admin_signature_confirmation',
-                fields => { 'update_signer[]' => [$id_1490, 1 ] }) or die "Failed to submit admin confirm signer form";
+                fields => { 'update_signer[]' => 18 }) or die "Failed to submit admin confirm signer form"; # XXX 18 shouldn't be hard-coded!
             $wth->browser_check_contents("Those signers have been confirmed");
-            $wth->browser_check_contents("Signers \\(3\\)");
             $wth->browser_check_no_contents("confirm_all");
         } else {
             comment("Confirm signature by user clicking link");
@@ -398,11 +394,8 @@ sub do_main_test {
     $wth->browser_check_contents($petition_text);
     $wth->browser_check_contents(name_n(1489));
     $wth->browser_check_contents("Signers \\(3\\)");
-    $wth->browser_form_name('petition_admin_signature_removal');
-    my $id_1489 = $wth->value('update_signer[]');
-    comment("Signer 1489 has database ID $id_1489");
     $wth->browser_submit_form(form_name => 'petition_admin_signature_removal',
-        fields => { 'update_signer[]' => [$id_1489, 2] }) or die "Failed to submit admin remove signer form";
+        fields => { 'update_signer[]' => [17, 2] }) or die "Failed to submit admin remove signer form";
     $wth->browser_check_contents("Those signers have been removed");
     $wth->browser_check_no_contents(name_n(1489));
     $wth->browser_check_contents("Signers \\(2\\)");
