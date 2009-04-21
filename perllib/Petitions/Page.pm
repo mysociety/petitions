@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.107 2009-01-12 23:00:29 matthew Exp $
+# $Id: Page.pm,v 1.108 2009-04-21 16:18:49 matthew Exp $
 #
 
 package Petitions::Page;
@@ -281,32 +281,15 @@ sub sign_box ($$) {
     my $ser = encode_base64($buf . hmac_sha1($buf, Petitions::DB::secret()), '');
     delete($safe_p->{salt});
 
-    return
-        $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => "/$p->{ref}/sign")
-        . qq(<input type="hidden" name="add_signatory" value="1" />)
-        . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
-        . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
-        . $q->div({ -id => 'signFormLeft' }, 
-          $q->p( 'You must be a British citizen or resident to sign the petition. Please enter your name only; signatures containing other text may be removed by the petitions team.'),
-          $q->p("I, ",
-                $q->textfield(
-                    -name => 'name', -id => 'name', -size => 20
-                ),
-                ", sign up to the petition."
-            )
-        . $q->p( '<label for="email">Your email:</label>',
-                $q->textfield(-name => 'email', -size => 20, -id => 'email'))
-        . $q->p( '<label for="email2">Confirm email:</label>',
-                $q->textfield(-name => 'email2', -size => 20, -id => 'email2'))
-        . $q->p($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
-        )
-        . $q->div({-id => 'signFormRight' },
-          $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
-                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:100%') ),
-          $q->p( '<label for="postcode">UK postcode:</label>', 
-                $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
-        ),
-        $q->p( '<label class="wide" for="overseas">Or, if you\'re an
+    my $must;
+    if ($q->{scratch}{site_type} eq 'pm') {
+        $must = 'You must be a British citizen or resident to sign the petition.';
+    } else {
+        $must = 'You must be a council resident to sign the petition.';
+    }
+
+    my $expat = '';
+    $expat = $q->p( '<label class="wide" for="overseas">Or, if you\'re an
         expatriate, you\'re in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>', 
             $q->popup_menu(-name=>'overseas', -id=>'overseas', -style=>'width:100%', -values=>[
@@ -331,7 +314,37 @@ the Armed Forces without a postcode, please select from this list:</label>',
                 'Tristan da Cunha',
                 'Turks and Caicos Islands',
                 ])
+    ) if $q->{scratch}{site_type} eq 'pm';
+
+    my $postcode_label = 'UK postcode:';
+    $postcode_label = 'Your postcode:' if $q->{scratch}{site_type} eq 'council';
+
+    return
+        $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => "/$p->{ref}/sign")
+        . qq(<input type="hidden" name="add_signatory" value="1" />)
+        . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
+        . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
+        . $q->div({ -id => 'signFormLeft' }, 
+          $q->p( $must . ' Please enter your name only; signatures containing other text may be removed by the petitions team.'),
+          $q->p("I, ",
+                $q->textfield(
+                    -name => 'name', -id => 'name', -size => 20
+                ),
+                ", sign up to the petition."
+            )
+        . $q->p( '<label for="email">Your email:</label>',
+                $q->textfield(-name => 'email', -size => 20, -id => 'email'))
+        . $q->p( '<label for="email2">Confirm email:</label>',
+                $q->textfield(-name => 'email2', -size => 20, -id => 'email2'))
+        . $q->p($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
+        )
+        . $q->div({-id => 'signFormRight' },
+          $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
+                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:100%') ),
+          $q->p( '<label for="postcode">' . $postcode_label . '</label>', 
+                $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),
+        $expat,
         $q->p( { -id => 'signatureSubmit', -align => 'right' },
             $q->submit(-name => 'submit', -value => 'Sign')
         )

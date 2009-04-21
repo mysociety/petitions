@@ -7,13 +7,14 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.54 2008-08-04 10:48:07 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.55 2009-04-21 16:18:50 matthew Exp $';
 
 use strict;
 
 # use Compress::Zlib;
 use Digest::HMAC_SHA1 qw(hmac_sha1_hex);
 use HTTP::Date qw();
+use URI::Escape;
 use utf8;
 
 use mySociety::Config;
@@ -103,15 +104,14 @@ sub main () {
         if ($p->{status} eq 'finished');
 
     if ($show_signed_box) {
+        my $url = mySociety::Config::get('BASE_URL') . "/$ref/";
         $html .=
             $q->div({ -id =>'success' },
                 $q->p(
                     "You are now signed up to this petition. Thank you."),
                 $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.number10.gov.uk/' }, 'main Downing Street homepage')),
                 $q->p("If you'd like to tell your friends about this petition, its permanent web address is:",
-                    $q->strong($q->a({ -href => "/$ref/" },
-                        ent(mySociety::Config::get('BASE_URL') . "/$ref/"
-                    ))))
+                    $q->strong($q->a({ -href => "/$ref/" }, ent($url))))
             );
     }
 
@@ -137,6 +137,28 @@ sub main () {
         $html .= Petitions::Page::reject_box($q, $p);
         $html .= $q->end_div();
     }
+    if ($p->{status} eq 'live') {
+        my $url = uri_escape(mySociety::Config::get('BASE_URL') . "/$ref/");
+	my $share_title = uri_escape(Petitions::sentence($q, $p, 0, 1));
+        $html .= <<EOF;
+<div class="clear_all">
+    <div id='sharethisembed'>Share this:</div>
+    <div class='sharethisholdermain'>
+        <a href='http://del.icio.us/post?url=$url&amp;title=$share_title' class='sharethislink'>
+        <img src='http://www.number10.gov.uk/wp-content/themes/number10/images/add_delicious16.gif' class='shareimage' alt="" />delicious</a>
+    </div>
+    <div class='sharethisholdermain'>
+        <a href='http://digg.com/submit?phase=2&amp;url=$url&amp;title=$share_title' class='sharethislink'>
+        <img src='http://www.number10.gov.uk/wp-content/themes/number10/images/add_digg16.gif' class='shareimage' alt="" />digg</a>
+    </div>
+    <div class='sharethisholdermain'>
+        <a href='http://www.facebook.com/sharer.php?u=$url' class='sharethislink'>
+        <img src='http://www.number10.gov.uk/wp-content/themes/number10/images/add_facebook16.gif' class='shareimage' alt="" />facebook</a>
+    </div>
+</div>
+EOF
+    }
+
     my $stat = 'View.' . $p->{ref};
     $stat .= '.signed' if ($show_signed_box);
     $html .= Petitions::Page::footer($q, $stat);

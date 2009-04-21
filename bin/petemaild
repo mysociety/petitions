@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.148 2008-08-06 10:43:27 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.149 2009-04-21 16:18:49 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -735,9 +735,6 @@ sub parse_smtp_response ($$$) {
         if ($code =~ /^3/) {
             # Ready to continue. Send the message text.
             my $msg = $self->{message}->text();
-            if ($self->{message}->recipient() =~ /\@aol\./) {
-                $msg =~ s/((http(s?):\/\/)([a-zA-Z\d\_\.\+\,\;\?\%\~\-\/\#\='\*\$\!\(\)\&]+)([a-zA-Z\d\_\?\%\~\-\/\#\='\*\$\!\(\)\&]))/<a href="$1">$1<\/a>/g;
-            }
             my $len = length($msg);
             $msg =~ s/^\./../gs;
             $msg =~ s/\n/\r\n/gs;
@@ -1678,6 +1675,14 @@ sub message_id ($$) {
                 mySociety::Config::get('EMAIL_DOMAIN'));
 }
 
+sub make_url {
+    my ($email, $url) = @_;
+    if ($email =~ /\@aol\./) {
+        $url = "<a href=\"$1\">$1</a>"; 
+    }
+    return $url;
+}
+
 # make_signer_email SIGNER PETITION
 # Make a confirmation email for SIGNER signing PETITION. Returns on-the-wire
 # text of the email.
@@ -1697,6 +1702,7 @@ sub make_signer_email ($$) {
     $h{url} = mySociety::Config::get('BASE_URL')
                 . "/$petition->{ref}/"
                 . Petitions::Token::make('s', $signer->{id});
+    $h{url} = make_url($signer->{email}, $h{url});
     $h{creator_name} = $petition->{name};
     my $q = { scratch => { site_type => 'pm' }}; # XXX petemaild is PM only at present, and this is hack
     $h{sentence} = Petitions::sentence($q, $petition);
@@ -1728,6 +1734,7 @@ sub make_petition_email ($) {
     $h{url} = mySociety::Config::get('BASE_URL')
                 . "/$petition->{ref}/"
                 . Petitions::Token::make('p', $petition->{id});
+    $h{url} = make_url($petition->{email}, $h{url});
     $h{content} = $petition->{content};
     $h{content} =~ s/\r|\n/ /g;
     ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
@@ -2666,4 +2673,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.148 2008-08-06 10:43:27 matthew Exp $
+$Id: petemaild,v 1.149 2009-04-21 16:18:49 matthew Exp $

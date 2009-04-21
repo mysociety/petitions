@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.17 2008-08-04 10:48:07 matthew Exp $
+// $Id: terms.php,v 1.18 2009-04-21 16:18:50 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -91,7 +91,7 @@ petition as a last resort.
 </p>
 
 <p>Please note that to keep the system manageable, and justify use of
-resources, we can usually only respond to serious petitions of 200
+resources, we can usually only respond to serious petitions of 500
 signatures or more.</p>
 
 <?

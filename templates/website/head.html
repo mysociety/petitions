@@ -39,87 +39,63 @@ PARAM_EXTRA
 	<div id="header">
 		<h1 class="leftfloat">
 			<span class="header_logo">
-				<img src="http://www.number10.gov.uk/wp-content/themes/networker-10/images/logo.gif" alt="Number10.gov.uk logo" /><br />
-				<span>The official site of the Prime Minister's Office.</span>
+				<a href="http://www.number10.gov.uk/" title="Go to the home page"><img src="http://www.number10.gov.uk/wp-content/themes/number10/images/logo.gif" alt="Number10.gov.uk" /></a><br />
+				<span>The official site of the Prime Minister&#8217;s Office</span>
 			</span>
-			
-		</h1>	<div class="beta">BETA</div>
+		</h1><div class="beta">BETA</div>
 	</div>
 	
 	<div id="top-menu-container">
 		<div id="top-menu">
-			
 			<ul>
-				<li >
-					
-					<a class="current_home" href="http://www.number10.gov.uk/">Home</a>					
-				</li>
-				<li >
-					
-					<a class="current_home_news" href="http://www.number10.gov.uk/topics/news/latest-news">News</a>				
-				</li>
-				<li >
-					
-					<a class="current_home_communicate_active" href="http://www.number10.gov.uk/communicate">Communicate</a>					
-				</li>
-				<li >
-					
-					<a class="current_home_meet" href="http://www.number10.gov.uk/meet-the-pm">Meet the PM</a>				
-				</li>
-				<li>
-					
-					<a class="current_home_history" href="http://www.number10.gov.uk/history-and-tour">History and Tour</a>				
-				</li>
-				<li>
-					
-					<a class="current_home_nr10tv" href="http://www.number10.gov.uk/number-10-tv">Number 10 TV</a>			
-				</li>
+				<li><a class="current_home" href="http://www.number10.gov.uk/">Home</a></li>
+				<li><a class="current_home_news" href="http://www.number10.gov.uk/news/latest-news">News</a></li>
+				<li><a class="current_home_communicate_active" href="http://www.number10.gov.uk/communicate">Communicate</a></li>
+				<li><a class="current_home_meet" href="http://www.number10.gov.uk/meet-the-pm">Meet the PM</a></li>
+				<li><a class="current_home_history" href="http://www.number10.gov.uk/history-and-tour">History and Tour</a></li>
+				<li><a class="current_home_nr10tv" href="http://www.number10.gov.uk/number-10-tv">Number 10 TV</a></li>
 			</ul>
-			
 		</div>
 
 		<div class="form_title" > 
-			<form method="get" id="searchform" action="http://www.number10.gov.uk">
-				<label class="rm" for="s"> Search </label>
-				<input type="text" value="Search" name="s" id="s" size="15" class="leftfloat" onfocus="if (this.value == 'Search') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Search';}" />
-				<input type="submit" class="searchbtn"  value="Go" />
+			<form name="kbs" method="get" id="kbs" action="http://search.number-10.gov.uk/kbroker/number10/number10/search.lsim">
+				<input type="text" name="qt" id="qt" maxlength="1000" value="Enter search terms" onfocus="if (this.value == 'Enter search terms') {this.value = '';}" onblur="if (this.value == '') {this.value = 'Enter search terms';}" />&nbsp;
+				<input class="searchbtn" name="go" id="go" type="submit"  value="Go" />
+				<input type="hidden" name="sr" value="0" />
+				<input type="hidden" name="nh" value="10" />
+				<input type="hidden" name="cs" value="iso-8859-1" />
+				<input type="hidden" name="sc" value="number10" />
+				<input type="hidden" name="sm" value="0" />
+				<input type="hidden" name="mt" value="1" />
+				<input type="hidden" name="to" value="0" />
+				<input type="hidden" name="ha" value="368" />
 			</form>
-			<span class="clear_all"></span>
 		</div>
+		<div class="clear_all"></div>
 	</div>
 	
-
-
-
 	<div id="wrapper">
 
 <div id="container">
 
-
-
- 
 <!--
-<div class="bread_crumb_communicate">
-
-<div class="breadcrumb">
-</div>
-
-<a href="/" class="blacktext">Home </a>&gt; <a href="/">Petitions</a></div>
+<div class="bread_crumb bread_crumb_communicate">
+<a href="http://www.number10.gov.uk/">Home </a>&gt; <a href="/">Petitions</a></div>
 -->
 
 <div class="pages_textnews_communicate">
-	<h2>E-Petitions.</h2>
+	<h2>E-Petitions</h2>
 </div>
 
-<div class="pages_sidenav_communicate">
-<p><a href="/">Petitions home</a></p>
-<p><a href="/list">View petitions</a></p>
-<p><a href="/new">Create a petition</a></p>
-<p><a href="/about">About e-petitions</a></p>
-<p><a href="/steps">Step-by-Step Guide</a></p>
-<p><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></p>
-<p><a href="/terms">Terms and Conditions</a></p>
-<p><a href="/privacy">Privacy Policy</a></p>
-</div>
+<ul class="pages_sidenav_communicate">
+<li class="page_item"><a href="/">Petitions home</a></li>
+<li class="page_item"><a href="/list">View petitions</a></li>
+<li class="page_item"><a href="/new">Create a petition</a></li>
+<li class="page_item"><a href="/about">About e-petitions</a></li>
+<li class="page_item"><a href="/steps">Step-by-Step Guide</a></li>
+<li class="page_item"><a href="/faq"><acronym title="Frequently Asked Questions">FAQs</acronym></a></li>
+<li class="page_item"><a href="/terms">Terms and Conditions</a></li>
+<li class="page_item"><a href="/privacy">Privacy Policy</a></li>
+</ul>
 
 <div class="pages_post_communicate" id="skip_to_content">

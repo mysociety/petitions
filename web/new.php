@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.76 2009-01-05 11:54:47 matthew Exp $
+// $Id: new.php,v 1.77 2009-04-21 16:18:50 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -212,9 +212,11 @@ function textfield($name, $val, $size, $errors, $after = '') {
 function petition_search_first() { ?>
 <p><big>Welcome to the petition creation page.</big></p>
 
-<p>There are over 6,000 petitions on this site.
-Before creating a new petition, please use this box to check whether a petition already exists which makes your point.
-If so, please add your name to that petition. We will not create duplicate petitions making identical points.</p>
+<p>There are several thousand petitions on this site.
+Before creating a new petition, please use this box to check whether a petition already exists which calls for the same or similar action.
+If so, please add your name to that petition.</p>
+
+<p><strong>We will not accept petitions making similar or overlapping points.</strong></p>
 
 <p>Once you've done your search, you can continue to create a new petition, or to sign an existing one.</p>
 
@@ -241,10 +243,12 @@ function petition_form_main($data = array(), $errors = array()) {
 
 <p><strong><?=$petition_prefix ?>...</strong> <br />
     <?
-    textfield('pet_content', $data['pet_content'], 80, $errors);
+    textfield('pet_content', $data['pet_content'], 70, $errors);
     ?>
+<br />(Please write a sentence, preferably starting with a verb, that describes what action 
+you would like the Prime Minister or Government to take.)
 </p>
-<p>More details about your petition (1000 characters maximum):<br />
+<p>More details about your petition (do not use block capitals &ndash; 1000 characters maximum):<br />
     <?
     textarea('detail', $data['detail'], 40, 7, $errors);
     ?>
@@ -357,6 +361,8 @@ the Armed Forces without a postcode, please select from this list:</label>
             $after = '';
             if ($name == 'email2')
                 $after = '(we need your email so we can get in touch with you when your petition completes, and so on)';
+            elseif ($name == 'name')
+                $after = '(please use a full name e.g. Mr John Smith)';
             textfield($name, $data[$name], $size, $errors, $after);
         }
 

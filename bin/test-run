@@ -24,7 +24,7 @@
 # HTML mail test could be better
 # Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.97 2009-01-05 12:21:50 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.98 2009-04-21 16:18:49 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -350,7 +350,7 @@ sub do_main_test {
 
         comment("Find confirmation email");
         my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
-        die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m#^\s*(https?://.*)$#m);
+        die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m{^\s*(https?://.*)$}m);
         my $confirm_signature_link = $1;
         if ($signer_no == 1490) {
             comment("Confirm signature by administrator");
@@ -362,11 +362,16 @@ sub do_main_test {
             $wth->browser_check_contents($petition_text);
             $wth->browser_follow_link(text_regex => qr/admin/);
             $wth->browser_check_contents($petition_text);
-            $wth->browser_submit_form(form_name => 'removesignerform1',
-                fields => { }, button => 'confirm_signer') or die "Failed to submit admin confirm signer button";
-            $wth->browser_check_contents("That signer has been confirmed");
+            $wth->browser_submit_form(form_name => 'petition_admin_search',
+                fields => { 'search' => '1490' } ) or die 'Failed to submit admin search form';
+            $wth->browser_form_name('petition_admin_signature_confirmation');
+            my $id_1490 = $wth->value('update_signer[]');
+            comment("Signer 1490 has database ID $id_1490");
+            $wth->browser_submit_form(form_name => 'petition_admin_signature_confirmation',
+                fields => { 'update_signer[]' => [$id_1490, 1 ] }) or die "Failed to submit admin confirm signer form";
+            $wth->browser_check_contents("Those signers have been confirmed");
             $wth->browser_check_contents("Signers \\(3\\)");
-            $wth->browser_check_no_contents("confirm_signer");
+            $wth->browser_check_no_contents("confirm_all");
         } else {
             comment("Confirm signature by user clicking link");
             comment("Confirmation link: $confirm_signature_link");
@@ -393,9 +398,12 @@ sub do_main_test {
     $wth->browser_check_contents($petition_text);
     $wth->browser_check_contents(name_n(1489));
     $wth->browser_check_contents("Signers \\(3\\)");
-    $wth->browser_submit_form(form_name => 'removesignerform2',
-        fields => { }, button => 'remove_signer') or die "Failed to submit admin remove signer button";
-    $wth->browser_check_contents("That signer has been removed");
+    $wth->browser_form_name('petition_admin_signature_removal');
+    my $id_1489 = $wth->value('update_signer[]');
+    comment("Signer 1489 has database ID $id_1489");
+    $wth->browser_submit_form(form_name => 'petition_admin_signature_removal',
+        fields => { 'update_signer[]' => [$id_1489, 2] }) or die "Failed to submit admin remove signer form";
+    $wth->browser_check_contents("Those signers have been removed");
     $wth->browser_check_no_contents(name_n(1489));
     $wth->browser_check_contents("Signers \\(2\\)");
 

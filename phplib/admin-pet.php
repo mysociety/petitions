@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.122 2008-08-04 10:48:06 matthew Exp $
+ * $Id: admin-pet.php,v 1.123 2009-04-21 16:18:49 matthew Exp $
  * 
  */
 
@@ -115,18 +115,18 @@ class ADMIN_PAGE_PET_SEARCH {
     }
 
     function search_signers($q, $search) {
-        $out = '';
+        $return = array('confirmed'=>'', 'unconfirmed'=>'');
         while ($r = db_fetch_array($q)) {
-            $out .= "<tr><td>$r[email]</td><td>$r[name]</td><td><a href=\"".OPTION_BASE_URL."/$r[ref]\">$r[ref]</a></td>";
-            $out .= '<td>' . prettify($r['signtime']) . '</td>';
-            $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
+            $out = '';
+            $out .= '<tr><td><input type="checkbox" name="update_signer[]" value="' . $r['id'] . '"></td>';
+            $out .= "<td>$r[email]</td><td>$r[name]</td><td><a href=\"".OPTION_BASE_URL."/$r[ref]/\">$r[ref]</a></td>";
+            $out .= '<td>' . prettify($r['signtime']) . "</td></tr>\n";
             if ($r['emailsent'] == 'confirmed')
-                $out .= '<input type="hidden" name="remove_signer_id" value="' . $r['id'] . '"><input type="submit" name="remove" value="Remove signer">';
+                $return['confirmed'] .= $out;
             elseif ($r['emailsent'] == 'sent')
-                $out .= '<input type="hidden" name="confirm_signer_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm signer">';
-            $out .= "</form></td></tr>";
+                $return['unconfirmed'] .= $out;
         }
-        return $out;
+        return $return;
     }
 
     function display() {
@@ -140,27 +140,48 @@ class ADMIN_PAGE_PET_SEARCH {
             from signer, petition
             where signer.petition_id = petition.id
             and showname = 't' and emailsent in ('sent', 'confirmed') and signer.email!='' ";
-        $out = '';
+        $out = array();
         if ($search && validate_email($search)) {
             $q = db_query($search_pet . "and lower(email) = ?", array($search));
-            $out = $this->search_petitions($q, $search);
+            $out['petitions'] = $this->search_petitions($q, $search);
             $q = db_query($search_sign . "and lower(signer.email) = ?", array($search));
-            $out .= $this->search_signers($q, $search);
+            $out['signers'] = $this->search_signers($q, $search);
         } elseif ($search) {
             $q = db_query($search_pet . "
                 and (name ilike '%'||?||'%' or lower(email) ilike '%'||?||'%')
                 order by lower(email)", array($search, $search));
-            $out = $this->search_petitions($q, $search);
+            $out['petitions'] = $this->search_petitions($q, $search);
             $q = db_query($search_sign . "
                 and (signer.name ilike '%'||?||'%' or lower(signer.email) ilike '%'||?||'%')
-                order by lower(signer.email)", array($search, $search));
-            $out = $this->search_signers($q, $search);
+                order by emailsent, lower(signer.email)", array($search, $search));
+            $out['signers'] = $this->search_signers($q, $search);
         }
-        if ($out) {
-            print "<table cellpadding=3 border=0><tr><th>Email</th><th>Name</th>
-                <th>Petition</th><th>Creation time</th><th>Actions</th></tr>";
-            print $out;
-            print "</table>";
+        if (count($out)) {
+            if ($out['petitions']) {
+                echo '<h2>Petition confirmations</h2>
+<table cellpadding=3 border=0><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
+                    $out['petitions'], '</table>';
+            }
+            if ($out['signers']['confirmed']) {
+                echo '<h2>Signature removal</h2>
+<form name="petition_admin_signature_removal" method="post" action="', $this->self_link, '">
+<input type="hidden" name="search" value="', htmlspecialchars($search), '">
+<table cellpadding=3 border=0><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
+                    $out['signers']['confirmed'], '</table>
+<input type="hidden" name="delete_all" value="1">
+<p><input type="submit" value="Remove all ticked"></p>
+</form>';
+            }
+            if ($out['signers']['unconfirmed']) {
+                echo '<h2>Signature confirmation</h2>
+<form name="petition_admin_signature_confirmation" method="post" action="', $this->self_link, '">
+<input type="hidden" name="search" value="', htmlspecialchars($search), '">
+<table cellpadding=3 border=0><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
+                    $out['signers']['unconfirmed'], '</table>
+<input type="hidden" name="confirm_all" value="1">
+<p><input type="submit" value="Confirm all ticked"></p>
+</form>';
+            }
         }
         else print '<p><em>No matches</em></p>';
     }
@@ -168,32 +189,37 @@ class ADMIN_PAGE_PET_SEARCH {
 
 function petition_admin_perform_actions() {
     $petition_id = null;
-    if (get_http_var('remove_signer_id')) {
-        $signer_id = get_http_var('remove_signer_id');
-        if (ctype_digit($signer_id)) {
+    if (get_http_var('delete_all') || get_http_var('confirm_all')) {
+        $ids = get_http_var('update_signer');
+        $sigs_by_petition = array();
+	$clean_ids = array();
+        foreach ($ids as $signer_id) {
+            if (!$signer_id || !ctype_digit($signer_id)) continue;
+	    $clean_ids[] = $signer_id;
             $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
-            db_query('UPDATE signer set showname = false where id = ?', $signer_id);
-            db_query('update petition set cached_signers = cached_signers - 1,
-                lastupdate = ms_current_timestamp() where id = ?', $petition_id);
-            $p = new Petition($petition_id);
-            $p->log_event('Admin hid signer ' . $signer_id, http_auth_user());
-            db_commit();
-            print '<p><em>That signer has been removed.</em></p>';
-        }
-    }
-    if (get_http_var('confirm_signer_id')) {
-        $signer_id = get_http_var('confirm_signer_id');
-        if (ctype_digit($signer_id)) {
-            $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
+	    $sigs_by_petition[$petition_id][] = $signer_id;
+	}
+	$ids = $clean_ids;
+        if (get_http_var('delete_all')) {
+            db_query('UPDATE signer set showname = false where id in (' . join(',', $ids) . ')');
+	    $change = '-';
+	    $log = 'Admin hid signers ';
+            print '<p><em>Those signers have been removed.</em></p>';
+	} else {
             db_query("UPDATE signer set emailsent = 'confirmed' where id = ?", $signer_id);
-            db_query('update petition set cached_signers = cached_signers + 1,
+	    $change = '+';
+	    $log = 'Admin confirmed signers ';
+            print '<p><em>Those signers have been confirmed.</em></p>';
+	}
+	foreach ($sigs_by_petition as $petition_id => $sigs) {
+            db_query("update petition set cached_signers = cached_signers $change " . count($sigs) . ',
                 lastupdate = ms_current_timestamp() where id = ?', $petition_id);
             $p = new Petition($petition_id);
-            $p->log_event('Admin confirmed signer ' . $signer_id, http_auth_user());
-            db_commit();
-            print '<p><em>That signer has been confirmed.</em></p>';
+            $p->log_event($log . join(',', $sigs), http_auth_user());
         }
+        db_commit();
     }
+
     if (get_http_var('confirm_petition_id')) {
         $petition_id = get_http_var('confirm_petition_id');
         if (ctype_digit($petition_id)) {
@@ -333,7 +359,7 @@ class ADMIN_PAGE_PET_MAIN {
             SELECT petition.*,
                 date_trunc('second',laststatuschange) AS laststatuschange,
                 (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
-		(deadline + interval '1 year' >= ms_current_date()) AS response_possible,
+                (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 cached_signers AS signers,
                 $surge
                 message.id AS message_id
@@ -463,7 +489,7 @@ class ADMIN_PAGE_PET_MAIN {
         $sel_query_part = "SELECT petition.*,
                 date_trunc('second', laststatuschange) AS laststatuschange,
                 date_trunc('second', creationtime) AS creationtime,
-		(deadline + interval '1 year' >= ms_current_date()) AS response_possible,
+                (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
                     emailsent in ('sent', 'confirmed')) AS signers
             FROM petition";
@@ -642,16 +668,13 @@ Deadline: ';
                 if ($r['signemail'])
                     array_push($e, $r['signemail']);
                 $e = join("<br>", $e);
-                $out[$e] = '<td>'.$e.'</td>';
+                $out[$e] = '<td>';
+                if ($r['emailsent'] == 'confirmed')
+                    $out[$e] .= '<input type="checkbox" name="update_signer[]" value="' . $r['signid'] . '">';
+                $out[$e] .= '</td>';
+                $out[$e] .= '<td>'.$e.'</td>';
                 $out[$e] .= '<td>'.prettify($r['signtime']).'</td>';
 
-                $out[$e] .= '<td>';
-                $out[$e] .= '<form name="removesignerform'.$c.'" method="post" action="'.$this->self_link.'">';
-                if ($r['emailsent'] == 'confirmed')
-                    $out[$e] .= '<input type="hidden" name="remove_signer_id" value="' . $r['signid'] . '"><input type="submit" name="remove_signer" value="Remove signer">';
-                elseif ($r['emailsent'] == 'sent')
-                    $out[$e] .= '<input type="hidden" name="confirm_signer_id" value="' . $r['signid'] . '"><input type="submit" name="confirm_signer" value="Confirm signer">';
-                $out[$e] .= '</form></td>';
             }
             if ($sort == 'e') {
                 function sort_by_domain($a, $b) {
@@ -663,7 +686,8 @@ Deadline: ';
                 uksort($out, 'sort_by_domain');
             }
             if (count($out)) {
-                print '<table border="1" cellpadding="3" cellspacing="0"><tr>';
+                echo '<form name="petition_admin_signature_removal" method="post" action="'.$this->self_link.'">';
+                echo '<table border="1" cellpadding="3" cellspacing="0"><tr><td></td>';
                 $cols = array('e'=>'Signer', 't'=>'Time');
                 foreach ($cols as $s => $col) {
                     print '<th>';
@@ -672,7 +696,6 @@ Deadline: ';
                     if ($sort != $s) print '</a>';
                     print '</th>';
                 }
-                print '<th>Action</th>';
                 print '</tr>';
                 $a = 0;
                 foreach ($out as $row) {
@@ -681,6 +704,8 @@ Deadline: ';
                     print '</tr>';
                 }
                 print '</table>';
+                echo '<p><input type="hidden" name="delete_all" value="1">
+<input type="submit" value="Remove all ticked"></p></form>';
                 if ($list_limit && $c >= $list_limit) {
                     print "<p>... only $list_limit signers shown, "; 
                     print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';

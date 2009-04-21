@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.11 2008-08-04 10:48:07 matthew Exp $
+// $Id: steps.php,v 1.12 2009-04-21 16:18:50 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
@@ -73,7 +73,7 @@ display the names of signatories, unless they have opted not to be shown.</p>
 
 <h3>Step 5: Petition close</h3>
 
-<p>When a serious petition closes, usually provided there are 200 signatures or more,
+<p>When a serious petition closes, usually provided there are 500 signatures or more,
 officials <?=OPTION_SITE_TYPE=='pm'?'at Downing Street':''?> will ensure you get a response to the issues you
 raise. <?=OPTION_SITE_TYPE=='pm'?'Depending on the nature of the petition, this may be from the Prime
 Minister, or he may ask one of his Ministers or officials to respond.':''?>

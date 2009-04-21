@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.54 2009-01-05 11:54:47 matthew Exp $
+// $Id: index.php,v 1.55 2009-04-21 16:18:50 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -115,7 +115,7 @@ project that runs various democracy focussed websites in the UK, such as
 <p>You can view and sign any <a href="/list">current petitions</a>, and see the
 <?=OPTION_SITE_TYPE=='pm'?'Government':"council's"?> response to any
 <a href="/list/closed">completed petitions</a>.
-If you have signed a petition that has reached more than 200 signatures
+If you have signed a petition that has reached more than 500 signatures
 by the time it closes, you will be sent a response from the
 <?=OPTION_SITE_TYPE=='pm'?'Government':'council'?> by email.
 </p>

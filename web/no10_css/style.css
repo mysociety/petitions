@@ -1,427 +1,451 @@
-/*  
-Theme Name: NetWorker
-Theme URI: http://www.antbag.com
-Description: An adsense ready theme from Antbag.com.
-Version: 1.0
-Author: Anthony Baggett
-Author URI: http://www.antbag.com/
-
+/*
+Theme Name: Number 10
+Theme URI: http://www.number10.gov.uk
+Description: Number 10 Downing St Theme
+Version: 1.1
+Author: Mike Little after New Media Maze
+Author URI: http://zed1.com/
 */
 
 /*body, h1, h2, h3, h4, h5, h6, blockquote, p, form{
-	margin: 0;
-	padding: 0;
+  margin: 0;
+  padding: 0;
 }
 */
 
-.rm{
-	position: absolute;
-	left: -999em;
+.rm {
+  position: absolute;
+  left: -999em;
 
 }
 
 .leftfloat{
-	float: left;
+  float: left;
 }
+
+#calendar_item { float:left; }
 
 .calendar_holder
 {
-float:left;
-width:180px;
-color:black;
-margin-top:20px;
+  float:left;
+  width:180px;
+  color:black;
+  margin-top:20px;
+  font-size:1em;
 }
+
 
 .calendar_holder a:link
 {
-text-decoration:none;
-color:#1d7a7a;
+  text-decoration:none;
+  color:#1d7a7a;
 }
 
 .calendar_holder a:visited
 {
-text-decoration:none;
-color:#1d7a7a;
+  text-decoration:none;
+  color:#1d7a7a;
 }
 
 .calendar_holder a:hover
 {
-text-decoration:underline;
-color:#1d7a7a;
+  text-decoration:underline;
+  color:#1d7a7a;
 }
 
 .calendar_holder a:active
 {
-text-decoration:none;
-color:#1d7a7a;
+  text-decoration:none;
+  color:#1d7a7a;
 }
 
 
 .rightfloat{
-	float: right;
+  float: right;
 }
 
 .blacktext{
-	color:#000;
+  color:#000;
 }
 
 .skip {
-       position: absolute;
-       left: -999em;
-       width: 990em;
+  position: absolute;
+  left: -999em;
+  width: 990em;
 }
 
 a.skip:active,  a.skip:focus {
-        left: -8.5em;
-        border: 3px #3399cc solid;
-        color:#000;
-        background-color: #fff;
+  left: -8.5em;
+  border: 3px #3399cc solid;
+  color:#000;
+  background-color: #fff;
 }
 
 #holder {
-text-align: left;
-min-height: 100%;
-height: 100%;
-background-color: white;
-margin: 0em auto;
-width: 1000px;
+  text-align: left;
+  min-height: 100%;
+  height: 100%;
+  background-color: white;
+  margin: 0em auto;
+  width: 1000px;
 }
 
 .loader{
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover.gif);
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/home_hover.gif);
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/communicate_hover.gif);
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/history_hover.gif);
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/meet_hover.gif);
-display:none;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover.gif);
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/home_hover.gif);
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/communicate_hover.gif);
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/history_hover.gif);
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/meet_hover.gif);
+  display:none;
 }
 
 .clear_all {
 
-clear:both;
+  clear:both;
 
 }
 
 .clear_all_youtube{
 
-clear:both;
-margin-top: 5px;
+  clear:both;
+  margin-top: 5px;
 
 }
 
 .clear_all_youtube hr{
-	color: #ccc;
-	background-color: #ccc;
-	height: 1px;
-	border: 0;
-  	width: 94%;
-  	margin: 0 0 0 0;
-  	padding: 0 0 0 0;
-  	border: solid;
-  	
+  color: #ccc;
+  background-color: #ccc;
+  height: 1px;
+  border: 0;
+  width: 94%;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  border: solid;
+
 
 }
 
 body{
-	margin: 0;
-	font-family: Arial, Verdana, Sans-Serif;
-	font-size: 0.8em;
-	text-align: center;
-	vertical-align: top;
-	background-color: #d6d3cc;
-	color: #000;
-	
+  margin: 0;
+  font-family: Arial, Verdana, Sans-Serif;
+  font-size: 0.8em;
+  text-align: center;
+  vertical-align: top;
+  background-color: #d6d3cc;
+  color: #000;
+
 }
 
 
+form#kbs {
+  margin-top: 1px;
+}
 
 .form_title{
-	float:left;
-	font-family: "Times New Roman", Arial, Sans serif;
-	color:#fff;
-	font-size:1.4em;
-	padding-top:2px;
-	margin-right:5px;
-	margin-left: 57px;
-	margin-top: 0px;
-}
-
-.tags a{
-
-color:#1d7a7a;
-text-decoration:none;
-}
-
-
-.tags a:hover{
-
-color:#1d7a7a;
-text-decoration:underline;
+  float:right;
+  font-family: "Times New Roman", Arial, Sans serif;
+  color:#fff;
+  font-size:1.4em;
+  padding-top:0px;
+  margin: 0 5px 0 7px;
+  height: 30px;
 }
 
 .searchbtn_wrapper{
-	margin-top: 3px;
-	margin-left: 0px;
-	padding-left: 0px;
+  margin-top: 3px;
+  margin-left: 0px;
+  padding-left: 0px;
 }
 
 .searchbtn
 {
-border-width: 0;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/search_btn.gif);
-background-repeat:repeat;
-border:none;
-color:#FFF;
-background-color: #5a798b;
-font-weight:bold;
+  border-width: 0;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/search_btn.gif);
+  background-repeat:repeat;
+  border:none;
+  color:#FFF;
+  background-color: #5a798b;
+  font-weight:bold;
 
-cursor:pointer;
-font-family: "Times New Roman", Arial, Sans serif;
-font-size: 0.95em;
-margin-left: 3px;
+  cursor:pointer;
+  font-family: "Times New Roman", Arial, Sans serif;
+  font-size: 0.95em;
+  margin-top: 2px;
+  margin-left: 3px;
 }
 
 #wrapper{
-	margin: 0 auto;
-	width: 1000px;
-	text-align: left;
-	border: none;
-	background: #FFF;
+  margin: 0 auto;
+  width: 1000px;
+  text-align: left;
+  border: none;
+  background: #FFF;
 }
 
 
 h1{
-	font-family: "Times New Roman", Arial;
-	font-size: 2.6em;
-	padding: 0 0 0 0;
-	margin: 0 0 0 0;
-	
-	height: 119px;
+  font-family: "Times New Roman", Arial;
+  font-size: 2.6em;
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
+
+  height: 119px;
 }
 
 h1 img{
-	
+
 }
 
 
 h3{
-	padding-top:5px;
-        padding-left:5px;
-        color:#000;
-        font-family: "Times New Roman", Arial, sans serif;
-        font-size:1.3em;
-        font-weight:normal;
+  padding-top:5px;
+  padding-left:0px;
+  color:#000;
+  font-family: Arial, sans-serif;
+  font-size: 1.1em;
+  font-weight: bold;
 }
 
-h4{
-	padding: 0 0 0 15px;
-}
-
-
-
-
-a img {
-	border: none;
-}
 
 /*******************
 ----Custom Styles---
 *******************/
 
-blockquote { 
-	font-style: italic; 
-	font-family: Helvetica, Arial, Sans-serif;
-	font-size: 90%;
-	color: #000; 
-	margin: 1.5em 30px 1.5em 30px; 
-	padding: 4px 4px 4px 10px;
-	background: #f1f0ed;
-	border-left: 2px solid #fff;
+.post_news_archive{
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
 }
 
-code { 
-	color: #9A2EFE; 
-	font-family: Courier, monospace; 
+.post_news_archive p{
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
+}
+
+.post_news_archive p a{
+  color:#1d7a7a;
+  text-decoration: none;
+}
+
+.post_news_archive p a:link{
+  color:#1d7a7a;
+  text-decoration: none;
+}
+
+.post_news_archive p a:visited{
+  color:#1d7a7a;
+  text-decoration: none;
+}
+
+.post_news_archive p a:active{
+  color:#1d7a7a;
+  text-decoration: none;
+}
+
+.post_news_archive p a:hover{
+  color:#1d7a7a;
+  text-decoration: underline;
+}
+
+blockquote {
+  font-style: italic;
+  font-family: Helvetica, Arial, Sans-serif;
+  font-size: 95%;
+  color: #000;
+  margin: 1.5em 30px 1.5em 30px;
+  /* padding: 4px 4px 4px 10px; Triggers obscure wandering off to the left IE6 bug!! */
+  background: #f1f0ed;
+  border-left: 2px solid #fff;
+}
+
+.entry blockquote p {
+  margin: 4px 4px 4px 10px;
+}
+
+blockquote blockquote { margin-left: 0.5em; font-size: 100%;}
+code {
+  color: #9A2EFE;
+  font-family: Courier, monospace;
 }
 
 .entry h4{
-	color:#000;
+  color:#000;
 }
 
-.entry p { 
-	margin: 0 0 15px 0px;
-
-}
-
-.entry p a { 
-	text-decoration: none;
-	color:#1d7a7a;
+.entry p {
+  margin: 0 0 15px 0px;
 
 }
 
-.entry p a:visited { 
-	text-decoration: none;
-	color:#1d7a7a;
+.entry p a {
+  text-decoration: none;
+  color:#1d7a7a;
 
 }
 
-.entry p a:hover { 
-	text-decoration: underline;
-	color:#1d7a7a;
+.entry p a:visited {
+  text-decoration: none;
+  color:#1d7a7a;
 
 }
 
-.entry p a:active { 
-	text-decoration: none;
-	color:#1d7a7a;
+.entry p a:hover {
+  text-decoration: underline;
+  color:#1d7a7a;
+
+}
+
+.entry p a:active {
+  text-decoration: none;
+  color:#1d7a7a;
 
 }
 
 .entryline
 {
-margin-top:10px;
-	border-bottom: 2px solid #000; 
+  margin-top:10px;
+  border-bottom: 2px solid #000;
 }
 
 .bg {
-	background: #f1f0ed;
+  background: #f1f0ed;
 
 }
 
-.entry ul, .entry ol { 
-	margin: 0 0 15px 5px; 
-	
-}
-	
-.entry ul { 
-	list-style-type: none; 
+.entry ul, .entry ol {
+  margin: 0 0 15px 5px;
+
 }
 
-.entry ul li{ 
-	display:table;
+.entry ul {
+  list-style-type: none;
 }
+
+.entry ul li{
+  /* display:table; ML why??? */
+}
+
 .timestamp{
-        font-family: "Times New Roman", Arial, Sans Serif;
-        font-size:1em;
-        color:#000000;
-        font-weight:bold;
-}	
+  font-family: "Times New Roman", Arial, Sans Serif;
+  font-size:1.2em;
+  color:#000000;
+  font-weight:bold;
+}
 .entry ul.bg {
-	background: #f1f0ed;
-	padding-top: 15px;
-	padding-bottom: 10px;
-	padding-right: 10px;
+  background: #f1f0ed;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  padding-right: 10px;
 
 }
 
 .entry ul.bg.blue {
-	background: #E0ECF8;
+  background: #E0ECF8;
 }
 
 .entry ol.bg {
-	background: #f1f0ed;
-	padding-top: 15px;
-	padding-bottom: 10px;
-	padding-right: 10px;
+  background: #f1f0ed;
+  padding-top: 15px;
+  padding-bottom: 10px;
+  padding-right: 10px;
 
 }
 
 .entry ol.bg.blue {
-	background: #E0ECF8;
+  background: #E0ECF8;
 }
 
-.entry li { 
-	margin: 0 0 5px 0; 
-}
-		
-.entry ul li ul, .entry ul li ol, .entry ol li ul, .entry ol li ol { 
-	margin: 5px 0 5px 30px; 
+.entry li {
+  margin: 0 0 5px 0;
 }
 
-.entry blockquote.right { 
-	width: 150px; 
-	font-style: normal !important; 
-	font-size: 1.1em;
-	color: #777;
-	margin: 0.3em 0 0.3em 15px !important; 
-	padding: 5px;
-	background: #f1f0ed; 
-	border-top: 2px solid #fff;
-	border-bottom: 2px solid #fff; 
-	border-left: none;
-	border-right: none;
-	text-align: center; 
-	float: right; 
-}
-		
-.entry blockquote.left { 
-	width: 150px; 
-	font-style: normal !important; 
-	font-size: 1.1em;
-	color: #777;
-	margin: 0.3em 15px 0.3em 0 !important; 
-	padding: 5px;
-	background: #f1f0ed; 
-	border-top: 2px solid #fff;
-	border-bottom: 2px solid #fff; 
-	border-left: none;
-	border-right: none;
-	text-align: center; 
-	float: left; 
-}
-	
-.entry blockquote.right p, .entry blockquote.left p { 
-	margin: 0; 
-	line-height: 1.4em !important; 
+.entry ul li ul, .entry ul li ol, .entry ol li ul, .entry ol li ol {
+  margin: 5px 0 5px 30px;
 }
 
-.entry img.left { 
-	padding: 6px; 
-	margin: 0.5em 15px 0.5em 0; 
-	border: none;
-	float: left; 	
-	clear: left; 
-}
-		
-.entry img.right { 
-	padding: 6px; 
-	margin: 0.5em 0 0.5em 15px; 
-	border: none;
-	float: right; 
-	clear: right; 
-}
-		
-.entry img.center { 
-	display: block; 
-	padding: 8px; 
-	margin: 0 auto 1.5em auto; 
-	border: none;
-	float: none; 
-	clear: both; 
-}
-	
-.entry img.frame { 
-	padding: 6px; 
-	margin: 0.5em 0 0.5em 15px; 
-	border: 1px solid #CCC;
-	background: #EEE;
-	float: right; 
-	clear: right; 
-}
-		
-.entry img.stack { 
-	clear: none !important; 
+.entry blockquote.right {
+  width: 150px;
+  font-style: normal !important;
+  font-size: 1.1em;
+  color: #777;
+  margin: 0.3em 0 0.3em 15px !important;
+  padding: 5px;
+  background: #f1f0ed;
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  border-left: none;
+  border-right: none;
+  text-align: center;
+  float: right;
 }
 
-.archive_head { 
-	text-align: center;
-	font-style: normal; 
-	font-family: Helvetica, Arial, Sans-serif;
-	font-size: 1em;
-	color: #000; 
-	margin: 25px auto 10px 30px;
-	border-top: 1px dotted #CCC;
-	border-bottom: 1px dotted #CCC;
+.entry blockquote.left {
+  width: 150px;
+  font-style: normal !important;
+  font-size: 1.1em;
+  color: #777;
+  margin: 0.3em 15px 0.3em 0 !important;
+  padding: 5px;
+  background: #f1f0ed;
+  border-top: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  border-left: none;
+  border-right: none;
+  text-align: center;
+  float: left;
+}
+
+.entry blockquote.right p, .entry blockquote.left p {
+  margin: 0;
+  line-height: 1.4em !important;
+}
+
+.entry img.left {
+  padding: 6px;
+  margin: 0.5em 15px 0.5em 0;
+  border: none;
+  float: left;
+  clear: left;
+}
+
+.entry img.right {
+  padding: 6px;
+  margin: 0.5em 0 0.5em 15px;
+  border: none;
+  float: right;
+  clear: right;
+}
+
+.entry img.center {
+  display: block;
+  padding: 8px;
+  margin: 0 auto 1.5em auto;
+  border: none;
+  float: none;
+  clear: both;
+}
+
+.entry img.frame {
+  padding: 6px;
+  margin: 0.5em 0 0.5em 15px;
+  border: 1px solid #CCC;
+  background: #EEE;
+  float: right;
+  clear: right;
+}
+
+.entry img.stack {
+  clear: none !important;
+}
+
+.archive_head {
+  text-align: center;
+  font-style: normal;
+  font-family: Helvetica, Arial, Sans-serif;
+  font-size: 1em;
+  color: #000;
+  margin: 25px auto 10px 30px;
+  border-top: 1px dotted #CCC;
+  border-bottom: 1px dotted #CCC;
 }
 
 /*******************
@@ -429,89 +453,62 @@ margin-top:10px;
 *******************/
 
 #header{
-	font-family:Georgia, "Times New Roman", Times, serif;
-	width: 1000px;
-	height: 119px;
-	margin: 0;
-	padding: 0;
-	background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/header_bg.gif);
-	background-color:#000;
-	color: #000;
-	clear: both;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  width: 1000px;
+  height: 119px;
+  margin: 0;
+  padding: 0;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/header_bg.png);
+  background-color:#000;
+  color: #000;
+  clear: both;
 }
 
 
 #header h1{
-	color: #fff;
-	font-size:1em
+  color: #fff;
+  font-size:1em
 
 }
 
 .header_logo{
-	float:left;
+  float:left;
 }
 
 .header_logo span{
-	padding-left: 24px;
-	color:#ccc;
-	font-size: 1.2em;
+  padding-left: 24px;
+  color:#ccc;
+  font-size: 1.2em;
 
 }
 
 .title{
-	margin: 0 auto 0 0;
-	width: 900px;
-	padding: 20px 20px 20px 10px;
-	text-align: left;
-	color: #000;
+  margin: 0 auto 0 0;
+  width: 900px;
+  padding: 20px 20px 20px 10px;
+  text-align: left;
+  color: #000;
 }
 
 .title a:link{
-	text-decoration: none;
-	color:#000;
+  text-decoration: none;
+  color:#000;
 }
 
 .title a:hover{
-	text-decoration: underline;
-	color: #CCC;
+  text-decoration: underline;
+  color: #CCC;
 }
 
 .title a:visited{
-	text-decoration: none;
-	color:#000;
+  text-decoration: none;
+  color:#000;
 }
 
 
 /********************
 ----Navigaiton Bar---
 ********************/
-
-#top-menu-container{
-	width: 1000px;
-	font-family:Georgia, "Times New Roman", Times, serif;
-	text-align: left;
-	border: none;
-    height: 30px;
-	background-color: #5a798b;
-
-}
-
-#top-menu{
-    float:left;
-	width: 75%;
-	font-family:Georgia, "Times New Roman", Times, serif;
-	text-align: left;
-	border: none;
-	height: 30px;
-    
-	background-color: #5a798b;
-    display:inline;
-    padding-left: 17px;   
-    margin: 0 0 0 0;
-    vertical-align: baseline;
-}
-
-
 
 
 
@@ -524,479 +521,519 @@ margin-top:10px;
 
 
 .current_home_left {
-	background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_left.gif);
-	background-color: #f00;
-	background-repeat:no-repeat;
-	background-position: top left;
-	float: left;
-	width: 10px;
-	height: 13px;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_left.gif);
+  background-color: #f00;
+  background-repeat:no-repeat;
+  background-position: top left;
+  float: left;
+  width: 10px;
+  height: 13px;
 }
 
 .current_home{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 
 .current_home:visited{
-	color: #fff;
-	background-color: #5a798b;  
+  color: #fff;
+  background-color: #5a798b;
 }
 
 .current_home:hover{
-	color: #000;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;   
+  color: #000;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home:active{
-	color: #000;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right; 
+  color: #000;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_active{
-    text-decoration: none;
-    float:left;
-	font-size: 1.4em;   
-    width:auto;
-	padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 
-    color: #000;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right; 
+  color: #000;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_active{
-	text-decoration: none;
+  text-decoration: none;
 }
 
 
 /*------------------news---------------*/
 
 .current_home_news{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 
 .current_home_news:link{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_news:visited{
-	text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;    
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_news:hover{
-	color: #1d7a7a;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;   
+  color: #1d7a7a;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_news:active{
-	text-decoration: none;
-    float:left;
-	color: #1d7a7a;
-	font-size: 1.4em;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right; 
+  text-decoration: none;
+  float:left;
+  color: #1d7a7a;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_news_active{
-	text-decoration: none;
-    float:left;
-	color: #1d7a7a;
-	font-size: 1.4em;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;  
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right; 
+  text-decoration: none;
+  float:left;
+  color: #1d7a7a;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 /*------------------Number 10 tv---------------*/
 
 .current_home_nr10tv{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 
 .current_home_nr10tv:link{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_nr10tv:visited{
-	text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;   
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_nr10tv:hover{
-	color: #660066;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;   
+  color: #660066;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_nr10tv:active{
-	text-decoration: none;
-    float:left;
-	color: #660066;
-	font-size: 1.4em;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px; 
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right; 
+  text-decoration: none;
+  float:left;
+  color: #660066;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_nr10tv_active{
-	text-decoration: none;
-    float:left;
-	color: #660066;
-	font-size: 1.4em;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;  
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right; 
+  text-decoration: none;
+  float:left;
+  color: #660066;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
+.pages_textnews_nr10tv h2{
+  font-family: Georgia, Arial ,sans-serif;
+
+  font-size: 2.4em;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  color: #660066;
+  padding: 10px 0 0 0;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  margin-top: -12px;
+  border-bottom:1px dashed #000;
+}
+
+.pages_post_nr10tv h2.page_title_border {
+  font-size: 1.4em;
+  color: #660066;
+}
 
 
 /*------------------communicate---------------*/
 
 .current_home_communicate{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_communicate:link{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_communicate:visited{
-	text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px; 
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_communicate:hover{
-	color: #4f8718;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;   
+  color: #4f8718;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_communicate_active{
-	text-decoration: none;
-    float:left;
-	font-size: 1.4em;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
-	color: #4f8718;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;     
+  text-decoration: none;
+  float:left;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  color: #4f8718;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 /*------------------meet---------------*/
 
 .current_home_meet{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_meet:link{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_meet:visited{
-	text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;  
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_meet:hover{
-	color: #c2604b;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;   
+  color: #c2604b;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 
 .current_home_meet:active{
-	text-decoration: none;
-    float:left;
-	font-size: 1.4em;
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
-	color: #c2604b;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;   
+  text-decoration: none;
+  float:left;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  color: #c2604b;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_meet_active{
-	text-decoration: none;
-    float:left;
-	font-size: 1.4em;
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
-	color: #c2604b;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;   
+  text-decoration: none;
+  float:left;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  color: #c2604b;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 
 /*------------------history---------------*/
 
 .current_home_history{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_history:link{
-    text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_history:visited{
-	text-decoration: none;
-    float:left;
-	color: #fff;
-	font-size: 1.4em;
-    background-color: #5a798b;    
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
+  text-decoration: none;
+  float:left;
+  color: #fff;
+  font-size: 1.4em;
+  background-color: #5a798b;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
 }
 
 .current_home_history:hover{
-	text-decoration: none;
-    float:left;
-	font-size: 1.4em;   
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
-	color: #976431;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;   
+  text-decoration: none;
+  float:left;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  color: #805429;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_history:active{
-	text-decoration: none;
-    float:left;
-	font-size: 1.4em;   
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
-	color: #976431;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;  
+  text-decoration: none;
+  float:left;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  color: #805429;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 .current_home_history_active{
-	text-decoration: none;
-    float:left;
-	font-size: 1.4em;   
-    width:auto;
-    padding: 3px 8px 0px 8px;
-    margin: 2px 0 0 0;
-    height: 25px;
-	color: #976431;
-    background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover_right.gif);
-	background-color: #fff;
-	background-repeat:no-repeat;
-	background-position: top right;  
+  text-decoration: none;
+  float:left;
+  font-size: 1.4em;
+  width:auto;
+  padding: 3px 8px 0px 8px;
+  margin: 2px 0 0 0;
+  height: 25px;
+  color: #805429;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover_right.gif);
+  background-color: #fff;
+  background-repeat:no-repeat;
+  background-position: top right;
 }
 
 /*-----------news navigation------------*/
 
 .navigation{
-	margin: 0px 15px 15px 235px;
+  margin: 0px 23px 15px 225px;
 }
 
-.navigation a{
-	color:#1d7a7a;
-	text-decoration: none;
+.navigation div{
+  margin-bottom:10px;
 }
 
-.navigation a:link{
-	color:#1d7a7a;
-	text-decoration: none;
+.navigation div a{
+  color:#1d7a7a;
+  text-decoration: none;
 }
 
-.navigation a:visited{
-	color:#1d7a7a;
-	text-decoration: none;
+.navigation div a:active, .navigation div a:hover{
+  text-decoration: underline;
 }
 
-.navigation a:active{
-	color:#1d7a7a;
-	text-decoration: none;
+
+    
+/*-------------- navigation ---------*/
+
+.navigation_communicate {
+  margin: 0px 23px 15px 225px;
+  padding-bottom: 10px;
 }
 
-.navigation a:hover{
-	color:#1d7a7a;
-	text-decoration: underline;
+.navigation_communicate div a{
+  color:#4f8718;
+  text-decoration: none;
 }
 
+.navigation_communicate div a:link{
+  color:#4f8718;
+  text-decoration: none;
+}
+
+.navigation_communicate div a:visited{
+  color:#4f8718;
+  text-decoration: none;
+}
+
+.navigation_communicate div a:active{
+  color:#4f8718;
+  text-decoration: none;
+}
+
+.navigation_communicate div a:hover{
+  color:#4f8718;
+  text-decoration: none;
+}
 
 /*
 /----------- sidebar right------------
@@ -1004,54 +1041,54 @@ margin-top:10px;
 
 .sidebar_features_panel div
 {
-	width: 198px;
-	margin: 0 0 0 0;
-	padding: 0 0 0 0;
+  width: 188px;
+  margin: 0 0 0 0;
+  padding: 0 0 0 0;
 }
 
 
 .sidebar_features_panel div div
 {
-	width: 198px;
-	margin: 0 0 0 0;
-	padding: 0 2px 0 2px;
+  width: 188px;
+  margin: 0 0 0 0;
+  padding: 0 5px 0 5px;
 }
 
 .sidebar_features_panel div div p
 {
-	width: 198px;
-	margin: 5px 0 0 0;
-	padding: 0 0 0 0px;
-	background-color: #1a1a1a;
+  width: 188px;
+  margin: 5px 0 0 0;
+  padding: 0 0 0 0px;
+  background-color: #1a1a1a;
 }
 
 .sidebar_features_panel div div p img
 {
-	margin-top: 0px;
+  margin-top: 0px;
 }
 
 .sidebar_features_panel div div p a:link
 {
-	color:#ca5188;
-	text-decoration: none;
+  color:#ca5188;
+  text-decoration: none;
 }
 
 .sidebar_features_panel div div p a:visited
 {
-	color:#ca5188;
-	text-decoration: none;
+  color:#ca5188;
+  text-decoration: none;
 }
 
 .sidebar_features_panel div div p a:active
 {
-	color:#ca5188;
-	text-decoration: none;
+  color:#ca5188;
+  text-decoration: none;
 }
 
 .sidebar_features_panel div div p a:hover
 {
-	color:#ca5188;
-	text-decoration: underline;
+  color:#ca5188;
+  text-decoration: underline;
 }
 
 
@@ -1060,309 +1097,266 @@ margin-top:10px;
 *******************/
 
 #container{
-	float: left;
-	width: 784px;
-	padding: 0 0 0 0;
-        background: #FFF;
+  float: left;
+  width: 784px;
+  padding: 0 0 0 0;
+  background: #FFF;
 }
 
 #inner_container{
-	padding: 0 0 0 0;
-	
+  padding: 0 0 0 0;
+
 }
 
 #inner_container div{
-	padding-right: 15px;
+  padding-right: 15px;
 }
 
 #container hr {
-width:730px;
-text-align:left;
-border:1px dashed #6b6b69;
-margin-top:15px;
+  /*width:730px;*/
+  text-align:left;
+  border:1px dashed #6b6b69;
+  margin-top:15px;
 }
 
 
 
 .page_title1{
-margin-top:10px;
-margin-left:22px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/video_news.gif);
-background-repeat:no-repeat;
-height:24px;
-padding-bottom:10px;
-width: 750px;
-border-bottom:1px dashed #000;
+  margin-top:10px;
+  margin-left:22px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/video_news.gif);
+  background-repeat:no-repeat;
+  height:24px;
+  padding-bottom:10px;
+  width: 750px;
+  border-bottom:1px dashed #000;
 
 }
 
 .page_title_recent_news{
-margin-top:10px;
-margin-left:22px;
-padding-bottom:10px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/recent_news.gif);
-background-repeat:no-repeat;
-float:left;
-width:182px;
-height:21px;
-width: 535px;
-border-bottom:1px dashed #000;
-}
-
-.post{
-	padding: 20px 0px 15px 23px;
-	width:535px;
+  margin-top:10px;
+  margin-left:22px;
+  padding-bottom:10px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/recent_news.gif);
+  background-repeat:no-repeat;
+  float:left;
+  width:182px;
+  height:21px;
+  width: 535px;
+  border-bottom:1px dashed #000;
 }
 
 .post_latestnews{
-	padding: 0px 0px 15px 0px;
-	width:535px;
+  margin-right:8px;
+  padding: 0px 0px 15px 0px;
+  width:535px;
 }
 
-.post h3{
-	text-transform: none;
-	font-family:"Times New Roman", Times, serif;
-	font-size: 1.3em;
-        color:black;
-        font-weight:normal;
-        padding: 0 0 0 0;
-        margin: 0;
+.post_petition{
+  margin-right:25px;
+  margin-left: 0;
+  padding:0px 0px 15px 0pt;
+  width:534px;
 }
 
-.post h3 a:link{
-color:#000;
-text-decoration:none;
+.post_petition1{
+  margin-right:8px;
+  padding: 0px 0px 15px 0px;
+  width:535px;
 }
 
-.post h3 a:visited{
-color:#000;
-text-decoration:none;
+.post_petition1 div p a{
+  color: #4f8718;
 }
 
-.post h3 a:hover{
-color:#000;
-text-decoration:underline;
+.post_petition1 div p a:link{
+  color: #4f8718;
 }
 
-.post h3 a:active{
-color:#000;
-text-decoration:none;
-}
-.entry{
-	line-height: 22px;
+.post_petition1 div p a:visited{
+  color: #4f8718;
 }
 
-.postinfo{
-        font-family:"Times New roman", Times, serif;
-	font-size: 1.1em;
-	color: #000;
-	padding: 2px 0 0 0;
+.post_petition1 div p a:active{
+  color: #4f8718;
 }
 
-.postinfo a{
-	color: #000;
+.post_petition1 div p a:hover{
+  color: #4f8718;
 }
 
-.postdate{ color: #000; }
-
-p.postmetadata{
-	font-size: 1em;
-	color: #000;
-	margin: 5px 0 0 0;
-	padding: 5px 0 0 0;
+p.postmetadata_communicate{
+  font-size: 1em;
+  color: #000;
+  margin: 5px 0 0 0;
+  padding: 5px 0 0 0;
 }
 
-p.postmetadata a:link{
-color:#1d7a7a;
-text-decoration:none;
+p.postmetadata_communicate a:link{
+  color:#4f8718;
+  text-decoration:none;
 }
 
-p.postmetadata a:visited{
-color:#1d7a7a;
-text-decoration:none;
+p.postmetadata_communicate a:visited{
+  color:#4f8718;
+  text-decoration:none;
 }
 
-p.postmetadata a:hover{
-color:#1d7a7a;
-text-decoration:underline;
+p.postmetadata_communicate a:hover{
+  color:#4f8718;
+  text-decoration:underline;
 }
 
-p.postmetadata a:active{
-color:#1d7a7a;
-text-decoration:none;
+p.postmetadata_communicate a:active{
+  color:#4f8718;
+  text-decoration:none;
 }
 
-p.postmetadata strong{
-	float: right;
+p.postmetadata_communicate strong{
+  float: right;
 }
 
 /* This is the link at the bottom of a post which lets you go to the next or previous post */
 
 .postnav{
-	padding: 10px 20px 20px 10px;
-	font-size: 1.1em;
-	font-weight: bold;
-	line-height: 18px;
+  padding: 10px 20px 20px 10px;
+  font-size: 1.1em;
+  font-weight: bold;
+  line-height: 1.4;
 }
 
-h3.archive_head{ 
-	font-weight: bold !important; 
-	font-size: 1.1em !important; 
-	text-transform: none !important; 
-	letter-spacing: normal !important; 
-	margin: 0 0 1.8em 10px !important; 
-	padding: 0.4em 5px !important; 
-	border-bottom: 1px dotted #CCC; 
-	background: none; 
+h3.archive_head{
+  font-weight: bold !important;
+  font-size: 1.1em !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  margin: 0 0 1.8em 10px !important;
+  padding: 0.4em 5px !important;
+  border-bottom: 1px dotted #CCC;
+  background: none;
 }
 
-	
+
 
 /********************
 ----Sidebar Styles---
 ********************/
 .sidebar_newsletter_topic
 {
-width:117px;
-height:16px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/newsletter_title.gif);
-background-repeat:no-repeat;
-margin-top:35px;
-margin-bottom:15px;
+  width:117px;
+  height:16px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/newsletter_title.gif);
+  background-repeat:no-repeat;
+  margin-top:35px;
+  margin-bottom:15px;
 }
 
 .sidebar_newsletter_text
 {
-color:#FFFFFF;
-font-size:1.2em;
-text-align:center;
-padding-top:25px;
-font-weight:bold;
+  color:#FFFFFF;
+  font-size:1.2em;
+  text-align:center;
+  padding-top:25px;
+  font-weight:bold;
 }
 
 .sidebar_newsletter_text a:link{
-color:#FFFFFF;
-text-decoration:none;
+  color:#FFFFFF;
+  text-decoration:none;
 }
 
 .sidebar_newsletter_text a:hover{
-color:#FFFFFF;
-text-decoration:underline;
+  color:#FFFFFF;
+  text-decoration:underline;
 }
 
 .sidebar_newsletter_panel
 {
-width:198px;
-height:7px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/newsletter_panel.gif);
-background-repeat:no-repeat;
-margin-bottom:0px;
-margin-top: 0px;
+  padding: 0px;
+
+  width:198px;
+  height:7px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/newsletter_panel.gif);
+  background-repeat:no-repeat;
+  margin-bottom:0px;
+  margin-top: 0px;
+  padding: 0 0 0 0;
+
 }
 
 .sidebar_aroundtheweb_topic
 {
-width:167px;
-height:19px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/around_the_web_title.gif);
-background-repeat:no-repeat;
-margin-bottom:5px;
+  width:167px;
+  height:19px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/around_the_web_title.gif);
+  background-repeat:no-repeat;
+  margin-bottom:5px;
 }
 
 .sidebar_topics
 {
-padding-top:5px;
-padding-left:5px;
-margin-top:5px;
+  padding-top:5px;
+  padding-left:5px;
+  margin-top:5px;
 
-margin-bottom:0;
-font-family:Arial;
-font-weight:bold;
-font-size:0.9em;
-color:#fff;
+  margin-bottom:0;
+  font-family:Arial;
+  font-weight:bold;
+  font-size:0.9em;
+  color:#fff;
 
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/aroundtheweb_panel.gif);
-background-repeat:no-repeat;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/aroundtheweb_panel.gif);
+  background-repeat:no-repeat;
 }
 
 .sidebar_newsletter_topics
 {
-padding-top:0;
-padding-left:5px;
-margin-top:3px;
-margin-bottom:0;
-font-family:Arial;
-font-weight:bold;
-font-size:0.9em;
-color:#ffffff;
+  padding-top:0;
+  padding-left:5px;
+  margin-top:3px;
+  margin-bottom:0;
+  font-family:Arial;
+  font-weight:bold;
+  font-size:0.9em;
+  color:#ffffff;
 
 }
 
 
 
-/*  
-Theme Name: NetWorker
-Theme URI: http://www.antbag.com
-Description: An adsense ready theme from Antbag.com.
-Version: 1.0
-Author: Anthony Baggett
-Author URI: http://www.antbag.com/
-
-*/
-
-/*body, h1, h2, h3, h4, h5, h6, blockquote, p, form{
-	margin: 0;
-	padding: 0;
-}
-*/
-
+/* ML duplication below here! */
 
 
 .tags a{
 
-color:#1d7a7a;
-text-decoration:none;
+  color:#1d7a7a;
+  text-decoration:none;
 }
 
 
 .tags a:hover{
 
-color:#1d7a7a;
-text-decoration:underline;
+  color:#1d7a7a;
+  text-decoration:underline;
 }
-
-
-
-
-
-#s{
-	margin-left: 3px;
-}
-
-#search_form
-{
-float:right;
-margin-right:0px;
-}
-
-
 
 h4{
-	padding-top:5px;
-        padding-left:5px;
-        color:white;
-        font-family: "Times New Roman", Arial, sans serif;
-        font-size:1.2em;
-        font-weight:normal;
+  padding: 0 0 0 15px;
+  padding-top:5px;
+  padding-left:5px;
+  color:white;
+  font-family: "Times New Roman", Arial, sans serif;
+  font-size:1.2em;
+  font-weight:normal;
 }
 
 h5{
-	padding: 0 0 0 15px;
+  padding: 0 0 0 15px;
 }
 
 
 a img {
-	border: none;
+  border: none;
 }
 
 
@@ -1370,24 +1364,44 @@ a img {
 ----Navigaiton Bar---
 ********************/
 
+#top-menu-container{
+  width: 1000px;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  text-align: left;
+  border: none;
+  background-color: #5a798b;
+  float:left;
+}
+
+#top-menu{
+  float:left;
+  width: 72%;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  text-align: left;
+  border: none;
+
+  background-color: #5a798b;
+  display:inline;
+  padding-left: 17px;
+  margin: 0 0 0 0;
+  vertical-align: baseline;
+}
 
 
 
 #top-menu ul{
-	margin: 0 0 0 0;
-    height:auto;
-    min-height: 30px;
-	width: auto;
-    float:left;
-	padding: 0 0 0 0;
-	text-align: left;
+  margin: 0 0 0 0;
+  height:auto;
+  width: auto;
+  float:left;
+  padding: 0 0 0 0;
+  text-align: left;
 }
 
 #top-menu ul li{
-	display: inline;
-	float:left;
- 	list-style-type: none;
- 	min-height: 30px;
+  display: inline;
+  float:left;
+  list-style-type: none;
 }
 
 
@@ -1397,525 +1411,535 @@ a img {
 
 
 
-#main_panel IMG
+#main_panel img
 {
-padding:10px;
+  padding:0px;
 }
 
 #main_panel
 {
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/main_panel.gif);
-width:746px;
-height:414px;
-margin-top:10px;
-margin-left:22px;
-margin-bottom:0px;
-padding: 6px 0px 5px 6px;	
-background-repeat:no-repeat;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/main_panel.gif);
+  width:746px;
+  height:414px;
+  margin-top:10px;
+  margin-left:22px;
+  margin-bottom:0px;
+  padding: 6px 0px 5px 6px;
+  background-repeat:no-repeat;
 }
 
 
 #main_panel div {
-	padding: 0 0 0 0;	
-	margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
 }
 
 #main_panel div p{
-	padding: 0 0 0 0;	
-	margin: 0 0 0 0;
+  padding: 0 0 0 0;
+  margin: 0 0 0 0;
 }
 
 
-	
 
 
-#main_panel div div p{
-	padding: 0 5px 0 476px;	
-	margin: 0 6px 0 5px;
-	background-color: #1a1a1a;
-	color: #fff;
+
+#main_panel #right-subpanel p{
+  padding: 0 5px 0 476px;
+  margin: 15px 6px 0 5px;
+  background-color: #1a1a1a;
+  color: #fff;
 }
 
-#main_panel div div h3{
-	padding: 0 5px 0 5px;	
-	margin: 0 10px 10px 476px;
-	background-color: #1a1a1a;
-	color: #fff;
+#main_panel #right-subpanel h3{
+  padding: 0 5px 0 5px;
+  margin: 0 10px 10px 476px;
+  background-color: #1a1a1a;
+  color: #fff;
+  font-size: 1.8em;
+  font-family:"Times New roman", Times, serif;
 }
 
 .beta{
-	
-	padding-top: 40px;
-	color: #ccc;
-	font-size: 1.2em;
+
+  padding-top: 40px;
+  color: #ccc;
+  font-size: 1.2em;
 }
 
 
 #main_panel div p a img{
-	padding: 0 0 0 0;
-	margin: 0 5px 0 0;
+  padding: 0 0 0 0;
+  margin: 0 5px 0 0;
 }
 
 #main_panel div p a embed{
-	padding: 0 0 0 0;
-	margin: 0 5px 0 0;
+  padding: 0 0 0 0;
+  margin: 0 5px 0 0;
 }
 
 #main_panel div p a object{
-	padding: 0 0 0 0;
-	margin: 0 5px 0 0;
+  padding: 0 0 0 0;
+  margin: 0 5px 0 0;
 }
 
-#main_panel div div p a{
-	color: #ca5188;
-	text-decoration: none;
+#main_panel #right-subpanel p a{
+  color: #ca5188;
+  text-decoration: none;
 }
 
-#main_panel div div p a:link{
-	color: #ca5188;
-	text-decoration: none;
+#main_panel #right-subpanel p a:link{
+  color: #ca5188;
+  text-decoration: none;
 }
 
-#main_panel div div p a:visited{
-	color: #ca5188;
-	text-decoration: none;
+#main_panel #right-subpanel p a:visited{
+  color: #ca5188;
+  text-decoration: none;
 }
 
-#main_panel div div p a:active{
-	color: #ca5188;
-	text-decoration: none;
+#main_panel #right-subpanel p a:active{
+  color: #ca5188;
+  text-decoration: none;
 }
 
-#main_panel div div p a:hover{
-	color: #ca5188;
-	text-decoration: underline;
+#main_panel #right-subpanel p a:hover{
+  color: #ca5188;
+  text-decoration: underline;
 }
 
 
 
 .page_title1{
-margin-top:10px;
-margin-left:22px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/video_news.gif);
-background-repeat:no-repeat;
-height:24px;
-padding-bottom:10px;
-width: 750px;
-border-bottom:1px dashed #000;
+  margin-top:10px;
+  margin-left:22px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/video_news.gif);
+  background-repeat:no-repeat;
+  height:24px;
+  padding-bottom:10px;
+  width: 750px;
+  border-bottom:1px dashed #000;
 
 }
 
 .page_title_recent_news{
-margin-top:10px;
-margin-left:22px;
-padding-bottom:10px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/recent_news.gif);
-background-repeat:no-repeat;
-float:left;
-width:182px;
-height:21px;
-width: 535px;
-border-bottom:1px dashed #000;
+  margin-top:10px;
+  margin-left:22px;
+  padding-bottom:10px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/recent_news.gif);
+  background-repeat:no-repeat;
+  float:left;
+  width:182px;
+  height:21px;
+  width: 535px;
+  border-bottom:1px dashed #000;
 }
+
 .post{
-	padding: 20px 0px 15px 23px;
-width:535px;
+  padding: 20px 0px 15px 23px;
+  width:535px;
 }
 
 .post h3{
-	text-transform: none;
-	font-family:"Times New Roman", Times, serif;
-	font-size: 1.6em;
-        color:black;
-        font-weight:normal;
-        padding: 0 0 0 0;
-        margin: 0;
+  text-transform: none;
+  font-family: Arial, sans-serif;
+  font-size: 1.6em;
+  color:black;
+  font-weight:normal;
+  padding: 0 0 0 0;
+  margin: 0;
 }
 
 .post h3 a:link{
-color:#000;
-text-decoration:none;
+  color:#000;
+  font-size: 1.25em;
+  text-decoration:none;
 }
 
 .post h3 a:visited{
-color:#000;
-text-decoration:none;
+  color:#000;
+  font-size: 1.25em;
+  text-decoration:none;
 }
 
-.post h3 a:hover{
-color:#000;
-text-decoration:underline;
+.post h3 a:hover {
+  color:#000;
+  font-size: 1.25em;
+  text-decoration:underline;
 }
 
-.post h3 a:active{
-color:#000;
-text-decoration:none;
+.post h3 a:active {
+  color:#000;
+  font-size: 1.25em;
+  text-decoration:underline;
 }
 .entry{
-	line-height: 22px;
+  line-height: 1.4;
 }
 
 .postinfo{
-        font-family:"Times New roman", Times, serif;
-	font-size: 1.2em;
-	color: #000;
-	padding: 2px 0 0 0;
+  font-family:"Times New roman", Times, serif;
+  font-size: 1.2em;
+  color: #000;
+  padding: 2px 0 0 0;
 }
 
 .postinfo a{
-	color: #000;
+  color: #000;
 }
 
 .postdate{ color: #000; }
 
 p.postmetadata{
-	font-size: 1em;
-	color: #000;
-	margin: 5px 0 0 0;
-	padding: 5px 0 0 0;
+  font-size: 1em;
+  color: #000;
+  margin: 5px 0 0 0;
+  padding: 5px 0 0 0;
 }
 
 p.postmetadata a:link{
-color:#1d7a7a;
-text-decoration:none;
+  color:#1d7a7a;
+  text-decoration:none;
 }
 
 p.postmetadata a:visited{
-color:#1d7a7a;
-text-decoration:none;
+  color:#1d7a7a;
+  text-decoration:none;
 }
 
 p.postmetadata a:hover{
-color:#1d7a7a;
-text-decoration:underline;
+  color:#1d7a7a;
+  text-decoration:underline;
 }
 
 p.postmetadata a:active{
-color:#1d7a7a;
-text-decoration:none;
+  color:#1d7a7a;
+  text-decoration:none;
 }
 
 p.postmetadata strong{
-	float: right;
+  float: right;
 }
 
 /* This is the link at the bottom of a post which lets you go to the next or previous post */
 
 .postnav{
-	padding: 10px 20px 20px 10px;
-	font-size: 1.1em;
-	font-weight: bold;
-	line-height: 18px;
+  padding: 10px 20px 20px 10px;
+  font-size: 1.1em;
+  font-weight: bold;
+  line-height: 1.4;
 }
 
-h3.archive_head{ 
-	font-weight: bold !important; 
-	font-size: 1.1em !important; 
-	text-transform: none !important; 
-	letter-spacing: normal !important; 
-	margin: 0 0 1.8em 10px !important; 
-	padding: 0.4em 5px !important; 
-	border-bottom: 1px dotted #CCC; 
-	background: none; 
+h3.archive_head{
+  font-weight: bold !important;
+  font-size: 1.1em !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+  margin: 0 0 1.8em 10px !important;
+  padding: 0.4em 5px !important;
+  border-bottom: 1px dotted #CCC;
+  background: none;
 }
 
-	
+
 
 /********************
 ----Sidebar Styles---
 ********************/
 .sidebar_newsletter_topic
 {
-width:117px;
-height:16px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/newsletter_title.gif);
-background-repeat:no-repeat;
-margin-top:35px;
+  width:117px;
+  height:16px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/newsletter_title.gif);
+  background-repeat:no-repeat;
+  margin-top:35px;
 
 }
 
 .sidebar_newsletter_text
 {
-color:#FFFFFF;
-font-size:1.3em;
-text-align:center;
-padding-top:25px;
-font-weight:bold;
+  color:#FFFFFF;
+  font-size:1.3em;
+  text-align:center;
+  padding-top:25px;
+  font-weight:bold;
 }
 
 .sidebar_newsletter_text a:link{
-color:#FFFFFF;
-text-decoration:none;
+  color:#FFFFFF;
+  text-decoration:none;
 }
 
 .sidebar_newsletter_text a:hover{
-color:#FFFFFF;
-text-decoration:underline;
+  color:#FFFFFF;
+  text-decoration:underline;
 }
 
 
 
 .sidebar_aroundtheweb_topic
 {
-width:167px;
-height:19px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/around_the_web_title.gif);
-background-repeat:no-repeat;
-margin-bottom:5px;
+  width:167px;
+  height:19px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/around_the_web_title.gif);
+  background-repeat:no-repeat;
+  margin-bottom:5px;
 }
 
 .sidebar_topics_body
 {
-padding-left:5px;
-padding-right:5px;
-padding-top:0;
-padding-bottom:5px;
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:0;
+  padding-bottom:5px;
 
-margin-top:0;
-font-family:Arial;
-font-weight:bold;
-font-size:0.9em;
-color:white;
-background-color:#49545b;
-width:188px;
+  margin-top:0;
+  font-family:Arial;
+  font-weight:bold;
+  font-size:0.9em;
+  color:white;
+  background-color:#49545b;
+  width:188px;
 }
 
 .sidebar_topics_body hr
 {
-border: 1px dashed #40494f;
+  border: 1px dashed #40494f;
 }
 
 .sidebar_topics_body_flicker
 {
-padding-left:0px;
-padding-right:0px;
-padding-top:3px;
-padding-bottom:5px;
-margin-top:0;
-font-family:Arial;
-font-weight:bold;
-font-size:0.9em;
-color:white;
-background-color:#49545b;
-width:198px;
+  padding-left:0px;
+  padding-right:0px;
+  padding-top:3px;
+  padding-bottom:5px;
+  margin-top:0;
+  font-family:Arial;
+  font-weight:bold;
+  font-size:0.9em;
+  color:white;
+  background-color:#49545b;
+  width:198px;
 }
 
 .sidebar_topics_body_flicker hr
 {
-border: 1px dashed #40494f;
+  border: 1px dashed #40494f;
 }
 
 
 .sidebar_aroundtheweb_panel IMG
 {
-margin-top:0px;
-padding-bottom: 0;
+  margin-top:0px;
+  padding-bottom: 0;
 
 }
 
 .sidebar_aroundtheweb_panel
 {
-	margin-bottom: 20px;
-
+  margin-bottom: 20px;
+  color:#fff;
 }
 
 .sidebar_history_topic
 {
-width:80px;
-height:21px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/history_title.gif);
-background-repeat:no-repeat;
-margin-top:40px;
+  width:80px;
+  height:21px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/history_title.gif);
+  background-repeat:no-repeat;
+  margin-top:40px;
 }
 
 .sidebar_history_panel
 {
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/history_panel.gif);
-background-repeat:no-repeat;
-padding-top:5px;
-padding-left:5px;
-margin-top:5px;
-font-family:Arial;
-font-weight:bold;
-font-size:1.2em;
-color:#fff;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/history_panel.gif);
+  background-repeat:no-repeat;
+  padding-top:5px;
+  padding-left:5px;
+  margin-top:5px;
+  font-family:Arial;
+  font-weight:bold;
+  font-size:1.2em;
+  color:#fff;
 
 }
 
 .sidebar_history_topics_body{
-padding-left:5px;
-padding-right:5px;
-padding-top:0;
-padding-bottom:5px;
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:0;
+  padding-bottom:5px;
 
-margin-top:0;
-font-family:Arial;
-font-weight:bold;
-font-size:0.9em;
-color:white;
-background-color:#976431;
-width:188px;
+  margin-top:0;
+  font-family:Arial;
+  font-weight:bold;
+  font-size:0.9em;
+  color:white;
+  background-color:#805429;
+  width:188px;
 }
 
 .sidebar_newsletter_topics_body{
-padding-left:5px;
-padding-right:5px;
-padding-top:0;
-padding-bottom:5px;
+  padding-left:5px;
+  padding-right:5px;
+  padding-top:0px;
+  padding-bottom:5px;
 
-margin-top:0;
-font-family:Arial;
-font-weight:bold;
-font-size:1.1em;
-color:white;
-background-color:#5A798B;
-width:188px;
+  margin-top:0px;
+  font-family:Arial;
+  font-weight:bold;
+  font-size:1.1em;
+  color:#fff;
+  background-color:#5A798B;
+  width:188px;
 }
 
 .rightbar{
-	float: right;
-	width: 198px;
-	margin-right: 16px;
-	padding-top: 0px;
-	padding-bottom: 15px;
-	display: inline;
-	overflow: hidden;
-	background: #FFF;
+  float: right;
+  width: 198px;
+  margin-right: 16px;
+  padding-top: 0px;
+  padding-bottom: 15px;
+  display: inline;
+  overflow: hidden;
+  background: #FFF;
 }
 
 .sidebar_features_topic
 {
-width:101px;
-margin-top:10px;
-padding-bottom:10px;
-height:16px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/features_title.gif);
-background-repeat:no-repeat;
+  width:101px;
+  margin-top:10px;
+  padding-bottom:10px;
+  height:16px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/features_title.gif);
+  background-repeat:no-repeat;
 }
 
 .features_text
 {
-font-family: Arial;
-font-size: 0.9em;
-color:white;
-padding-left:5px;
-padding-right:5px;
+  font-family: Arial;
+  font-size: 0.9em;
+  color:white;
+  padding-left:5px;
+  padding-right:5px;
 }
 
 
 #features_link a
 {
-font-family: Arial;
-font-size:0.9em;
-color:#ff4583;
-padding-left:5px;
-padding-right:5px;
-font-weight:bold;
-text-decoration:none;
+  font-family: Arial;
+  font-size:0.9em;
+  color:#ff4583;
+  padding-left:5px;
+  padding-right:5px;
+  font-weight:bold;
+  text-decoration:none;
 }
 
 #features_link a:hover
 {
-font-family: Arial;
-font-size:0.9em;
-color:#ff4583;
-padding-left:5px;
-padding-right:5px;
-font-weight:bold;
-text-decoration:underline;
+  font-family: Arial;
+  font-size:0.9em;
+  color:#ff4583;
+  padding-left:5px;
+  padding-right:5px;
+  font-weight:bold;
+  text-decoration:underline;
 }
 
 .sidebar_features_panel
 {
-width:198px;
-float:right;
-margin-bottom:10px;
-height:234px;
-background-image:url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/features_panel.gif);
-background-repeat:no-repeat;
+  width:198px;
+  float:right;
+  margin-bottom:10px;
+  height:234px;
+  background-image:url(http://www.number10.gov.uk/wp-content/themes/number10/images/features_panel.gif);
+  background-repeat:no-repeat;
 }
 
 
 
 .sidebar_features_panel IMG
 {
-	margin-top:15px;
-	
+  margin-top:15px;
+
 }
 
 .sidebar_features_panel p
 {
-	font-family: Arial, serif;
-	color: #fff;
-	font-size: 1em;
-	padding: 0 3px 3px 3px;
+  font-family: Arial, serif;
+  color: #fff;
+  font-size: 1em;
+  padding: 0 0 3px 3px;
 }
 
 .rightbar ul{
-	list-style: none;
-	margin: 0;
-	padding: 0 10px 0 10px;
+  list-style: none;
+  margin: 0;
+  padding: 0 10px 0 10px;
 }
 
 .rightbar ul li{
-	padding: 10px 0 10px 5px;
+  padding: 10px 0 10px 5px;
 }
 
 .rightbar ul li h3{
-	font-family: Georgia, Sans-serif;
-	font-size: 1.3em;
-	font-weight: normal;
-	text-transform: uppercase;
-	color: #555;
-	padding: 5px 5px 5px 0px;
-	margin: 0 10px 10px 0;
-	border-bottom: 1px solid #CCC;
+  font-family: Georgia, Sans-serif;
+  font-size: 1.3em;
+  font-weight: normal;
+  text-transform: uppercase;
+  color: #555;
+  padding: 5px 5px 5px 0px;
+  margin: 0 10px 10px 0;
+  border-bottom: 1px solid #CCC;
 }
 
 .rightbar ul ul li{
-	padding: 0;
-	margin: 0 0 0 13px;
-	line-height: 24px;
-	list-style: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/bullet.gif);
-	font-size: 1em;
+  padding: 0;
+  margin: 0 0 0 13px;
+  line-height: 1.8;
+  list-style: url(http://www.number10.gov.uk/wp-content/themes/number10/images/bullet.gif);
+  font-size: 1em;
 }
 
 .rightbar .syndication .rss {
-	width: 179px;
-	height: 33px;
-	position: relative;
-	padding-top: 12px;
+  width: 179px;
+  height: 33px;
+  position: relative;
+  padding-top: 12px;
 }
 
 .rightbar .syndication .rss span{
-	background: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/sub_rss.gif) no-repeat;
-	position: absolute;
-	width: 100%;
-	height: 100%;
+  background: url(http://www.number10.gov.uk/wp-content/themes/number10/images/sub_rss.gif) no-repeat;
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }
 
 .rightbar .syndication .rss .sub{
-	list-style: none;
+  list-style: none;
 }
 
 
 
+#wp-calendar {
+  font-size:1em;
+}
 
 table#wp-calendar{
-	width: 100%;
+  width: 100%;
 }
 
 /* Left Sidebar */
 
 .leftbar{
-	float: right;
-	width: 216px;
-	margin: 0;
-	padding-top: 0px;
-	padding-bottom: 15px;
-	display: inline;
-	overflow: hidden;
-	background: #FFF;
+  float: right;
+  width: 216px;
+  margin: 0;
+  padding-top: 0px;
+  padding-bottom: 15px;
+  display: inline;
+  overflow: hidden;
+  background: #FFF;
 }
 
 
@@ -1923,30 +1947,30 @@ table#wp-calendar{
 
 
 .leftbar ul{
-	list-style: none;
-	margin: 0;
-	padding: 0 5px 0 0px;
+  list-style: none;
+  margin: 0;
+  padding: 0 5px 0 0px;
 }
 
 .leftbar ul li{
-	padding: 10px 0 10px 5px;
+  padding: 10px 0 10px 5px;
 }
 
 .leftbar ul h3{
-	font-family: Georgia, Sans-serif;
-	font-size: 1.3em;
-	font-weight: normal;
-	text-transform: uppercase;
-	color: #555;
+  font-family: Georgia, Sans-serif;
+  font-size: 1.3em;
+  font-weight: normal;
+  text-transform: uppercase;
+  color: #555;
 }
 
 .leftbar ul ul li{
-	padding: 2px 0;
-	margin: 0 3px 0 10px;
-	line-height: 18px;
-	list-style: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/bullet.gif);
-	font-size: 0.9em;
-	border-bottom: 1px dotted #CCC;
+  padding: 2px 0;
+  margin: 0 3px 0 10px;
+  line-height: 1.5;
+  list-style: url(http://www.number10.gov.uk/wp-content/themes/number10/images/bullet.gif);
+  font-size: 0.9em;
+  border-bottom: 1px dotted #CCC;
 }
 
 
@@ -1956,77 +1980,77 @@ table#wp-calendar{
 *******************/
 
 #comment-form{
-	width: 425px;
-	background: #f1f0ed;
-	margin: 10px 0 0;
-	padding: 5px 5px 15px 15px;
+  width: 425px;
+  background: #f1f0ed;
+  margin: 10px 0 0;
+  padding: 5px 5px 15px 15px;
 }
 
 .comments-template a{
-	text-decoration: underline;
-	color: #fff;
+  text-decoration: underline;
+  color: #fff;
 }
 
 
 .comments-template a:hover{
-	text-decoration: underline;
-	color: #333;
+  text-decoration: underline;
+  color: #333;
 }
 
 .comments-template ol{
-	margin: 0;
-	padding: 0 0 15px;
-	list-style: none;
+  margin: 0;
+  padding: 0 0 15px;
+  list-style: none;
 }
 
 .comments-template ol li{
-	margin: 10px 0;
-	line-height: 18px;
-	padding: 10px 0 5px 15px;
+  margin: 10px 0;
+  line-height: 1.5;
+  padding: 10px 0 5px 15px;
 }
 
 .comments-template h3, .comments-template h3{
-	font-family: Georgia, Sans-serif;
-	font-size: 1.3em;
-	color: #fff;
-	padding: 10px 0 30px 0;
+  font-family: Georgia, Sans-serif;
+  font-size: 1.3em;
+  color: #fff;
+  padding: 10px 0 30px 0;
 }
 
 .commentmetadata{
-	font-size: 1em;
-	color: #AAA;
-	padding: 20px 0;
+  font-size: 1em;
+  color: #AAA;
+  padding: 20px 0;
 }
 
-.commentmetadata strong { 
-	font-size: 1.1em; 
+.commentmetadata strong {
+  font-size: 1.1em;
 }
 
 .comments-template p.nocomments{
-	padding: 0;
+  padding: 0;
 }
 
 .comments-template input{
-	border: 1px solid #CCC;
+  border: 1px solid #CCC;
 }
 
 .comments-template textarea{
-	font-family: Helvetica, Arial, Sans-serif;
-	font-size: 1em;
-	color: #000;
-	margin: 30px 15px 15px 0;
-	background: #FFF;
-	border: 1px solid #CCC;
+  font-family: Helvetica, Arial, Sans-serif;
+  font-size: 1em;
+  color: #000;
+  margin: 30px 15px 15px 0;
+  background: #FFF;
+  border: 1px solid #CCC;
 }
 
 .even {
-	background: #f1f0ed;
-	border: none;
+  background: #f1f0ed;
+  border: none;
 }
 
 .alt {
-	background: #FFF;
-	border: 2px solid #f1f0ed;
+  background: #FFF;
+  border: 2px solid #f1f0ed;
 }
 
 /*******************
@@ -2034,916 +2058,969 @@ table#wp-calendar{
 *******************/
 
 #footer{
-	clear: both;
-	float: left;
-	width: 985px;
-	margin: 0;
-	padding: 10px 5px 5px 10px;
-	line-height: 18px;
-	font-size: 1em;
-	color: #000;
-	background: #FFF;
-	border-top: 1px dotted #CCC;
-	border-bottom: none;
+  clear: both;
+  float: left;
+  width: 981px;
+  margin: 0 0 0 0;
+  padding: 10px 5px 5px 14px;
+  line-height: 1.5;
+  font-size: 1em;
+  color: #000;
+  background: #FFF;
+  border-top: 1px dotted #CCC;
+  border-bottom: none;
 }
 
 #footer_links
 {
-	float:left;
-	font-size:0.8em;
-	margin-left:0px;
+  float:left;
+  font-size:0.8em;
+  margin-left:0px;
 }
 
-#footer_links ul li 
+#footer_links ul li
 {
- float:left;
- list-style-type: none;
+  float:left;
+  list-style-type: none;
 }
+
+
 
 #footer_links ul
 {
-	padding-left: 8px;
-	margin-left: 1px
+  padding-left: 8px;
+  margin-left: 1px
 }
 
 #footer_links ul li a
 {
-	text-decoration: none;
-	color: #000;
-	font-size: 1.2em;
-	margin-left: 3px;
+  text-decoration: none;
+  color: #000;
+  font-size: 1.2em;
+  margin-left: 0px;
+  padding-right:5px;
+  margin-right:5px;
+  padding-top:0;
+  padding-bottom:0;
+  border-right: 1px solid #000;
 }
 
 #footer_links ul li a:link{
-	text-decoration: none;
-	color: #000;
+  text-decoration: none;
+  color: #000;
 }
 
 #footer_links ul li a:visited{
-	text-decoration: none;
-	color: #000;
+  text-decoration: none;
+  color: #000;
 }
 
 #footer_links ul li a:hover{
-	text-decoration: underline;
-	color: #000;
+  text-decoration: underline;
+  color: #000;
 }
 
 #footer_links ul li a:active{
-	text-decoration: none;
-	color: #000;
+  text-decoration: none;
+  color: #000;
 }
 
 
 
 .page-item-4 a{
-        text-decoration: none;
-        float:left;
-	color: #FFF;
-	font-size: 1.3em;
-        margin-left:10px;
-        height:30px;
-        padding-top:5px;
-        padding-left:8px;
+  text-decoration: none;
+  float:left;
+  color: #FFF;
+  font-size: 1.3em;
+  margin-left:10px;
+  height:30px;
+  padding-top:5px;
+  padding-left:8px;
 }
 
 .page-item-4 a:hover{
-        text-decoration: none;
-        float:left;
-	color: #1d7a7a;
-	font-size: 1.3em;
-        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/home_hover.gif);
-        background-repeat:no-repeat;
-        height:30px;
-        padding-top:5px;
-        padding-left:8px;
+  text-decoration: none;
+  float:left;
+  color: #1d7a7a;
+  font-size: 1.3em;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/home_hover.gif);
+  background-repeat:no-repeat;
+  height:30px;
+  padding-top:5px;
+  padding-left:8px;
 }
 
 
 
 .page-item-6 a{
-        text-decoration: none;
-        float:left;
-	color: #FFF;
-        height:30px;
-	font-size: 1.3em;
-        width:123px;
-        padding-top:5px;
-        padding-left:8px;
+  text-decoration: none;
+  float:left;
+  color: #FFF;
+  height:30px;
+  font-size: 1.3em;
+  width:123px;
+  padding-top:5px;
+  padding-left:8px;
 }
 
 .page-item-6 a:hover{
-        text-decoration: none;
-        float:left;
-	color: #4f8718;
-	font-size: 1.3em;
-        height:30px;
-        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/communicate_hover.gif);
-        vertical-align:bottom;
-        background-repeat:no-repeat;
-        width:123px;
-        padding-top:5px;
-        padding-left:8px;
+  text-decoration: none;
+  float:left;
+  color: #4f8718;
+  font-size: 1.3em;
+  height:30px;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/communicate_hover.gif);
+  vertical-align:bottom;
+  background-repeat:no-repeat;
+  width:123px;
+  padding-top:5px;
+  padding-left:8px;
 
 }
 
-.page-item-12037 a{
-        text-decoration: none;
-        float:left;
-	color: #FFF;
-        height:30px;
-	font-size: 1.3em;
-        margin-left:10px;
-        width:116px;
-        padding-top:5px;
-        padding-left:8px;
-}
 
-.page-item-12037 a:hover{
-        text-decoration: none;
-        float:left;
-	color: #d2806b;
-	font-size: 1.3em;
-        height:30px;
-        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/meet_hover.gif);
-        vertical-align:bottom;
-        background-repeat:no-repeat;
-        width:116px;
-        padding-top:5px;
-        padding-left:8px;
-}
 
 .page-item-5 a{
-        text-decoration: none;
-        float:left;
-	color: #FFF;
-        height:30px;
-	font-size: 1.3em;
-        margin-left:10px;
-        width:145px;
-        padding-top:5px;
-        padding-left:8px;
+  text-decoration: none;
+  float:left;
+  color: #FFF;
+  height:30px;
+  font-size: 1.3em;
+  margin-left:10px;
+  width:145px;
+  padding-top:5px;
+  padding-left:8px;
 }
 
 .page-item-5 a:hover{
-        text-decoration: none;
-	color: #976431;
-        height:30px;
-	font-size: 1.3em;
-        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/history_hover.gif);
-        vertical-align:bottom;
-        background-repeat:no-repeat;
-        width:145px;
-        padding-top:5px;
-        padding-left:8px;
+  text-decoration: none;
+  color: #805429;
+  height:30px;
+  font-size: 1.3em;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/history_hover.gif);
+  vertical-align:bottom;
+  background-repeat:no-repeat;
+  width:145px;
+  padding-top:5px;
+  padding-left:8px;
 
 }
 
 
 
 .menu_home {
-        text-decoration: none;
-        float:left;
-	color: #ffffff;
-	font-size: 1.3em;
-        margin-left:5px;
-        width:72px;
-        height:30px;
-        padding-top:5px;
-        padding-left:8px;
+  text-decoration: none;
+  float:left;
+  color: #ffffff;
+  font-size: 1.3em;
+  margin-left:5px;
+  width:72px;
+  height:30px;
+  padding-top:5px;
+  padding-left:8px;
 }
 
 .menu_home:hover{
-        text-decoration: none;
-        float:left;
-	color: #000000;
-	font-size: 1.3em;
-        background-image: url(http://www.number10.gov.uk/wp-content/themes/networker-10/images/news_hover.gif);
-        vertical-align:bottom;
-        background-repeat:no-repeat;
-        width:72px;
-        height:30px;
-        padding-top:5px;
-        padding-left:8px;
+  text-decoration: none;
+  float:left;
+  color: #000000;
+  font-size: 1.3em;
+  background-image: url(http://www.number10.gov.uk/wp-content/themes/number10/images/news_hover.gif);
+  vertical-align:bottom;
+  background-repeat:no-repeat;
+  width:72px;
+  height:30px;
+  padding-top:5px;
+  padding-left:8px;
 }
 
 
 .textaround
 {
-font-family:Georgia, "Times New Roman", Times, serif;
-font-size:2.0em;
-font-weight:normal;
-color:#49545b;
-letter-spacing:-0.03cm;
-margin-bottom:10px;
-padding-bottom: 0;
-margin-top:40px;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-size:2.0em;
+  font-weight:normal;
+  color:#49545b;
+  letter-spacing:-0.03cm;
+  margin-bottom:10px;
+  padding-bottom: 0;
+  margin-top:40px;
 }
 
 
 .textfeatures
 {
-font-family:Georgia, "Times New Roman", Times, serif;
-font-size:2.0em;
-color:#ca3168;
-font-weight:normal;
-letter-spacing:-0.03cm;
-margin-top:11px;
-padding-bottom:0px;
-margin-bottom: 2px;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-size:2.0em;
+  color:#ca3168;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  margin-top:11px;
+  padding-bottom:0px;
+  margin-bottom: 2px;
 }
 
 
 .textnewsletter
 {
-font-family:Georgia, "Times New Roman", Times, serif;
-font-size:2.0em;
-color:#5a798b;
-font-weight:normal;
-letter-spacing:-0.03cm;
-margin-top:49px;
-margin-bottom:0px;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-size:2.0em;
+  color:#5a798b;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  margin-top:49px;
+  margin-bottom:0px;
 }
 
 
-.textnews
-{
-font-family:Georgia, "Times New Roman", Times, serif;
-font-size:2.4em;
-color:#1d7a7a;
-font-weight:normal;
-letter-spacing:-0.03cm;
-margin-top:5px;
-margin-left:22px;
-padding-bottom:2px;
-width: 535px;
-border-bottom:1px dashed #000;
-float:left;
+.textnews {
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-size:2.4em;
+  color:#1d7a7a;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  margin-top:5px;
+  margin-left:22px;
+  padding-bottom:2px;
+  width: 535px;
+  border-bottom:1px dashed #000;
+  float:left;
+}
+
+.textnews a {
+  color:#1d7a7a;
+  text-decoration: none;
+}
+.textnews a:hover, .textnews a:active  {
+  text-decoration: underline;
 }
 
 .textnews2
 {
-font-family:Georgia, "Times New Roman", Times, serif;
-font-size:2.4em;
-color:#ca3168;
-font-weight:normal;
-margin-top:44px;
-margin-left:25px;
-margin-right: 0px;
-letter-spacing:-0.03cm;
-padding-bottom:3px;
-width: 742px;
-border-bottom:1px dashed #000;
-margin-bottom: 25px;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-size:2.4em;
+  color:#ca3168;
+  font-weight:normal;
+  margin-top:42px;
+  margin-left:25px;
+  margin-right: 0px;
+  letter-spacing:-0.03cm;
+  padding-bottom:3px;
+  width: 742px;
+  border-bottom:1px dashed #000;
+  margin-bottom: 25px;
 }
 
 
 .texthistory
 {
-font-family:Georgia, "Times New Roman", Times, serif;
-font-size:2.0em;
-color:#976431;
-font-weight:normal;
-letter-spacing:-0.03cm;
-margin-top:40px;
-margin-bottom:0px;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-size:2.0em;
+  color:#805429;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  margin-top:40px;
+  margin-bottom:0px;
 }
 .search_text
 {float:left; padding-top:3px;}
 
 .pages_post {
-float:left;
-width:500px;
+  float:left;
+  width:500px;
 }
 
 .pages_post_news {
-float:left;
-width:500px;
+  float:left;
+  width:534px;
+  border-bottom: 2px #000 solid;
+  margin-bottom: 10px;
 }
 
+.pages_post_news h2,
+.pages_post_communicate h2{
+  margin-top: 0;
+  font-size:1.9em;
+}
+
+.entry h2 { font-size: 1.3em; }
+.entry h3 { font-size: 1.2em; clear:both;}
+
+
 .pages_post_communicate {
-float:left;
-width:500px;
+  float:left;
+  width:534px;
+  border-bottom: 2px #000 solid;
+  margin-bottom: 10px;
 }
 
 .pages_post_meet {
-float:left;
-width:500px;
+  float:left;
+  width:500px;
 }
 
 
 .pages_post_history {
-float:left;
-width:500px;
+  float:left;
+  width:500px;
+  margin-left:18px;
 }
 
 .pages_post_news a{
-	color:#000;
+  color:#000;
 }
 
 .pages_post_communicate a{
-	color:#000;
+  color:#000;
 }
 
 .pages_post_meet a{
-	color:#000;
+  color:#000;
 }
 
 .pages_post_history a{
-	color:#000;
+  color:#000;
 }
 
 .pages_sidenav {
-float:left;
-width:200px;
-margin-left:23px;
+  float:left;
+  width:200px;
+  margin-left:23px;
 }
 
 .pages_sidenav_news {
-color:#1d7a7a;
-float:left;
-width:200px;
-margin-left: 25px;
-
+  color:#1d7a7a;
+  float:left;
+  width:200px;
+  margin-left: 25px;
+  padding-left:0;
 }
 
-.pages_sidenav_news p {
-background-color:white;
-padding-top:5px;
-width:180px;
-padding-bottom:5px;
-margin:0px;
-border-bottom:1px dashed #cccccc;
-text-decoration: none;
+.pages_sidenav_news li {
+  background-color:white;
+  padding-top:5px;
+  width:180px;
+  padding-bottom:5px;
+  margin:0px;
+  border-bottom:1px dashed #cccccc;
+  text-decoration: none;
+  list-style-type: none;
 }
 
-.pages_sidenav_news p:hover {
-background-color:#dbeaea;
-padding-top:5px;
-width:180px;
-padding-bottom:5px;
-margin:0px;
-border-bottom:1px dashed #cccccc;
-text-decoration:none;
+.pages_sidenav_news li:hover {
+  background-color:#dbeaea;
+  padding-top:5px;
+  width:180px;
+  padding-bottom:5px;
+  margin:0px;
+  border-bottom:1px dashed #cccccc;
+  text-decoration:none;
 }
 
-.pages_sidenav_communicate p {
-background-color:white;
-padding-top:5px;
-width:180px;
-padding-bottom:5px;
-margin:0px;
-border-bottom:1px dashed #cccccc;
-text-decoration:none
+.pages_sidenav_communicate li {
+  background-color:white;
+  padding-top:5px;
+  width:180px;
+  padding-bottom:5px;
+  margin:0px;
+  border-bottom:1px dashed #cccccc;
+  text-decoration:none;
+  list-style-type: none;
 }
 
-.pages_sidenav_communicate p:hover {
-background-color:#e5eedd;
-padding-top:5px;
-width:180px;
-padding-bottom:5px;
-margin:0px;
-border-bottom:1px dashed #cccccc;
-text-decoration:none;
-}
-
-
-
-.pages_sidenav_history p {
-background-color:white;
-padding-top:5px;
-width:180px;
-padding-bottom:5px;
-margin:0px;
-border-bottom:1px dashed #cccccc;
-text-decoration:none;
+.pages_sidenav_communicate li:hover {
+  background-color:#e5eedd;
+  padding-top:5px;
+  width:180px;
+  padding-bottom:5px;
+  margin:0px;
+  border-bottom:1px dashed #cccccc;
+  text-decoration:none;
 }
 
 
-.pages_sidenav_history div div  {
 
-margin-top:3px;
-text-decoration: none;
-margin-bottom:3px;
-}
+.pages_sidenav_history li {
+  background-color:#fff;
+  padding-top:5px;
+  width:180px;
+  padding-bottom:5px;
+  margin:0px;
 
-.pages_sidenav_history div div:hover  {
-background-color:#f8f5f2;
-margin-top:3px;
-text-decoration: none;
-margin-bottom:3px;
-width: 170px;
-}
-
-.pages_sidenav_history div div a:hover  {
-text-decoration: none;
-}
-
-.pages_sidenav_history p a:hover  {
-text-decoration: none;
-}
-
-.pages_sidenav_history p:hover {
-background-color:#f8f5f2;
-padding-top:5px;
-width:180px;
-padding-bottom:5px;
-margin:0px;
-border-bottom:1px dashed #cccccc;
-}
-
-.pages_sidenav_meet p {
-background-color:white;
-padding-top:5px;
-width:180px;
-padding-bottom:5px;
-margin:0px;
-border-bottom:1px dashed #cccccc;
-}
-
-.pages_sidenav_meet p:hover {
-background-color:#faedea;
-padding-top:5px;
-width:180px;
-padding-bottom:5px;
-margin:0px;
-border-bottom:1px dashed #cccccc;
+  text-decoration:none;
+  list-style-type: none;
+  border-bottom: 1px dashed #cccccc;
 }
 
 
-.pages_sidenav_news p a {
-color:#1d7a7a;
-text-decoration: none;
+.pages_sidenav_history li ul li  {
+
+  margin-top:0px;
+  padding:2px 0 2px 0;
+  text-decoration: none;
+  margin-bottom:0px;
+  border:none;
 }
 
-.pages_sidenav_news p a:visited {
-color:#1d7a7a;
-text-decoration: none;
+.pages_sidenav_history li ul li a {
+  margin: 0 0 0 10px;
+
 }
 
-.pages_sidenav_news p a:hover {
-color:#1d7a7a;
-text-decoration:none;
+.pages_sidenav_history li a{
+
 }
 
-.pages_sidenav_news p a:active{
-color:#1d7a7a;
-text-decoration:none;
+.pages_sidenav_history li ul li:hover  {
+  background-color:#f8f5f2;
+  margin-top:0px;
+  text-decoration: none;
+  margin-bottom:0px;
+  width: 170px;
+  border:none;
+  padding:2px 0 2px 0;
+}
+
+.pages_sidenav_history li ul li a:hover  {
+  text-decoration: none;
+}
+
+.pages_sidenav_history li a:hover  {
+  text-decoration: none;
+}
+
+.pages_sidenav_history li:hover {
+  background-color:#f8f5f2;
+  padding-top:5px;
+  width:180px;
+  padding-bottom:5px;
+  margin:0px;
+  /*border-bottom:1px dashed #cccccc;*/
+}
+
+.pages_sidenav_meet li {
+  background-color:white;
+  padding-top:5px;
+  width:180px;
+  padding-bottom:5px;
+  margin:0px;
+  border-bottom:1px dashed #cccccc;
+  list-style-type: none;
+}
+
+.pages_sidenav_meet li:hover {
+  background-color:#faedea;
+  padding-top:5px;
+  width:180px;
+  padding-bottom:5px;
+  margin:0px;
+  border-bottom:1px dashed #cccccc;
+  list-style-type: none;
+}
+
+
+.pages_sidenav_news li a {
+  color:#1d7a7a;
+  text-decoration: none;
+}
+
+.pages_sidenav_news li a:visited {
+  color:#1d7a7a;
+  text-decoration: none;
+}
+
+.pages_sidenav_news li a:hover {
+  color:#1d7a7a;
+  text-decoration:none;
+}
+
+.pages_sidenav_news li a:active{
+  color:#1d7a7a;
+  text-decoration:none;
 }
 
 .pages_sidenav_history  {
-color:#a06c28;
-float:left;
-width:200px;
-margin-left: 25px;
-height: 100%;
+  color:#805429;
+  float:left;
+  width:200px;
+  margin-left: 25px;
+  height: 100%;
+  padding: 0 0 0 25px ;
+  margin:0;
 }
 
-.pages_sidenav_history p a {
-color:#a06c28;
-text-decoration:none;
+.pages_sidenav_history li ul{
+  padding:0 0 0 0;
+  margin:0 0 0 0px;
+}
+
+.pages_sidenav_history li a {
+  color:#805429;
+  text-decoration:none;
 }
 
 
-.pages_sidenav_history p a:visited {
-color:#a06c28;
-text-decoration:none;
+.pages_sidenav_history li a:visited {
+  color:#805429;
+  text-decoration:none;
 }
 
-.pages_sidenav_history p a:hover{
-color:#a06c28;
-text-decoration:none;
+.pages_sidenav_history li a:hover{
+  color:#805429;
+  text-decoration:none;
 }
 
-.pages_sidenav_history p a:active{
-color:#a06c28;
-text-decoration:none;
+.pages_sidenav_history li a:active{
+  color:#805429;
+  text-decoration:none;
 }
 
 .pages_sidenav_communicate {
-color:#4f8718;
-float:left;
-width:200px;
-margin-left: 25px;
+  color:#4f8718;
+  float:left;
+  width:200px;
+  margin-top: 0;
+  margin-left: 25px;
+  padding-left:0;
 }
 
-.pages_sidenav_communicate p a {
-color:#4f8718;
-text-decoration:none; 
+.pages_sidenav_communicate li a {
+  color:#4f8718;
+  text-decoration:none;
 }
 
 
-.pages_sidenav_communicate p a:visited {
-color:#4f8718;
-text-decoration:none;
+.pages_sidenav_communicate li a:visited {
+  color:#4f8718;
+  text-decoration:none;
 }
 
-.pages_sidenav_communicate p a:hover{
-color:#4f8718;
-text-decoration:none;
+.pages_sidenav_communicate li a:hover{
+  color:#4f8718;
+  text-decoration:none;
 }
 
-.pages_sidenav_communicate p a:active{
-color:#4f8718;
-text-decoration:none;
+.pages_sidenav_communicate li a:active{
+  color:#4f8718;
+  text-decoration:none;
 }
 
 .pages_sidenav_meet {
-color:#c2604b;
-width:200px;
-float:left;
-margin-left: 25px;
+  color:#c2604b;
+  width:200px;
+  float:left;
+  margin-left: 25px;
+  padding-left:0;
 }
 
-.pages_sidenav_meet p a {
-color:#c2604b;
-text-decoration:none;
+.pages_sidenav_meet li a {
+  color:#c2604b;
+  text-decoration:none;
 }
 
 
-.pages_sidenav_meet p a:visited {
-color:#c2604b;
-text-decoration:none;
+.pages_sidenav_meet li a:visited {
+  color:#c2604b;
+  text-decoration:none;
 }
 
-.pages_sidenav_meet p a:hover{
-color:#c2604b;
-text-decoration:none;
+.pages_sidenav_meet li a:hover{
+  color:#c2604b;
+  text-decoration:none;
 }
 
-.pages_sidenav_meet p a:active{
-color:#c2604b;
-text-decoration:none;
+.pages_sidenav_meet li a:active{
+  color:#c2604b;
+  text-decoration:none;
 }
 
 .pages_textnews_news h2{
-	font-family: Georgia, "Times New Roman",Times,serif;
-	font-size: 2.4em;
-	font-weight:normal;
-	letter-spacing:-0.03cm;
-	color: #1d7a7a;
-	padding: 10px 0 0 0;
-	margin-left: 25px;
-	margin-right: 25px;
-	margin-bottom: 25px;
-	margin-top: 3px;
-	border-bottom:1px dashed #000;
+  font-family: Georgia, Arial ,sans-serif;
+  font-size: 2.4em;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  color: #1d7a7a;
+  padding: 10px 0 0 0;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  margin-top: -12px;
+  border-bottom:1px dashed #000;
 }
 
 .pages_textnews_communicate h2{
-	font-family: Georgia, "Times New Roman",Times,serif;
-	font-size: 2.4em;
-	font-weight:normal;
-	letter-spacing:-0.03cm;
-	color: #4f8718;
-	padding: 10px 0 0 0;
-	margin-left: 25px;
-	margin-right: 25px;
-	margin-bottom: 25px;
-	margin-top: 3px;
-	border-bottom:1px dashed #000;
+  font-family: Georgia, Arial ,sans-serif;
+  font-size: 2.4em;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  color: #4f8718;
+  padding: 10px 0 0 0;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  margin-top: 3px;
+  border-bottom:1px dashed #000;
 }
 
 .pages_textnews_meet h2{
-	font-family: Georgia, "Times New Roman",Times,serif;
-	font-size: 2.4em;
-	font-weight:normal;
-	letter-spacing:-0.03cm;
-	color: #c2604b;
-	padding: 10px 0 0 0;
-	margin-left: 25px;
-	margin-right: 25px;
-	margin-bottom: 25px;
-	margin-top: 3px;
-	border-bottom:1px dashed #000;
+  font-family: Georgia, Arial ,sans-serif;
+  font-size: 2.4em;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  color: #c2604b;
+  padding: 10px 0 0 0;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  margin-top: -12px;
+  border-bottom:1px dashed #000;
 }
 
+
 .pages_textnews_history h2{
-	font-family: Georgia, "Times New Roman",Times,serif;
-	font-size: 2.4em;
-	font-weight:normal;
-	letter-spacing:-0.03cm;
-	color: #a06c28;
-	padding: 10px 0 0 0;
-	margin-left: 25px;
-	margin-right: 25px;
-	margin-bottom: 25px;
-	margin-top: 3px;
-	border-bottom:1px dashed #000;
+  font-family: Georgia, Arial ,sans-serif;
+
+  font-size: 2.4em;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
+  color: #805429;
+  padding: 10px 0 0 0;
+  margin-left: 25px;
+  margin-right: 25px;
+  margin-bottom: 25px;
+  margin-top: -12px;
+  border-bottom:1px dashed #000;
 }
 
 
 .pages_textnews_news h3{
-	font-family: "Times New Roman",Times,serif;
-	font-size: 2.6em;
-	color: #1d7a7a;
-	font-weight: bold;
-	padding-top:10px;
-	padding-bottom:0px;
-	padding-right:0px;
-	padding-left:21px;
-	margin:0px;
+  font-family: Georgia, Arial ,sans-serif;
+  font-size: 2.6em;
+  color: #1d7a7a;
+  font-weight: bold;
+  padding-top:10px;
+  padding-bottom:0px;
+  padding-right:0px;
+  padding-left:21px;
+  margin:0px;
 }
 
 .pages_textnews_history h3
 {
-font-family: "Times New Roman",Times,serif;
-font-size: 2.1em;
-color: #a06c28;
-font-weight: bold;
-padding-top:10px;
-padding-bottom:0px;
-padding-right:0px;
-padding-left:21px;
-margin:0px;
+  font-family: Georgia, Arial ,sans-serif;
+  font-size: 2.1em;
+  color: #805429;
+  font-weight: bold;
+  padding-top:10px;
+  padding-bottom:0px;
+  padding-right:0px;
+  padding-left:21px;
+  margin:0px;
 }
 
 .pages_textnews_communicate h3
 {
-font-family: "Times New Roman",Times,serif;
-font-size: 2.1em;
-color: #4f8718;
-font-weight: bold;
-padding-top:10px;
-padding-bottom:0px;
-padding-right:0px;
-padding-left:21px;
-margin:0px;
+  font-family: Georgia, Arial ,sans-serif;
+  font-size: 2.1em;
+  color: #4f8718;
+  font-weight: bold;
+  padding-top:10px;
+  padding-bottom:0px;
+  padding-right:0px;
+  padding-left:21px;
+  margin:0px;
 }
 
 .pages_textnews_meet h3
 {
-font-family: "Times New Roman",Times,serif;
-font-size: 2.2em;
-color: #e2907b;
-font-weight: bold;
-padding-top:10px;
-padding-bottom:0px;
-padding-right:0px;
-padding-left:21px;
-margin:0px;
+  font-family: Georgia, Arial ,sans-serif;
+  font-size: 2.2em;
+  color: #e2907b;
+  font-weight: bold;
+  padding-top:10px;
+  padding-bottom:0px;
+  padding-right:0px;
+  padding-left:21px;
+  margin:0px;
 }
 
+/*********16/07**********/
 .feed_youtube_content{
-	font-family:  Arial, Verdena, Sans-serif;
-    font-size:1em;
-    color:#FFFFFF;
-    font-weight:normal; 
-    
-    text-decoration:none;
-	
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1em;
+  color:#FFFFFF;
+  font-weight:normal;
+
+  text-decoration:none;
+  height:60px;
 }
 
-.feed_youtube_content a{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1em;
-      color:#FFFFFF;
-      font-weight:normal; 
-      
-      text-decoration:none;
-      
+/*********16/07**********/
+.feed_flickr_content{
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1em;
+  color:#FFFFFF;
+  font-weight:normal;
+
+  text-decoration:none;
 }
 
-.feed_youtube_content a:link{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1em;
-      color:#FFFFFF;
-      font-weight:normal; 
-      
-     
-      text-decoration:none;
-}
-.feed_youtube_content a:visited{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size: 1em;
-      color:#FFFFFF;
-      font-weight:normal;
-      
-      
-      text-decoration:none;
-}
-.feed_youtube_content a:hover{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size: 1em;
-      color:#FFFFFF;
-      font-weight:normal;
-      
-      
-       text-decoration:none;
-}
 
 .feed_youtube_viewall{
-	font-weight:bold;
-	
-	margin-top:2px;
-	padding-top:5px;
+  font-weight:bold;
+
+  margin-top:2px;
+  padding-top:5px;
 }
 
 .feed_twitter_viewall{
-	font-weight:bold;
-	margin-top:5px;
-	padding-top:5px;
-	font-size:1.3em;
+  font-weight:bold;
+  margin-top:5px;
+  padding-top:5px;
+  font-size:1.3em;
 }
 
 .feed_history_viewall{
-	font-weight:bold;
-	border-top: 1px dashed #ccc;
-	margin-top:5px;
-	padding-top:5px;
+  font-weight:bold;
+  border-top: 1px dashed #ccc;
+  margin-top:5px;
+  padding-top:5px;
 }
 
 .feed_newsletter_viewall{
-	font-weight:bold;
-	border-top: 1px dashed #ccc;
-	margin-top:5px;
-	padding-top:5px;
+  font-weight:bold;
+  border-top: 1px dashed #ccc;
+  margin-top:5px;
+  padding-top:5px;
 }
 
 .feed_newsletter_viewall a:link{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1.0em;
-      color:#FFFFFF;
-      font-weight:bold;
-      text-decoration:none;
-      margin-left: 0px;      
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1.0em;
+  color:#FFFFFF;
+  font-weight:bold;
+  text-decoration:none;
+  margin-left: 0px;
 }
-.feed_newsletter_viewall a:visited{  
-      color:#FFFFFF;
-      text-decoration:none;
-      
+.feed_newsletter_viewall a:visited{
+  color:#FFFFFF;
+  text-decoration:none;
+
 }
 
-.feed_newsletter_viewall a:hover{ 
-      color:#FFFFFF;
-      text-decoration:underline;   
+.feed_newsletter_viewall a:hover{
+  color:#FFFFFF;
+  text-decoration:underline;
 }
 
-.feed_newsletter_viewall a:active{ 
-      color:#FFFFFF;
-      text-decoration:none;   
+.feed_newsletter_viewall a:active{
+  color:#FFFFFF;
+  text-decoration:none;
 }
 
 .feed_youtube_viewall a:link{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1.3em;
-      color:#FFFFFF;
-      font-weight:bold;
-      text-decoration:none;
-      margin-left: 0px;      
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1.3em;
+  color:#FFFFFF;
+  font-weight:bold;
+  text-decoration:none;
+  margin-left: 0px;
 }
-.feed_youtube_viewall a:visited{  
-      color:#FFFFFF;
-      text-decoration:none;
-      
+.feed_youtube_viewall a:visited{
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1.3em;
+  color:#FFFFFF;
+  font-weight:bold;
+  text-decoration:none;
+  margin-left: 0px;
+
 }
 
-.feed_youtube_viewall a:hover{ 
-      color:#FFFFFF;
-      text-decoration:underline;   
+.feed_youtube_viewall a:hover{
+  color:#FFFFFF;
+  text-decoration:underline;
 }
 
-.feed_youtube_viewall a:active{ 
-      color:#FFFFFF;
-      text-decoration:none;   
+.feed_youtube_viewall a:active{
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1.3em;
+  color:#FFFFFF;
+  font-weight:bold;
+  text-decoration:none;
+  margin-left: 0px;
 }
 
 .feed_history_viewall a{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1.3em;
-      color:#FFFFFF;
-      font-weight:bold;
-      text-decoration:none;
-      margin-left: 0px;  
-          
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1.3em;
+  color:#FFFFFF;
+  font-weight:bold;
+  text-decoration:none;
+  margin-left: 0px;
+
 }
 
-.feed_history_viewall a:link{  
-      color:#FFFFFF;
-      text-decoration:none;
-     
+.feed_history_viewall a:link{
+  color:#FFFFFF;
+  text-decoration:none;
+
 }
 
-.feed_history_viewall a:visited{  
-      color:#FFFFFF;
-      text-decoration:none;
-     
+.feed_history_viewall a:visited{
+  color:#FFFFFF;
+  text-decoration:none;
+
 }
 
-.feed_history_viewall a:hover{ 
-      color:#FFFFFF;
-      text-decoration:underline;   
+.feed_history_viewall a:hover{
+  color:#FFFFFF;
+  text-decoration:underline;
 }
 
-.feed_history_viewall a:active{ 
-      color:#FFFFFF;
-      text-decoration:none;   
+.feed_history_viewall a:active{
+  color:#FFFFFF;
+  text-decoration:none;
 }
 
 
 
 .feed_twitter_viewall a:link{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1em;
-      color:#FFFFFF;
-      font-weight:bold;
-      text-decoration:none;
-      margin-left: 0px;      
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1em;
+  color:#FFFFFF;
+  font-weight:bold;
+  text-decoration:none;
+  margin-left: 0px;
 }
-.feed_twitter_viewall a:visited{  
-      color:#FFFFFF;
-      text-decoration:none;
-      
+.feed_twitter_viewall a:visited{
+  color:#FFFFFF;
+  text-decoration:none;
+
 }
 
-.feed_twitter_viewall a:hover{ 
-      color:#FFFFFF;
-      text-decoration:underline;   
+.feed_twitter_viewall a:hover{
+  color:#FFFFFF;
+  text-decoration:underline;
 }
 
-.feed_twitter_viewall a:active{ 
-      color:#FFFFFF;
-      text-decoration:none;   
+.feed_twitter_viewall a:active{
+  color:#FFFFFF;
+  text-decoration:none;
 }
 
+
+.feed_flickr_viewall{
+  border-top: 1px dashed #ccc;
+  margin: 0 5px 5px 5px;
+  padding-top:5px;
+  padding-right: 0;
+}
 
 .feed_flickr_viewall a:link{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1.3em;
-      color:#FFFFFF; 
-      text-decoration:none;
-      margin-left: 5px;
-      margin-top: 0;
-      padding-top: 0;
-      
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1.3em;
+  color:#FFFFFF;
+  text-decoration:none;
+  margin-left:  0;
+  margin-top: 0;
+  padding-top: 0;
+
 }
 .feed_flickr_viewall a:visited{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1.3em;
-      color:#FFFFFF; 
-      text-decoration:none;
-      margin-left: 5px;
-      
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1.3em;
+  color:#FFFFFF;
+  text-decoration:none;
+  margin-left: 0;
+
 }
 
 .feed_flickr_viewall a:hover{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1.3em;
-      color:#FFFFFF;
-      text-decoration:underline;
-      margin-left: 5px;     
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1.3em;
+  color:#FFFFFF;
+  text-decoration:underline;
+  margin-left: 0;
 }
 
 
 
+.feed_youtube_content a{
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1em;
+  color:#FFFFFF;
+  font-weight:normal;
+
+  text-decoration:none;
+
+}
+
+.feed_youtube_content a:link{
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1em;
+  color:#FFFFFF;
+  font-weight:normal;
+
+
+  text-decoration:none;
+}
+.feed_youtube_content a:visited{
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size: 1em;
+  color:#FFFFFF;
+  font-weight:normal;
+
+
+  text-decoration:none;
+}
 
 .feed_youtube_content a:hover{
-      font-family:  Arial, Verdena, Sans-serif;
-      font-size:1em;
-      color:#FFFFFF;
- 
-      
-      margin-top:3px;
-       text-decoration:underline;
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1em;
+  color:#FFFFFF;
+
+  font-weight:normal;
+  margin-top:3px;
+  text-decoration:underline;
 }
 
 
 
 .feed_youtube_date{
-   font-family:  Arial, Verdena, Sans-serif;
-      font-size:1em;
-      color:#FFFFFF;
-font-weight:normal; 
-      
+  font-family:  Arial, Verdena, Sans-serif;
+  font-size:1em;
+  color:#FFFFFF;
+  font-weight:normal;
+
 }
 
 .feed_title{
-    background-color: #49545b;
-    font-family:  Arial, Verdena, Sans-serif;
-	padding: 0 0 0 0;
-	margin: 0 24px 0 0;
-	font-size:1.3em;
-	color:#fff;
-	font-weight: bold;
+  background-color: #49545b;
+  font-family:  Arial, Verdena, Sans-serif;
+  padding: 0 0 0 0;
+  margin: 0 24px 0 0;
+  font-size:1.3em;
+  color:#fff;
+  font-weight: bold;
 }
 
 
 
 
 .feed_title_history{
-	background-color: #976431;
-	 margin-right: 24px;
-}     
+  background-color: #805429;
+  margin-right: 24px;
+}
 
 .twitter_feed_logo{
-	margin-top: 8px;
-	margin-bottom: 0px;
+  margin-top: 8px;
+  margin-bottom: 0px;
 }
 
 
 
 .feed_image{
-     margin-left:123px;
+  margin-left:123px;
 }
 
 .feed_image_flickr{
@@ -2959,547 +3036,591 @@ font-weight:normal;
 }
 
 .feed_image_history{
-     margin-left:90px;
+  margin-left:90px;
 }
 
 .feed_holder_history{
-    font-weight:normal;
+  font-weight:normal;
 }
 
 .feed_holder_history hr{
-    border: 1px dashed #779eb5;
+  border: 1px dashed #779eb5;
 }
 
 .feed_holder_flickr{
-	margin-bottom: 3px;
-	padding-bottom: 0px;
+  margin-bottom: 3px;
+  padding-bottom: 0px;
 }
 
 .feed_holder_flickr a img{
-	width:198px;
-	height:150px;
+  width:198px;
+  height:150px;
 }
 
-.feed_holder_youtube{
-	margin-top: 0px;
-	margin-bottom: 0px;
-	padding-top: 3px;
-	padding-bottom: 6px;
-	border-bottom: 1px dashed #ccc;
+
+
+/*********16/07**********/
+.feed_holder_flicker {
+  display: block;
+  width:188px;
+
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 3px;
+  padding-bottom: 6px;
+
 }
 
+/*********16/07**********/
+.feed_holder_youtube {
+  display: block;
+  width:188px;
+
+  margin-top: 0px;
+  margin-bottom: 0px;
+  padding-top: 3px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #ccc;
+}
+
+/*********16/07**********/
+.feed_holder_youtube1 {
+  display: block;
+  width:188px;
+
+  margin-bottom: 6px;
+  margin-bottom: 0px;
+  padding-top: 3px;
+  padding-bottom: 6px;
+  border-bottom: 1px dashed #ccc;
+}
+
+/*********16/07**********/
 
 .embed_this{
-	margin-left: 5px;
-	margin-right: 5px;
-	margin-top: 5px;
-	padding-top: 5px;
-	border-top: 1px dashed #ccc;
-	font-size: 1.3em;
+  margin-left: 5px;
+  margin-right: 5px;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed #ccc;
+  font-size: 1.3em;
 }
 
 .embed_this_youtube{
-	margin-left: 0px;
-	margin-right: 0px;
-	margin-top: 5px;
-	padding-top: 5px;
-	border-top: 1px dashed #ccc;
-	font-size: 1.3em;
+  margin-left: 0px;
+  margin-right: 0px;
+  margin-top: 5px;
+  padding-top: 5px;
+  border-top: 1px dashed #ccc;
+  font-size: 1.3em;
 }
 
 .pages_post_news div p img{
-	float:left;
-	margin-right: 10px;
+  float:left;
+  margin-right: 10px;
 }
 
 .pages_post_communicate div p img{
-	float:left;
-	margin-right: 10px;
+  float:left;
+  margin-right: 10px;
 }
 
 .pages_post_meet div p img{
-	float:left;
-	margin-right: 10px;
+  float:left;
+  margin-right: 10px;
 }
 
 
 .pages_post_history div p img{
-	float:left;
-	margin-right: 10px;
+  float:left;
+  margin-right: 10px;
 }
 
 /***************************************
-        News post links
+News post links
 ****************************************/
 
+.pages_post_news div p {
+  line-height:1.4;
+}
+
+.pages_post_meet div p {
+  line-height:1.4;
+}
+
+.pages_post_history div p {
+  line-height:1.4;
+}
+
+.pages_post_communicate div p {
+  line-height:1.4;
+}
+
+
+
 .pages_post_news div p a:link{
-	color: #1d7a7a;
-	text-decoration: none;
+  color: #1d7a7a;
+  text-decoration: none;
 }
 
 .pages_post_news div p a:visited{
-	color: #1d7a7a;
-	text-decoration: none;
+  color: #1d7a7a;
+  text-decoration: none;
 }
 
+
 .pages_post_news div p a:active{
-	color: #1d7a7a;
-	text-decoration: none;
+  color: #1d7a7a;
+  text-decoration: none;
 }
 
 .pages_post_news div p a:hover{
-	color: #1d7a7a;
-	text-decoration: underline;
+  color: #1d7a7a;
+  text-decoration: underline;
 }
 
 .pages_post_news div ul li a:link{
-	color: #1d7a7a;
-	text-decoration: none;
+  color: #1d7a7a;
+  text-decoration: none;
 }
 
 .pages_post_news div ul li a:visited{
-	color: #1d7a7a;
-	text-decoration: none;
+  color: #1d7a7a;
+  text-decoration: none;
 }
 
 .pages_post_news div ul li a:active{
-	color: #1d7a7a;
-	text-decoration: none;
+  color: #1d7a7a;
+  text-decoration: none;
 }
 
 .pages_post_news div ul li a:hover{
-	color: #1d7a7a;
-	text-decoration: none;
+  color: #1d7a7a;
+  text-decoration: none;
 }
 
 /***************************************
-        Communicate post links
+Communicate post links
 ****************************************/
 
 .pages_post_communicate div p strong a:link{
-	color: #4f8718;
-	text-decoration: none;
+  color: #4f8718;
+  text-decoration: none;
 }
 
 .pages_post_communicate div p strong a:visited{
-	color: #4f8718;
-	text-decoration: none;
+  color: #4f8718;
+  text-decoration: none;
 }
 
 .pages_post_communicate div p strong a:active{
-	color: #4f8718;
-	text-decoration: none;
+  color: #4f8718;
+  text-decoration: none;
 }
 
 .pages_post_communicate div p strong a:hover{
-	color: #4f8718;
-	text-decoration: underline;
+  color: #4f8718;
+  text-decoration: underline;
 }
 
 .pages_post_communicate div p a:link{
-	color: #4f8718;
-	text-decoration: none;
+  color: #4f8718;
+  text-decoration: none;
 }
 
 .pages_post_communicate div p a:visited{
-	color: #4f8718;
-	text-decoration: none;
+  color: #4f8718;
+  text-decoration: none;
 }
 
 .pages_post_communicate div p a:active{
-	color: #4f8718;
-	text-decoration: none;
+  color: #4f8718;
+  text-decoration: none;
 }
 
 .pages_post_communicate div p a:hover{
-	color: #4f8718;
-	text-decoration: underline;
+  color: #4f8718;
+  text-decoration: underline;
 }
 
 /***************************************
-         Meet the PM post links
+Meet the PM post links
 ****************************************/
 
 .pages_post_meet div ul li a:link{
-	color: #c2604b;
-	text-decoration: none;
+  color: #c2604b;
+  text-decoration: none;
 }
 
 .pages_post_meet div ul li a:visited{
-	color: #c2604b;
-	text-decoration: none;
+  color: #c2604b;
+  text-decoration: none;
 }
 
 
 .pages_post_meet div ul li a:active{
-	color: #c2604b;
-	text-decoration: none;
+  color: #c2604b;
+  text-decoration: none;
 }
 
 
 .pages_post_meet div ul li a:hover{
-	color: #c2604b;
-	text-decoration: underline;
+  color: #c2604b;
+  text-decoration: underline;
 }
 
 .pages_post_meet div p a:link{
-	color: #c2604b;
-	text-decoration: none;
+  color: #c2604b;
+  text-decoration: none;
 }
 
 .pages_post_meet div p a:visited{
-	color: #c2604b;
-	text-decoration: none;
+  color: #c2604b;
+  text-decoration: none;
 }
 
 .pages_post_meet div p a:active{
-	color: #c2604b;
-	text-decoration: none;
+  color: #c2604b;
+  text-decoration: none;
 }
 
 .pages_post_meet div p a:hover{
-	color: #c2604b;
-	text-decoration: underline;
+  color: #c2604b;
+  text-decoration: underline;
 }
 
 /***************************************
-          history post links
+history post links
 ****************************************/
 
 .pages_post_history div p strong a:link{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div p strong a:visited{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div p strong a:active{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div p strong a:hover{
-	color: #976431;
-	text-decoration: underline;
+  color: #805429;
+  text-decoration: underline;
 }
 
 .pages_post_history div ul li a:link{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div ul li a:visited{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div ul li a:active{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div ul li a:hover{
-	color: #976431;
-	text-decoration: underline;
+  color: #805429;
+  text-decoration: underline;
 }
 
 .pages_post_history div p a:link{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div p a:visited{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div p a:active{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 
 .pages_post_history div p a:hover{
-	color: #976431;
-	text-decoration: underline;
+  color: #805429;
+  text-decoration: underline;
 }
 
 
 .pages_post_history div ol li a:link{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div ol li a:visited{
-	color: #a06c28;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 
 .pages_post_history div ol li a:active{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div ol li a:hover{
-	color: #976431;
-	text-decoration: underline;
+  color: #805429;
+  text-decoration: underline;
 }
 
 .pages_post_history div ul li a:link{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div ul li a:visited{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div ul li a:active{
-	color: #976431;
-	text-decoration: none;
+  color: #805429;
+  text-decoration: none;
 }
 
 .pages_post_history div ul li a:hover{
-	color: #976431;
-	text-decoration: underline;
+  color: #805429;
+  text-decoration: underline;
 }
 
 
 
 .entry ul{
-	margin-left: 5px;
+  margin-left: 5px;
 }
 
 
 /****************************
-        Bread Crumbs
+Bread Crumbs
 *****************************/
-
-.bread_crumb_news{
-	margin-top: 15px;
-	margin-left:26px;
+.bread_crumb {
+  margin-top: 15px;
+  margin-left:26px;
+  margin-bottom: 10px;
 }
 
-.bread_crumb_news a:link{
-	text-decoration: none;
-	color: #1d7a7a;
-}
+.bread_crumb a:link,
+.bread_crumb a:visited,
+.bread_crumb a:hover{ text-decoration: none; }
+.bread_crumb a:active{ text-decoration: underline; }
 
-.bread_crumb_news a:visited{
-	text-decoration: none;
-	color: #1d7a7a;
-}
-
-.bread_crumb_news a:hover{
-	text-decoration: none;
-	color: #1d7a7a;
-}
-
-.bread_crumb_news a:active{
-	text-decoration: underline;
-	color: #1d7a7a;
-}
+.bread_crumb_news {}
+.bread_crumb_news a:link,
+.bread_crumb_news a:visited,
+.bread_crumb_news a:hover{ color: #1d7a7a; }
+.bread_crumb_news a:active{}
 
 /*----------nr 10 TV-------------*/
 
-.bread_crumb_nr10tv{
-	margin-top: 15px;
-	margin-left:26px;
-}
+.bread_crumb_nr10tv{ margin-bottom:20px; }
+.bread_crumb_nr10tv a:link,
+.bread_crumb_nr10tv a:visited,
+.bread_crumb_nr10tv a:hover{ color:#660066; }
+.bread_crumb_nr10tv a:active{}
 
-.bread_crumb_nr10tv a:link{
-	text-decoration: none;
-	color: #660066;
-}
-
-.bread_crumb_nr10tv a:visited{
-	text-decoration: none;
-	color: #660066;
-}
-
-.bread_crumb_nr10tv a:hover{
-	text-decoration: none;
-	color: #660066;
-}
-
-.bread_crumb_nr10tv a:active{
-	text-decoration: underline;
-	color: #660066;
-}
+.pages_post_nr10tv{ margin-left: 25px; }
 
 /*-----------communicate---------*/
 
-.bread_crumb_communicate{
-	margin-top: 15px;
-	margin-left:26px;
-}
+.bread_crumb_communicate {}
+.bread_crumb_communicate a:link,
+.bread_crumb_communicate a:visited,
+.bread_crumb_communicate a:hover{ color: #4f8718; }
+.bread_crumb_communicate a:active{}
 
-.bread_crumb_communicate a:link{
-	text-decoration: none;
-	color: #4f8718;
-}
+/*-----------meet the PM---------*/
 
-.bread_crumb_communicate a:visited{
-	text-decoration: none;
-	color: #4f8718;
-}
-
-.bread_crumb_communicate a:hover{
-	text-decoration: none;
-	color: #4f8718;
-}
-
-.bread_crumb_communicate a:active{
-	text-decoration: underline;
-	color: #4f8718;
-}
-
-/*-----------meet th PM---------*/
-
-.bread_crumb_meet{
-	margin-top: 15px;
-	margin-left:26px;
-}
-
-.bread_crumb_meet a:link{
-	text-decoration: none;
-	color: #c2604b;
-}
-
-.bread_crumb_meet a:visited{
-	text-decoration: none;
-	color: #c2604b;
-}
-
-.bread_crumb_meet a:hover{
-	text-decoration: none;
-	color: #c2604b;
-}
-
-.bread_crumb_meet a:active{
-	text-decoration: underline;
-	color: #c2604b;
-}
+.bread_crumb_meet {}
+.bread_crumb_meet a:link,
+.bread_crumb_meet a:visited,
+.bread_crumb_meet a:hover{ color: #c2604b; }
+.bread_crumb_meet a:active{}
 
 /*-----------history---------*/
 
-.bread_crumb_history{
-	margin-top: 15px;
-	margin-left:26px;
-}
-
-.bread_crumb_history a:link{
-	text-decoration: none;
-	color: #a06c28;
-}
-
-.bread_crumb_history a:visited{
-	text-decoration: none;
-	color: #a06c28;
-}
-
-.bread_crumb_history a:hover{
-	text-decoration: none;
-	color: #a06c28;
-}
-
-.bread_crumb_history a:active{
-	text-decoration: underline;
-	color: #a06c28;
-}
-
-.history_submenu{
-	margin-left:10px;
-}
+.bread_crumb_history {}
+.bread_crumb_history a:link,
+.bread_crumb_history a:visited,
+.bread_crumb_history a:hover{ color: #805429; }
+.bread_crumb_history a:active{}
+.history_submenu{ margin-left:10px; }
 
 .history_submenu div a{
-	color:#976431;
-	text-decoration: none;
+  color:#805429;
+  text-decoration: none;
 }
 
+
 .submenu_top_border{
-	border-top:1px dashed #cccccc; 
-	margin-top:5px; 
-	margin-bottom:5px;
-	margin-left: 0;
-	padding-left: 0;
+  border-top:1px dashed #cccccc;
+  margin-top:5px;
+  margin-bottom:5px;
+  margin-left: 0;
+  padding-left: 0;
 }
 
 .page_title_border{
-	border-bottom:1px solid #000;
-	font-family: Georgia, "Times New Roman",Times,serif;
-	font-weight:normal;
-	letter-spacing:-0.03cm;	
+  border-bottom:1px solid #000;
+  font-family: Georgia, "Times New Roman",Times,serif;
+  font-weight:normal;
+  letter-spacing:-0.03cm;
 }
 
 .page_title_border a{
-	text-decoration: none;
+  text-decoration: none;
 }
 
 
 .flickr_logo_margin{
-	margin-top:0px; 
-	margin-bottom:0px;
-	padding-top: 0px;
-	padding-bottom: 0;
+  margin-top:0px;
+  margin-bottom:0px;
+  padding-top: 0px;
+  padding-bottom: 0;
 }
 
 .youtube_logo_margin{
-	margin-top:15px; 
-	margin-bottom:5px;
-	
+  margin-top:15px;
+  margin-bottom:5px;
+
 }
 
 .youtube_img{
-	float:left;
-	margin-right:4px;
+  float:left;
+  margin-right:4px;
 }
 
 .youtube_feed_logo{
-	margin-top: 3px;
+  margin-top: 3px;
 
 }
 
 .youtube_hr {
-	color: #ccc;
-	background-color: #ccc;
-	height: 1px;
-	border: 0;
-  	width: 94%;
+  color: #ccc;
+  background-color: #ccc;
+  height: 1px;
+  border: 0;
+  width: 94%;
 }
 
 .posts_list_post {
-	margin:  0 0 5px 0;
-	padding: 0 0 0 0;
-	font-size: 2.0em;
-	font-family:Georgia, "Times New Roman", Times, serif;
-	font-weight: normal;
+  margin:  0 0 5px 0;
+  padding: 0 0 0 0;
+  font-size: 2.0em;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-weight: normal;
+}
+
+
+.posts_list_post a{
+  margin:  0 0 5px 0;
+  padding: 0 0 0 0;
+  font-size: 1.0em;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-weight: normal;
+  color: #000;
+  text-decoration: none;
 }
 
 .posts_list_post a{
-	margin:  0 0 5px 0;
-	padding: 0 0 0 0;
-	font-size: 1.0em;
-	font-family:Georgia, "Times New Roman", Times, serif;
-	font-weight: normal;
-	color: #000;
-	text-decoration: none;
+  text-decoration: underline;
 }
 
 .posts_list_post a:hover{
-	margin:  0 0 5px 0;
-	padding: 0 0 0 0;
-	font-size: 1.0em;
-	font-family:Georgia, "Times New Roman", Times, serif;
-	font-weight: normal;
-	color: #000;
-	text-decoration: underline;
+  margin:  0 0 5px 0;
+  padding: 0 0 0 0;
+  font-size: 1.0em;
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-weight: normal;
+  color: #000;
+  text-decoration: underline;
 }
 
+.posts_list_post a{
+  text-decoration: underline;
+}
 
+#all_latest_news
+{
+  width:550px;
+  text-align:left;
+  padding-left:22px;
+  font-weight: bold;
+}
 
+a#latest_news_link
+{
+  color:#1D7A7A;
+  text-decoration:none;
+}
+
+a#latest_news_link:hover
+{
+  text-decoration:underline;
+}
+
+div.sharethisholder
+{
+  text-align : left;
+  padding-left : 0px;
+}
+
+div#sharethisembed
+{
+  width:120px;
+
+  padding-top : 16px;
+
+  font-weight:bold;
+
+  font-family:Georgia, "Times New Roman", Times, serif;
+  font-size:1.2em;
+  float:left;
+}
+
+div.sharethisholdermain
+{
+  width:120px;
+  text-align : left;
+  padding-left : 3px;
+  padding-top : 16px;
+  float:left;
+}
+
+img.shareimage
+{
+  vertical-align : middle;
+  border-width : 0px;
+  margin-right : 5px;
+  margin-left : 5px;
+}
+
+a.sharethislink
+{
+  font-family : Arial,Verdana,Sans-Serif;
+  font-size : 1.0em;
+  text-decoration : none;
+}
+
+img.alignnone
+{
+  display: block;
+}
+
+div#rssholder
+{
+  margin-right:25px;
+  text-align : right;
+}
