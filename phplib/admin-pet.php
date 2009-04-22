@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.124 2009-04-21 16:54:44 matthew Exp $
+ * $Id: admin-pet.php,v 1.125 2009-04-22 18:03:26 matthew Exp $
  * 
  */
 
@@ -22,7 +22,6 @@ class ADMIN_PAGE_PET_SUMMARY {
         $this->id = 'summary';
     }
     function display() {
-        global $pet_today;
         petition_admin_search_form();
     }
 }
@@ -32,13 +31,82 @@ class ADMIN_PAGE_PET_STATS {
         $this->id = 'stats';
         $this->navname = 'Statistics';
     }
-    function display() {
-        global $pet_today;
 
+    function date_range($from, $to) {
+        $end_interval = "?::date+'1 day'::interval";
+        $petitions_submitted = db_getOne("select count(*) from petition
+            where creationtime>=? and creationtime<$end_interval",
+            $from['iso'], $to['iso']);
+        $closed_less500 = db_getOne("select count(*) from petition
+            where deadline>=? and deadline<=? and cached_signers<500
+            and status='finished'", $from['iso'], $to['iso']);
+        $closed_more500 = db_getOne("select count(*) from petition
+            where deadline>=? and deadline<=? and cached_signers>=500
+            and status='finished'", $from['iso'], $to['iso']);
+        $signatures = db_getOne("select count(*) from signer
+            where signtime>=? and signtime<$end_interval
+            and emailsent='confirmed' and showname='t'",
+            $from['iso'], $to['iso']);
+        $responses = db_getOne("select count(*) from message
+            where whencreated>=? and whencreated<$end_interval
+            and circumstance='government-response'",
+            $from['iso'], $to['iso']);
+        $responded_sigs = db_getOne("select count(*) from message_signer_recipient
+            where message_id in (select id from message
+                where whencreated>=? and whencreated<$end_interval
+                and circumstance='government-response')",
+            $from['iso'], $to['iso']);
+        $petitions_closed = db_getAll("select ref from petition
+            left join message on petition.id=petition_id and circumstance='government-response'
+            where deadline>=? and deadline<=? and cached_signers>=500 and status='finished'
+            and petition_id is null order by deadline", $from['iso'], $to['iso']);
+        $from_pretty = prettify($from['iso']);
+        $to_pretty = prettify($to['iso']);
+        echo <<<EOF
+<h2>Statistics for $from_pretty to $to_pretty</h2>
+<ul>
+<li>Number of petitions submitted: $petitions_submitted
+<li>Petitions closed with fewer than 500 signatures: $closed_less500
+<li>Petitions closed with 500 signatures or more: $closed_more500
+<li>Number of signatures placed: $signatures
+<li>Number of petitions responded to: $responses
+<li>Number of signatures emailed government responses: $responded_sigs
+</ul>
+EOF;
+        if (count($petitions_closed)) {
+            echo '<h3>Closed petitions with 500 signatures or more that have not received a response</h3> <ul>';
+            foreach ($petitions_closed as $p) {
+                echo '<li><a href="?page=pet&amp;petition=', $p['ref'], '">', $p['ref'], '</a></li>';
+            }
+            echo '</ul>';
+        }
+    }
+
+    function display() {
+        global $pet_time;
+        if (get_http_var('from') && get_http_var('to')) {
+            $from = datetime_parse_local_date(get_http_var('from'), $pet_time, 'en', 'GB');
+            $to = datetime_parse_local_date(get_http_var('to'), $pet_time, 'en', 'GB');
+            if ($from && $to) {
+                $this->date_range($from, $to);
+            }
+        }
+
+        $from = htmlspecialchars(get_http_var('from'));
+        $to = htmlspecialchars(get_http_var('to'));
+        echo <<<EOF
+<form method="post" action="$this->self_link">
+Date range statistics &ndash;
+<label for="date_from">From:</label> <input type="text" id="date_from" name="from" value="$from">
+<label for="date_to">To:</label> <input type="text" id="date_to" name="to" value="$to">
+<input type="submit" value="Lookup">
+</form>
+EOF;
+        
         # Overall
         $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
         print <<<EOF
-<p>Statistics last updated: $statsdate
+<p>Summary statistics last updated: $statsdate
 EOF;
 
         # Petitions
@@ -322,7 +390,7 @@ class ADMIN_PAGE_PET_MAIN {
     }
 
     function list_all_petitions() {
-        global $pet_today, $global_petition_categories;
+        global $global_petition_categories;
         $sort = get_http_var('s');
         if (!$sort || preg_match('/[^radecsz]/', $sort)) $sort = 'c';
         $order = '';
@@ -766,7 +834,7 @@ function rejection_text(obj) {
 'Individual legal cases are a matter for direct communication with the Home Office.',
 'This is a devolved matter and should be directed to the Scottish Executive / Welsh Assembly / Northern Ireland Executive as appropriate.',
 'This is a matter for direct communication with Parliament.',
-'The Cabinet Office is actively seeking nominations for honours from the public. Please go to http://www.honours.gov.uk/',
+'The Cabinet Office is actively seeking nominations for honours from the public. Please go to http://www.direct.gov.uk/honours',
         );
         foreach ($autotext as $t) {
             echo '<li><a style="cursor:pointer;" onclick="rejection_text(this);">', $t, '</a>';

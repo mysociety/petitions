@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.37 2009-02-17 17:16:08 matthew Exp $
+// $Id: page.php,v 1.38 2009-04-22 18:03:26 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -252,8 +252,8 @@ found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
 <? if (OPTION_SITE_TYPE == 'pm') { ?>
 <li>nominations for Honours. These have been accepted in the past but
 this is not the appropriate channel; accordingly, from 6 March 2008 we
-are rejecting such petitions and directing petitioners to the
-<a href="http://www.honours.gov.uk/">Cabinet Office website</a> where
+are rejecting such petitions and directing petitioners to
+<a href="http://www.direct.gov.uk/honours">http://www.direct.gov.uk/honours</a> where
 nominations for Honours can be made directly to the appropriate department.</li>
 <? } ?>
 </ul>
