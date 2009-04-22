@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.125 2009-04-22 18:03:26 matthew Exp $
+ * $Id: admin-pet.php,v 1.126 2009-04-22 18:17:54 matthew Exp $
  * 
  */
 
@@ -35,7 +35,8 @@ class ADMIN_PAGE_PET_STATS {
     function date_range($from, $to) {
         $end_interval = "?::date+'1 day'::interval";
         $petitions_submitted = db_getOne("select count(*) from petition
-            where creationtime>=? and creationtime<$end_interval",
+            where creationtime>=? and creationtime<$end_interval
+            and status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')",
             $from['iso'], $to['iso']);
         $closed_less500 = db_getOne("select count(*) from petition
             where deadline>=? and deadline<=? and cached_signers<500
