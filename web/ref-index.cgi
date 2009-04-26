@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.55 2009-04-21 16:18:50 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.56 2009-04-26 23:36:52 matthew Exp $';
 
 use strict;
 
@@ -137,7 +137,7 @@ sub main () {
         $html .= Petitions::Page::reject_box($q, $p);
         $html .= $q->end_div();
     }
-    if ($p->{status} eq 'live') {
+    if (1==0 && $p->{status} eq 'live') {
         my $url = uri_escape(mySociety::Config::get('BASE_URL') . "/$ref/");
 	my $share_title = uri_escape(Petitions::sentence($q, $p, 0, 1));
         $html .= <<EOF;
