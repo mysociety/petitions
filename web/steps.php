@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.12 2009-04-21 16:18:50 matthew Exp $
+// $Id: steps.php,v 1.13 2009-06-29 21:43:35 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
@@ -59,7 +59,8 @@ acknowledged on this website.</p>
 
 <p>Once your petition is live, you will be able to publicise the URL
 you chose when you created your petition, and anyone will be able to
-come to the website and sign it.</p>
+come to the website and sign it. As the petition creator, your name
+and your organisation, if you have specified one, will be displayed.</p>
 
 <p>They will be asked to give their name and address and an email address that we
 can verify. The system is designed to identify duplicate names and addresses, and
