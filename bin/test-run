@@ -24,7 +24,7 @@
 # HTML mail test could be better
 # Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.99 2009-04-21 16:54:44 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.100 2009-07-16 15:08:05 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -35,70 +35,29 @@ mySociety::Config::set_file('../conf/general');
 use mySociety::DBHandle qw(dbh);
 use mySociety::WebTestHarness;
 
-use Data::Dumper;
-use Carp qw(verbose);
-use Storable;
-use FindBin;
-use Getopt::Long;
-use IO::Handle;
 use POSIX;
 
-my %allowed_actions = ( main => 1, rejection => 1, timeout => 1, resubmit => 1, early => 1 );
+my @actions = ('main', 'rejection', 'timeout', 'resubmit', 'early');
+my %actions_desc = (
+    main => 'Create petition, sign it, wait until completion, send two government responses',
+    rejection => 'Make a petition, and reject it, resubmit, and reject again',
+    timeout => 'Test timeout for petitions which have been rejected once but not resubmitted',
+    resubmit => 'Make a petition, and reject it, resubmit, and approve. Also test admin deadline changing and removal',
+    early => 'Create petition, sign it, send government response, sign it some more',
+);
 
-sub help {
-print <<END
-
-Usage: test-run [OPTION] [ACTIONS...]
-
-Options are
-    --verbose=n   Choose 0 (no progress), 1 (basic actions), 2 (full debug)
-
-Actions are a list of tests, run if present in this order:
-    main - Create petition, sign it, wait until completion, send two government responses
-    rejection - Make a petition, and reject it, resubmit, and reject again
-    timeout - Test timeout for petitions which have been rejected once but not resubmitted
-    resubmit - Make a petition, and reject it, resubmit, and approve. Also test admin deadline changing and removal
-    early - Create petition, sign it, send government response, sign it some more
-If you specify no actions, it will run all of them.
-
-END
-}
-
-# Parse command line
-our $verbose = 0; # currently 3 levels: 0, 1 and 2
-our $multispawn = 1; # can test launching multiple instances of cron jobs
-our $help;
-if (!GetOptions(
-        'verbose=i' =>  \$verbose,
-        'help' =>               \$help
-    )) {
-    help();
-    exit(1);
-}
-if ($help) {
-    help();
-    exit(0);
-}
-our %action;
-foreach (@ARGV) {
-    if ($allowed_actions{$_}) {
-        $action{$_} = 1;
-    } else {
-        help();
-        print STDERR "Action '$_' not known\n";
-        exit(0);
-    }
-}
-if (scalar(@ARGV) == 0) {
-    %action = %allowed_actions;
-}
+date_print("Set up web test harness...");
+my ($wth, $action, $verbose, $pause, $multispawn) = mySociety::WebTestHarness::setup({
+    actions => \@actions,
+    actions_desc => \%actions_desc,
+    dbname => 'PET',
+});
 
 # Set up options
 our $base_url = mySociety::Config::get('BASE_URL');
 our $admin_url = mySociety::Config::get('ADMIN_URL');
 our $auth_user = mySociety::Config::get('AUTH_USER');
 our $auth_password = mySociety::Config::get('AUTH_PASSWORD');
-our $httpd_error_log = mySociety::Config::get('HTTPD_ERROR_LOG');
 our $email_domain = mySociety::Config::get('EMAIL_DOMAIN');
 our $web_domain = mySociety::Config::get('WEB_DOMAIN');
 our $contact_email = mySociety::Config::get('CONTACT_EMAIL');
@@ -114,22 +73,11 @@ my $named_fcgi_processes = '"^(ref-index.cgi|ref-sign.cgi|reject.cgi)\$"';
 mySociety::SystemMisc::kill_named_processes(SIGKILL, $named_fcgi_processes);
 
 # Configure test harness class
-date_print("Set up web test harness...") if $verbose > 0;
-our $wth = new mySociety::WebTestHarness();
 $base_url =~ m#^http://(.+)/?$#;
 $wth->browser_credentials("$1:80", "ePetitions staging site", $auth_user, $auth_password); 
 $wth->browser_credentials("$1:80", "$web_domain admin pages", $auth_user, $auth_password); 
-$wth->database_connect('PET_');
-$wth->database_drop_reload('../db/schema.sql');
-$wth->database_cycle_sequences(200);
 mySociety::SystemMisc::kill_named_processes(SIGKILL, $named_fcgi_processes);
-$wth->log_watcher_setup($httpd_error_log);
 $wth->log_watcher_self_test($base_url . "/test.php?error=1", "deliberate_error_to_test_error_handling");
-my $eveld_bin = "$FindBin::Bin/../../services/EvEl/bin/eveld";
-$eveld_bin = undef if ! -e $eveld_bin; # when running on servers rely on EvEl daemon, rather than calling EvEl binary directly XXX need more explicit way of distinguishing this case, than just checking evel isn't checked out in the same tree
-$wth->email_setup({ eveld_bin => $eveld_bin,
-                    log_mailbox => "log_mailbox" });
-$wth->browser_set_validator("/usr/bin/validate");
 
 # Start email and signup daemons
 my $petemaild_pid;
@@ -146,7 +94,7 @@ END {
     }
     exit($exit_code);
 };
-date_print("Starting daemons...") if $verbose > 0;
+date_print("Starting daemons...");
 $petemaild_pid = fork();
 die "failed to fork" if (!defined($petemaild_pid));
 my $daemon_verbose = -1;
@@ -163,41 +111,29 @@ if ($petsignupd_pid == 0) {
 }
 
 # Syntax check all .php files
-date_print("Syntax check all PHP files...") if $verbose > 0;
+date_print("Syntax check all PHP files...");
 $wth->php_check_syntax("../../pet/");
 $wth->php_check_syntax("../../pet/templates/emails/", qr//);
 
 # Run tests specified
-if ($action{'main'}) {
-    date_print("Main test...") if $verbose > 0;
-    do_main_test();
-}
-if ($action{'rejection'}) {
-    date_print("Rejection test...") if $verbose > 0;
-    do_rejection_test();
-}
-if ($action{'timeout'}) {
-    date_print("Timeout test...") if $verbose > 0;
-    do_timeout_test();
-}
-if ($action{'resubmit'}) {
-    date_print("Resubmit test...") if $verbose > 0;
-    do_resubmit_test();
-}
-
-if ($action{'early'}) {
-    date_print("Early response test...") if $verbose > 0;
-    do_early_response_test();
+foreach (@actions) {
+    next unless $action->{$_};
+    date_print($actions_desc{$_}) if $actions_desc{$_};
+    do_main_test() if $_ eq 'main';
+    do_rejection_test() if $_ eq 'rejection';
+    do_timeout_test() if $_ eq 'timeout';
+    do_resubmit_test() if $_ eq 'resubmit';
+    do_early_response_test() if $_ eq 'early';
 }
 
 # Check for any unhandled mails or errors
 call_send_messages();
 call_mark_finished();
-date_print("Checking no emails left at end...") if $verbose > 0;
+date_print("Checking no emails left at end...");
 $wth->email_check_none_left();
-date_print("Checking no log file errors at end...") if $verbose > 0;
+date_print("Checking no log file errors at end...");
 $wth->log_watcher_check();
-date_print("Everything completed successfully") if $verbose > 0;
+date_print("Everything completed successfully");
 
 #############################################################################
 # General functions
