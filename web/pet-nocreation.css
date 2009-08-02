@@ -1,0 +1,23 @@
+/*
+ * pet-nocreation.css
+ * Tweak for when there's no creation option.
+ *
+ * Copyright (c) 2009 UK Citizens Online Democracy. All rights reserved.
+ * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
+ *
+ * $Id: pet-nocreation.css,v 1.1 2009-08-02 18:43:28 matthew Exp $
+ *
+ */
+
+div#petition_actions {
+    width: 150px;
+}
+
+div#petition_actions ul li {
+    width: auto;
+}
+
+div#petition_actions ul li#action_view {
+    float: none;
+}
+

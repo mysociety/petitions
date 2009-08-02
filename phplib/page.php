@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.38 2009-04-22 18:03:26 matthew Exp $
+// $Id: page.php,v 1.39 2009-08-02 18:43:26 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -47,7 +47,11 @@ function page_header($title, $params = array()) {
     // Display header
     global $devwarning;
     if (OPTION_SITE_TYPE == 'pm') {
-        $contents = file_get_contents("../templates/website/head.html");
+        if (OPTION_CREATION_DISABLED) {
+            $contents = file_get_contents("../templates/website/head-nocreation.html");
+        } else {
+            $contents = file_get_contents("../templates/website/head.html");
+        }
         $creator = '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
         $desc = 'Petitions to the Prime Minister, 10 Downing Street';
         $contents = str_replace('PARAM_SUBJECTS', '<meta name="dc.subject" content="10 Downing Street" />
@@ -307,9 +311,11 @@ recognizable action.</li>
 
 function page_closed_message($front = false) {
     if ($front) echo '<br style="clear:both" />';
-    echo '<p>Notice: Submission of new petitions will be closed from 23rd December
-to 5th January while the Prime Minister is away from Number 10. This
-will allow the Number 10 e-petitions team to progress with recently
-submitted e-petitions and to prevent a backlog of unprocessed petitions.
+    if (is_string(OPTION_CREATION_DISABLED)) {
+        echo '<p>' . OPTION_CREATION_DISABLED . '</p>';
+    } else {
+        echo '<p>Notice: Submission of new petitions is currently closed.
 You can still sign any petition during this time.</p>';
+    }
 }
+
