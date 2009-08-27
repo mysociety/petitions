@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.39 2009-08-02 18:43:26 matthew Exp $
+// $Id: page.php,v 1.40 2009-08-27 12:22:46 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -300,9 +300,9 @@ cereal. These are also outside the remit of the Prime Minister.</li>
 
 <? } ?>
 
-<li>We cannot accept petitions which call upon the <?=OPTION_SITE_TYPE=='pm'?'PM':'council'?> to "recognize" or
+<li>We cannot accept petitions which call upon the <?=OPTION_SITE_TYPE=='pm'?'PM':'council'?> to "recognise" or
 "acknowledge" something, as they do not clearly call for a
-recognizable action.</li>
+recognisable action.</li>
 
 </ul>
 
