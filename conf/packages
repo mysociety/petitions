@@ -8,3 +8,4 @@ php-pear
 libmailtools-perl
 libmime-perl
 libjson-perl
+libmath-bigint-gmp-perl
