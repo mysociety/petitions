@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.150 2009-10-27 15:18:20 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.151 2009-10-27 15:52:55 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -134,7 +134,7 @@ use constant STATE_DONE =>          1;
             # delivery permanently failed
 use constant STATE_BAD =>           2;
 
-my @statename = qw(STATE_PENDING STATE_DONE STATE_BAD);
+our @statename = qw(STATE_PENDING STATE_DONE STATE_BAD);
 
 use constant EVENT_CREATED =>       0;
 use constant EVENT_TEMP_FAILURE =>  1;
@@ -2673,4 +2673,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.150 2009-10-27 15:18:20 matthew Exp $
+$Id: petemaild,v 1.151 2009-10-27 15:52:55 matthew Exp $
