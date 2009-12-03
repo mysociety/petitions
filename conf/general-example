@@ -14,9 +14,14 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.27 2009-08-02 18:43:25 matthew Exp $
+ * $Id: general-example,v 1.28 2009-12-03 16:26:51 matthew Exp $
  * 
  */
+
+// Whether this petition site caters for 'one' body or 'multiple' bodies
+define('OPTION_SITE_TYPE', '');
+// Name for templates etc.
+define('OPTION_SITE_NAME', '');
 
 define('OPTION_CREATION_DISABLED', 0); // Set to disable creation of petitions. If a string, will be printed as error message.
 
