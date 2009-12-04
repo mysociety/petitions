@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.29 2009-12-04 12:26:25 matthew Exp $
+ * $Id: general-example,v 1.30 2009-12-04 15:06:33 matthew Exp $
  * 
  */
 
@@ -81,6 +81,7 @@ define('OPTION_PET_STAGING', 0);
 
 // Where web services used are
 define('OPTION_EVEL_URL', 'http://services.mysociety.org/evel');
+define('OPTION_MAPIT_URL', '');
 
 // Test harness parameters
 define('OPTION_HTTPD_ERROR_LOG', '/var/log/apache/error.log');
