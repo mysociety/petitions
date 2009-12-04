@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.65 2008-05-29 10:28:48 matthew Exp $
+-- $Id: schema.sql,v 1.66 2009-12-04 15:07:41 matthew Exp $
 --
 
 -- global_seq
@@ -55,11 +55,21 @@ create function ms_current_timestamp()
     end;
 ' language 'plpgsql';
 
+-- information about things that receive petitions
+create table body (
+    id integer not null primary key default nextval('global_seq'),
+    area_id integer,
+    ref text not null, -- short name for URLs
+    name text not null
+);
+
 -- information about each petition
 create table petition (
     id integer not null primary key default nextval('global_seq'),
     -- short name of petition for URLs
     ref text not null,
+    -- Body this petition is applied to
+    body_id integer references body(id),
 
     -- "We the undersigned petition the Prime Minister to..."
     content text not null default '', -- LLL
