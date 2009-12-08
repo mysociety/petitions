@@ -83,3 +83,6 @@ div.petition_box {
     background-color: #ccccff;
 }
 
+#content_clipboard {
+    overflow: auto;
+}

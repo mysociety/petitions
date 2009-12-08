@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.55 2009-12-08 12:21:10 matthew Exp $
+# $Id: Petitions.pm,v 1.56 2009-12-08 15:46:23 matthew Exp $
 #
 
 package Petitions::DB;
@@ -79,23 +79,33 @@ sub today () {
     return scalar(dbh()->selectrow_array('select ms_current_date()'));
 }
 
-=item check_ref REFERENCE
+=item check_ref BODY_REF REFERENCE
 
-Given a petition REFERENCE, return its canonical reference, or undef if there
-is none.
+Given a petition REFERENCE and BODY_REF (can be undef), return its canonical
+reference, or undef if there is none.
 
 =cut
-sub check_ref ($) {
-    my $ref = shift;
+sub check_ref ($$) {
+    my ($body, $ref) = @_;
     return undef if (!defined($ref) || $ref !~ /^[A-Za-z0-9-]{6,16}$/);
-    if (defined($ref = dbh()->selectrow_array("
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        if (defined($ref = dbh()->selectrow_array("
+                select petition.ref from petition, body
+                where status in ('live', 'rejected', 'finished')
+                    and body.id = body_id
+                    and lower(body.ref) = ?
+                    and lower(petition.ref) = ?", {}, lc $body, lc $ref))) {
+            return $ref;
+        }
+    } else {
+        if (defined($ref = dbh()->selectrow_array("
                 select ref from petition
                 where status in ('live', 'rejected', 'finished')
                 and lower(ref) = ?", {}, lc $ref))) {
-        return $ref;
-    } else {
-        return undef;
+            return $ref;
+        }
     }
+    return undef;
 }
 
 =item get REF [NOCOUNT] [GOVTRESPONSE]

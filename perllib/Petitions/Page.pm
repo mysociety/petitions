@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.109 2009-12-08 12:21:10 matthew Exp $
+# $Id: Page.pm,v 1.110 2009-12-08 15:46:23 matthew Exp $
 #
 
 package Petitions::Page;
@@ -245,6 +245,8 @@ sub sign_box ($$) {
 
     my $safe_p = {
         deadline => $p->{deadline},
+        body_ref => $p->{body_ref},
+        body_name => $p->{body_name},
         'ref' => $p->{ref},
         organisation => $p->{organisation},
         org_url => $p->{org_url},
@@ -302,6 +304,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => $action)
         . qq(<input type="hidden" name="add_signatory" value="1" />)
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
+        . qq(<input type="hidden" name="body" value="@{[ ent($p->{body_ref}) ]}" />)
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
         . $q->div({ -id => 'signFormLeft' }, 
           $q->p( $must . ' Please enter your name only; signatures containing other text may be removed by the petitions team.'),

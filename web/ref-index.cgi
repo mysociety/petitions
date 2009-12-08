@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.59 2009-12-08 12:21:12 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.60 2009-12-08 15:46:23 matthew Exp $';
 
 use strict;
 
@@ -33,18 +33,28 @@ use Petitions::Page;
 sub main () {
     my $q = shift;
 
+    my $qp_body;
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        $qp_body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
+        if (!defined($qp_body)) {
+            print $q->redirect("/");
+            return;
+        }
+    }
+
     my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
     my $qp_id = $q->ParamValidate(id => qr/^[0-9]+$/);
-    my $ref = Petitions::DB::check_ref($qp_ref);
+    my $ref = Petitions::DB::check_ref($qp_body, $qp_ref);
     if (!defined($ref)) {
         Petitions::Page::bad_ref_page($q, $qp_ref);
         return;
     }
 
     # Perhaps redirect to canonical ref if non-canonical was given.
-    if ($qp_ref ne $ref && $q->request_method() =~ /^(GET|HEAD)$/) {
+    if (($qp_ref ne $ref || ($qp_body && lc($qp_body) ne $qp_body)) && $q->request_method() =~ /^(GET|HEAD)$/) {
         my $url = "/$ref/";
-        (my $qs = $q->query_string()) =~ s/ref=[A-Za-z0-9-]*//;
+        $url = '/' . lc($qp_body) . $url if $qp_body;
+        (my $qs = $q->query_string()) =~ s/;?(body|ref)=[A-Za-z0-9-]*//g;
         $url .= '?' . $qs if $qs;
         print $q->redirect($url);
         return;

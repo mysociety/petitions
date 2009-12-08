@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.52 2009-12-08 12:21:12 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.53 2009-12-08 15:46:23 matthew Exp $';
 
 use strict;
 
@@ -88,11 +88,8 @@ sub signup_page ($$) {
     }
     $errors{address} = 'Please enter your address'
         if (!$qp_address);
-    $errors{postcode}
-        = 'Please enter a valid postcode, such as OX1 3DR, or choose from the drop-down'
-        if !$qp_postcode && !$qp_overseas && $q->{scratch}{site_type} eq 'pm';
-    $errors{postcode} = 'Please enter a valid postcode'
-        if !$qp_postcode && $q->{scratch}{site_type} eq 'council';
+    $errors{postcode} = 'Please enter a valid postcode, or choose from the drop-down'
+        if !$qp_postcode && !$qp_overseas;
     $errors{postcode} = 'You can\'t both put a postcode and pick an option from the drop-down.'
         if (defined($qp_postcode) && defined($qp_overseas));
 
@@ -236,6 +233,16 @@ sub confirm_page ($$$) {
 # main
 sub main () {
     my $q = shift;
+
+    my $body;
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        $body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
+        if (!defined($body)) {
+            print $q->redirect("/");
+            return;
+        }
+    }
+
     my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
     if (!defined($qp_ref)) {
         print $q->redirect("/");
@@ -253,7 +260,9 @@ sub main () {
     # petition page if this is a GET.
     if ($q->request_method() ne 'POST') {
         #warn "bad method";
-        print $q->redirect("/$qp_ref/");
+        my $url = "/$qp_ref/";
+        $url = "/$body$url" if $body;
+        print $q->redirect($url);
         return;
     }
 
