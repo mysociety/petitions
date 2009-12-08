@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.55 2009-12-08 12:21:10 matthew Exp $
+ * $Id: petition.php,v 1.56 2009-12-08 12:50:53 matthew Exp $
  * 
  */
 
@@ -142,6 +142,7 @@ class Petition {
             $this->data['body_name'] = $row['name'];
             $this->data['body_ref'] = $row['ref'];
         }
+        $this->data['petitioned'] = OPTION_SITE_TYPE == 'one' ? OPTION_SITE_PETITIONED : $this->data['body_name'];
 
         $this->data['sentence'] = $this->sentence();
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));

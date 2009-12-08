@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.62 2009-12-08 12:21:12 matthew Exp $
+// $Id: list.php,v 1.63 2009-12-08 12:50:52 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -184,12 +184,7 @@ $rss_items = array();
 if ($ntotal > 0) {
     $c = 1;
     if (!$rss) {
-        if (OPTION_SITE_TYPE == 'one') {
-            $petitioned = OPTION_SITE_NAME=='number10' ? 'the Prime Minister' : OPTION_SITE_PETITIONED;
-        } else {
-            $petitioned = '';
-        }
-           
+        $petitioned = (OPTION_SITE_TYPE == 'one') ? OPTION_SITE_PETITIONED : '';
 ?>
 <table cellpadding="3" cellspacing="0" border="0">
 <tr><th align="left">We the undersigned petition <?=$petitioned ?> to&hellip;</th>
