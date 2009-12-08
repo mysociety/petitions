@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.46 2009-12-08 13:00:37 matthew Exp $
+ * $Id: send-messages,v 1.47 2009-12-08 14:53:57 matthew Exp $
  *
  */
 
@@ -169,6 +169,7 @@ function send_pending_messages() {
             } else {
                 $data['url'] = OPTION_BASE_URL . '/' . $petition->ref() . '/';
             }
+            $data['rejected_url'] = OPTION_BASE_URL . '/list/rejected';
         }
         if ($msg['circumstance'] == 'rejected-once' || $msg['circumstance'] == 'rejected-again'
             || $msg['circumstance'] == 'rejected-timeout') {
