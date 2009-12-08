@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.40 2009-08-27 12:22:46 matthew Exp $
+// $Id: page.php,v 1.41 2009-12-08 12:21:10 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -46,22 +46,21 @@ function page_header($title, $params = array()) {
 
     // Display header
     global $devwarning;
-    if (OPTION_SITE_TYPE == 'pm') {
-        if (OPTION_CREATION_DISABLED) {
-            $contents = file_get_contents("../templates/website/head-nocreation.html");
-        } else {
-            $contents = file_get_contents("../templates/website/head.html");
-        }
+    if (OPTION_CREATION_DISABLED && file_exists('../templates/' . OPTION_SITE_NAME . '/head-nocreation.html')) {
+        $contents = file_get_contents('../templates/' . OPTION_SITE_NAME . '/head-nocreation.html');
+    } else {
+        $contents = file_get_contents('../templates/' . OPTION_SITE_NAME . '/head.html');
+    }
+    if (OPTION_SITE_NAME == 'number10') {
         $creator = '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
         $desc = 'Petitions to the Prime Minister, 10 Downing Street';
         $contents = str_replace('PARAM_SUBJECTS', '<meta name="dc.subject" content="10 Downing Street" />
 <meta name="dc.subject" content="Petitions" />
 <meta name="dc.subject" content="Prime Minister" />
 <meta name="dc.subject" content="Gordon Brown" />', $contents);
-    } elseif (OPTION_SITE_TYPE == 'council') {
-        $contents = file_get_contents("../templates/" . OPTION_SITE_NAME . '/head.html');
-	$creator = OPTION_SITE_NAME;
-	$desc = 'Petitions to ' . OPTION_SITE_NAME;
+    } else {
+        $creator = OPTION_SITE_NAME;
+        $desc = 'Petitions to ' . OPTION_SITE_NAME;
     }
     $extra = '';
     $contents = str_replace('PARAM_CREATOR', $creator, $contents);
@@ -84,16 +83,14 @@ function page_footer($stat_code = '') {
         $stat_code = 'Petitions';
     }
 
-    if (OPTION_SITE_TYPE == 'pm') {
+    $contents = file_get_contents('../templates/' . OPTION_SITE_NAME . '/foot.html');
+    if (OPTION_SITE_NAME == 'number10') {
         $site_stats = '';
         if (!OPTION_PET_STAGING) {
-            $site_stats = file_get_contents('../templates/website/site-stats.html');
+            $site_stats = file_get_contents('../templates/number10/site-stats.html');
             $site_stats = str_replace("PARAM_STAT_CODE", $stat_code, $site_stats);
         }
-        $contents = file_get_contents("../templates/website/foot.html");
         $contents = str_replace("PARAM_SITE_STATS", $site_stats, $contents);
-    } elseif (OPTION_SITE_TYPE == 'council') {
-        $contents = file_get_contents('../templates/' . OPTION_SITE_NAME . '/foot.html');
     }
 
     print $contents;
@@ -156,7 +153,12 @@ function rss_header($title, $description, $params) {
     header('Content-Type: application/xml; charset=utf-8');
     header('Cache-Control: max-age=3600');
     print '<?xml version="1.0" encoding="UTF-8"?>';
-    print '<?xml-stylesheet type="text/css" href="http://www.number10.gov.uk/rss/rss.css"?>';
+    if (OPTION_SITE_NAME == 'number10') {
+        $site_title = 'Number 10 E-Petitions';
+        print '<?xml-stylesheet type="text/css" href="http://www.number10.gov.uk/rss/rss.css"?>';
+    } else {
+        $site_title = 'E-Petitions';
+    }
 ?>
 
 <rdf:RDF
@@ -165,7 +167,7 @@ function rss_header($title, $description, $params) {
 >
 
 <channel rdf:about="<?=$main_page?>">
-<title>Number 10 E-Petitions - <?=$title?></title>
+<title><?=$site_title ?> - <?=$title?></title>
 <link><?=$main_page?></link>
 <description><?=$description?></description>
 
@@ -208,10 +210,10 @@ Government site. Party political content cannot be published, under the
 <a href="http://www.civilservice.gov.uk/civilservicecode">normal rules governing the Civil Service</a>.
 Please note, this does not mean it is not permissible to petition on
 controversial issues. For example, this party political petition
-would not be permitted: "We petition the <?=OPTION_SITE_TYPE=='pm'?"PM to change his party's policy on education"
-:"council to change the Labour executive's policy on education" ?>,
+would not be permitted: "We petition <?=OPTION_SITE_NAME=='number10'?"the PM to change his party's policy on education"
+:OPTION_SITE_PETITIONED . " to change the Labour executive's policy on education" ?>,
 but this non-party political version would be:
-"We petition the <?=OPTION_SITE_TYPE=='pm'?"PM to change the government's":'council to change their'?> policy on education".</li>
+"We petition <?=OPTION_SITE_NAME=='number10'?"the PM to change the government's":OPTION_SITE_PETITIONED . ' to change their'?> policy on education".</li>
 <li>potentially libellous, false, or defamatory statements;</li>
 <li>information which may be protected by an injunction or court order (for
 example, the identities of children in custody disputes);</li>
@@ -235,10 +237,10 @@ possible to petition for anything, no matter how radical, politely).</li>
 <p>We reserve the right to reject:</p>
 <ul>
 <li>petitions that are similar to and/or overlap with an existing petition or petitions;</li>
-<li>petitions which ask for things outside the remit or powers of the <?
+<li>petitions which ask for things outside the remit or powers of <?
 
-if (OPTION_SITE_TYPE == 'pm') echo 'Prime Minister and Government';
-else echo 'council';
+if (OPTION_SITE_NAME == 'number10') echo 'the Prime Minister and Government';
+else echo OPTION_SITE_PETITIONED;
 
 ?>;</li>
 <li>statements that don't actually request any action - ideally start the title of your petition with a verb;</li>
@@ -253,7 +255,7 @@ for purely frivolous purposes);</li>
 <li>Freedom of Information requests. This is not the right channel
 for FOI requests; information about the appropriate procedure can be
 found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
-<? if (OPTION_SITE_TYPE == 'pm') { ?>
+<? if (OPTION_SITE_NAME == 'number10') { ?>
 <li>nominations for Honours. These have been accepted in the past but
 this is not the appropriate channel; accordingly, from 6 March 2008 we
 are rejecting such petitions and directing petitioners to
@@ -284,7 +286,7 @@ directly to the Home Office.</li>
 <li>Please don't use 'shouting' capital letters excessively as they
 can make petitions fall foul of our 'impossible to read' criteria.</li>
 
-<? if (OPTION_SITE_TYPE == 'pm') { ?>
+<? if (OPTION_SITE_NAME == 'number10') { ?>
 
 <li>We receive a lot of petitions on devolved matters. If your
 petition relates to the powers devolved to parts of the UK, such as
@@ -300,7 +302,7 @@ cereal. These are also outside the remit of the Prime Minister.</li>
 
 <? } ?>
 
-<li>We cannot accept petitions which call upon the <?=OPTION_SITE_TYPE=='pm'?'PM':'council'?> to "recognise" or
+<li>We cannot accept petitions which call upon <?=OPTION_SITE_PETITIONED?> to "recognise" or
 "acknowledge" something, as they do not clearly call for a
 recognisable action.</li>
 

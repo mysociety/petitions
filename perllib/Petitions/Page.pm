@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.108 2009-04-21 16:18:49 matthew Exp $
+# $Id: Page.pm,v 1.109 2009-12-08 12:21:10 matthew Exp $
 #
 
 package Petitions::Page;
@@ -33,13 +33,6 @@ sub do_fastcgi {
     try {
         my $W = new mySociety::WatchUpdate();
         while (my $q = new mySociety::Web()) {
-            my $web_domain = mySociety::Config::get('WEB_DOMAIN');
-            if ($q->virtual_host() =~ /^(.*?)\.$web_domain/) {
-                $q->{scratch}{site_type} = 'council';
-                $q->{scratch}{site_name} = $1;
-            } else {
-                $q->{scratch}{site_type} = 'pm';
-            }
             &$func($q);
             $W->exit_if_changed();
         }
@@ -88,15 +81,10 @@ sub header ($$%) {
     }
 
     # html header shared with PHP
-    my $out;
-    if ($q->{scratch}{site_type} eq 'pm') {
-        $out = read_file("../templates/website/head.html");
-    } else {
-        $out = read_file('../templates/' . $q->{scratch}{site_name} . '/head.html');
-        utf8::decode($out); # binmode argument on read_file simply just sets O_BINARY
-    }
+    my $out = read_file('../templates/' . mySociety::Config::get('SITE_NAME') . '/head.html');
+    utf8::decode($out); # binmode argument on read_file simply just sets O_BINARY
     if (!$out) {
-        warn "Couldn't find ../templates/website/head.html";
+        warn "Couldn't find ../templates/" . mySociety::Config::get('SITE_NAME') . "/head.html";
         return "";
     }
     my $ent_url = ent($q->url());
@@ -136,26 +124,16 @@ sub header ($$%) {
 =cut
 sub footer ($$) {
     my ($q, $stat_code) = @_;
-    if ($stat_code) {
-        $stat_code = "Petitions.$stat_code";
-    } else {
-        $stat_code = 'Petitions';
-    }
     
-    # html footer, shared with PHP
-    my $site_stats = "";
-    if (!mySociety::Config::get('PET_STAGING')) {
-        $site_stats = read_file("../templates/website/site-stats.html");# || die "couldn't open site-stats.html: $!";
+    my $out = read_file('../templates/' . mySociety::Config::get('SITE_NAME') . '/foot.html');
+    utf8::decode($out);
+
+    if (mySociety::Config::get('SITE_NAME') eq 'number10' && !mySociety::Config::get('PET_STAGING')) {
+        $stat_code = $stat_code ? "Petitions.$stat_code" : 'Petitions';
+        my $site_stats = read_file("../templates/number10/site-stats.html");# || die "couldn't open site-stats.html: $!";
         $site_stats =~ s/PARAM_STAT_CODE/$stat_code/g;
+        $out =~ s/PARAM_SITE_STATS/$site_stats/g;
     }
-    my $out;
-    if ($q->{scratch}{site_type} eq 'pm') {
-        $out = read_file("../templates/website/foot.html");
-    } else {
-        $out = read_file('../templates/' . $q->{scratch}{site_name} . '/foot.html');
-        utf8::decode($out);
-    }
-    $out =~ s/PARAM_SITE_STATS/$site_stats/g;
 
     return $out;
 }
@@ -243,7 +221,7 @@ sub display_box ($$%) {
         $q->div({ -class => 'petition_box' },
             $q->p({ -style => 'margin-top: 0' },
                 (exists($params{href}) ? qq(<a href="@{[ ent($params{href}) ]}">) : ''),
-                Petitions::sentence($q, $p, 1),
+                Petitions::sentence($p, 1),
                 (exists($params{href}) ? '</a>' : ''),
                 $details
             ),
@@ -282,14 +260,13 @@ sub sign_box ($$) {
     delete($safe_p->{salt});
 
     my $must;
-    if ($q->{scratch}{site_type} eq 'pm') {
-        $must = 'You must be a British citizen or resident to sign the petition.';
-    } else {
+    if ($p->{body_area_id}) {
         $must = 'You must be a council resident to sign the petition.';
+    } else {
+        $must = 'You must be a British citizen or resident to sign the petition.';
     }
 
-    my $expat = '';
-    $expat = $q->p( '<label class="wide" for="overseas">Or, if you\'re an
+    my $expat = $q->p( '<label class="wide" for="overseas">Or, if you\'re an
         expatriate, you\'re in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>', 
             $q->popup_menu(-name=>'overseas', -id=>'overseas', -style=>'width:100%', -values=>[
@@ -314,13 +291,15 @@ the Armed Forces without a postcode, please select from this list:</label>',
                 'Tristan da Cunha',
                 'Turks and Caicos Islands',
                 ])
-    ) if $q->{scratch}{site_type} eq 'pm';
+    );
 
     my $postcode_label = 'UK postcode:';
-    $postcode_label = 'Your postcode:' if $q->{scratch}{site_type} eq 'council';
+    $postcode_label = 'Your postcode:' if mySociety::Config::get('SITE_NAME') ne 'number10';
 
+    my $action = "/$p->{ref}/sign";
+    $action = "/$p->{body_ref}$action" if mySociety::Config::get('SITE_TYPE') eq 'multiple';
     return
-        $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => "/$p->{ref}/sign")
+        $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => $action)
         . qq(<input type="hidden" name="add_signatory" value="1" />)
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
@@ -340,7 +319,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         )
         . $q->div({-id => 'signFormRight' },
           $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
-                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:100%') ),
+                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:95%') ),
           $q->p( '<label for="postcode">' . $postcode_label . '</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),

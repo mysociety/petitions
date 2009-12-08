@@ -6,13 +6,14 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.78 2009-08-02 18:43:28 matthew Exp $
+// $Id: new.php,v 1.79 2009-12-08 12:21:12 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
 require_once '../phplib/token.php';
 require_once '../../phplib/datetime.php';
+require_once '../../phplib/mapit.php';
 
 $page_title = 'Create a new petition';
 ob_start();
@@ -27,7 +28,7 @@ if (get_http_var('tostepmain')
         $data = array('token' => $token);
         check_edited_petition($data);
         petition_form_main($data);
-    } elseif (OPTION_SITE_TYPE == 'council') { # No search step
+    } elseif (OPTION_SITE_NAME != 'number10') { # Only Number 10 has this at the moment
         petition_form_main();
     } elseif (OPTION_CREATION_DISABLED) {
         page_closed_message();
@@ -241,12 +242,25 @@ function petition_form_main($data = array(), $errors = array()) {
 
 <p>Please note that you must be a British citizen or resident to create a petition.</p>
 
-<p><strong><?=$petition_prefix ?>...</strong> <br />
-    <?
+<p><strong><?
+    echo $petition_prefix;
+    if (OPTION_SITE_TYPE == 'multiple') {
+        $bodies = db_getAll('select id, name from body order by name');
+        echo '<select name="body" id="body">';
+        print "<option value=''>-- Please select --</option>";
+        foreach ($bodies as $body) {
+            print "<option value='$body[id]'";
+            if (isset($data['body']) && $body['id'] == $data['body'])
+                print ' selected';
+            print ">$body[name]</option>";
+        }
+        echo '</select> to';
+    }
+    echo '...</strong> <br />';
     textfield('pet_content', $data['pet_content'], 70, $errors);
-    ?>
+?>
 <br />(Please write a sentence, preferably starting with a verb, that describes what action 
-you would like the Prime Minister or Government to take.)
+you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government':OPTION_SITE_PETITIONED?> to take.)
 </p>
 <p>More details about your petition (do not use block capitals &ndash; 1000 characters maximum):<br />
     <?
@@ -386,6 +400,15 @@ function step_main_error_check($data) {
     $errors = array();
 
     $disallowed_refs = array('contact', 'translate', 'posters', 'graphs', 'privacy', 'reject');
+    if (OPTION_SITE_TYPE == 'multiple') {
+        if (!array_key_exists('body', $data) || !$data['body'])
+            $errors['body'] = _('Please pick who you wish to petition');
+        $q = db_query('SELECT ref FROM body WHERE id=?', array($data['body']));
+        if (!db_num_rows($q))
+            $errors['body'] = _('Please pick a valid body to petition');
+    } else {
+        $data['body'] = null;
+    }
     if (!array_key_exists('ref', $data) || !$data['ref'])
         $errors['ref'] = _('Please enter a short name for your petition');
     elseif (strlen($data['ref']) < 6)
@@ -468,6 +491,16 @@ function step_you_error_check($data) {
         $errors['postcode'] = 'Please enter a valid postcode or choose an option from the drop-down menu';
     if ($data['postcode'] && $data['overseas'])
         $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
+
+    if (OPTION_SITE_TYPE == 'multiple' && $data['postcode'] && validate_postcode($data['postcode'])) {
+        $body = db_getRow('SELECT * FROM body WHERE id=?', array($data['body']));
+        if ($body['area_id']) {
+            $areas = mapit_get_voting_areas($data['postcode']);
+            if (!in_array($body['area_id'], $areas)) {
+                $errors['postcode'] = 'You can only petition your own body';
+            }
+        }
+    }
 
     $vars = array(
         'name' => 'name',
@@ -614,7 +647,7 @@ function petition_create($data) {
 
             db_query("
                     insert into petition (
-                        id, detail, content,
+                        id, body_id, detail, content,
                         deadline, rawdeadline,
                         email, name, ref, 
                         organisation, address,
@@ -622,7 +655,7 @@ function petition_create($data) {
                         comments, creationtime, category,
                         status, laststatuschange, lastupdate
                     ) values (
-                        ?, ?, ?,
+                        ?, ?, ?, ?,
                         ?, ?,
                         ?, ?, ?, 
                         ?, ?,
@@ -630,7 +663,7 @@ function petition_create($data) {
                         ?, ms_current_timestamp(), ?,
                         'unconfirmed', ms_current_timestamp(), ms_current_timestamp()
                     )",
-                    $data['id'], $data['detail'], $data['pet_content'],
+                    $data['id'], $data['body'], $data['detail'], $data['pet_content'],
                     $data['deadline'], $data['rawdeadline'],
                     $data['email'], $data['name'], $data['ref'],
                     $data['organisation'], $data['address'],

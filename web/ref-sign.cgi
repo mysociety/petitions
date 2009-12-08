@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.51 2008-09-18 10:13:20 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.52 2009-12-08 12:21:12 matthew Exp $';
 
 use strict;
 
@@ -184,13 +184,16 @@ sub confirm_page ($$$) {
 
         if ($what eq 'p') {
             # Display message about petition creation.
+            my $message = mySociety::Config::get('SITE_NAME') eq 'number10'
+                ? 'the Number 10 team'
+                : 'the team';
             $html = Petitions::Page::header($q, "Petition created")
                     . $q->p({ -class => 'noprint loudmessage' },
                         "Thank you for creating your petition")
                     . $q->p({ -class => 'noprint loudmessage',
                         -align => 'center' }, "
                         It has been entered on our system and will now go to
-                        the Number 10 team for approval.")
+                        $message for approval.")
                     . Petitions::Page::footer($q, 'Confirm_Petition');
         } else {
             # Redirect so that the token isn't left in the browser. But use

@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.58 2009-04-28 11:37:28 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.59 2009-12-08 12:21:12 matthew Exp $';
 
 use strict;
 
@@ -81,7 +81,7 @@ sub main () {
     }
 
     my $p = Petitions::DB::get($ref, 0, 1);
-    my $title = Petitions::sentence($q, $p, 1, 1);
+    my $title = Petitions::sentence($p, 1, 1);
     # XXX: Should all the show_parts be done in the get() so I don't need to worry about remembering to do it?
     my $name = Petitions::show_part($p, 'name') ? ent($p->{name}) : '&lt;Name cannot be shown&gt;';
     my $detail = Petitions::show_part($p, 'detail') ? ent($p->{detail}) : 'More details cannot be shown';
@@ -137,9 +137,9 @@ sub main () {
         $html .= Petitions::Page::reject_box($q, $p);
         $html .= $q->end_div();
     }
-    if ($p->{status} eq 'live') {
+    if ($p->{status} eq 'live' && mySociety::Config::get('SITE_NAME') eq 'number10') {
         my $url = uri_escape(mySociety::Config::get('BASE_URL') . "/$ref/");
-	my $share_title = URI::Escape::uri_escape_utf8(Petitions::sentence($q, $p, 0, 1));
+        my $share_title = URI::Escape::uri_escape_utf8(Petitions::sentence($p, 0, 1));
         $html .= <<EOF;
 <div class="clear_all">
     <div id='sharethisembed'>Share this:</div>

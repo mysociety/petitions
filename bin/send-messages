@@ -8,7 +8,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: send-messages,v 1.44 2008-08-14 09:00:28 keith Exp $
+ * $Id: send-messages,v 1.45 2009-12-08 12:21:09 matthew Exp $
  *
  */
 
@@ -189,7 +189,7 @@ function send_pending_messages() {
         } else {
             // We assume that this is now a government response
             $subject = "";
-            if ($msg['fromaddress'] == 'number10html') {
+            if ($msg['fromaddress'] == 'admin-html') {
                 $type = 'email';
             } else {   
                 $type = 'plain';

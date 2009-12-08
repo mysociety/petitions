@@ -5,13 +5,16 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.21 2009-04-21 16:18:50 matthew Exp $
+// $Id: faq.php,v 1.22 2009-12-08 12:21:12 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
 
 header('Cache-Control: max-age=300');
 page_header('Questions and Answers');
+
+$contact_email = str_replace('@', '&#64;', OPTION_CONTACT_EMAIL);
+
 ?>
 
 <h2 class="page_title_border">Questions and Answers</h2>
@@ -33,7 +36,7 @@ page_header('Questions and Answers');
 <dt>How do I get in touch with the team behind the website?</dt>
 <dd>
 <p>If you have any comments on the functioning of the petitions system, please contact
-<a href="mailto:number10&#64;petitions.pm.gov.uk">number10&#64;petitions.pm.gov.uk</a>.
+<a href="mailto:<?=$contact_email?>"><?=$contact_email?></a>.
 </p>
 </dd>
 </dl>

@@ -9,7 +9,7 @@
  * Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: pet.php,v 1.17 2008-08-04 10:48:06 matthew Exp $
+ * $Id: pet.php,v 1.18 2009-12-08 12:21:10 matthew Exp $
  * 
  */
 
@@ -21,16 +21,6 @@ require_once 'page.php';
 require_once 'fns.php';
 
 err_set_handler_display('pet_handle_error');
-
-# What type of site are we?
-$councils = array('bromley', 'haringey', 'brighton');
-if (preg_match('#^(.*?)\.' . OPTION_WEB_DOMAIN . '#', $_SERVER['HTTP_HOST'], $m)) {
-    define('OPTION_SITE_TYPE', 'council');
-    if (!in_array($m[1], $councils)) err("Unknown subdomain!");
-    define('OPTION_SITE_NAME', $m[1]);
-} else {
-    define('OPTION_SITE_TYPE', 'pm');
-}
 
 /* Output buffering: PHP's output buffering is broken, because it does not
  * affect headers. However, it's worth using it anyway, because in the common
@@ -63,7 +53,7 @@ function pet_handle_error($num, $message, $file, $line, $context) {
             $err = "<p><em>$message</em></p>";
         else
             # Message will be in log file, don't display it for cleanliness
-            $err = '<p>' . sprintf(_('Please try again later, or <a href="mailto:%s">email us</a> for help resolving the problem.'), htmlspecialchars('team@' . OPTION_EMAIL_DOMAIN)) . '</p>';
+            $err = '<p>' . sprintf(_('Please try again later, or <a href="mailto:%s">email us</a> for help resolving the problem.'), htmlspecialchars(OPTION_CONTACT_EMAIL)) . '</p>';
         if ($num & (E_USER_ERROR | E_USER_WARNING)) {
             $err = "<p><em>$message</em></p> $err";
         }

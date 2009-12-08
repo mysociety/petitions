@@ -20,7 +20,7 @@
  * Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
  * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
  *
- * $Id: response-send,v 1.16 2008-11-08 15:54:09 matthew Exp $
+ * $Id: response-send,v 1.17 2009-12-08 12:21:09 matthew Exp $
  *
  */
 
@@ -198,7 +198,7 @@ function pump_message_to_exim($message_id) {
 }
 
 function create_message_body($message) {
-    if ($message['fromaddress'] == 'number10html') {
+    if ($message['fromaddress'] == 'admin-html') {
         $type = 'email';
         $headers = '';
     } else {

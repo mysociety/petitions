@@ -12,7 +12,7 @@ Your petition will now appear in the list of rejected petitions.
 
 Your petition reads:
 
-We the undersigned petition the Prime Minister to:
+We the undersigned petition <?=$values['petitioned']?> to:
 '<?=$values['content']?>'
 
 <?=$values['detail']?>

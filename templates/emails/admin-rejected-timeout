@@ -4,13 +4,13 @@ Hello,
 
     This is an automatic email to let you know that the petition
 you submitted 4 weeks ago has now been published on the rejected
-petitions page, <http://petitions.number10.gov.uk/list/rejected>.
+petitions page, <http://<?=$values['rejected_url']?>>.
 This is because you chose not to edit and resubmit your petition
 in the time since we asked you to change your original submission.
 
 As a reminder, your petition reads:
 
-We the undersigned petition the Prime Minister to:
+We the undersigned petition <?=$values['petitioned']?> to:
 '<?=$values['content']?>'
 
 <?=$values['detail']?>

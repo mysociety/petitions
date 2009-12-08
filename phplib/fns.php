@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.17 2009-04-21 16:18:49 matthew Exp $
+// $Id: fns.php,v 1.18 2009-12-08 12:21:10 matthew Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
@@ -56,7 +56,7 @@ function pet_send_message($petition_id, $sender, $recips, $circumstance, $templa
             $circumstance,
                 $petition_id,
                 $circumstance,
-            $sender == MSG_ADMIN ? 'number10' : 'creator',
+            $sender == MSG_ADMIN ? 'admin' : 'creator',
                 ($recips & MSG_ADMIN) ? 't' : 'f',
                 ($recips & MSG_CREATOR) ? 't' : 'f',
                 ($recips & MSG_SIGNERS) ? 't' : 'f',
@@ -125,7 +125,10 @@ function pet_send_email_internal($to, $spec) {
     return $success;
 }
 
-function pet_search_form($front = false) { ?>
+/* This is for Number 10 petitions only at present */
+function pet_search_form($front = false) {
+    if (OPTION_SITE_NAME != 'number10') return;
+?>
 <form<? if ($front) print ' id="search_front"'; ?> name="pet_search" method="get" action="http://search.petitions.number10.gov.uk/kbroker/number10/petitions/search.lsim">
 <input type="hidden" name="ha" value="1157" />
 <input type="hidden" name="sc" value="number10" />

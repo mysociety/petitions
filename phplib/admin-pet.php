@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.126 2009-04-22 18:17:54 matthew Exp $
+ * $Id: admin-pet.php,v 1.127 2009-12-08 12:21:10 matthew Exp $
  * 
  */
 
@@ -986,7 +986,7 @@ EOF;
                                 and circumstance = 'government-response'), -1) + 1,
                         ?, true, true, false, true, ?, ?)",
                 array($q_message_id, $p->id(), $p->id(),
-                    $q_html_mail ? 'number10html' : 'number10',
+                    $q_html_mail ? 'admin-html' : 'admin',
                     $q_message_subject, $email));
             }
             db_commit();

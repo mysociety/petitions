@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.152 2009-10-28 10:36:29 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.153 2009-12-08 12:21:09 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -1689,8 +1689,13 @@ sub make_url {
 sub make_signer_email ($$) {
     my ($signer, $petition) = @_;
     
-    our $sig_template;
-    $sig_template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/signature-confirm");
+    my $site_name = mySociety::Config::get('SITE_NAME');
+    my $sig_template;
+    if (-e "$FindBin::Bin/../templates/$site_name/emails/signature-confirm") {
+        $sig_template = File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/signature-confirm");
+    } else {
+        $sig_template = File::Slurp::read_file("$FindBin::Bin/../templates/emails/signature-confirm");
+    }
 
     my %h = ( );
     $h{detail} = $petition->{detail};
@@ -1699,14 +1704,20 @@ sub make_signer_email ($$) {
     ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
     $h{user_name} = $signer->{name};
 
-    $h{url} = mySociety::Config::get('BASE_URL')
-                . "/$petition->{ref}/"
+    $h{petitioned} = mySociety::Config::get('SITE_TYPE') eq 'one'
+        ? mySociety::Config::get('SITE_PETITIONED')
+        : $petition->{body_name};
+
+    $h{url} = mySociety::Config::get('BASE_URL');
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        $h{url} .= "/$petition->{body_ref}";
+    }
+    $h{url} .= "/$petition->{ref}/"
                 . Petitions::Token::make('s', $signer->{id});
     $h{url} = make_url($signer->{email}, $h{url});
     $h{creator_name} = $petition->{name};
-    my $q = { scratch => { site_type => 'pm' }}; # XXX petemaild is PM only at present, and this is hack
-    $h{sentence} = Petitions::sentence($q, $petition);
-    $h{signature} = '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the Number 10 petitions system. ]';
+    $h{sentence} = Petitions::sentence($petition);
+    $h{signature} = '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the petitions system. ]';
 
     return mySociety::Email::construct_email({
                 _template_ => $sig_template,
@@ -1724,22 +1735,34 @@ sub make_signer_email ($$) {
 sub make_petition_email ($) {
     my $petition = shift;
 
-    our $pet_template;
-    $pet_template ||= File::Slurp::read_file("$FindBin::Bin/../templates/emails/petition-confirm");
+    my $site_name = mySociety::Config::get('SITE_NAME');
+    my $pet_template;
+    if (-e "$FindBin::Bin/../templates/$site_name/emails/petition-confirm") {
+        $pet_template = File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/petition-confirm");
+    } else {
+        $pet_template = File::Slurp::read_file("$FindBin::Bin/../templates/emails/petition-confirm");
+    }
 
     my %h = ( );
     $h{detail} = $petition->{detail};
     $h{creator_name} = $petition->{name};
 
-    $h{url} = mySociety::Config::get('BASE_URL')
-                . "/$petition->{ref}/"
+    $h{petitioned} = mySociety::Config::get('SITE_TYPE') eq 'one'
+        ? mySociety::Config::get('SITE_PETITIONED')
+        : $petition->{body_name};
+
+    $h{url} = mySociety::Config::get('BASE_URL');
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        $h{url} .= "/$petition->{body_ref}";
+    }
+    $h{url} .= "/$petition->{ref}/"
                 . Petitions::Token::make('p', $petition->{id});
     $h{url} = make_url($petition->{email}, $h{url});
     $h{content} = $petition->{content};
     $h{content} =~ s/\r|\n/ /g;
     ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
 
-    $h{signature} = '[ This email has been automatically sent by the Number 10 petitions system ]';
+    $h{signature} = '[ This email has been automatically sent by the petitions system ]';
 
     return mySociety::Email::construct_email ({
                 _template_ => $pet_template,
@@ -1770,10 +1793,19 @@ sub database_child_process ($) {
         # "order by petition_id" so that we only need to cache data about one
         # petition at once
 
-    my $st_p = dbh()->prepare("
-                    select *, extract(epoch from creationtime) as t
-                    from petition where status = 'unconfirmed'
-                        and id > ?");
+    my $st_p;
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        $st_p = dbh()->prepare("
+            select petition.*, extract(epoch from creationtime) as t,
+                body.name as body_name, body.ref as body_ref
+            from petition, body where body_id = body.id and status = 'unconfirmed'
+                and petition.id > ?");
+    } else {
+        $st_p = dbh()->prepare("
+            select *, extract(epoch from creationtime) as t
+            from petition where status = 'unconfirmed'
+                and id > ?");
+    }
 
     my $p;
     my $petition_id;
@@ -2673,4 +2705,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.152 2009-10-28 10:36:29 matthew Exp $
+$Id: petemaild,v 1.153 2009-12-08 12:21:09 matthew Exp $

@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.61 2009-02-17 17:16:08 matthew Exp $
+// $Id: list.php,v 1.62 2009-12-08 12:21:12 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -72,16 +72,23 @@ if ($q_sort == 'date' || $q_sort == 'signers') {
 $sql_params = array($status);
 if ($q_cat) $sql_params[] = $q_cat;
 $sql_params[] = PAGE_SIZE;
-$qrows = db_query("
-        SELECT petition.*, '$pet_today' <= petition.deadline AS open,
-            cached_signers as signers,
-                (select count(*) from message where petition.id = message.petition_id
-                    and circumstance = 'government-response') as responses
-            FROM petition
-            WHERE status = ? " .
-            ($q_cat ? "AND category = ? " : "") .
-           "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset", $sql_params);
+$qrows = "
+    SELECT petition.*, '$pet_today' <= petition.deadline AS open,
+        cached_signers as signers,
+        (select count(*) from message where petition.id = message.petition_id
+            and circumstance = 'government-response') as responses
+";
+if (OPTION_SITE_TYPE == 'multiple') {
+    $qrows .= ", body.ref as body_ref, body.name as body_name
+            FROM petition, body
+            WHERE status = ? AND body.id = body_id ";
+} else {
+    $qrows = " FROM petition WHERE status = ? ";
+}
+$qrows .= ($q_cat ? "AND category = ? " : "") .
+           "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset";
 /* PG bug: mustn't quote parameter of offset */
+$qrows = db_query($qrows, $sql_params);
 
 $heading = '';
 if ($q_cat) {
@@ -176,9 +183,16 @@ if (!$rss) {
 $rss_items = array();
 if ($ntotal > 0) {
     $c = 1;
-    if (!$rss) { ?>
+    if (!$rss) {
+        if (OPTION_SITE_TYPE == 'one') {
+            $petitioned = OPTION_SITE_NAME=='number10' ? 'the Prime Minister' : OPTION_SITE_PETITIONED;
+        } else {
+            $petitioned = '';
+        }
+           
+?>
 <table cellpadding="3" cellspacing="0" border="0">
-<tr><th align="left">We the undersigned petition the <?=OPTION_SITE_TYPE=='pm'?'Prime Minister':'council'?> to&hellip;</th>
+<tr><th align="left">We the undersigned petition <?=$petitioned ?> to&hellip;</th>
 <th>Submitted by</th>
 <?      if ($q_type != 'rejected') { ?>
 <th>Deadline to sign by</th>
@@ -199,6 +213,9 @@ if ($ntotal > 0) {
             if (!$petition->rejected_show_part('content'))
                 print 'Petition details cannot be shown &mdash; ';
             print '<a href="/';
+            if (OPTION_SITE_TYPE == 'multiple') {
+                print $petition->body_ref() . '/';
+            }
             print $petition->rejected_show_part('ref') ? $petition->ref() . '/' : 'reject?id=' . $petition->id();
             print '">';
             if ($petition->rejected_show_part('content')) {

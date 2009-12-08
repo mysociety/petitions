@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: terms.php,v 1.18 2009-04-21 16:18:50 matthew Exp $
+// $Id: terms.php,v 1.19 2009-12-08 12:21:12 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -21,14 +21,14 @@ their views known. All petitions will be accepted and published on this
 website, providing they meet the criteria below.</p>
 
 <?
-if (OPTION_SITE_TYPE == 'pm') {
+if (OPTION_SITE_NAME == 'number10') {
     echo '<p>Petitions have long been sent to the Prime Minister by post, or
 delivered to the Number 10 door in person. E-petitions are welcome in
 the same way.</p>';
 }
 ?>
 
-<p>Petitioners may freely disagree with the <?=OPTION_SITE_TYPE=='pm'?'Government':'council'?> or call for
+<p>Petitioners may freely disagree with <?=OPTION_SITE_NAME=='number10'?'Government':OPTION_SITE_PETITIONED?> or call for
 changes of policy. There will be no attempt to exclude critical views
 and decisions to accept or reject will not be made on a party political basis.</p>
 
@@ -40,8 +40,8 @@ some basic conditions.</p>
 <ul>
 <li>the title or subject of the petition;</li>
 <li>a clear and concise statement covering the subject of the
-petition. It should state what action the petitioner wishes the <?=OPTION_SITE_TYPE=='pm'
-?'PM or the Government':'council' ?> to take. The petition will be returned to you to edit
+petition. It should state what action the petitioner wishes <?=OPTION_SITE_NAME=='number10'
+?'PM or the Government':OPTION_SITE_PETITIONED ?> to take. The petition will be returned to you to edit
 if it is unclear what action is being sought;</li>
 <li>the petition author's contact address (in case we need to
 contact you about the petition. This

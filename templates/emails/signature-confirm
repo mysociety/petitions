@@ -1,4 +1,4 @@
-Subject: Signing up to ask the Prime Minister to <?=$values['content_truncated']?>
+Subject: Signing up to ask <?=$values['petitioned']?> to <?=$values['content_truncated']?>
 
 <?=$values['user_name']?>,
 

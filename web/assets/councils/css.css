@@ -1,0 +1,85 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+    background-color: #666666;
+    color: #ffffff;
+    max-width: 45em;
+    margin: 0 auto;
+    border-left: solid 2px #333333;
+    border-right: solid 2px #333333;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Baskerville, serif;
+}
+
+h1 {
+    margin: 0;
+    padding: 0.5em;
+    font-size: 200%;
+    background-image: url("http://www.mysociety.org/mysociety_sm.gif");
+    background-repeat: no-repeat;
+    background-position: 99% 0;
+    background-color: #ffffff;
+    color: #000000;
+    min-height: 33px;
+}
+
+#nav {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    background-color: #333333;
+    overflow: auto;
+}
+
+#nav li {
+    float: left;
+    margin-right: 0.5em;
+}
+#nav a {
+    color: #ffffff;
+    display: block;
+    padding: 5px;
+    text-decoration: none;
+}
+#nav a:hover {
+    color: #333333;
+    background-color: #ffffff;
+}
+
+#main {
+    clear: both;
+    color: #000000;
+    background-color: #ffffff;
+    padding: 5px;
+    overflow: auto;
+}
+
+#footer {
+    clear: both;
+    text-align: center;
+    list-style-type: none;
+    font-size: 83%;
+    background-color: #333333;
+    color: #cccccc;
+    margin: 0;
+    padding: 1em;
+}
+#footer li {
+    display: inline;
+}
+#footer li:after {
+    content: " | ";
+}
+#footer li:last-child:after {
+    content: "";
+}
+
+#footer a {
+    color: #cccccc;
+}
+
+div.petition_box {
+    background-color: #ccccff;
+}
+

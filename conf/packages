@@ -9,3 +9,6 @@ libmailtools-perl
 libmime-perl
 libjson-perl
 libmath-bigint-gmp-perl
+libheap-perl
+libheap-priority-perl
+libtie-cache-perl

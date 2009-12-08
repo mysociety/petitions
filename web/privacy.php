@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: privacy.php,v 1.8 2008-11-05 20:07:48 root Exp $
+// $Id: privacy.php,v 1.9 2009-12-08 12:21:12 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -15,28 +15,20 @@ page_header('E-petitions Privacy Policy');
 
 <h2 class="page_title_border">Privacy policy</h2>
 
-<? if (OPTION_SITE_TYPE == 'pm') { ?>
+<? if (OPTION_SITE_NAME == 'number10') { ?>
 
 <p>In addition to the <a href="http://www.number10.gov.uk/footer/privacy-policy">normal
 privacy policy</a> we have the following:</p>
 
 <h3>E-petitions</h3>
 
-<p>If you create an e-petition on the Downing Street website, you will be
-required to provide us with basic personal information so that we can contact
-you about your petition. The information will only be used for this purpose,
-although we may need to pass your details to the relevant Government department
-to enable them to respond to the issues you raise.</p>
-
-<? } elseif (OPTION_SITE_TYPE == 'council') { ?>
+<? } ?>
 
 <p>If you create an e-petition on this website, you will be
 required to provide us with basic personal information so that we can contact
 you about your petition. The information will only be used for this purpose,
 although we may need to pass your details to the relevant department
 to enable them to respond to the issues you raise.</p>
-
-<? } ?>
 
 <p>If you sign an e-petition on this website, you will be
 required to provide us with basic personal information to enable us to verify

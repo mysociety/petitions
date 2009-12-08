@@ -1,8 +1,8 @@
-Subject: Resubmitted petition to the Prime Minister
+Subject: Resubmitted petition to <?=$values['petitioned']?>
 
 A rejected petition has been resubmitted with the title:
 
-We the undersigned petition the Prime Minister to:
+We the undersigned petition <?=$values['petitioned']?> to:
 '<?=$values['content']?>'
 
 The creator added the following comments for you:

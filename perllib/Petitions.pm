@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.54 2008-08-04 10:48:05 matthew Exp $
+# $Id: Petitions.pm,v 1.55 2009-12-08 12:21:10 matthew Exp $
 #
 
 package Petitions::DB;
@@ -117,7 +117,9 @@ sub get ($;$$) {
                 ms_current_date() <= deadline as open";
     $s .= ", message.emailbody as response, message.whencreated as responsetime" if ($govtresponse);
     $s .= ", cached_signers as signers" unless ($nocount);
+    $s .= ', body.ref as body_ref, body.name as body_name, body.area_id as body_area_id' if mySociety::Config::get('SITE_TYPE') eq 'multiple';
     $s .= " from petition";
+    $s .= ' inner join body on body.id = body_id' if mySociety::Config::get('SITE_TYPE') eq 'multiple';
     $s .= " left join message on petition.id = message.petition_id and circumstance = 'government-response'"
         if ($govtresponse);
     my $p;
@@ -125,7 +127,7 @@ sub get ($;$$) {
     $order = ' order by responsetime desc' if $govtresponse;
     $p ||= select_all("$s where petition.id = ?$order", $ref)
             if ($ref =~ /^[1-9]\d*$/);
-    $p ||= select_all("$s where lower(ref) = ?$order", lc $ref);
+    $p ||= select_all("$s where lower(petition.ref) = ?$order", lc $ref);
     
     return undef unless $p && @$p > 0;
     $p->[0]->{category} = $petition_categories{$p->[0]->{category}};
@@ -287,18 +289,22 @@ use POSIX qw();
 use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
 
-=item sentence PETITION [HTML]
+=item sentence PETITION [HTML] [SHORT]
+
+Returns the main sentence of a petition. If HTML is set, encode HTML entities.
+If SHORT is set, truncate the sentence to just what it's for.
 
 =cut
-sub sentence ($$;$$) {
-    my ($q, $p, $html, $short) = @_;
+sub sentence ($;$$) {
+    my ($p, $html, $short) = @_;
     croak("PETITION may not be undef") unless (defined($p));
     croak("PETITION must be a hash of db fields") unless (ref($p) eq 'HASH');
     croak("Field 'content' missing from PETITION") unless (exists($p->{content}));
-    my $petitionee = '';
-    $petitionee = 'Prime Minister' if $q->{scratch}{site_type} eq 'pm';
-    $petitionee = 'council' if $q->{scratch}{site_type} eq 'council';
-    my $sentence = sprintf('We the undersigned petition the %s to %s', $petitionee, $p->{content});
+    my $petitionee = mySociety::Config::get('SITE_PETITIONED');
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        $petitionee = $p->{body_name};
+    }
+    my $sentence = sprintf('We the undersigned petition %s to %s', $petitionee, $p->{content});
     if ($short) {
         $sentence = 'Petition to: ' . $p->{content};
     }
@@ -409,7 +415,7 @@ sub send_message ($$$$$) {
             $circumstance,
                 $id,
                 $circumstance,
-            $sender == MSG_ADMIN ? 'number10' : 'creator',
+            $sender == MSG_ADMIN ? 'admin' : 'creator',
             (map { $recipients & $_ } (MSG_ADMIN, MSG_CREATOR, MSG_SIGNERS)),
             $template);
 }

@@ -6,17 +6,15 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.54 2008-08-04 10:48:06 matthew Exp $
+ * $Id: petition.php,v 1.55 2009-12-08 12:21:10 matthew Exp $
  * 
  */
 
 // Textual content
-if (OPTION_SITE_TYPE == 'council') {
-    $petition_prefix = 'We the undersigned petition the council to';
-} elseif (OPTION_SITE_TYPE == 'pm') {
-    $petition_prefix = 'We the undersigned petition the Prime Minister to';
+if (OPTION_SITE_TYPE == 'one') {
+    $petition_prefix = 'We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to';
 } else {
-    $petition_prefix = 'We the undersigned petition someone to';
+    $petition_prefix = 'We the undersigned petition ';
 }
 
 /* Must keep this synchronised with constraint in schema. */
@@ -82,19 +80,28 @@ class Petition {
     // - array, a dictionary of data about the petition
     function Petition($ref) {
         global $pet_today;
-        $main_query_part = "SELECT petition.*,
-                               '$pet_today' <= petition.deadline AS open,
+        $main_query_part = 'SELECT petition.*, ';
+        if (OPTION_SITE_TYPE == 'multiple') {
+            $main_query_part .= 'body.name as body_name, body.ref as body_ref, ';
+        }
+        $main_query_part .= "'$pet_today' <= petition.deadline AS open,
                                cached_signers as signers,
                                email,
                                content, detail
                            FROM petition";
+        if (OPTION_SITE_TYPE == 'multiple') {
+            $main_query_part .= ', body WHERE body_id = body.id AND';
+        } else {
+            $main_query_part .= ' WHERE';
+        }
+
         if (gettype($ref) == "integer" or (gettype($ref) == "string" and preg_match('/^[1-9]\d*$/', $ref))) {
-            $q = db_query("$main_query_part WHERE petition.id = ?", array($ref));
+            $q = db_query("$main_query_part petition.id = ?", array($ref));
             if (!db_num_rows($q))
                 err(_('Petition short name not known'));
             $this->data = db_fetch_array($q);
         } elseif (gettype($ref) == "string") {
-            $q = db_query("$main_query_part WHERE lower(ref) = ?", array(strtolower($ref)));
+            $q = db_query("$main_query_part lower(ref) = ?", array(strtolower($ref)));
             if (!db_num_rows($q)) {
                 err(_('We couldn\'t find that petition.  Please check the URL again carefully.'));
             }
@@ -126,6 +133,16 @@ class Petition {
             $finished = true;
         $this->data['finished'] = $finished;
 
+        /* If we haven't fetched from the database, we only have a ref */
+        if (OPTION_SITE_TYPE == 'multiple' && !array_key_exists('body_name', $this->data)) {
+            $q = db_query('SELECT name, ref FROM body WHERE id=?', array($this->data['body']));
+            if (!db_num_rows($q))
+                err(_('Petition short name not known'));
+            $row = db_fetch_array($q);
+            $this->data['body_name'] = $row['name'];
+            $this->data['body_ref'] = $row['ref'];
+        }
+
         $this->data['sentence'] = $this->sentence();
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
@@ -156,11 +173,18 @@ class Petition {
     function creationtime() { return $this->data['creationtime']; }
     function creationdate() { return substr($this->data['creationtime'], 0, 10); }
 
+    function body_ref() { return $this->data['body_ref']; }
+    function body_name() { return $this->data['body_name']; }
+
     // Parameters:
     // html - return HTML, rather than plain text
     function sentence($params = array()) { 
         global $petition_prefix;
-        $sentence = $petition_prefix . " " . $this->data['content'];
+        $sentence = $petition_prefix;
+        if (OPTION_SITE_TYPE == 'multiple') {
+            $sentence .= $this->body_name() . ' to';
+        }
+        $sentence .= ' ' . $this->data['content'];
         if (!$this->rejected_show_part('content'))
             $sentence = 'This petition cannot be shown';
         if (array_key_exists('html', $params)) {

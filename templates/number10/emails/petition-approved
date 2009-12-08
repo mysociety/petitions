@@ -1,7 +1,8 @@
 Subject: Your petition to <?=$values['petitioned']?> has been approved
 
-Your petition has been approved by the web team, and is
-now available on the website at the following address:
+Your petition has been approved by the Number 10 web team,
+and is now available on the Number 10 website at the following
+address:
 
 <?=$values['url']?>
 

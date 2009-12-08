@@ -10,7 +10,7 @@ Submitted: <?=$values['creationtime']?>
 
 <?=$values['address']?>
 
-We the undersigned petition the Prime Minister to:
+We the undersigned petition <?=$values['petitioned']?> to:
 '<?=$values['content']?>'
 
 The petition's details read:
