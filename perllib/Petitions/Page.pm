@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.110 2009-12-08 15:46:23 matthew Exp $
+# $Id: Page.pm,v 1.111 2009-12-08 16:09:14 matthew Exp $
 #
 
 package Petitions::Page;
@@ -299,12 +299,16 @@ the Armed Forces without a postcode, please select from this list:</label>',
     $postcode_label = 'Your postcode:' if mySociety::Config::get('SITE_NAME') ne 'number10';
 
     my $action = "/$p->{ref}/sign";
-    $action = "/$p->{body_ref}$action" if mySociety::Config::get('SITE_TYPE') eq 'multiple';
+    my $body_ref = '';
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        $action = "/$p->{body_ref}$action";
+        $body_ref = '<input type="hidden" name="body" value="' . ent($p->{body_ref}) . '" />';
+    }
     return
         $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => $action)
         . qq(<input type="hidden" name="add_signatory" value="1" />)
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
-        . qq(<input type="hidden" name="body" value="@{[ ent($p->{body_ref}) ]}" />)
+        . $body_ref
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
         . $q->div({ -id => 'signFormLeft' }, 
           $q->p( $must . ' Please enter your name only; signatures containing other text may be removed by the petitions team.'),
