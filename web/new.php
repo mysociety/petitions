@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.79 2009-12-08 12:21:12 matthew Exp $
+// $Id: new.php,v 1.80 2009-12-08 12:29:26 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -105,6 +105,9 @@ function petition_form_submitted() {
     if (preg_match('#^\s*\d+\s*$#', $data['rawdeadline'])) $data['rawdeadline'] .= ' months';
     $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
     $data['deadline'] = $data['deadline_details']['iso'];
+    if (OPTION_SITE_TYPE == 'one') {
+        $data['body'] = null;
+    }
 
     # Step 1, main petition details
     if (get_http_var('tostepmain')) {
@@ -406,8 +409,6 @@ function step_main_error_check($data) {
         $q = db_query('SELECT ref FROM body WHERE id=?', array($data['body']));
         if (!db_num_rows($q))
             $errors['body'] = _('Please pick a valid body to petition');
-    } else {
-        $data['body'] = null;
     }
     if (!array_key_exists('ref', $data) || !$data['ref'])
         $errors['ref'] = _('Please enter a short name for your petition');
