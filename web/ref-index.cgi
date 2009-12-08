@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.60 2009-12-08 15:46:23 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.61 2009-12-08 16:52:19 matthew Exp $';
 
 use strict;
 
@@ -85,7 +85,9 @@ sub main () {
         if (!$show_signed_box) {
             # Bogus/out-of-date signed parameter, so redirect to main petitions
             # page.
-            print $q->redirect("/$ref/");
+            my $url = "/$ref/";
+            $url = '/' . lc($qp_body) . $url if $qp_body;
+            print $q->redirect($url);
             return;
         }
     }
@@ -114,14 +116,15 @@ sub main () {
         if ($p->{status} eq 'finished');
 
     if ($show_signed_box) {
-        my $url = mySociety::Config::get('BASE_URL') . "/$ref/";
+        my $url = "/$ref/";
+        $url = '/' . lc($qp_body) . $url if $qp_body;
         $html .=
             $q->div({ -id =>'success' },
                 $q->p(
                     "You are now signed up to this petition. Thank you."),
                 $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.number10.gov.uk/' }, 'main Downing Street homepage')),
                 $q->p("If you'd like to tell your friends about this petition, its permanent web address is:",
-                    $q->strong($q->a({ -href => "/$ref/" }, ent($url))))
+                    $q->strong($q->a({ -href => $url }, ent(mySociety::Config::get('BASE_URL') . $url))))
             );
     }
 

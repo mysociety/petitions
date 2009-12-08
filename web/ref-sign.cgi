@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.53 2009-12-08 15:46:23 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.54 2009-12-08 16:52:19 matthew Exp $';
 
 use strict;
 
@@ -156,10 +156,10 @@ sub signup_page ($$) {
     print $q->header(-content_length => length($html)), $html;
 }
 
-# confirm_page Q REF TOKEN
+# confirm_page Q BODY_REF REF TOKEN
 # Given a confirm TOKEN, validate a signup or petition creation.
-sub confirm_page ($$$) {
-    my ($q, $ref, $token) = @_;
+sub confirm_page ($$$$) {
+    my ($q, $body_ref, $ref, $token) = @_;
     
     my $html = '';
     my ($what, $id);
@@ -207,7 +207,9 @@ sub confirm_page ($$$) {
             # enough.
             my $t = sprintf('%x', int(time()) - 1_000_000_000);
             $t .= "." . substr(hmac_sha1_hex($t, Petitions::DB::secret()), 0, 6);
-            print $q->redirect("/$ref/?signed=$t");
+            my $url = "/$ref/?signed=$t";
+            $url = "/$body_ref$url" if $body_ref;
+            print $q->redirect($url);
             return;
         }
     } else {
@@ -234,10 +236,10 @@ sub confirm_page ($$$) {
 sub main () {
     my $q = shift;
 
-    my $body;
+    my $qp_body;
     if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
-        $body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
-        if (!defined($body)) {
+        $qp_body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
+        if (!defined($qp_body)) {
             print $q->redirect("/");
             return;
         }
@@ -252,7 +254,7 @@ sub main () {
     # Confirm page.
     my $qp_token = $q->ParamValidate(token => qr/^[A-Za-z0-9_\$'\/-]+$/);
     if (defined($qp_token)) {
-        confirm_page($q, $qp_ref, $qp_token);
+        confirm_page($q, $qp_body, $qp_ref, $qp_token);
         return;
     }
 
@@ -261,7 +263,7 @@ sub main () {
     if ($q->request_method() ne 'POST') {
         #warn "bad method";
         my $url = "/$qp_ref/";
-        $url = "/$body$url" if $body;
+        $url = "/$qp_body$url" if $qp_body;
         print $q->redirect($url);
         return;
     }

@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.14 2009-12-08 12:21:12 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.15 2009-12-08 16:52:19 matthew Exp $';
 
 use strict;
 
@@ -38,8 +38,10 @@ sub main () {
     }
 
     if ($p->{status} ne 'rejected') {
-        print $q->redirect('/' . $p->{ref} . '/');
-	return;
+        my $url = '/' . $p->{ref} . '/';
+        $url = '/' . $p->{body_ref} . $url if $p->{body_ref};
+        print $q->redirect($url);
+        return;
     }
 
     my $title = Petitions::sentence($p, 1, 1);
