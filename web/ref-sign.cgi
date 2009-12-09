@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.54 2009-12-08 16:52:19 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.55 2009-12-09 12:08:24 matthew Exp $';
 
 use strict;
 
@@ -119,10 +119,12 @@ sub signup_page ($$) {
                     $q->h2({-class => 'page_title_border'}, 'Now check your email!')
                     . $q->p({-class => 'noprint loudmessage'},
                         "Thank you. We have sent you an email. To add your signature to the petition, you need to click the link in this email."
-                    )
-                    . $q->p({-class => 'noprint loudmessage'},
+                    );
+                $html .= $q->p({-class => 'noprint loudmessage'},
                         "For more news about the Prime Minister's work and agenda, and other information including speeches, web chats, history and a virtual tour of No.10, visit the ", $q->a({-href => 'http://www.number10.gov.uk/'}, 'main Downing Street homepage'))
-                    . $q->p({-class => 'noprint loudmessage'},
+                    if mySociety::Config::get('SITE_NAME') eq 'number10';
+                $html .=
+                    $q->p({-class => 'noprint loudmessage'},
                     q(If you don't receive the email and you use web-based
                     email or have "junk mail" filters, please check
                     your bulk/spam mail folders, in case the message

@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.61 2009-12-08 16:52:19 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.62 2009-12-09 12:08:24 matthew Exp $';
 
 use strict;
 
@@ -120,9 +120,9 @@ sub main () {
         $url = '/' . lc($qp_body) . $url if $qp_body;
         $html .=
             $q->div({ -id =>'success' },
-                $q->p(
-                    "You are now signed up to this petition. Thank you."),
-                $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.number10.gov.uk/' }, 'main Downing Street homepage')),
+                $q->p("You are now signed up to this petition. Thank you."),
+                mySociety::Config::get('SITE_NAME') eq 'number10'
+                    ? $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.number10.gov.uk/' }, 'main Downing Street homepage')) : '',
                 $q->p("If you'd like to tell your friends about this petition, its permanent web address is:",
                     $q->strong($q->a({ -href => $url }, ent(mySociety::Config::get('BASE_URL') . $url))))
             );
