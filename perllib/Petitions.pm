@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.56 2009-12-08 15:46:23 matthew Exp $
+# $Id: Petitions.pm,v 1.57 2009-12-09 11:58:47 matthew Exp $
 #
 
 package Petitions::DB;
@@ -322,6 +322,17 @@ sub sentence ($;$$) {
     $sentence = ent($sentence) if ($html);
     $sentence .= '.' unless $sentence =~ /\.$/;
     return $sentence;
+}
+
+=item url BODY REF
+
+Given a BODY (can be undef) and a REF, construct a URL for this petition.
+
+=cut
+sub url ($$) {
+    my ($body, $ref) = @_;
+    return "/$body/$ref/" if mySociety::Config::get('SITE_TYPE') eq 'multiple';
+    return "/$ref/";
 }
 
 =item detail PETITION
