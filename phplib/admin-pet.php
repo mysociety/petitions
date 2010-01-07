@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.127 2009-12-08 12:21:10 matthew Exp $
+ * $Id: admin-pet.php,v 1.128 2010-01-07 17:38:46 matthew Exp $
  * 
  */
 
@@ -557,14 +557,24 @@ class ADMIN_PAGE_PET_MAIN {
         else
             $list_limit = 100;
 
-        $sel_query_part = "SELECT petition.*,
+        $sel_query_part = "SELECT petition.*, ";
+        if (OPTION_SITE_TYPE == 'multiple') {
+            $sel_query_part .= 'body.name as body_name, body.ref as body_ref, ';
+        }
+        $sel_query_part .= "
                 date_trunc('second', laststatuschange) AS laststatuschange,
                 date_trunc('second', creationtime) AS creationtime,
                 (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
                     emailsent in ('sent', 'confirmed')) AS signers
             FROM petition";
-        $q = db_query("$sel_query_part WHERE lower(ref) = ?", strtolower($petition));
+        if (OPTION_SITE_TYPE == 'multiple') {
+            $sel_query_part .= ', body WHERE body_id = body.id AND';
+        } else {
+            $sel_query_part .= ' WHERE';
+        }
+
+        $q = db_query("$sel_query_part lower(petition.ref) = ?", strtolower($petition));
         $pdata = db_fetch_array($q);
         if (!$pdata) {
             printf("Petition '%s' not found", htmlspecialchars($petition));
