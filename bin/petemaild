@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.154 2009-12-09 11:58:47 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.155 2010-01-12 17:21:12 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -302,7 +302,7 @@ our @statename = qw(STATE_CONNECT STATE_BANNER STATE_HELO STATE_MAIL_FROM
 
 # We maintain an activity timer which is updated whenever we receive an SMTP
 # response. Timeouts are detected in pre_select and result in an abort.
-use constant TIMEOUT => 40;
+use constant TIMEOUT => 90;
 
 # new TARGET MESSAGES
 # TARGET is the host to which we connect; MESSAGES is a reference to a list of
@@ -2699,4 +2699,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.154 2009-12-09 11:58:47 matthew Exp $
+$Id: petemaild,v 1.155 2010-01-12 17:21:12 matthew Exp $
