@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.30 2009-12-04 15:06:33 matthew Exp $
+ * $Id: general-example,v 1.31 2010-01-14 16:52:53 matthew Exp $
  * 
  */
 
@@ -24,6 +24,8 @@ define('OPTION_SITE_TYPE', '');
 define('OPTION_SITE_NAME', '');
 // Who is being petitioned
 define('OPTION_SITE_PETITIONED', '');
+// Whether there's an approval step
+define('OPTION_SITE_APPROVAL', '');
 
 define('OPTION_CREATION_DISABLED', 0); // Set to disable creation of petitions. If a string, will be printed as error message.
 
