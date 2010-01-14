@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.81 2010-01-14 18:27:22 matthew Exp $
+// $Id: new.php,v 1.82 2010-01-14 18:29:33 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -148,7 +148,7 @@ function petition_submitted_you(&$data) {
         $data['overseas'] = '';
 
     if (get_http_var('tostepyou')) {
-        petition_form_you($data, $errors);
+        petition_form_you($data);
         return true;
     }
     $errors = step_you_error_check($data);
