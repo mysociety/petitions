@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.57 2009-12-08 12:21:12 matthew Exp $
+// $Id: index.php,v 1.58 2010-01-14 18:26:15 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -40,7 +40,7 @@ the Number 10 door in person. You can now both create and sign petitions on
 this website too, giving you the opportunity to reach a potentially wider audience
 and to deliver your petition directly to Downing Street.</p>';
 } else {
-    echo '<p><em>You can now both create and sign petitions to ' . OPTION_SITE_PETITIONED . ' on this website,
+    echo '<p><em>You can now both create and sign petitions to ' . str_replace('the ', 'your ', OPTION_SITE_PETITIONED) . ' on this website,
 giving you the opportunity to reach a potentially wider audience and to deliver your petition
 directly to ' . OPTION_SITE_PETITIONED . '.</em></p>';
 }

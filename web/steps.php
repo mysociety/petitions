@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: steps.php,v 1.14 2009-12-08 12:21:12 matthew Exp $
+// $Id: steps.php,v 1.15 2010-01-14 18:26:15 matthew Exp $
 
 require_once '../phplib/pet.php';
 $page_title = _('Create a new petition');
@@ -14,10 +14,11 @@ petition_form_intro();
 page_footer('Step-by-step_guide');
 
 function petition_form_intro() {
+    $n = 1;
 ?>
 <h2 class="page_title_border">Step-by-step guide to making petitions</h2>
 
-<h3>Step 1: Create your petition</h3>
+<h3>Step <?=$n++?>: Create your petition</h3>
 
 <p>You will be asked to give your name, organisation (if you represent one),
 address and email address, and the title and text of your petition. You will also be
@@ -28,13 +29,25 @@ your petition.</p>
 <p>You will be able to specify a start and finish date for your petition, and we
 can host your petition for up to 12 months.</p>
 
-<h3>Step 2: Submit your petition</h3>
+<h3>Step <?=$n++?>: Submit your petition</h3>
 
 <p>Once you have submitted your petition, you will receive an email asking
 you to click a link to confirm. Your proposed petition will then
+<?
+    if (OPTION_SITE_APPROVAL) {
+?>
 be delivered to <?=OPTION_SITE_NAME=='number10'?'the Downing Street':OPTION_SITE_PETITIONED?> inbox.</p>
+<?
+    } else {
+?>
+appear on the site.</p>
+<?
+    }
 
-<h3>Step 3: Petition approval</h3>
+    if (OPTION_SITE_APPROVAL) {
+?>
+
+<h3>Step <?=$n++?>: Petition approval</h3>
 
 <p>Officials <?=OPTION_SITE_NAME=='number10'?'at Downing Street':''?> will check your petition to make sure that it meets
 the basic requirements set out in our <a href="/terms">acceptable use policy</a> and the
@@ -55,7 +68,11 @@ website, along with the reason(s) why it was rejected. Any content that is
 offensive or illegal or clearly spam will be left out. Every petition that is received will be
 acknowledged on this website.</p>
 
-<h3>Step 4: Petition live</h3>
+<?
+    }
+?>
+
+<h3>Step <?=$n++?>: Petition live</h3>
 
 <p>Once your petition is live, you will be able to publicise the URL
 you chose when you created your petition, and anyone will be able to
@@ -72,15 +89,27 @@ the petition.</p>
 <p>Your petition will show the total number of signatures received. It will also
 display the names of signatories, unless they have opted not to be shown.</p>
 
-<h3>Step 5: Petition close</h3>
+<h3>Step <?=$n++?>: Petition close</h3>
 
+<?
+    if (OPTION_SITE_NAME == 'number10') {
+?>
 <p>When a serious petition closes, usually provided there are 500 signatures or more,
-officials <?=OPTION_SITE_NAME=='number10'?'at Downing Street':''?> will ensure you get a response to the issues you
-raise. <?=OPTION_SITE_NAME=='number10'?'Depending on the nature of the petition, this may be from the Prime
-Minister, or he may ask one of his Ministers or officials to respond.':''?>
+officials at Downing Street will ensure you get a response to the issues you
+raise. Depending on the nature of the petition, this may be from the Prime
+Minister, or he may ask one of his Ministers or officials to respond.
 
 <p>We will email the petition organiser and everyone who has signed the
 petition via this website giving details of the Government’s response.
+<?
+    } else {
+?>
+<p>We are working on ways for councils to officially respond to petitions.
+They will be able to email the petition organiser and everyone who has signed
+the petition, and will not have access to your personal details.</p>
+<?
+    }
+?>
 
 <form method="get" action="/new">
 <p align="right">

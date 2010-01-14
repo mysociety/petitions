@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.41 2009-12-08 12:21:10 matthew Exp $
+// $Id: page.php,v 1.42 2010-01-14 18:26:15 matthew Exp $
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -205,9 +205,16 @@ order for the petition service to comply with the law and with
 the Civil Service Code, you must not include: </p>
 
 <ul>
-<li>Party political material. This website is a
+<li>Party political material.
+<?
+    if (OPTION_SITE_NAME == 'number10') {
+?>
+This website is a
 Government site. Party political content cannot be published, under the
 <a href="http://www.civilservice.gov.uk/civilservicecode">normal rules governing the Civil Service</a>.
+<?
+    }
+?> 
 Please note, this does not mean it is not permissible to petition on
 controversial issues. For example, this party political petition
 would not be permitted: "We petition <?=OPTION_SITE_NAME=='number10'?"the PM to change his party's policy on education"
@@ -234,13 +241,17 @@ people reading it could reasonably take offence (we believe it is
 possible to petition for anything, no matter how radical, politely).</li>
 </ul>
 
+<?
+    if (OPTION_SITE_APPROVAL) {
+?>
+
 <p>We reserve the right to reject:</p>
 <ul>
 <li>petitions that are similar to and/or overlap with an existing petition or petitions;</li>
 <li>petitions which ask for things outside the remit or powers of <?
 
-if (OPTION_SITE_NAME == 'number10') echo 'the Prime Minister and Government';
-else echo OPTION_SITE_PETITIONED;
+        if (OPTION_SITE_NAME == 'number10') echo 'the Prime Minister and Government';
+        else echo OPTION_SITE_PETITIONED;
 
 ?>;</li>
 <li>statements that don't actually request any action - ideally start the title of your petition with a verb;</li>
@@ -261,7 +272,9 @@ this is not the appropriate channel; accordingly, from 6 March 2008 we
 are rejecting such petitions and directing petitioners to
 <a href="http://www.direct.gov.uk/honours">http://www.direct.gov.uk/honours</a> where
 nominations for Honours can be made directly to the appropriate department.</li>
-<? } ?>
+<?
+        }
+?>
 </ul>
 
 <p>We will strive to ensure that petitions that do not meet our
@@ -309,6 +322,10 @@ recognisable action.</li>
 </ul>
 
 <?
+    } else {
+        print '<p>Petitions which are found to break these terms will be removed from the site.</p>';
+    }
+
 }
 
 function page_closed_message($front = false) {
