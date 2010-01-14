@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.112 2009-12-09 11:58:48 matthew Exp $
+# $Id: Page.pm,v 1.113 2010-01-14 18:27:55 matthew Exp $
 #
 
 package Petitions::Page;
@@ -245,6 +245,8 @@ sub sign_box ($$) {
 
     my $safe_p = {
         deadline => $p->{deadline},
+        body_id => $p->{body_id},
+        body_area_id => $p->{body_area_id},
         body_ref => $p->{body_ref},
         body_name => $p->{body_name},
         'ref' => $p->{ref},

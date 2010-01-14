@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.42 2007-10-22 12:36:20 matthew Exp $
+# $Id: RPC.pm,v 1.43 2010-01-14 18:27:55 matthew Exp $
 #
 
 package Petitions::RPC;
@@ -143,8 +143,9 @@ sub confirm_db ($;$) {
 
     if ($r->{confirm} eq 'p') {
         # never move a petition backwards in status...
+        my $status = mySociety::Config::get('SITE_APPROVAL') ? 'draft' : 'live';
         my $n = dbh()->do("
-                update petition set status = 'draft', laststatuschange = ms_current_timestamp(),
+                update petition set status = '$status', laststatuschange = ms_current_timestamp(),
                 deadline=deadline+(ms_current_date()-date_trunc('day', creationtime))
                 where id = ? and status = 'sentconfirm'", {},
                 $r->{id});
@@ -154,7 +155,7 @@ sub confirm_db ($;$) {
                 Petitions::MSG_ADMIN,
                 'created',
                 'admin-new-petition'
-            ) if ($n > 0);
+            ) if ($n > 0 && $status eq 'draft');
     } elsif ($r->{confirm} eq 's') {
         my $creator_email = dbh()->selectrow_array("
                 select petition.email from petition, signer

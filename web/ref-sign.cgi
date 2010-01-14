@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.55 2009-12-09 12:08:24 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.56 2010-01-14 18:27:56 matthew Exp $';
 
 use strict;
 
@@ -24,6 +24,7 @@ use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
 use mySociety::PostcodeUtil;
 use mySociety::EmailUtil;
+use mySociety::MaPit;
 
 use Petitions;
 use Petitions::Page;
@@ -92,6 +93,13 @@ sub signup_page ($$) {
         if !$qp_postcode && !$qp_overseas;
     $errors{postcode} = 'You can\'t both put a postcode and pick an option from the drop-down.'
         if (defined($qp_postcode) && defined($qp_overseas));
+
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple' && $qp_postcode && $p->{body_area_id}) {
+        my $areas = mySociety::MaPit::get_voting_areas($qp_postcode);
+        unless (grep { $p->{body_area_id} == $_ } values %$areas) {
+            $errors{postcode} = 'You can only sign a petition for the council where you live.'
+        }
+    }
 
     if (!keys(%errors)) {
         # Success. Add the signature, assuming that we can.
@@ -188,12 +196,20 @@ sub confirm_page ($$$$) {
                 : 'the team';
             $html = Petitions::Page::header($q, "Petition created")
                     . $q->p({ -class => 'noprint loudmessage' },
-                        "Thank you for creating your petition")
-                    . $q->p({ -class => 'noprint loudmessage',
+                        "Thank you for creating your petition");
+            if (mySociety::Config::get('SITE_APPROVAL')) {
+                $html .=
+                    $q->p({ -class => 'noprint loudmessage',
                         -align => 'center' }, "
                         It has been entered on our system and will now go to
-                        $message for approval.")
-                    . Petitions::Page::footer($q, 'Confirm_Petition');
+                        $message for approval.");
+            } else {
+                $html .=
+                    $q->p({ -class => 'noprint loudmessage',
+                        -align => 'center' }, "
+                        It is now available on our site.");
+            }
+            $html .= Petitions::Page::footer($q, 'Confirm_Petition');
         } else {
             # Redirect so that the token isn't left in the browser. But use
             # a signed timestamp so that a "?signed=..." URL can't be
