@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.80 2009-12-08 12:29:26 matthew Exp $
+// $Id: new.php,v 1.81 2010-01-14 18:27:22 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -24,12 +24,20 @@ if (get_http_var('tostepmain')
     petition_form_submitted();
 } else {
     $token = get_http_var('token');
-    if ($token) {
+    if ($token && OPTION_SITE_APPROVAL) {
         $data = array('token' => $token);
         check_edited_petition($data);
-        petition_form_main($data);
+        if (OPTION_SITE_TYPE == 'one') {
+            petition_form_main($data);
+        } else {
+            petition_form_you($data);
+        }
     } elseif (OPTION_SITE_NAME != 'number10') { # Only Number 10 has this at the moment
-        petition_form_main();
+        if (OPTION_SITE_TYPE == 'one') {
+            petition_form_main();
+        } else {
+            petition_form_you();
+        }
     } elseif (OPTION_CREATION_DISABLED) {
         page_closed_message();
     } else {
@@ -76,7 +84,6 @@ function check_edited_petition(&$data) {
 }
 
 function petition_form_submitted() {
-    global $pet_time;
     $errors = array();
     $data = array();
 
@@ -100,7 +107,19 @@ function petition_form_submitted() {
         return;
     }
 
-    # Step 1 fixes
+    if (OPTION_SITE_TYPE == 'one') {
+        if (petition_submitted_main($data)) return;
+        if (petition_submitted_you($data)) return;
+        petition_submitted_preview($data);
+    } else {
+        if (petition_submitted_you($data)) return;
+        if (petition_submitted_main($data)) return;
+        petition_submitted_preview($data);
+    }
+}
+
+function petition_submitted_main(&$data) {
+    global $pet_time;
     if (!array_key_exists('rawdeadline', $data)) $data['rawdeadline'] = '';
     if (preg_match('#^\s*\d+\s*$#', $data['rawdeadline'])) $data['rawdeadline'] .= ' months';
     $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
@@ -109,37 +128,41 @@ function petition_form_submitted() {
         $data['body'] = null;
     }
 
-    # Step 1, main petition details
     if (get_http_var('tostepmain')) {
         petition_form_main($data);
-        return;
+        return true;
     }
     $errors = step_main_error_check($data);
     if (sizeof($errors)) {
         petition_form_main($data, $errors);
-        return;
+        return true;
     }
 
-    # Step 2 fixes
+    return false;
+}
+
+function petition_submitted_you(&$data) {
     if (array_key_exists('name', $data) && $data['name']==_('<Enter your name>')) 
         $data['name'] = '';
     if (array_key_exists('overseas', $data) && $data['overseas']=='-- Select --') 
         $data['overseas'] = '';
 
-    # Step 2, your details
     if (get_http_var('tostepyou')) {
         petition_form_you($data, $errors);
-        return;
+        return true;
     }
     $errors = step_you_error_check($data);
     if (sizeof($errors)) {
         petition_form_you($data, $errors);
-        return;
+        return true;
     }
 
-    # Step 3, preview
+    return false;
+}
+
+function petition_submitted_preview(&$data) {
     if (get_http_var('tosteppreview')) {
-        preview_petition($data, $errors);
+        preview_petition($data);
         return;
     }
     $errors = preview_error_check($data);
@@ -231,33 +254,37 @@ If so, please add your name to that petition.</p>
 /* petition_form_main [DATA [ERRORS]]
  * Display the first stage of the petitions form. */
 function petition_form_main($data = array(), $errors = array()) {
-    global $pet_time, $petition_prefix;
-    echo 'There are 5 stages to the petition process:';
-    echo petition_breadcrumbs(0);
-    echo '<p><a href="/steps">More detailed description of these steps</a></p>';
+    global $petition_prefix;
+    if (OPTION_SITE_NAME == 'number10') {
+        echo 'There are 5 stages to the petition process:';
+        echo petition_breadcrumbs(0);
+        echo '<p><a href="/steps">More detailed description of these steps</a></p>';
+    }
     foreach (array('pet_content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
     startform();
+    if (OPTION_SITE_TYPE == 'one') {
+        $step = 1;
+        $must_be = 'British citizen or resident';
+    } else {
+        $step = 2;
+        $must_be = 'council resident';
+    }
+
     ?>
-<h2 class="page_title_border">New petition &#8211; Part 1 of 3 &#8211; Your petition</h2>
+<h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of 3 &#8211; Your petition</h2>
 <?  errorlist($errors); ?>
 
-<p>Please note that you must be a British citizen or resident to create a petition.</p>
+<p>Please note that you must be a <?=$must_be?> to create a petition.</p>
 
 <p><strong><?
     echo $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
-        $bodies = db_getAll('select id, name from body order by name');
-        echo '<select name="body" id="body">';
-        print "<option value=''>-- Please select --</option>";
-        foreach ($bodies as $body) {
-            print "<option value='$body[id]'";
-            if (isset($data['body']) && $body['id'] == $data['body'])
-                print ' selected';
-            print ">$body[name]</option>";
-        }
-        echo '</select> to';
+        $body = db_getRow('select id, name from body where id=?', $data['body']);
+        print "<input type='hidden' name='body' value='$body[id]'>";
+        print $body['name'];
+        echo ' to';
     }
     echo '...</strong> <br />';
     textfield('pet_content', $data['pet_content'], 70, $errors);
@@ -297,19 +324,32 @@ you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government
 ?>
 </select></p>
 <?
-    nextprevbuttons(null, null, 'tostepyou', null);
+    if (OPTION_SITE_TYPE == 'one') {
+        nextprevbuttons(null, null, 'tostepyou', null);
+    } else {
+        nextprevbuttons('tostepyou', null, 'tosteppreview', null);
+    }
     endform($data);
 }
 
 /* petition_form_you [DATA [ERRORS]]
  * Display the "about you" (second) section of the petition creation form. */
 function petition_form_you($data = array(), $errors = array()) {
-    errorlist($errors);
     startform();
+    if (OPTION_SITE_TYPE == 'one') {
+        $step = 2;
+        $must_be = 'British citizen or resident';
+    } else {
+        $step = 1;
+        $must_be = 'council resident';
+    }
     ?>
-<h2 class="page_title_border">New petition &#8211; Part 2 of 3 &#8211; About you</h2>
+<h2 class="page_title_border">New petition &#8211; Part <?=$step?> of 3 &#8211; About you</h2>
+<?
+    errorlist($errors);
+?>
 <div>
-<p>Please note that you must be a British citizen or resident to create a petition.</p><?
+<p>Please note that you must be a <?=$must_be ?> to create a petition.</p><?
 
     $fields = array(
             'name'  =>          _('Your name'),
@@ -355,7 +395,8 @@ function petition_form_you($data = array(), $errors = array()) {
         
         if ($name == 'address')
             textarea($name, $data[$name], 30, 4, $errors);
-        elseif ($name == 'overseas') { ?>
+        elseif ($name == 'overseas') {
+            if (OPTION_SITE_TYPE == 'one') { ?>
 
 <p><label for="overseas">Or, if you're an
 expatriate, you're in an overseas territory, a Crown dependency or in
@@ -369,6 +410,7 @@ the Armed Forces without a postcode, please select from this list:</label>
             } ?>
 </select></p>
         <?
+            }
         } else {
             $size = 20;
             if ($name == 'postcode')
@@ -390,7 +432,11 @@ the Armed Forces without a postcode, please select from this list:</label>
             print '</p>';
     }
 
-    nextprevbuttons('tostepmain', null, 'tosteppreview', null);
+    if (OPTION_SITE_TYPE == 'one') {
+        nextprevbuttons('tostepmain', null, 'tosteppreview', null);
+    } else {
+        nextprevbuttons(null, null, 'tostepmain', null);
+    }
     print '</div>';
     endform($data);
 }
@@ -404,11 +450,13 @@ function step_main_error_check($data) {
 
     $disallowed_refs = array('contact', 'translate', 'posters', 'graphs', 'privacy', 'reject');
     if (OPTION_SITE_TYPE == 'multiple') {
-        if (!array_key_exists('body', $data) || !$data['body'])
+        if (!array_key_exists('body', $data) || !$data['body']) {
             $errors['body'] = _('Please pick who you wish to petition');
-        $q = db_query('SELECT ref FROM body WHERE id=?', array($data['body']));
-        if (!db_num_rows($q))
-            $errors['body'] = _('Please pick a valid body to petition');
+        } else {
+            $q = db_query('SELECT ref FROM body WHERE id=?', array($data['body']));
+            if (!db_num_rows($q))
+                $errors['body'] = _('Please pick a valid body to petition');
+        }
     }
     if (!array_key_exists('ref', $data) || !$data['ref'])
         $errors['ref'] = _('Please enter a short name for your petition');
@@ -430,7 +478,7 @@ function step_main_error_check($data) {
      * petition.
      */
     $check_ref = true;
-    if (array_key_exists('token', $data)) {
+    if (OPTION_SITE_APPROVAL && array_key_exists('token', $data)) {
         list($what, $id) = token_check($data['token']);
         $ref = db_getOne('select ref from petition where id = ?', $id);
         if (strtolower($ref) <> strtolower($data['ref']))
@@ -477,7 +525,7 @@ function step_main_error_check($data) {
 
 /* step_you_error_check DATA
  * */
-function step_you_error_check($data) {
+function step_you_error_check(&$data) {
     global $pet_today;
     $errors = array();
     if (!validate_email($data['email'])) $errors['email'] = _('Please enter a valid email address');
@@ -488,18 +536,22 @@ function step_you_error_check($data) {
     if (!preg_match('#\d#', $data['telephone']))
         $errors['telephone'] = 'Please enter a valid telephone number';
 
-    if (!$data['postcode'] && !$data['overseas'])
-        $errors['postcode'] = 'Please enter a valid postcode or choose an option from the drop-down menu';
+    if (!$data['postcode'] && !$data['overseas']) {
+        $errors['postcode'] = 'Please enter a valid postcode';
+        if (OPTION_SITE_TYPE == 'one') {
+            $errors['postcode'] .= ' or choose an option from the drop-down menu';
+        }
+    }
     if ($data['postcode'] && $data['overseas'])
         $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
 
     if (OPTION_SITE_TYPE == 'multiple' && $data['postcode'] && validate_postcode($data['postcode'])) {
-        $body = db_getRow('SELECT * FROM body WHERE id=?', array($data['body']));
-        if ($body['area_id']) {
-            $areas = mapit_get_voting_areas($data['postcode']);
-            if (!in_array($body['area_id'], $areas)) {
-                $errors['postcode'] = 'You can only petition your own body';
-            }
+        $areas = mapit_get_voting_areas($data['postcode']);
+        $body = db_getRow('SELECT * FROM body WHERE area_id in (' . join(',', array_values($areas)) . ')');
+        if ($body) {
+            $data['body'] = $body['id'];
+        } else {
+            $errors['postcode'] = 'We do not have any body covering your postcode, sorry.';
         }
     }
 
@@ -520,7 +572,7 @@ function preview_error_check($data) {
     return $errors;
 }
 
-function preview_petition($data, $errors) {
+function preview_petition($data, $errors = array()) {
     errorlist($errors);
 ?>
 <h2 class="page_title_border">New petition &#8211; Part 3 of 3</h2>
@@ -562,10 +614,16 @@ longer be valid.
 <p>When you're happy with your petition, <strong>click "Create"</strong> to
 confirm that you wish this site to display the petition at the top
 of this page in your name, and that you agree to the terms and conditions below.
+<?
+    if (OPTION_SITE_NAME == 'number10') {
+?>
 <br />If you have any special requests for the web team concerning your petition, please include them
 here:</p>
 <p>
 <textarea name="comments" rows="7" cols="40"><? if (isset($data['comments'])) print htmlspecialchars($data['comments']) ?></textarea>
+<?
+    }
+?>
 </p>
 
 <p align="right">
@@ -576,8 +634,9 @@ here:</p>
 
 <? terms_and_conditions(); ?>
 
-<p>Petitioners may freely disagree with the Government or call for
-changes of policy. There will be no attempt to exclude critical views
+<p>Petitioners may freely disagree with
+<?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> or
+call for changes of policy. There will be no attempt to exclude critical views
 and decisions will not be made on a party political basis.</p>
 
 <p align="right">
@@ -605,7 +664,7 @@ function petition_create($data) {
     $data['detail'] = str_replace("\t", ' ', $data['detail']);
     $data['pet_content'] = str_replace("\t", ' ', $data['pet_content']);
 
-    if (array_key_exists('token', $data)) {
+    if (OPTION_SITE_APPROVAL && array_key_exists('token', $data)) {
         /* Resubmitted petition. */
         list($what, $id) = token_check($data['token']);
 
@@ -675,12 +734,21 @@ function petition_create($data) {
 
         global $page_title;
         $page_title = _('Now check your email');
+        if (OPTION_SITE_APPROVAL) {
 ?>
     <p class="noprint loudmessage">We have sent you an email to confirm
     that we've received your petition details. In order for us to approve
     your petition, we need you to open this email and click on an activation
     link, which will send your petition details to our team for approval.</p>
 <?
+        } else {
+?>
+    <p class="noprint loudmessage">We have sent you an email to confirm
+    that we've received your petition details. In order for us to show
+    your petition, we need you to open this email and click on the activation
+    link in it.</p>
+<?
+        }
     }
 }
 
