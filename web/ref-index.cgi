@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.62 2009-12-09 12:08:24 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.63 2010-01-14 18:26:47 matthew Exp $';
 
 use strict;
 
@@ -60,20 +60,23 @@ sub main () {
         return;
     }
 
+    my $qp_signed = $q->param('signed');
+
     # We don't do this in a PostgreSQL function because they don't use indices always
     # (at least in PostgreSQL 7.4) which led to slow sequential scans.
 
     # XXX: lastupdate is only updated when the number changes on cron now
     # People notice names changing, but not the number, so should probably
     # add some sort of explanation that the number might be behind real-time
+    # Also don't return a 304 if we've just confirmed a signature.
     my $lastmodified = dbh()->selectrow_array('select extract(epoch from lastupdate)
         from petition where ref = ?', {}, $ref);
-    return if ($q->Maybe304($lastmodified));
+    return if !$qp_signed && $q->Maybe304($lastmodified);
 
     # We show the "you've signed" box if a signed=... parameter with a
     # recent-enough timestamp is passed.
     my $show_signed_box = 0;
-    if (my $qp_signed = $q->param('signed')) {
+    if ($qp_signed) {
         my ($t, $s) = ($qp_signed =~ /^([0-9a-f]+)\.([0-9a-f]+)$/);
         if ($t && $s) {
             my $s2 = substr(hmac_sha1_hex($t, Petitions::DB::secret()), 0, 6);
