@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.58 2010-01-14 18:26:15 matthew Exp $
+// $Id: index.php,v 1.59 2010-01-14 19:05:23 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -53,20 +53,23 @@ if (OPTION_CREATION_DISABLED) {
 echo "</div>
 <div id='most_recent'>
 <h3 class='page_title_border'>Five most recent petitions</h3>
-<p>We the undersigned petition " . OPTION_SITE_PETITIONED . " to&hellip;</p>
-<ul>";
+<p>We the undersigned petition";
 
 if (OPTION_SITE_TYPE == 'multiple') {
-    $recent = db_getAll("select petition.ref, content, body.ref as body_ref
+    echo ': <ul>';
+    $recent = db_getAll("select petition.ref, content,
+        body.ref as body_ref, body.name as body_name
     from petition, body
     where status = 'live' and body_id = body.id
     order by laststatuschange desc limit 5");
     $most = db_getAll("
-    select petition.ref, content, cached_signers, body.ref as body_ref
+    select petition.ref, content, cached_signers,
+        body.ref as body_ref, body.name as body_name
     from petition, body
     where status = 'live' and body_id = body.id
     order by cached_signers desc limit 5");
 } else {
+    echo ' ' . OPTION_SITE_PETITIONED . " to&hellip;</p> <ul>";
     $recent = db_getAll("select ref, content from petition
     where status = 'live'
     order by laststatuschange desc limit 5");
@@ -81,7 +84,10 @@ foreach ($recent as $petition) {
     print '<li';
     if ($c%2) print ' class="a"';
     print '><a href="/';
-    if (isset($petition['body_ref'])) print $petition['body_ref'] . '/';
+    if (OPTION_SITE_TYPE == 'multiple') {
+        print $petition['body_ref'] . '/">' . $petition['body_name'] . '</a> to <a href="/';
+        print $petition['body_ref'] . '/';
+    }
     print $petition['ref'] . '/">';
     print htmlspecialchars($petition['content']) . '</a></li>';
     $c++;
@@ -103,7 +109,10 @@ foreach ($most as $petition) {
     print '<li';
     if ($c%2) print ' class="a"';
     print '><a href="/';
-    if (isset($petition['body_ref'])) print $petition['body_ref'] . '/';
+    if (OPTION_SITE_TYPE == 'multiple') {
+        print $petition['body_ref'] . '/">' . $petition['body_name'] . '</a> to <a href="/';
+        print $petition['body_ref'] . '/';
+    }
     print $petition['ref'] . '/">';
     print htmlspecialchars($petition['content']) . '</a> <small>(';
     print $petition['cached_signers'] . ' signature';
