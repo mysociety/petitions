@@ -4,14 +4,14 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.25 2008-11-06 23:14:03 root Exp $
+# $Id: crontab.ugly,v 1.26 2010-02-11 23:00:27 matthew Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
 
-!!(* if ($hostname eq "steak") { *)!!
+!!(* if ($hostname eq "steak" || $hostname eq 'balti') { *)!!
 
-# On just the database/daemon machine
+# On just the database/daemon machine (currently steak for live, balti for dev)
 
 # Frequently, on one machine only as not concurrent. I think, haven't checked.
 */15 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/send-messages.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/send-messages || echo "stalled?"
