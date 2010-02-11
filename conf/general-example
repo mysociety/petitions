@@ -14,7 +14,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: general-example,v 1.31 2010-01-14 16:52:53 matthew Exp $
+ * $Id: general-example,v 1.32 2010-02-11 23:24:08 matthew Exp $
  * 
  */
 
@@ -61,6 +61,7 @@ define('OPTION_WEB_DOMAIN', 'www.---.com');
 // Top-level URL of current website
 define('OPTION_BASE_URL', 'http://www.---.com');
 define('OPTION_ADMIN_URL', 'https://secure.---.com');
+define('OPTION_ADMIN_PUBLIC', 0);
 
 // Domain name for emails to current website (email this for help etc)
 define('OPTION_EMAIL_DOMAIN', '---.com');
