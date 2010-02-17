@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.82 2010-01-14 18:29:33 matthew Exp $
+// $Id: new.php,v 1.83 2010-02-17 13:51:39 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -161,6 +161,9 @@ function petition_submitted_you(&$data) {
 }
 
 function petition_submitted_preview(&$data) {
+    if (!array_key_exists('comments', $data))
+        $data['comments'] = '';
+
     if (get_http_var('tosteppreview')) {
         preview_petition($data);
         return;
@@ -266,9 +269,12 @@ function petition_form_main($data = array(), $errors = array()) {
     startform();
     if (OPTION_SITE_TYPE == 'one') {
         $step = 1;
-        $must_be = 'British citizen or resident';
     } else {
         $step = 2;
+    }
+    if (OPTION_SITE_TYPE == 'one' && !preg_match('#council#i', OPTION_SITE_PETITIONED)) {
+        $must_be = 'British citizen or resident';
+    } else {
         $must_be = 'council resident';
     }
 
@@ -338,9 +344,12 @@ function petition_form_you($data = array(), $errors = array()) {
     startform();
     if (OPTION_SITE_TYPE == 'one') {
         $step = 2;
-        $must_be = 'British citizen or resident';
     } else {
         $step = 1;
+    }
+    if (OPTION_SITE_TYPE == 'one' && !preg_match('#council#i', OPTION_SITE_PETITIONED)) {
+        $must_be = 'British citizen or resident';
+    } else {
         $must_be = 'council resident';
     }
     ?>
@@ -348,7 +357,7 @@ function petition_form_you($data = array(), $errors = array()) {
 <?
     errorlist($errors);
 ?>
-<div>
+<div id="new_you">
 <p>Please note that you must be a <?=$must_be ?> to create a petition.</p><?
 
     $fields = array(
@@ -388,7 +397,7 @@ function petition_form_you($data = array(), $errors = array()) {
 
     foreach ($fields as $name => $desc) {
         if (is_string($desc))
-            printf('<p><strong>%s:</strong> ', htmlspecialchars($desc));
+            printf('<p><label>%s:</label> ', htmlspecialchars($desc));
 
         if (!array_key_exists($name, $data))
             $data[$name] = '';
@@ -396,7 +405,7 @@ function petition_form_you($data = array(), $errors = array()) {
         if ($name == 'address')
             textarea($name, $data[$name], 30, 4, $errors);
         elseif ($name == 'overseas') {
-            if (OPTION_SITE_TYPE == 'one') { ?>
+            if (OPTION_SITE_TYPE == 'one' && !preg_match('#council#i', OPTION_SITE_PETITIONED)) { ?>
 
 <p><label for="overseas">Or, if you're an
 expatriate, you're in an overseas territory, a Crown dependency or in
@@ -419,14 +428,14 @@ the Armed Forces without a postcode, please select from this list:</label>
                 $size = 15;
             $after = '';
             if ($name == 'email2')
-                $after = '(we need your email so we can get in touch with you when your petition completes, and so on)';
+                $after = '<br>(we need your email so we can get in touch with you when your petition completes, and so on)';
             elseif ($name == 'name')
                 $after = '(please use a full name e.g. Mr John Smith)';
             textfield($name, $data[$name], $size, $errors, $after);
         }
 
         if ($name == 'org_url' || $name == 'organisation')
-            print " (optional)";
+            print " <small>(optional)</small>";
 
         if (is_string($desc))
             print '</p>';
@@ -615,7 +624,7 @@ longer be valid.
 confirm that you wish this site to display the petition at the top
 of this page in your name, and that you agree to the terms and conditions below.
 <?
-    if (OPTION_SITE_NAME == 'number10') {
+    if (OPTION_SITE_APPROVAL) {
 ?>
 <br />If you have any special requests for the web team concerning your petition, please include them
 here:</p>
