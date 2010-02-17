@@ -1,0 +1,273 @@
+/* Generics */
+
+body {
+    margin: 0;
+    padding: 0;
+    line-height: 1.4;
+    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, Arial, sans-serif;
+    background-color: #fafacc;
+    color: #000000;
+}
+
+a:link {
+    color: #0000ff;
+}
+a:visited {
+    color: #000099;
+}
+a:focus, a:active, a:hover {
+    color: #cc0000;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: Baskerville, 'Palatino Linotype', Georgia, Cambria, Times, "Times New Roman", serif;
+}
+
+h1 {
+    background: transparent url("/assets/sbdc/black.png");
+    background: rgba(0, 0, 0, 0.4) none;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+    color: #ffffff;
+    padding: 0.4em 0.25em;
+    margin: 1em 0 0 0;
+    font-size: 180%;
+    width: 13em;
+}
+
+h2 {
+    margin-top: 0;
+}
+
+dt {
+    font-weight: bold;
+}
+
+ul {
+    margin: 0;
+    padding: 0 0 0 1.5em;
+}
+
+table {
+    border: none;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: none;
+    border-bottom: solid 1px #666666;
+    padding: 4px;
+    margin: 0;
+}
+
+tr.a, li.a {
+    background-color: #ffffee;
+}
+
+tr:nth-child(2n) {
+    background-color: #ffffcc;
+}
+
+input, textarea {
+    padding: 3px;
+    border: solid 1px #999966;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    border-radius: 4px;
+}
+
+/* Site layout */
+
+/* A wrapper div because of IE6 transparency issues with links */
+#message {
+    position: fixed;
+    font-size: 83%;
+    top: 0;
+    right: 0;
+    text-align: center;
+    -moz-border-radius-bottomleft: 8px;
+    -webkit-border-bottom-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+}
+#message_wrap {
+    background: transparent url("/assets/sbdc/red.png");
+    background: rgba(153, 0, 0, 0.8) none;
+    color: #ffffff;
+    width: 15em;
+    padding: 1em;
+}
+#message a {
+    color: #ffffff;
+}
+#message a:hover {
+    color: #000000;
+}
+
+#wrapper {
+    max-width: 60em;
+    margin: 0 auto;
+}
+
+#header {
+    padding: 1em 0 0 1em;
+    background-color: #000000;
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    background-image: url("/assets/sbdc/sunny_big_c.jpg");
+    border-bottom: solid 1px #999999;
+}
+
+#nav {
+    list-style-type: none;
+    margin: 0 0 0 0;
+    padding: 35px 0 0 0;
+    overflow: hidden;
+}
+
+#nav li {
+    display: inline;
+    margin: 0;
+    padding: 0;
+}
+#nav a {
+    -moz-border-radius-topleft: 4px;
+    -moz-border-radius-topright: 4px;
+    -webkit-border-top-left-radius: 4px;
+    -webkit-border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
+    border-top-right-radius: 4px;
+    float: left;
+    background: transparent url("/assets/sbdc/black.png");
+    background: rgba(0, 0, 0, 0.4) none;
+    padding: 0.3em 0.5em;
+    margin-right: 0.5em;
+    color: #ffffff;
+    text-decoration: none;
+}
+#nav a:hover {
+    background-color: #000000;
+}
+
+#main {
+    clear: both;
+    color: #000000;
+    background-color: #ffffff;
+    padding: 1.5em 1.5em 0.75em;
+    overflow: auto;
+    max-width: 42em;
+    margin: 0 auto;
+}
+#admin #main {
+    max-width: 57em;
+}
+
+#footer {
+    clear: both;
+    text-align: center;
+    background-color: #444433;
+    color: #ffffff;
+    margin: 0;
+    padding: 0.5em 1em;
+    font-size: 83%;
+}
+#footer ul {
+    list-style-type: none;
+    padding: 0.5em 0;
+    margin: 0;
+}
+#footer li {
+    display: inline;
+    margin: 0 0.5em;
+}
+
+#footer a {
+    color: #ddddcc;
+}
+
+#admin_nav {
+    float: right;
+    width: 25em;
+    border: solid 1px #cccccc;
+    border-top: none;
+    padding: 0.25em 0 0 0.5em;
+    margin: -24px 0 0.5em 0.5em;
+}
+
+/* Bits and pieces */
+
+div.petition_box {
+    background-color: #ffffcc;
+    -moz-border-radius: 5px;
+    -webkit-border-radius: 5px;
+    border-radius: 5px;
+}
+
+#petition_actions {
+    overflow: auto;
+}
+#petition_actions a {
+    text-decoration: none;
+}
+
+#errors > p {
+    margin-top: 0;
+}
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #cccc66;
+    margin: 0;
+    padding: 0;
+    line-height: 2;
+}
+.petition_view_tabs span {
+    font-weight: normal;
+    background-color: #cccc66;
+    color: #ffffff;
+    padding: 0.4em;
+}
+.petition_view_tabs a {
+    background-color: #999999;
+    color: #ffffff;
+    text-decoration: none;
+    padding: 0.3em;
+}
+
+#new_you label {
+    display: block;
+    float: left;
+    width: 12em;
+}
+
+div#signatories {
+   clear: left;
+}
+
+div#most_recent {
+    float: right;
+}
+
+#most_popular h3 {
+    margin-top: 0;
+}
+
+div#petition_actions {
+    float: left;
+    width: 45%;
+    background-color: #ffffff;
+    border: solid 1px #cccccc;
+    font-size: 150%;
+    margin: 0 1em 0 0;
+    padding: 5px;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+form#signForm label {
+    width: 8em;
+}
+
+
