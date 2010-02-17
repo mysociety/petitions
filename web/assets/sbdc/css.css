@@ -86,16 +86,16 @@ input, textarea {
     top: 0;
     right: 0;
     text-align: center;
-    -moz-border-radius-bottomleft: 8px;
-    -webkit-border-bottom-left-radius: 8px;
-    border-bottom-left-radius: 8px;
 }
 #message_wrap {
     background: transparent url("/assets/sbdc/red.png");
     background: rgba(153, 0, 0, 0.8) none;
     color: #ffffff;
     width: 15em;
-    padding: 1em;
+    padding: 0.5em;
+    -moz-border-radius-bottomleft: 8px;
+    -webkit-border-bottom-left-radius: 8px;
+    border-bottom-left-radius: 8px;
 }
 #message a {
     color: #ffffff;
