@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: index.php,v 1.3 2007-02-14 00:52:51 francis Exp $
+ * $Id: index.php,v 1.4 2010-02-17 13:53:14 matthew Exp $
  * 
  */
 
@@ -22,12 +22,23 @@ $pages = array(
     new ADMIN_PAGE_PET_MAIN,
     new ADMIN_PAGE_PET_SEARCH,
     new ADMIN_PAGE_PET_STATS,
-    null, // space separator on menu
+);
+if (!OPTION_ADMIN_PUBLIC) {
+    array_push($pages,
+    null,
     new ADMIN_PAGE_SERVERINFO,
     new ADMIN_PAGE_CONFIGINFO,
-    new ADMIN_PAGE_PHPINFO,
-);
+    new ADMIN_PAGE_PHPINFO
+    );
+}
 
-admin_page_display(str_replace("http://", "", OPTION_BASE_URL), $pages, new ADMIN_PAGE_PET_SUMMARY);
+ob_start(); # As footer wants to output total length
+page_header('Admin', array('admin'=>1));
+admin_page_display(str_replace("http://", "", OPTION_BASE_URL), $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
+ob_end_flush(); # There's an ob_start in admin.php
+if (OPTION_SITE_NAME == 'sbdc') {
+    $num = preg_replace('#44(....)#', '0\1 ', OPTION_SMS_ALERT_NUMBER_TOM);
+    echo '<p align="right"><em>Got any questions? Call ' . $num . '.</em></p>';
+}
+page_footer();
 
-?>

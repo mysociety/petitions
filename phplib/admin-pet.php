@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.128 2010-01-07 17:38:46 matthew Exp $
+ * $Id: admin-pet.php,v 1.129 2010-02-17 13:53:14 matthew Exp $
  * 
  */
 
@@ -20,9 +20,10 @@ require_once '../../phplib/datetime.php';
 class ADMIN_PAGE_PET_SUMMARY {
     function ADMIN_PAGE_PET_SUMMARY() {
         $this->id = 'summary';
+        $this->navname = 'Admin interface';
     }
     function display() {
-        petition_admin_search_form();
+        petition_admin_navigation($this);
     }
 }
 
@@ -92,6 +93,8 @@ EOF;
                 $this->date_range($from, $to);
             }
         }
+
+        petition_admin_navigation($this);
 
         $from = htmlspecialchars(get_http_var('from'));
         $to = htmlspecialchars(get_http_var('to'));
@@ -168,17 +171,23 @@ EOF;
 class ADMIN_PAGE_PET_SEARCH {
     function ADMIN_PAGE_PET_SEARCH() {
         $this->id = 'petsearch';
-        $this->navname = 'Search petitions';
+        $this->navname = 'Search';
     }
 
     function search_petitions($q, $search) {
         $out = '';
         while ($r = db_fetch_array($q)) {
-            $out .= "<tr><td>$r[email]</td><td>".htmlspecialchars($r['name'])."</td><td>$r[ref]</td>";
+            $out .= "<tr><td></td><td>" . privacy($r['email']) . "</td><td>" . htmlspecialchars($r['name']) . "</td><td>$r[ref]</td>";
             $out .= '<td>' . prettify($r['creationtime']) . '</td>';
-            $out .= '<td><form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
-            $out .= '<input type="hidden" name="confirm_petition_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm petition, move to \'draft\'">';
-            $out .= "</form></td></tr>";
+            $out .= '<td>';
+            if ($r['status'] == 'sentconfirm') {
+                $out .= '<form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
+                $out .= '<input type="hidden" name="confirm_petition_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm petition, move to \'draft\'">';
+                $out .= "</form>";
+            } else {
+                $out .= '<a href="?page=pet&amp;petition='.$r['ref'].'">admin</a>';
+            }
+            $out .= "</td></tr>";
         }
         return $out;
     }
@@ -188,7 +197,7 @@ class ADMIN_PAGE_PET_SEARCH {
         while ($r = db_fetch_array($q)) {
             $out = '';
             $out .= '<tr><td><input type="checkbox" name="update_signer[]" value="' . $r['id'] . '"></td>';
-            $out .= "<td>$r[email]</td><td>$r[name]</td><td><a href=\"".OPTION_BASE_URL."/$r[ref]/\">$r[ref]</a></td>";
+            $out .= "<td>" . privacy($r['email']) . '</td><td>' . htmlspecialchars($r['name']) . "</td><td><a href='".OPTION_BASE_URL."/$r[ref]/'>$r[ref]</a></td>";
             $out .= '<td>' . prettify($r['signtime']) . "</td></tr>\n";
             if ($r['emailsent'] == 'confirmed')
                 $return['confirmed'] .= $out;
@@ -199,11 +208,11 @@ class ADMIN_PAGE_PET_SEARCH {
     }
 
     function display() {
+        petition_admin_navigation($this, array('search'=>$search));
         petition_admin_perform_actions();
         $search = strtolower(get_http_var('search'));
-        petition_admin_navigation(array('search'=>$search));
         $search_pet = "select id, ref, name, email, status, date_trunc('second', creationtime) as creationtime
-            from petition where status = 'sentconfirm' ";
+            from petition where status in ('sentconfirm', 'draft', 'live', 'resubmitted', 'finished') ";
         $search_sign = "select signer.id, ref, signer.name, signer.email, emailsent,
                 date_trunc('second', signtime) as signtime
             from signer, petition
@@ -227,15 +236,15 @@ class ADMIN_PAGE_PET_SEARCH {
         }
         if (count($out)) {
             if ($out['petitions']) {
-                echo '<h2>Petition confirmations</h2>
-<table cellpadding=3 border=0><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
+                echo '<h2>Petitions</h2>
+<table><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th><th>Actions</th></tr>',
                     $out['petitions'], '</table>';
             }
             if ($out['signers']['confirmed']) {
                 echo '<h2>Signature removal</h2>
 <form name="petition_admin_signature_removal" method="post" action="', $this->self_link, '">
 <input type="hidden" name="search" value="', htmlspecialchars($search), '">
-<table cellpadding=3 border=0><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
+<table><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
                     $out['signers']['confirmed'], '</table>
 <input type="hidden" name="delete_all" value="1">
 <p><input type="submit" value="Remove all ticked"></p>
@@ -245,7 +254,7 @@ class ADMIN_PAGE_PET_SEARCH {
                 echo '<h2>Signature confirmation</h2>
 <form name="petition_admin_signature_confirmation" method="post" action="', $this->self_link, '">
 <input type="hidden" name="search" value="', htmlspecialchars($search), '">
-<table cellpadding=3 border=0><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
+<table><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
                     $out['signers']['unconfirmed'], '</table>
 <input type="hidden" name="confirm_all" value="1">
 <p><input type="submit" value="Confirm all ticked"></p>
@@ -313,46 +322,48 @@ function petition_admin_perform_actions() {
     return $petition_id;
 }
 
-function petition_admin_navigation($array = array()) {
+function petition_admin_navigation($page, $array = array()) {
     $status = isset($array['status']) ? $array['status'] : '';
     # $found = isset($array['found']) ? $array['found'] : 0;
     $search = isset($array['search']) ? $array['search'] : '';
-    print "<p><strong>Show &ndash;</strong> ";
+    print '<div id="admin_nav">';
+    petition_admin_search_form($search);
+    print "<p>View petitions of status: ";
     if ($status == 'draft') {
-        print 'Draft / '; # (' . $found . ') / ';
+        print '<strong>Draft</strong> / '; # (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'live') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
-        print 'Live / '; # (' . $found . ') / ';
+        print '<strong>Live</strong> / '; # (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'finished') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
-        print 'Finished / '; # (' . $found . ') / ';
+        print '<strong>Finished</strong> / '; # (' . $found . ') / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     } elseif ($status == 'rejected') {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
-        print 'Rejected / '; # (' . $found . ')';
+        print '<strong>Rejected</strong> / '; # (' . $found . ')';
     } else {
         print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
         print '<a href="?page=pet&amp;o=live">Live</a> / ';
         print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
         print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
     }
-    print " <strong>&ndash; petitions</strong></p>";
-    petition_admin_search_form($search);
-    print '<hr>';
+    print " </p>";
+    print '</div>';
+    print "<h2>Admin interface: $page->navname</h2>";
 }
 
 function petition_admin_search_form($search='') { ?>
 <form name="petition_admin_search" method="get" action="./">
 <input type="hidden" name="page" value="petsearch">
-Search for name/email: <input type="text" name="search" value="<?=htmlspecialchars($search) ?>" size="40">
+Search for user&rsquo;s name/email: <input type="text" name="search" value="<?=htmlspecialchars($search) ?>" size="30">
 <input type="submit" value="Search">
 </form>
 <?
@@ -365,11 +376,11 @@ class ADMIN_PAGE_PET_MAIN {
     }
 
     function petition_header($sort, $status) {
-        print '<table border="1" cellpadding="3" cellspacing="0"><tr>';
+        print '<table><tr>';
         $cols = array(
             'z'=>'Signers<br>(in last day)',
-            'r'=>'Ref', 
-            'a'=>'Title', 
+            'r'=>'Petition reference', 
+            'a'=>'Petition title', 
             's'=>'Signers', 
             'd'=>'Deadline', 
             'e'=>'Creator', 
@@ -384,7 +395,7 @@ class ADMIN_PAGE_PET_MAIN {
                 print '</a>';
             print '</th>';
         }
-        if (!$this->cat_change && ($status == 'finished' || $status == 'draft'))
+        if ($status == 'rejected' || (!$this->cat_change && ($status == 'finished' || $status == 'draft' || $status == 'live')))
             print '<th>Actions</th>';
         print '</tr>';
         print "\n";
@@ -450,7 +461,7 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= $r['ref'];
             if ($r['status']=='live' || $r['status']=='finished' || $r['status']=='rejected')
                 $row .= '</a>';
-            $row .= '<br><a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>';
+            $row .= '<br>(<a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>)';
             $row .= '</td>';
             $row .= '<td>' . trim_characters(htmlspecialchars($r['content']),0,100);
             if ($this->cat_change) {
@@ -460,7 +471,7 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= '</td>';
             $row .= '<td>' . htmlspecialchars($r['signers']) . '</td>';
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
-            $row .= '<td><a href="mailto:'.htmlspecialchars($r['email']).'">'.
+            $row .= '<td><a href="mailto:' . privacy($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
             $row .= '<td>'.$r['laststatuschange'].'</td>';
             $late = false;
@@ -494,7 +505,7 @@ class ADMIN_PAGE_PET_MAIN {
                         $row .= '<input type="submit" name="respond" value="Write response">';
                     }
                     if ($status == 'live') {
-                        $row .= ' <input type="submit" name="redraft" value="Move back to draft">';
+                        $row .= ' <input type="submit" name="redraft" value="Undo approval">';
                     }
                     $row .= ' <input type="submit" name="remove" value="Remove petition">';
                     $row .= '</form>';
@@ -515,17 +526,27 @@ class ADMIN_PAGE_PET_MAIN {
             uksort($open, 'sort_by_percent');
         }
 */
-        petition_admin_navigation(array('status'=>$status, 'found'=>count($found)));
+        print '<p>Here you can view existing petitions in the system and deal with them,
+for example by approving or rejecting draft petitions, or writing responses to finished
+petitions.</p>';
+
         if ($this->cat_change) { ?>
 <form method="post" action="<?=$this->self_link ?>">
 <input type="hidden" name="cats" value="1"><input type="hidden" name="o" value="<?=$status ?>">
 <p><input type="submit" value="Update all categories">
 <a href="<?=$this->self_link ?>;o=<?=$status ?>">Back to normal screen</a></p>
-<?      } else {
+<?      } elseif (OPTION_SITE_NAME == 'number10') {
             print '<p><a href="'.$this->self_link.';o='.$status.';cats=1">Update categories</a></p>';
         }
-        print '<p><a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page-1).'">Previous '.$page_limit.'</a>';
-        print ' | <a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page+1).'">Next '.$page_limit.'</a></p>';
+
+        $count = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$status' order by id desc limit 1") - 1;
+
+        if ($page>0) {
+            print '<p><a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page-1).'">Previous '.$page_limit.'</a>';
+        }
+        if ($page < floor($count/$page_limit)) {
+            print ' | <a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page+1).'">Next '.$page_limit.'</a></p>';
+        }
         $this->petition_header($sort, $status);
         $a = 0;
         foreach ($found as $row) {
@@ -544,8 +565,6 @@ class ADMIN_PAGE_PET_MAIN {
     }
 
     function show_one_petition($petition) {
-        petition_admin_navigation();
-
         $sort = get_http_var('s');
         if (!$sort || preg_match('/[^etc]/', $sort)) $sort = 't';
         $list_limit = get_http_var('l');
@@ -587,7 +606,7 @@ class ADMIN_PAGE_PET_MAIN {
             $pdata['ref'] . '/">' . $pdata['ref'] . '</a>&rsquo;';
         print "</h2>";
 
-        print "<ul><li>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  htmlspecialchars($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
+        print "<ul><li>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  privacy($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
         print '<li>Organisation: ';
         print $pdata['organisation'] ? htmlspecialchars($pdata['organisation']) : 'None given';
         if ($pdata['org_url'])
@@ -628,7 +647,7 @@ Deadline: ';
             print ' <input type="submit" value="Change">';
         print ' (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")
 </form>';
-        print '<li>Title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
+        print '<li>Petition title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
         print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
         print '</ul>';
@@ -650,7 +669,7 @@ Deadline: ';
                 print '<input type="submit" name="respond" value="Write response">';
             }
             if ($pdata['status'] == 'live')
-                print ' <input type="submit" name="redraft" value="Move back to draft">';
+                print ' <input type="submit" name="redraft" value="Undo approval">';
             print ' <input type="submit" name="remove" value="Remove petition">';
             print '</form>';
         } elseif ($pdata['status'] == 'rejected') {
@@ -707,7 +726,7 @@ Deadline: ';
         $q = db_query('select * from petition_log 
                 where petition_id = ? order by order_id', $pdata['id']);
 
-        print '<table border="1" cellpadding="3" cellspacing="0">';
+        print '<table>';
         $n = 0;
         print "<tr><th>Date/time</th><th>Event</th><th>Administrator</th></tr>\n";
         while ($r = db_fetch_array($q)) {
@@ -747,7 +766,7 @@ Deadline: ';
                 if ($r['signname'])
                     array_push($e, $r['signname']);
                 if ($r['signemail'])
-                    array_push($e, $r['signemail']);
+                    array_push($e, privacy($r['signemail']));
                 $e = join("<br>", $e);
                 $out[$e] = '<td>';
                 if ($r['emailsent'] == 'confirmed')
@@ -768,7 +787,7 @@ Deadline: ';
             }
             if (count($out)) {
                 echo '<form name="petition_admin_signature_removal" method="post" action="'.$this->self_link.'">';
-                echo '<table border="1" cellpadding="3" cellspacing="0"><tr><td></td>';
+                echo '<table><tr><td></td>';
                 $cols = array('e'=>'Signer', 't'=>'Time');
                 foreach ($cols as $s => $col) {
                     print '<th>';
@@ -1182,14 +1201,14 @@ rejected through the admin interface as normal.
 <p>You are removing the <em><?=$p->ref() ?></em> petition from the petition site.
 <br>This should only be done if the petition creator has asked for it to be
 removed.
-<br>Otherwise, use the "Move back to draft" button, so that the petition
+<br>Otherwise, use the "Undo approval" button, so that the petition
 can be rejected properly.</p>
 <p><label for="reason">Please give the reason for removing this petition, for audit purposes. For example, provide a copy of the request email from the petition creator:</label>
 <br><textarea id="reason" name="reason" rows="10" cols="40"></textarea></p>
 <input type="submit" name="submit_button" value="Remove petition">
 <? } ?>
 </form>
-<hr><hr>
+<hr>
 <?
         }
     }
@@ -1253,6 +1272,12 @@ can be rejected properly.</p>
 
     function display() {
         db_connect();
+
+        # XXX This is duplicated elsewhere
+        $status = get_http_var('o');
+        if (!$status || !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
+        petition_admin_navigation($this, array('status'=>$status));
+
         $petition_id = petition_admin_perform_actions();
         if (!$petition_id)
             $petition_id = get_http_var('petition_id') + 0; # id
@@ -1298,3 +1323,7 @@ can be rejected properly.</p>
     }
 }
 
+function privacy($e) {
+    if (OPTION_ADMIN_PUBLIC) return '<em>hidden in public interface</em>';
+    return htmlspecialchars($e);
+}
