@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.113 2010-01-14 18:27:55 matthew Exp $
+# $Id: Page.pm,v 1.114 2010-02-17 13:50:03 matthew Exp $
 #
 
 package Petitions::Page;
@@ -113,6 +113,7 @@ sub header ($$%) {
     $out =~ s/PARAM_TITLE/$ent_title/g;
     $out =~ s/PARAM_DEV_WARNING/$devwarning/;
     $out =~ s/PARAM_RSS_LINKS//g;
+    $out =~ s/PARAM_BODYID//g;
     # Currently, no need to follow links from CGI-generated pages -
     # no need to index list of names either
     $out =~ s/index,follow/noindex,nofollow/;
@@ -264,7 +265,7 @@ sub sign_box ($$) {
     delete($safe_p->{salt});
 
     my $must;
-    if ($p->{body_area_id}) {
+    if ($p->{body_area_id} || $p->{body_name} =~ /council/i || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
         $must = 'You must be a council resident to sign the petition.';
     } else {
         $must = 'You must be a British citizen or resident to sign the petition.';
