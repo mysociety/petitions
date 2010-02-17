@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.56 2010-01-14 18:27:56 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.57 2010-02-17 13:50:33 matthew Exp $';
 
 use strict;
 
@@ -196,7 +196,7 @@ sub confirm_page ($$$$) {
                 : 'the team';
             $html = Petitions::Page::header($q, "Petition created")
                     . $q->p({ -class => 'noprint loudmessage' },
-                        "Thank you for creating your petition");
+                        "Thank you for creating your petition.");
             if (mySociety::Config::get('SITE_APPROVAL')) {
                 $html .=
                     $q->p({ -class => 'noprint loudmessage',
