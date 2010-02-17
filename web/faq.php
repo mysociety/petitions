@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: faq.php,v 1.22 2009-12-08 12:21:12 matthew Exp $
+// $Id: faq.php,v 1.23 2010-02-17 13:49:16 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -56,6 +56,7 @@ To sign a petition, you will need to give your name, address and email on the fo
 
 <dd>
 <p>
+<? if (OPTION_SITE_NAME == 'number10') { ?>
 Nothing, unless you expressly ask to sign up for other services available on
 the Downing Street website (e.g. email updates). We will use your email address
 to confirm your signature and, unless you ask us not to, we will also send you
@@ -64,6 +65,15 @@ we may introduce a facility to enable the creator of the petition to send you a
 maximum of two emails as well.  See our <a href="/privacy">privacy policy</a>
 for more information. The data themselves are held by mySociety and not by the
 Prime Minister's Office or any other government bodies or agencies.
+<? } else { ?>
+We will use your email address
+to confirm your signature and, unless you ask us not to, we will also send you
+a maximum of two responses to the issues raised in the petition. In the future
+we may introduce a facility to enable the creator of the petition to send you a
+maximum of two emails as well.  See our <a href="/privacy">privacy policy</a>
+for more information. The data themselves are held by mySociety and not by the
+council or any other government bodies or agencies.
+<? } ?>
 </p>
 </dd>
 
@@ -135,6 +145,7 @@ meet standards that are set out in our
 <p>If you decide not to resubmit your petition, or if your second iteration is also rejected, we will list your petition and the reason(s) for not accepting it on this website.</p>
 </dd>
 
+<? if (OPTION_SITE_NAME == 'number10') { ?>
 <dt>Can I still send in a paper petition?</dt>
 
 <dd>
@@ -146,6 +157,7 @@ Yes. Paper petitions can still be posted/delivered to Downing Street. If you wou
 London SW1A 2AA
 </p>
 </dd>
+<? } ?>
 
 <dt>How long will my petition run for?</dt>
 
@@ -158,12 +170,20 @@ You can decide how long your petition can run for and we will carry it for up to
 <dt>What will happen to my petition once it is finished?</dt>
 
 <dd>
+<? if (OPTION_SITE_NAME == 'number10') { ?>
 <p>Once your petition has closed, usually provided there are 500 signatures or more, it
 will be passed to officials who work for the Prime Minister in Downing
 Street, or sent to the relevant Government department for a response.</p>
 
 <p>Every person who signs such a petition will receive an email detailing the
 Government's response to the issues raised.</p>
+<? } else { ?>
+<p>Once your petition has closed, usually provided there are 500 signatures or more, it
+will be passed to the relevant officials at the council for a response.</p>
+
+<p>Every person who signs such a petition will receive an email detailing the
+response to the issues raised.</p>
+<? } ?>
 </dd>
 
 <h3>Organisational questions</h3>
