@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.64 2009-12-08 12:57:32 matthew Exp $
+// $Id: list.php,v 1.65 2010-02-17 13:48:32 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -28,7 +28,7 @@ if ($err) {
 
 $rss = get_http_var('rss') ? true : false;
 
-if (!$rss && $q_type == 'default' && $q_sort == 'default' && $q_cat == 'default') {
+if (OPTION_SITE_NAME=='number10' && !$rss && $q_type == 'default' && $q_sort == 'default' && $q_cat == 'default') {
     list_front();
     exit;
 }
@@ -141,17 +141,21 @@ if (!$rss) {
     $prev = '<span class="greyed">Previous</span>';
     $next = '<span class="greyed">Next</span>';
     $last = '<span class="greyed">Last</span>';
+    $other = false;
     if ($q_offset > 0) {
+        $other = true;
         $n = $q_offset - PAGE_SIZE;
         if ($n < 0) $n = 0;
         $prev = '<a href="' . htmlspecialchars(url_new("/list/$q_type", true, 'offset', $n, 'type', null)) . '">Previous</a>';
         $first = '<a href="' . htmlspecialchars(url_new("/list/$q_type", true, 'offset', 0, 'type', null)) . '">First</a>';
     }
     if ($q_offset + PAGE_SIZE < $ntotal) {
+        $other = true;
         $n = $q_offset + PAGE_SIZE;
         $next = '<a href="' . htmlspecialchars(url_new("/list/$q_type", true, 'offset', $n, 'type', null)) . '">Next</a>';
         $last = '<a href="' . htmlspecialchars(url_new("/list/$q_type", true, 'offset', floor(($ntotal-1)/PAGE_SIZE)*PAGE_SIZE, 'type', null)) . '">Last</a>';
     }
+    if (OPTION_SITE_NAME == 'sbdc') print '<h2>View petitions</h2>';
     $navlinks = '<p class="petition_view_tabs">' . $views . "</p>\n";
     if ($ntotal > 0) {
         $navlinks .= '<p align="center" style="font-size: 89%">' . _('Sort by'). ': ';
@@ -172,9 +176,11 @@ if (!$rss) {
             $b = true;
         }
         $navlinks .= '</p> <p align="center">';
-        $navlinks .= "$first | $prev | " . _('Petitions'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
-            ($q_offset + PAGE_SIZE > $ntotal ? $ntotal : $q_offset + PAGE_SIZE) . ' of ' .
-            $ntotal . " | $next | $last";
+        if ($other) {
+            $navlinks .= "$first | $prev | " . _('Petitions'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
+                ($q_offset + PAGE_SIZE > $ntotal ? $ntotal : $q_offset + PAGE_SIZE) . ' of ' .
+                $ntotal . " | $next | $last";
+        }
         $navlinks .= '</p>';
     }
     print $navlinks;
