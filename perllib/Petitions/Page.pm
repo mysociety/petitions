@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.114 2010-02-17 13:50:03 matthew Exp $
+# $Id: Page.pm,v 1.115 2010-02-18 18:41:20 matthew Exp $
 #
 
 package Petitions::Page;
@@ -431,7 +431,7 @@ sub signatories_box ($$) {
         $q->start_div({-id => 'signatories'})
             . $q->h3({-class => 'page_title_border' }, '<a name="signers"></a>Current signatories');
 
-    if ($p->{signers} == 1) {
+    if ($p->{signers} == 1 && !$q->param('signed')) {
         $html .=
             $q->p("So far, only @{[ ent($p->{name}) ]}, the Petition Creator, has signed this petition.")
             . $q->end_div();
