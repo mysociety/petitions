@@ -5,7 +5,7 @@ body {
     padding: 0;
     line-height: 1.4;
     font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, Arial, sans-serif;
-    background-color: #fafacc;
+    background-color: #f6f6c6;
     color: #000000;
 }
 
@@ -20,7 +20,7 @@ a:focus, a:active, a:hover {
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: Baskerville, 'Palatino Linotype', Georgia, Cambria, Times, "Times New Roman", serif;
+    font-family: Candara, "Trebuchet MS", Helvetica, Arial, sans-serif;
 }
 
 h1 {
