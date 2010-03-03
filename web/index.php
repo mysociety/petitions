@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.60 2010-02-17 13:54:08 matthew Exp $
+// $Id: index.php,v 1.61 2010-03-03 12:35:19 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -48,13 +48,16 @@ if (OPTION_SITE_NAME == 'sbdc') {
     front_actions();
     front_intro_text();
     front_most_popular($most);
+    print '<div style="float: left; text-align: center; padding-top:0.5em; width: 45%; padding: 5px;">';
+    pet_search_form(array('front'=>true));
+    print '</div>';
     front_most_recent($recent);
     front_how_it_works();
 } else {
     echo '<div id="content_clipboard">';
     front_actions();
     front_intro_text();
-    pet_search_form(true);
+    pet_search_form(array('front'=>true));
     if (OPTION_CREATION_DISABLED) {
         page_closed_message(true);
     }

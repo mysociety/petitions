@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.65 2010-02-17 13:48:32 matthew Exp $
+// $Id: list.php,v 1.66 2010-03-03 12:35:20 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -131,7 +131,8 @@ if (!$rss) {
         $b = true;
     }
 
-    pet_search_form();
+    pet_search_form(array('float'=>true));
+    if (OPTION_SITE_NAME == 'sbdc') print '<h2>View petitions</h2>';
 
     if ($q_cat) {
         print '<h3>You are viewing petitions in the "' . $global_petition_categories[$q_cat] . '" category</h3>';
@@ -155,8 +156,7 @@ if (!$rss) {
         $next = '<a href="' . htmlspecialchars(url_new("/list/$q_type", true, 'offset', $n, 'type', null)) . '">Next</a>';
         $last = '<a href="' . htmlspecialchars(url_new("/list/$q_type", true, 'offset', floor(($ntotal-1)/PAGE_SIZE)*PAGE_SIZE, 'type', null)) . '">Last</a>';
     }
-    if (OPTION_SITE_NAME == 'sbdc') print '<h2>View petitions</h2>';
-    $navlinks = '<p class="petition_view_tabs">' . $views . "</p>\n";
+    $navlinks = '<p style="clear: both;" class="petition_view_tabs">' . $views . "</p>\n";
     if ($ntotal > 0) {
         $navlinks .= '<p align="center" style="font-size: 89%">' . _('Sort by'). ': ';
         $arr = array(

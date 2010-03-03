@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.18 2009-12-08 12:21:10 matthew Exp $
+// $Id: fns.php,v 1.19 2010-03-03 12:35:20 matthew Exp $
 
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
@@ -126,8 +126,9 @@ function pet_send_email_internal($to, $spec) {
 }
 
 /* This is for Number 10 petitions only at present */
-function pet_search_form($front = false) {
-    if (OPTION_SITE_NAME != 'number10') return;
+function pet_search_form($params=array()) {
+    $front = isset($params['front']) && $params['front'];
+    if (OPTION_SITE_NAME == 'number10') {
 ?>
 <form<? if ($front) print ' id="search_front"'; ?> name="pet_search" method="get" action="http://search.petitions.number10.gov.uk/kbroker/number10/petitions/search.lsim">
 <input type="hidden" name="ha" value="1157" />
@@ -136,6 +137,17 @@ function pet_search_form($front = false) {
 <input type="text" name="qt" id="q" size="11" maxlength="1000" value="" />&nbsp;<input type="submit" value="Go" /></p>
 </form>
 <?
+    } elseif (OPTION_SITE_NAME == 'sbdc') {
+?>
+<form<?
+        if (isset($params['float'])) print ' style="float:right"';
+        if ($front) print ' id="search_front"';
+?> name="pet_search" method="get" action="/search">
+<p><label for="q">Search petitions:</label>
+<input type="text" name="q" id="q" size="11" maxlength="1000" value="" />&nbsp;<input type="submit" value="Go" /></p>
+</form>
+<?
+    }
 }
 
 function pet_create_response_email($type, $ref, $subject, $body) {

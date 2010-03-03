@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: search.php,v 1.15 2008-08-04 10:48:07 matthew Exp $
+// $Id: search.php,v 1.16 2010-03-03 12:35:20 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -16,13 +16,15 @@ require_once '../../phplib/importparams.php';
 $search = trim(get_http_var('q', true));
 if (!$search) $search = trim(get_http_var('s', true));
 
-header('Location: http://search.petitions.number10.gov.uk/kbroker/number10/petitions/search.lsim?ha=1157&sc=number10&qt=' . urlencode($search));
-exit; # TEMP MPS 2008-06-14 - IS THIS USED???
+if (OPTION_SITE_NAME == 'number10') {
+    header('Location: http://search.petitions.number10.gov.uk/kbroker/number10/petitions/search.lsim?ha=1157&sc=number10&qt=' . urlencode($search));
+    exit;
+}
 
 $rss = get_http_var('rss') ? true : false;
 $rss_items = array();
 $petitions_output = array();
-$heading = sprintf(_("Search results for '%s'"), htmlspecialchars($search));
+$heading = sprintf(_("Search results for &lsquo;%s&rsquo;"), htmlspecialchars($search));
 if ($rss)
     rss_header($heading, $heading, array());
 else {
@@ -69,11 +71,13 @@ function search($search) {
     // Link to RSS feed
     if (!$rss) {
         global $heading;
-?><p align="right"><a href="/rss<?=$_SERVER['REQUEST_URI'] ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of search results for') . " '".htmlspecialchars($search)."'" ?>" /> RSS</a>
+?><p style="float:right; margin:0;"><a href="/rss<?=$_SERVER['REQUEST_URI'] ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of search results for') . " '".htmlspecialchars($search)."'" ?>" /> RSS</a>
 | <a href="http://news.bbc.co.uk/1/hi/help/3223484.stm">What is RSS?</a></p>
 <?
 
     }
+
+    print "<h2>$heading</h2>";
 
     // General query
     global $pet_today;
@@ -201,8 +205,6 @@ function search($search) {
 </form>
 <h2>Search again</h2>
 EOF;
-    } else {
-        print '<h2>Search E-Petitions</h2>';
     }
     pet_search_form();
 }
