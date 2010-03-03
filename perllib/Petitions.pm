@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.58 2010-01-14 18:27:55 matthew Exp $
+# $Id: Petitions.pm,v 1.59 2010-03-03 19:07:15 matthew Exp $
 #
 
 package Petitions::DB;
@@ -167,37 +167,16 @@ package Petitions::Token;
 
 use strict;
 
+use Carp;
 use Crypt::Blowfish;
 use Digest::HMAC_SHA1 qw(hmac_sha1);
 use Digest::SHA1 qw(sha1);
-use MIME::Base64;
 use mySociety::BaseN;
 
 use mySociety::DBHandle ();
 use mySociety::Random qw(random_bytes);
 
-use constant TOKEN_LENGTH => 15;
-use constant TOKEN_LENGTH_B64 => 20;
 use constant TOKEN_LENGTH_B62 => 23;
-
-sub encode_base64ish ($) {
-    return mySociety::BaseN::encodefast(62, $_[0]);
-}
-
-# XXX Specific to tokens now
-sub decode_base64ish ($) {
-    my $b64 = shift;
-    if (length($b64) == TOKEN_LENGTH_B64) {
-        while (length($b64) % 4) {
-            $b64 .= '=';
-        }
-        $b64 =~ s#\$|_#+#g;
-        $b64 =~ s#'|-#/#g;
-        return decode_base64($b64);
-    } else {
-        return mySociety::BaseN::decodefast(62, $b64);
-    }
-}
 
 =item make WHAT ID
 
@@ -232,13 +211,13 @@ again:
     my $plaintext = pack('C4N', @salt, $id);
     my $hmac = hmac_sha1($plaintext, Petitions::DB::secret());
     
-        # XXX is this safe or ought we to have two different secrets?
+    # XXX is this safe or ought we to have two different secrets?
     our $crypt ||= new Crypt::Blowfish(substr(sha1(Petitions::DB::secret()), 0, 8));
     my $ciphertext = $crypt->encrypt($plaintext);
 
-    # 8 bytes of ciphertext plus 7 bytes of HMAC gives 15 bytes, 20 chars
-    # base64.
-    my $token = encode_base64ish($ciphertext . substr($hmac, 0, 7));
+    # 8 bytes of ciphertext plus 7 bytes of HMAC gives 15 bytes, 23 chars
+    # base62.
+    my $token = mySociety::BaseN::encodefast(62, $ciphertext . substr($hmac, 0, 7));
 
     # probably need more than these but this shows willing and therefore is
     # enough for now ;-)
@@ -256,9 +235,9 @@ were passed to make; or, if TOKEN is invalid, the empty list.
 sub check ($) {
     my $token = shift;
     croak("TOKEN must be defined") unless (defined($token));
-    return () if (length($token) != TOKEN_LENGTH_B64 && length($token) != TOKEN_LENGTH_B62);
+    return () if length($token) != TOKEN_LENGTH_B62;
 
-    my $data = decode_base64ish($token);
+    my $data = mySociety::BaseN::decodefast(62, $token);
     return () unless ($data);
 
     my $ciphertext = substr($data, 0, 8);
