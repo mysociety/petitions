@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.129 2010-02-17 13:53:14 matthew Exp $
+ * $Id: admin-pet.php,v 1.130 2010-03-08 11:33:09 matthew Exp $
  * 
  */
 
@@ -1273,9 +1273,8 @@ can be rejected properly.</p>
     function display() {
         db_connect();
 
-        # XXX This is duplicated elsewhere
         $status = get_http_var('o');
-        if (!$status || !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
+        if ($status && !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
         petition_admin_navigation($this, array('status'=>$status));
 
         $petition_id = petition_admin_perform_actions();
