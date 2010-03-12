@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.44 2010-03-12 00:06:38 matthew Exp $
+# $Id: RPC.pm,v 1.45 2010-03-12 19:02:56 matthew Exp $
 #
 
 package Petitions::RPC;
@@ -100,10 +100,10 @@ called while holding a lock against concurrent signatures (e.g. row exclusive).
 sub sign_petition_db ($) {
     my $r = shift;
     
-    my $s = dbh()->selectrow_array('
+    my $s = dbh()->selectrow_array("
             select emailsent from signer
             where petition_id = (select id from petition where ref = ?)
-                and email = ?', {}, map { $r->{$_} } qw(ref email));
+                and email!='' and email = ?", {}, map { $r->{$_} } qw(ref email));
     return if (defined($s) && $s =~ /^(confirmed|pending)$/);
     
     # First try updating the row.
