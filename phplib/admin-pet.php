@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.131 2010-03-12 00:06:38 matthew Exp $
+ * $Id: admin-pet.php,v 1.132 2010-03-12 00:21:00 matthew Exp $
  * 
  */
 
@@ -208,9 +208,9 @@ class ADMIN_PAGE_PET_SEARCH {
     }
 
     function display() {
+        $search = strtolower(get_http_var('search'));
         petition_admin_navigation($this, array('search'=>$search));
         petition_admin_perform_actions();
-        $search = strtolower(get_http_var('search'));
         $search_pet = "select id, ref, name, email, status, date_trunc('second', creationtime) as creationtime
             from petition where status in ('sentconfirm', 'draft', 'live', 'resubmitted', 'finished') ";
         $search_sign = "select signer.id, ref, signer.name, signer.email, emailsent,
