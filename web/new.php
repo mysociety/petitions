@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.83 2010-02-17 13:51:39 matthew Exp $
+// $Id: new.php,v 1.84 2010-03-12 00:09:45 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -428,7 +428,7 @@ the Armed Forces without a postcode, please select from this list:</label>
                 $size = 15;
             $after = '';
             if ($name == 'email2')
-                $after = '<br>(we need your email so we can get in touch with you when your petition completes, and so on)';
+                $after = '<br />(we need your email so we can get in touch with you when your petition completes, and so on)';
             elseif ($name == 'name')
                 $after = '(please use a full name e.g. Mr John Smith)';
             textfield($name, $data[$name], $size, $errors, $after);
