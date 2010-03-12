@@ -24,7 +24,7 @@
 # HTML mail test could be better
 # Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.103 2010-03-12 00:33:40 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.104 2010-03-12 19:22:31 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -33,6 +33,8 @@ use mySociety::SystemMisc;
 use mySociety::Config;
 mySociety::Config::set_file('../conf/general');
 use mySociety::DBHandle qw(dbh);
+use mySociety::Memcached;
+mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
 use mySociety::WebTestHarness;
 
 use POSIX;
@@ -68,6 +70,9 @@ my $named_fcgi_processes = '"^(ref-index.cgi|ref-sign.cgi|reject.cgi)\$"';
 
 #############################################################################
 # Main code
+
+# Make sure nothing is in memcached
+mySociety::Memcached::flush_all();
 
 # Kill FastCGI processes
 mySociety::SystemMisc::kill_named_processes(SIGKILL, $named_fcgi_processes);
