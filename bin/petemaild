@@ -13,7 +13,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.155 2010-01-12 17:21:12 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.156 2010-03-12 19:00:35 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -2187,10 +2187,13 @@ sub post_select ($$) {
                 my $q = ($result->question())[0]->qname();
 
                 if ($result->header()->rcode() eq 'SERVFAIL') {
-                    # Transient error attempting to resolve the domain.
-                    $self->{mx} = undef;
+                    # Transient error attempting to resolve the domain - ignore this particular MX for now.
                     $self->log('warning', "temporary failure resolving A record for '$q'");
-                    $self->state(STATE_BAD);
+                    @{$self->{mx}} = grep { $_->exchange() ne $q } @{$self->{mx}};
+                    delete $self->{a}->{$q};
+                    $self->{mx} = undef if (!@{$self->{mx}});
+                    $self->state(STATE_BAD) if (!keys(%{$self->{sockets}}) && !$self->{mx});
+                    $self->state(STATE_DONE) if (!keys(%{$self->{sockets}}) && $self->{mx});
                     return;
                 } elsif ($result->header()->rcode() eq 'NXDOMAIN') {
                     # This A record does not exist.
@@ -2699,4 +2702,4 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1 VERSION
 
-$Id: petemaild,v 1.155 2010-01-12 17:21:12 matthew Exp $
+$Id: petemaild,v 1.156 2010-03-12 19:00:35 matthew Exp $
