@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.116 2010-03-12 00:06:38 matthew Exp $
+# $Id: Page.pm,v 1.117 2010-03-12 19:07:18 matthew Exp $
 #
 
 package Petitions::Page;
@@ -15,6 +15,7 @@ use strict;
 
 use Carp;
 use Digest::HMAC_SHA1 qw(hmac_sha1);
+use Encode;
 use Error qw(:try);
 use MIME::Base64;
 use RABX;
@@ -22,6 +23,8 @@ use File::Slurp qw(read_file);
 
 use mySociety::DBHandle qw(dbh);
 use mySociety::HTMLUtil;
+use mySociety::Memcached;
+mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
 use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
 
@@ -438,6 +441,9 @@ sub signatories_box ($$) {
         return $html;
     }
     
+    my $cached = mySociety::Memcached::get("signatures:$p->{ref}");
+    return decode('utf8', $cached) if $cached;
+
     my $st;
     my $showall = $q->param('showall') ? 1 : 0;      # ugh
     my $reverse = 0;
@@ -500,6 +506,7 @@ sub signatories_box ($$) {
     }
 
     $html .= "</div>";
+    mySociety::Memcached::set("signatures:$p->{ref}", encode('utf8', $html), 60);
     return $html;
 }
 
