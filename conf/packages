@@ -12,3 +12,6 @@ libmath-bigint-gmp-perl
 libheap-perl
 libheap-priority-perl
 libtie-cache-perl
+libcache-memcached-perl
+memcached
+php5-memcache

@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.115 2010-02-18 18:41:20 matthew Exp $
+# $Id: Page.pm,v 1.116 2010-03-12 00:06:38 matthew Exp $
 #
 
 package Petitions::Page;
@@ -265,7 +265,7 @@ sub sign_box ($$) {
     delete($safe_p->{salt});
 
     my $must;
-    if ($p->{body_area_id} || $p->{body_name} =~ /council/i || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
+    if ($p->{body_area_id} || ($p->{body_name} && $p->{body_name} =~ /council/i) || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
         $must = 'You must be a council resident to sign the petition.';
     } else {
         $must = 'You must be a British citizen or resident to sign the petition.';

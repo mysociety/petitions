@@ -6,34 +6,13 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: chris@mysociety.org; WWW: http://www.mysociety.org/
  *
- * $Id: token.php,v 1.8 2007-02-06 13:19:48 francis Exp $
+ * $Id: token.php,v 1.9 2010-03-12 00:06:38 matthew Exp $
  * 
  */
 
 require_once '../../phplib/db.php';
 require_once '../../phplib/random.php';
 require_once '../../phplib/BaseN.php';
-
-function token_encode_base64ish($in) {
-    return basen_encodefast(62, $in);
-}
-
-function token_decode_base64ish($in) {
-    if (strlen($in) == TOKEN_LENGTH_B64) {
-        while (strlen($in) % 4)
-            $in .= '=';
-        return
-            base64_decode(
-                preg_replace('/\$|_/', '+',
-                    preg_replace('/\'|-/', '/', $in)));
-    } else {
-        return basen_decodefast(62, $in);
-    }
-}
-
-define('TOKEN_LENGTH', 15);
-define('TOKEN_LENGTH_B64', 20);
-define('TOKEN_LENGTH_B62', 23);
 
 /* token_make WHAT ID
  * Make a token identifying the given ID (of a petition or signer). WHAT
@@ -66,7 +45,7 @@ function token_make($what, $id) {
                         MCRYPT_MODE_ECB,
                         "\0\0\0\0\0\0\0\0");
 
-    return token_encode_base64ish($ciphertext . substr($hmac, 0, 7));
+    return basen_encodefast(62, $ciphertext . substr($hmac, 0, 7));
 }
 
 /* token_check TOKEN
@@ -77,7 +56,7 @@ function token_check($token) {
     if (!isset($token))
         err("TOKEN must be set");
 
-    $data = token_decode_base64ish($token);
+    $data = basen_decodefast(62, $token);
 
     $ciphertext = substr($data, 0, 8);
     $hmac7 = substr($data, 8, 7);

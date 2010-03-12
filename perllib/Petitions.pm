@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Petitions.pm,v 1.59 2010-03-03 19:07:15 matthew Exp $
+# $Id: Petitions.pm,v 1.60 2010-03-12 00:06:37 matthew Exp $
 #
 
 package Petitions::DB;
@@ -18,6 +18,8 @@ use DBI;
 
 use mySociety::Config;
 use mySociety::DBHandle qw(dbh select_all);
+use mySociety::Memcached;
+mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
 use mySociety::Random qw(random_bytes);
 
 my $secret;
@@ -88,21 +90,22 @@ reference, or undef if there is none.
 sub check_ref ($$) {
     my ($body, $ref) = @_;
     return undef if (!defined($ref) || $ref !~ /^[A-Za-z0-9-]{6,16}$/);
+    my @row;
     if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
-        if (defined($ref = dbh()->selectrow_array("
-                select petition.ref from petition, body
+        if (@row = dbh()->selectrow_array("
+                select petition.id, petition.ref from petition, body
                 where status in ('live', 'rejected', 'finished')
                     and body.id = body_id
                     and lower(body.ref) = ?
-                    and lower(petition.ref) = ?", {}, lc $body, lc $ref))) {
-            return $ref;
+                    and lower(petition.ref) = ?", {}, lc $body, lc $ref)) {
+            return @row;
         }
     } else {
-        if (defined($ref = dbh()->selectrow_array("
-                select ref from petition
+        if (@row = dbh()->selectrow_array("
+                select id, ref from petition
                 where status in ('live', 'rejected', 'finished')
-                and lower(ref) = ?", {}, lc $ref))) {
-            return $ref;
+                and lower(ref) = ?", {}, lc $ref)) {
+            return @row;
         }
     }
     return undef;
@@ -141,6 +144,10 @@ sub get ($;$$) {
     
     return undef unless $p && @$p > 0;
     $p->[0]->{category} = $petition_categories{$p->[0]->{category}};
+
+    my $signers = mySociety::Memcached::get('signers:' . $p->[0]->{id});
+    $p->[0]->{signers} = $signers if $signers;
+
     return $p->[0] if @$p == 1;
     my $o = shift @$p;
     foreach (@$p) {

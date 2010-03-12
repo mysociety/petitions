@@ -35,7 +35,9 @@ use mySociety::Config;
 BEGIN {
     mySociety::Config::set_file("$FindBin::Bin/../conf/general");
 }
-use mySociety::DBHandle qw(dbh);
+use mySociety::DBHandle qw(dbh select_all);
+use mySociety::Memcached;
+mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
 use Petitions;
 
 if (!$ARGV[0]) {
@@ -57,25 +59,26 @@ if ($ARGV[0] eq "all") {
 } else {
     die "First parameter must be either 'all' to update all petitions, or a number of minutes to do only those changed that recently"
 }
-my $r = dbh()->selectcol_arrayref("select id,
+my $r = select_all("select id, ref,
     (select count(*)+1 from signer 
-        where petition_id=petition.id and emailsent='confirmed' and showname='t')
+        where petition_id=petition.id and emailsent='confirmed' and showname='t') as count
     from petition
     where cached_signers !=
         (select count(*)+1 from signer
             where petition_id=petition.id and emailsent='confirmed' and showname='t')
         $date_part
-    ", { Columns => [1,2] } );
-my %hash = @$r;
+    ");
 
 # print "Starting to update " . (@$r/2) . " cached totals at " . localtime() . "\n";
 
-foreach (keys %hash) {
+foreach (@$r) {
     # print "Updating $_ to $hash{$_}...\n";
     dbh()->do("update petition set cached_signers=?, lastupdate=ms_current_timestamp()
         where id=? and cached_signers!=?",
-        {}, $hash{$_}, $_, $hash{$_});
+        {}, $_->{count}, $_->{id}, $_->{count});
     dbh()->commit();
+    mySociety::Memcached::set("signers:$_->{id}", $_->{count});
+    mySociety::Memcached::set("lastupdate:$_->{id}", time());
 }
 
 # print "Finished at " . localtime() . "\n";

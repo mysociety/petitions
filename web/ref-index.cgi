@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.63 2010-01-14 18:26:47 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.64 2010-03-12 00:06:38 matthew Exp $';
 
 use strict;
 
@@ -22,6 +22,8 @@ BEGIN {
     mySociety::Config::set_file("../conf/general");
 }
 use mySociety::DBHandle qw(dbh);
+use mySociety::Memcached;
+mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
 use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
 
@@ -44,7 +46,7 @@ sub main () {
 
     my $qp_ref = $q->ParamValidate(ref => qr/^[A-Za-z0-9-]{6,16}$/);
     my $qp_id = $q->ParamValidate(id => qr/^[0-9]+$/);
-    my $ref = Petitions::DB::check_ref($qp_body, $qp_ref);
+    my ($petition_id, $ref) = Petitions::DB::check_ref($qp_body, $qp_ref);
     if (!defined($ref)) {
         Petitions::Page::bad_ref_page($q, $qp_ref);
         return;
@@ -64,13 +66,13 @@ sub main () {
 
     # We don't do this in a PostgreSQL function because they don't use indices always
     # (at least in PostgreSQL 7.4) which led to slow sequential scans.
-
-    # XXX: lastupdate is only updated when the number changes on cron now
-    # People notice names changing, but not the number, so should probably
-    # add some sort of explanation that the number might be behind real-time
     # Also don't return a 304 if we've just confirmed a signature.
-    my $lastmodified = dbh()->selectrow_array('select extract(epoch from lastupdate)
-        from petition where ref = ?', {}, $ref);
+    my $lastmodified = mySociety::Memcached::get("lastupdate:$petition_id");
+    if (!$lastmodified) {
+        $lastmodified = dbh()->selectrow_array('select extract(epoch from lastupdate)
+            from petition where ref = ?', {}, $ref);
+        mySociety::Memcached::set("lastupdate:$petition_id", $lastmodified);
+    }
     return if !$qp_signed && $q->Maybe304($lastmodified);
 
     # We show the "you've signed" box if a signed=... parameter with a

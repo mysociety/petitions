@@ -1,16 +1,18 @@
 #!/usr/bin/perl -w -I../../perllib -I../perllib
 
-# (was PETargh uncommitted in the document root)
-
 use strict;
 require 5.8.0;
 use mySociety::Config;
 BEGIN {
 mySociety::Config::set_file('../conf/general');
 }
-use mySociety::DBHandle qw(dbh);
 use Petitions;
 
-print Petitions::Token::make('e', 54199);
+my ($what, $id) = @ARGV;
+if ($id) {
+    print Petitions::Token::make($what, $id);
+} else {
+    print join(' ', Petitions::Token::check($what));
+}
 print "\n";
 

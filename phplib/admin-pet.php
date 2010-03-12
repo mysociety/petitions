@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.130 2010-03-08 11:33:09 matthew Exp $
+ * $Id: admin-pet.php,v 1.131 2010-03-12 00:06:38 matthew Exp $
  * 
  */
 
@@ -291,9 +291,17 @@ function petition_admin_perform_actions() {
                 print '<p><em>Those signers have been confirmed.</em></p>';
             }
         }
+        $memcache = new Memcache;
+        $memcache->connect('localhost', 11211);
         foreach ($sigs_by_petition as $petition_id => $sigs) {
             db_query("update petition set cached_signers = cached_signers $change " . count($sigs) . ',
                 lastupdate = ms_current_timestamp() where id = ?', $petition_id);
+            if ($change == '+') {
+                $memcache->increment(OPTION_PET_DB_NAME . 'signers:' . $petition_id, count($sigs));
+            } else {
+                $memcache->decrement(OPTION_PET_DB_NAME . 'signers:' . $petition_id, count($sigs));
+            }
+            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
             $p = new Petition($petition_id);
             $p->log_event($log . join(',', $sigs), http_auth_user());
         }
@@ -936,6 +944,9 @@ EOF;
                         laststatuschange = ms_current_timestamp(),
                         lastupdate = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
+            $memcache = new Memcache;
+            $memcache->connect('localhost', 11211);
+            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $id, time());
             if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_rejected'")) {
                 db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_rejected', '1')");
             # db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected_$cat'");
@@ -1114,6 +1125,9 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.number10.gov.uk
         } else {
             db_query('update petition set deadline=?, lastupdate = ms_current_timestamp()
                 where id=?', $new_deadline['iso'], $petition_id);
+            $memcache = new Memcache;
+            $memcache->connect('localhost', 11211);
+            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
             $p->log_event("Admin altered deadline of petition from $current_deadline to $new_deadline[iso]", http_auth_user());
             db_commit();
             print '<p><em>Deadline updated</em></p>';
@@ -1132,6 +1146,9 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.number10.gov.uk
                 rejection_hidden_parts = 0,
                 laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
+            $memcache = new Memcache;
+            $memcache->connect('localhost', 11211);
+            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
             if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_live'")) {
                 db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_live', '1')");
             }
@@ -1242,6 +1259,9 @@ can be rejected properly.</p>
         if (get_http_var('submit') && !sizeof($errors)) {
             db_query("UPDATE petition SET $column=?, lastupdate=ms_current_timestamp()
                 where id=?", $criteria_new, $petition_id);
+            $memcache = new Memcache;
+            $memcache->connect('localhost', 11211);
+            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
             $p->log_event("Admin changed rejection criteria from $criteria to $criteria_new, reason '$reason'", http_auth_user());
             db_commit();
             print '<p><em>Petition criteria changed</em></p>';

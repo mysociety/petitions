@@ -22,7 +22,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.35 2007-08-02 11:45:05 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: petsignupd,v 1.36 2010-03-12 00:06:37 matthew Exp $';
 
 use strict;
 
@@ -49,6 +49,8 @@ use Time::HiRes qw(time alarm);
 use Data::Dumper;
 
 use mySociety::DBHandle qw(dbh);
+use mySociety::Memcached;
+mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
 use mySociety::PIDFile;
 
 use Petitions;
@@ -130,10 +132,8 @@ sub do_pending () {
     }
 
     foreach my $id (keys(%$signercount)) {
-        dbh()->do('
-            update petition set cached_signers = cached_signers + ?,
-                lastupdate = ms_current_timestamp()
-            where id = ?', {}, $signercount->{$id}, $id);
+        mySociety::Memcached::incr("signers:$id", $signercount->{$id});
+        mySociety::Memcached::set("lastupdate:$id", time());
     }
     
     dbh()->commit();
@@ -355,5 +355,5 @@ Copyright (c) 2006 UK Citizens Online Democracy
 
 =head1
 
-$Id: petsignupd,v 1.35 2007-08-02 11:45:05 matthew Exp $
+$Id: petsignupd,v 1.36 2010-03-12 00:06:37 matthew Exp $
 

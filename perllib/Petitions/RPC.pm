@@ -6,7 +6,7 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: RPC.pm,v 1.43 2010-01-14 18:27:55 matthew Exp $
+# $Id: RPC.pm,v 1.44 2010-03-12 00:06:38 matthew Exp $
 #
 
 package Petitions::RPC;
@@ -157,26 +157,18 @@ sub confirm_db ($;$) {
                 'admin-new-petition'
             ) if ($n > 0 && $status eq 'draft');
     } elsif ($r->{confirm} eq 's') {
-        my $creator_email = dbh()->selectrow_array("
-                select petition.email from petition, signer
+        my ($petition_id, $creator_email, $signer_email) = dbh()->selectrow_array("
+                select petition.id, petition.email, signer.email from petition, signer
                 where petition.id = signer.petition_id
-                  and signer.email = petition.email
                   and signer.id = ?", {}, $r->{id});
-        return if $creator_email;
+        return if $creator_email eq $signer_email;
         my $n = dbh()->do("
                 update signer set emailsent = 'confirmed'
                 where id = ? and emailsent in ('sent', 'pending')", {},
                 $r->{id});
-        # If the database server isn't coping with lots of writes under
-        # heavy load, then one piece of gaffer tape would be to comment out
-        # this if statement, and make the update-totals cron job run more
-        # often.
-        #if ($signercount && $n > 0) {
-        #    my $petition_id = dbh()->selectrow_array("
-        #            select petition_id from signer where id = ?", {},
-        #            $r->{id});
-        #    $signercount->{$petition_id} += $n;
-        #}
+        if ($signercount && $n > 0) {
+            $signercount->{$petition_id} += $n;
+        }
     }
 }
 
