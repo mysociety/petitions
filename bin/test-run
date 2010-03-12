@@ -24,7 +24,7 @@
 # HTML mail test could be better
 # Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.102 2010-03-12 00:15:56 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.103 2010-03-12 00:33:40 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -51,7 +51,6 @@ my ($wth, $action, $verbose, $pause, $multispawn) = mySociety::WebTestHarness::s
     actions => \@actions,
     actions_desc => \%actions_desc,
     dbname => 'PET',
-    no_validate_html => 1, # XXX temporary
 });
 
 # Set up options
