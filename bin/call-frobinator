@@ -3,6 +3,7 @@
 # call with:
 # ./call-frobinator 2007-03-31
 
+#set -x
 set -e
 
 # Global config
@@ -13,8 +14,9 @@ mkdir -p $CACHE_DIR
 TODAY=`date +"%Y-%m-%d"`
 YESTERDAY=`date --date yesterday +"%Y-%m-%d"`
 
-DODATE=$1
-#DODATE=$YESTERDAY
+#DODATE=$1
+DODATE=$YESTERDAY
+#DODATE=$TODAY
 
 VHOST=petitions.number10.gov.uk
 LOG_FILES=`find $CACHE_DIR -type f | grep "/$VHOST-.*/" | grep $DODATE`
