@@ -28,7 +28,7 @@ while(<>) {
     my $timezone = $_[4] ;
     $timezone =~ s/\]//;
 
-    die "method unknown '$method':\n$_" if $method ne "GET" && $method ne "POST" && $method ne "HEAD";
+    next if $method ne "GET" && $method ne "POST" && $method ne "HEAD";
     die "timezone unknown '$timezone':\n$_" if $timezone ne "+0000";
 
     # Skip stuff we definitely don't care about
