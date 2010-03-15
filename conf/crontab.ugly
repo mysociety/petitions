@@ -4,12 +4,12 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.27 2010-03-12 00:06:37 matthew Exp $
+# $Id: crontab.ugly,v 1.28 2010-03-15 17:12:43 matthew Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
 
-!!(* if ($hostname eq "steak" || $hostname eq 'balti') { *)!!
+!!(* if ($hostname eq "steak" || $hostname eq 'balti' || $vhost eq 'petitions.surrey.gov.uk') { *)!!
 
 # On just the database/daemon machine (currently steak for live, balti for dev)
 
@@ -31,7 +31,9 @@ MAILTO=team@mysociety.org
 # Once a week, scrub some data
 0 2 * * Sun !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/remove-old-data.lock /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/remove-old-data || echo "stalled?"
 
-!!(* } else { *)!!
+!!(* } *)!!
+
+!!(* if (($hostname ne "steak" && $hostname ne 'balti') || $vhost eq 'petitions.surrey.gov.uk') { *)!!
 
 # On every web host machine, as makes files
 45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petition-signup-graph
