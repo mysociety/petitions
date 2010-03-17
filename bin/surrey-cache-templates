@@ -1,0 +1,48 @@
+#!/usr/bin/perl -w
+# 
+# surrey-cache-templates
+# 
+# This script will run daily overnight to fetch and cache various
+# council headers and footers to be used for the Surrey petitions website.
+
+# TODO: Add CSS and RSS links in headers.
+
+use strict;
+use File::Slurp;
+use FindBin;
+use LWP::Simple;
+
+my ($header, $footer);
+
+# Surrey
+$header = get('http://www1.surreycc.gov.uk/scctemplate/petitions/header1.asp');
+$header .= "\n<title>Surrey County Council - PARAM_TITLE</title>\n";
+$header .= get('http://www1.surreycc.gov.uk/scctemplate/petitions/header2.asp');
+$footer = get('http://www1.surreycc.gov.uk/scctemplate/petitions/footer.asp');
+output('surrey', $header, $footer);
+
+# Surrey Heath
+$header = get('http://www.surreyheath.gov.uk/general_header.asp');
+$header =~ s/<title>/<title>PARAM_TITLE - /;
+$header =~ s/<\*\*page_title\*\*>/PARAM_TITLE/;
+$footer = get('http://www.surreyheath.gov.uk/general_footer.asp');
+output('surreyheath', $header, $footer);
+
+# Elmbridge
+$header = get('http://www.elmbridge.gov.uk/website_header.asp');
+$header =~ s/<title>/<title>PARAM_TITLE - /;
+$footer = get('http://www.elmbridge.gov.uk/website_footer.asp');
+output('elmbridge', $header, $footer);
+
+# Tandridge
+$header = get('http://www.tandridge.gov.uk/template_header_new.asp');
+$header =~ s/<title>/<title>PARAM_TITLE - Tandridge District Council/;
+$footer = get('http://www.tandridge.gov.uk/template_footer_new.asp');
+output('tandridge', $header, $footer);
+
+sub output {
+    my ($dir, $header, $footer) = @_;
+    mkdir("$FindBin::Bin/../templates/$dir");
+    write_file("$FindBin::Bin/../templates/$dir/head.html", { atomic => 1 }, \$header);
+    write_file("$FindBin::Bin/../templates/$dir/foot.html", { atomic => 1 }, \$footer);
+}
