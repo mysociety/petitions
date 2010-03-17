@@ -5,7 +5,21 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.43 2010-02-17 13:50:13 matthew Exp $
+// $Id: page.php,v 1.44 2010-03-17 15:08:00 matthew Exp $
+
+# Work out which site we're on
+$site_name = null;
+if (strpos(OPTION_SITE_NAME, ',')) {
+    $sites = explode(',', OPTION_SITE_NAME);
+    foreach ($sites as $s) {
+        if ($_SERVER['HTTP_HOST'] == "petitions.$s.gov.uk") {
+            $site_name = $s;
+            break;
+        }
+    }
+} else {
+    $site_name = OPTION_SITE_NAME;
+}
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
@@ -45,12 +59,13 @@ function page_header($title, $params = array()) {
     }
 
     // Display header
-    global $devwarning;
-    if (OPTION_CREATION_DISABLED && file_exists('../templates/' . OPTION_SITE_NAME . '/head-nocreation.html')) {
-        $contents = file_get_contents('../templates/' . OPTION_SITE_NAME . '/head-nocreation.html');
+    global $site_name;
+    if (OPTION_CREATION_DISABLED && file_exists('../templates/' . $site_name . '/head-nocreation.html')) {
+        $contents = file_get_contents('../templates/' . $site_name . '/head-nocreation.html');
     } else {
-        $contents = file_get_contents('../templates/' . OPTION_SITE_NAME . '/head.html');
+        $contents = file_get_contents('../templates/' . $site_name . '/head.html');
     }
+
     if (OPTION_SITE_NAME == 'number10') {
         $creator = '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
         $desc = 'Petitions to the Prime Minister, 10 Downing Street';
@@ -62,6 +77,7 @@ function page_header($title, $params = array()) {
         $creator = OPTION_SITE_NAME;
         $desc = 'Petitions to ' . OPTION_SITE_NAME;
     }
+
     $extra = '';
     $contents = str_replace('PARAM_CREATOR', $creator, $contents);
     $contents = str_replace('PARAM_DESCRIPTION', $desc, $contents);
@@ -82,13 +98,15 @@ function page_header($title, $params = array()) {
  * Print bottom of HTML page. This closes the "content" <div>.  
  */
 function page_footer($stat_code = '') {
+    global $site_name;
+
     if ($stat_code) {
         $stat_code = 'Petitions.' . $stat_code;
     } else {
         $stat_code = 'Petitions';
     }
 
-    $contents = file_get_contents('../templates/' . OPTION_SITE_NAME . '/foot.html');
+    $contents = file_get_contents('../templates/' . $site_name . '/foot.html');
     if (OPTION_SITE_NAME == 'number10') {
         $site_stats = '';
         if (!OPTION_PET_STAGING) {
