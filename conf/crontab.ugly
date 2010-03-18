@@ -4,12 +4,12 @@
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
 #
-# $Id: crontab.ugly,v 1.28 2010-03-15 17:12:43 matthew Exp $
+# $Id: crontab.ugly,v 1.29 2010-03-18 16:04:43 matthew Exp $
 
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=team@mysociety.org
 
-!!(* if ($hostname eq "steak" || $hostname eq 'balti' || $vhost eq 'petitions.surrey.gov.uk') { *)!!
+!!(* if ($hostname eq "steak" || $hostname eq 'balti' || $vhost eq 'petitions.surreycc.gov.uk') { *)!!
 
 # On just the database/daemon machine (currently steak for live, balti for dev)
 
@@ -33,10 +33,15 @@ MAILTO=team@mysociety.org
 
 !!(* } *)!!
 
-!!(* if (($hostname ne "steak" && $hostname ne 'balti') || $vhost eq 'petitions.surrey.gov.uk') { *)!!
+!!(* if (($hostname ne "steak" && $hostname ne 'balti') || $vhost eq 'petitions.surreycc.gov.uk') { *)!!
 
 # On every web host machine, as makes files
 45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petition-signup-graph
 45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petition-creation-graph
 
 !!(* } *)!!
+
+!!(* if ($vhost eq 'petitions.surreycc.gov.uk') { *)!!
+30 0 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/surrey-cache-templates
+!!(* } *)!!
+
