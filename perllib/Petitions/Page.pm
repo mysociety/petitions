@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.117 2010-03-12 19:07:18 matthew Exp $
+# $Id: Page.pm,v 1.118 2010-03-18 18:36:56 matthew Exp $
 #
 
 package Petitions::Page;
@@ -29,6 +29,23 @@ use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
 
 use Petitions;
+
+# Work out which site we're on
+sub template_dir {
+    if (mySociety::Config::get('SITE_NAME') =~ /,/) { 
+        my @sites = split /,/, mySociety::Config::get('SITE_NAME');
+        foreach (@sites) {
+            if ($ENV{HTTP_HOST} eq "petitions.$_.gov.uk") {
+                $site_name = $_;
+                last;
+            }
+        }
+        $site_name = $sites[0] unless $site_name;
+    } else {
+        $site_name = mySociety::Config::get('SITE_NAME');
+    }
+    return $site_name;
+}
 
 sub do_fastcgi {
     my $func = shift;
@@ -84,10 +101,11 @@ sub header ($$%) {
     }
 
     # html header shared with PHP
-    my $out = read_file('../templates/' . mySociety::Config::get('SITE_NAME') . '/head.html');
+    my $site_name = template_dir();
+    my $out = read_file('../templates/' . $site_name . '/head.html');
     utf8::decode($out); # binmode argument on read_file simply just sets O_BINARY
     if (!$out) {
-        warn "Couldn't find ../templates/" . mySociety::Config::get('SITE_NAME') . "/head.html";
+        warn "Couldn't find ../templates/" . $site_name . "/head.html";
         return "";
     }
     my $ent_url = ent($q->url());
@@ -129,7 +147,8 @@ sub header ($$%) {
 sub footer ($$) {
     my ($q, $stat_code) = @_;
     
-    my $out = read_file('../templates/' . mySociety::Config::get('SITE_NAME') . '/foot.html');
+    my $site_name = template_dir();
+    my $out = read_file('../templates/' . $site_name . '/foot.html');
     utf8::decode($out);
 
     if (mySociety::Config::get('SITE_NAME') eq 'number10' && !mySociety::Config::get('PET_STAGING')) {
