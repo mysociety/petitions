@@ -19,6 +19,7 @@ $header = get('http://www1.surreycc.gov.uk/scctemplate/petitions/header1.asp');
 $header .= <<EOF;
 <title>Surrey County Council - PARAM_TITLE</title>
 <link rel="stylesheet" type="text/css" href="/pet.css">
+<link rel="stylesheet" type="text/css" href="/assets/surreycc/css.css">
 EOF
 $header .= get('http://www1.surreycc.gov.uk/scctemplate/petitions/header2.asp');
 $footer = get('http://www1.surreycc.gov.uk/scctemplate/petitions/footer.asp');

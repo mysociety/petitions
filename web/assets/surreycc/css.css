@@ -1,0 +1,19 @@
+#new_you label {
+    display: block;
+    float: left;
+    width: 12em;
+}
+
+div#most_recent {
+    float: right;
+}
+
+#most_popular h3 {
+    margin-top: 0;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
