@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.61 2010-03-03 12:35:19 matthew Exp $
+// $Id: index.php,v 1.62 2010-03-19 12:21:11 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -43,8 +43,9 @@ page_header('Introduction to e-petitions', array(
     )
 ));
 
-if (OPTION_SITE_NAME == 'sbdc') {
-    echo '<h2>Make or sign petitions through this official Borsetshire District Council petitions website</h2>';
+if (OPTION_SITE_NAME == 'sbdc' || strpos(OPTION_SITE_NAME, 'surrey')!==false) {
+    if (OPTION_SITE_NAME == 'sbdc')
+        echo '<h2>Make or sign petitions through this official Borsetshire District Council petitions website</h2>';
     front_actions();
     front_intro_text();
     front_most_popular($most);
