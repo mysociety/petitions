@@ -22,6 +22,9 @@ $header .= <<EOF;
 <link rel="stylesheet" type="text/css" href="/assets/surreycc/css.css">
 EOF
 $header .= get('http://www1.surreycc.gov.uk/scctemplate/petitions/header2.asp');
+$header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>/PARAM_RSS_LINKS\nPARAM_SUBJECTS/;
+$header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>//g;
+$header =~ s/(<meta name="DC\.Identifier".*?")http.*?"/\1PARAM_DC_IDENTIFIER/;
 $footer = get('http://www1.surreycc.gov.uk/scctemplate/petitions/footer.asp');
 output('surreycc', $header, $footer);
 
