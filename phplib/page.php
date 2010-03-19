@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.45 2010-03-18 16:04:42 matthew Exp $
+// $Id: page.php,v 1.46 2010-03-19 15:01:35 matthew Exp $
 
 # Work out which site we're on
 $site_name = null;
@@ -83,7 +83,7 @@ function page_header($title, $params = array()) {
     $contents = str_replace('PARAM_CREATOR', $creator, $contents);
     $contents = str_replace('PARAM_DESCRIPTION', $desc, $contents);
     $contents = str_replace('PARAM_EXTRA', $extra, $contents);
-    $contents = str_replace("PARAM_DC_IDENTIFIER", $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], $contents);
+    $contents = str_replace("PARAM_DC_IDENTIFIER", 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], $contents);
     $contents = str_replace("PARAM_TITLE", $title, $contents);
     $contents = str_replace("PARAM_DEV_WARNING", $devwarning, $contents);
     $contents = str_replace("PARAM_RSS_LINKS", $rss_links, $contents);
