@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.62 2010-03-19 12:21:11 matthew Exp $
+// $Id: index.php,v 1.63 2010-03-19 13:44:23 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -90,7 +90,7 @@ function front_intro_text() {
 the Number 10 door in person. You can now both create and sign petitions on
 this website too, giving you the opportunity to reach a potentially wider audience
 and to deliver your petition directly to Downing Street.</p>';
-    } elseif (OPTION_SITE_NAME != 'sbdc') {
+    } elseif (OPTION_SITE_NAME == 'councils') {
         echo '<p><em>You can now both create and sign petitions to ' . str_replace('the ', 'your ', OPTION_SITE_PETITIONED) . ' on this website,
 giving you the opportunity to reach a potentially wider audience and to deliver your petition
 directly to ' . OPTION_SITE_PETITIONED . '.</em></p>';
@@ -168,7 +168,7 @@ function front_how_it_works() {
 <p>You can view and sign any <a href="/list">current petitions</a>, and see
 <?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED."'s"?> response to any
 <a href="/list/closed">completed petitions</a>.
-<? if (OPTION_SITE_NAME != 'sbdc') { ?>
+<? if (OPTION_SITE_NAME == 'number10') { ?>
 If you have signed a petition that has reached more than 500 signatures
 by the time it closes, you will be sent a response from
 <?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> by email.
@@ -183,7 +183,7 @@ The aim is to enable as many people as possible to make their views known.
 <p>To ensure transparency, any petition that cannot be accepted will be listed,
 along with the reasons why.
 <?
-    if (OPTION_SITE_NAME != 'sbdc') {
+    if (OPTION_SITE_NAME == 'number10') {
 ?>
 A list of <a href="/list/rejected">rejected petitions</a>
 is available on this website.</p>
