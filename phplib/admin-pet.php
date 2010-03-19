@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.132 2010-03-12 00:21:00 matthew Exp $
+ * $Id: admin-pet.php,v 1.133 2010-03-19 17:37:11 matthew Exp $
  * 
  */
 
@@ -496,8 +496,13 @@ class ADMIN_PAGE_PET_MAIN {
                 }
                 $row .= '</td>';
             } elseif (!$this->cat_change && $status == 'draft') {
-                $row .= '<td><form name="petition_admin_approve" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] .
-                    '"><input type="submit" name="reject" value="Reject"></form>';
+                $row .= '<td style="white-space: pre"><form name="petition_admin_approve" method="post" action="'
+                    . $this->self_link.'"><input type="hidden" name="petition_id" value="'
+                    . $r['id'] . '"><input type="submit" name="reject" value="Reject">';
+                if (OPTION_SITE_TYPE == 'multiple') {
+                    $row .= ' <input type="submit" name="forward" value="Forward">';
+                }
+                $row .= '</form>';
                 if ($r['status'] == 'resubmitted') {
                     $row .= ' resubmitted';
                 }
@@ -1148,6 +1153,7 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.number10.gov.uk
                 WHERE id=?", $petition_id);
             $memcache = new Memcache;
             $memcache->connect('localhost', 11211);
+            $memcache->set(OPTION_PET_DB_NAME . 'signers:' . $petition_id, 1);
             $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
             if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_live'")) {
                 db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_live', '1')");
