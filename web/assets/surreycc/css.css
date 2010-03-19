@@ -21,3 +21,7 @@ div#front_how {
     width: 45%;
 }
 
+form#signForm label {
+    width: 8em;
+}
+
