@@ -6,7 +6,7 @@
 # Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
-# $Id: Page.pm,v 1.118 2010-03-18 18:36:56 matthew Exp $
+# $Id: Page.pm,v 1.119 2010-03-19 16:38:55 matthew Exp $
 #
 
 package Petitions::Page;
@@ -32,6 +32,7 @@ use Petitions;
 
 # Work out which site we're on
 sub template_dir {
+    my $site_name;
     if (mySociety::Config::get('SITE_NAME') =~ /,/) { 
         my @sites = split /,/, mySociety::Config::get('SITE_NAME');
         foreach (@sites) {
