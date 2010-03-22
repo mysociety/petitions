@@ -5,7 +5,7 @@
 # Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
 # Email: francis@mysociety.org. WWW: http://www.mysociety.org/
 # 
-# $Id: petition-creation-graph,v 1.1 2007-02-28 00:12:47 francis Exp $
+# $Id: petition-creation-graph,v 1.2 2010-03-22 11:18:41 matthew Exp $
 
 GPLOT_OUTPUT="set terminal png font 'Vera.ttf' 9 size 1200,400"
 EXTENSION=".png"
@@ -19,6 +19,14 @@ cd ../../
 source shlib/deployfns
 
 read_conf pet/conf/general
+
+if [ $OPTION_PET_DB_NAME = 'pet-surrey' ]; then
+    START_DATE=2010-03-01
+elif [ $OPTION_PET_DB_NAME = 'pet-sbdc' ]; then
+    START_DATE=2010-02-01
+else
+    START_DATE=2006-11-14
+fi
 
 SOURCEA=/tmp/pet-creation-rate-graph-data-$RANDOM$RANDOM
 SOURCEB=/tmp/pet-creation-rate-graph-data-$RANDOM$RANDOM
@@ -71,7 +79,7 @@ cat >$GPSCRIPT <<END
 
     set xdata time
     set timefmt "%Y-%m-%d"
-    set xrange ["2006-11-14":]
+    set xrange ["$START_DATE":]
     set format x "%d %b %Y"
     set xtics nomirror
     set xlabel "status of petitions that were created on each calendar day"

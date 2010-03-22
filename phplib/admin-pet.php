@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.133 2010-03-19 17:37:11 matthew Exp $
+ * $Id: admin-pet.php,v 1.134 2010-03-22 11:18:42 matthew Exp $
  * 
  */
 
@@ -129,7 +129,7 @@ EOF;
 <p>$counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again = <strong>$counts[all_confirmed]</strong> total with confirmed emails<br>
 With unconfirmed emails: $counts[unconfirmed] not sent, $counts[failedconfirm] failed send, $counts[sentconfirm] sent
 = <strong>$counts[all_unconfirmed]</strong> total with unconfirmed emails
-<p><img src="pet-live-creation.png" alt="Graph of petition status by creation date">
+<p><img style="max-width:100%" src="pet-live-creation.png" alt="Graph of petition status by creation date">
 EOF;
 
         # Signatures
@@ -139,7 +139,7 @@ EOF;
         print <<<EOF
 <h2>Signatures</h2>
 <p>$signatures_confirmed confirmed signatures ($signers unique emails in past year), $signatures_unconfirmed unconfirmed
-<p><img src="pet-live-signups.png" alt="Graph of signers across whole site">
+<p><img style="max-width:100%" src="pet-live-signups.png" alt="Graph of signers across whole site">
 EOF;
 
         # Responses 
