@@ -24,7 +24,7 @@
 # HTML mail test could be better
 # Redrafting from admin interface
 
-my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.105 2010-03-31 17:03:28 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: test-run,v 1.106 2010-03-31 20:24:06 matthew Exp $';
 
 use strict;
 require 5.8.0;
@@ -1111,6 +1111,33 @@ sub do_early_response_test {
     $wth->browser_check_no_contents('signForm');
 }
 
+# Just here for now, first run
+my $safe_config;
+sub change_config_file {
+    my ($search, $replace) = @_;
+
+    open(FP, '../conf/general') or die $!;
+    my $f = join('', <FP>);
+    close FP;
+    $safe_config = $f unless $safe_config;
+
+    $f =~ s/$search/$replace/;
+    open(FP, '>../conf/general') or die $!;
+    print FP $f;
+    close FP;
+}
+
+END {
+    restore_config_file();
+}
+
+sub restore_config_file {
+    return unless $safe_config;
+    open(FP, '>../conf/general') or die $!;
+    print FP $safe_config;
+    close FP;
+}
+
 sub do_disabled_test {
     set_pet_date('1996-01-01');
 
@@ -1164,15 +1191,15 @@ sub do_disabled_test {
     my $c = 1;
     $wth->browser_submit_form(form_name => 'signForm',
             fields => {
-                name => name_n($signer_no),
-                email => email_n($signer_no),
-                email2 => email_n($signer_no),
-                address => "$signer_no Signature Street\n\nSealville",
+                name => name_n(1201),
+                email => email_n(1201),
+                email2 => email_n(1201),
+                address => "1201 Signature Street\n\nSealville",
                 postcode => "EH99 1SP",
                 }, button => 'submit') or die "Failed to submit sign petition";
     $wth->browser_check_contents("We have sent you an email");
 
-    my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
+    my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1201).'" <'.email_n(1201).'>%Please click on the link below to confirm your signature%');
     die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_signature_link = $1;
     $wth->browser_get($confirm_signature_link);
@@ -1180,7 +1207,8 @@ sub do_disabled_test {
     $wth->browser_get($petition_uri);
 
     comment("Disable petition signing");
-    mySociety::Config::set('SIGNING_DISABLED', 'Petition signing is currently disabled.');
+    change_config_file("SIGNING_DISABLED', 0", "SIGNING_DISABLED', 'Petition signing is currently disabled.'");
+    mySociety::SystemMisc::kill_named_processes(SIGKILL, $named_fcgi_processes);
 
     comment("Try to sign the petition, using the form we loaded before disabling");
     $wth->browser_submit_form(form_name => 'signForm',
@@ -1200,15 +1228,16 @@ sub do_disabled_test {
     $wth->browser_check_contents("Petition signing is currently disabled."); 
 
     comment("Disable petition creation");
-    mySociety::Config::set('CREATION_DISABLED', 'Petition creation is currently closed.');
+    change_config_file("CREATION_DISABLED', 0", "CREATION_DISABLED', 'Petition creation is currently closed.'");
+    mySociety::SystemMisc::kill_named_processes(SIGKILL, $named_fcgi_processes);
 
     comment("Try and create a new petition");
     $wth->browser_get($base_url);
-    $wth->browser_follow_link(text_regex => qr/Create a petition/);
+    $wth->browser_check_no_contents('Create a petition');
+    $wth->browser_get($base_url . '/new'); # XXX It's not linked anywhere!
     $wth->browser_check_no_contents("Before creating a new petition");
     $wth->browser_check_contents("Petition creation is currently closed.");
 
-    mySociety::Config::set('CREATION_DISABLED', 0);
-    mySociety::Config::set('SIGNING_DISABLED', 0);
+    restore_config_file();
 }
 
