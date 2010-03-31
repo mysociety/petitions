@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.57 2010-02-17 13:50:33 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.58 2010-03-31 15:29:34 matthew Exp $';
 
 use strict;
 
@@ -47,6 +47,11 @@ sub signup_page ($$) {
     my mySociety::Web $q = shift;
     my $p = shift;
 
+    if (my $disabled = mySociety::Config::get('SIGNING_DISABLED')) {
+        Petitions::Page::error_page($q, $disabled);
+        return;
+    }
+    
     # Check the deadline of the petition.
     my $today = POSIX::strftime('%Y-%m-%d', localtime(time()));
     # ... the whole point of ref-sign.cgi is to not use the database - so only

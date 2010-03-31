@@ -7,7 +7,7 @@
 # Email: chris@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.64 2010-03-12 00:06:38 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: ref-index.cgi,v 1.65 2010-03-31 15:29:34 matthew Exp $';
 
 use strict;
 
@@ -141,7 +141,9 @@ sub main () {
 
     $html .= Petitions::Page::display_box($q, $p, detail=>1);
     $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
-    if ($p->{status} eq 'live' && !$show_signed_box) {
+    if (my $disabled = mySociety::Config::get('SIGNING_DISABLED')) {
+        $html .= $q->p($disabled);
+    } elsif ($p->{status} eq 'live' && !$show_signed_box) {
         $html .= $q->h3('Sign a petition')
             if $p->{response};
         $html .= Petitions::Page::sign_box($q, $p);
