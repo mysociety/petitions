@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.134 2010-03-22 11:18:42 matthew Exp $
+ * $Id: admin-pet.php,v 1.135 2010-04-06 10:13:41 matthew Exp $
  * 
  */
 
@@ -514,7 +514,7 @@ class ADMIN_PAGE_PET_MAIN {
                 else {
                     $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
                         '">';
-                    if ($r['response_possible'] == 't') {
+                    if ($r['response_possible'] == 't' && !OPTION_RESPONSE_DISABLED) {
                         $row .= '<input type="submit" name="respond" value="Write response">';
                     }
                     if ($status == 'live') {
@@ -678,7 +678,7 @@ Deadline: ';
             print '<form name="petition_admin_go_respond" method="post" action="'
                 . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
                 '">';
-            if ($pdata['response_possible'] == 't') {
+            if ($pdata['response_possible'] == 't' && !OPTION_RESPONSE_DISABLED) {
                 print '<input type="submit" name="respond" value="Write response">';
             }
             if ($pdata['status'] == 'live')
@@ -980,6 +980,11 @@ EOF;
             $p->log_event("Bad response state", http_auth_user());
             db_commit();
             err("Should only be able to respond to petitions in live or finished state");
+            return;
+        }
+
+        if (OPTION_RESPONSE_DISABLED) {
+            err("Currently petition responses cannot be sent");
             return;
         }
 
