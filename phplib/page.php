@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: page.php,v 1.46 2010-03-19 15:01:35 matthew Exp $
+// $Id: page.php,v 1.47 2010-04-06 09:56:21 matthew Exp $
 
 # Work out which site we're on
 $site_name = null;
@@ -355,7 +355,7 @@ recognisable action.</li>
 function page_closed_message($front = false) {
     if ($front) echo '<br style="clear:both" />';
     if (is_string(OPTION_CREATION_DISABLED)) {
-        echo '<p>' . OPTION_CREATION_DISABLED . '</p>';
+        echo OPTION_CREATION_DISABLED;
     } else {
         echo '<p>Notice: Submission of new petitions is currently closed.
 You can still sign any petition during this time.</p>';
