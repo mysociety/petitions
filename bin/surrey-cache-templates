@@ -53,6 +53,14 @@ output('tandridge', $header, $footer);
 sub output {
     my ($dir, $header, $footer) = @_;
     mkdir("$FindBin::Bin/../templates/$dir");
-    write_file("$FindBin::Bin/../templates/$dir/head.html", { atomic => 1 }, \$header);
-    write_file("$FindBin::Bin/../templates/$dir/foot.html", { atomic => 1 }, \$footer);
+    write_file("$FindBin::Bin/../templates/$dir/head.html", { atomic => 1 }, \$header)
+        if $header;
+    write_file("$FindBin::Bin/../templates/$dir/foot.html", { atomic => 1 }, \$footer)
+        if $footer;
+}
+
+sub get($) {
+    my $url = shift;
+    my $r = LWP::Simple::get($url);
+    return $r || '';
 }
