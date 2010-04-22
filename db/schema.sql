@@ -5,7 +5,7 @@
 -- Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 -- Email: francis@mysociety.org; WWW: http://www.mysociety.org/
 --
--- $Id: schema.sql,v 1.67 2009-12-08 12:21:10 matthew Exp $
+-- $Id: schema.sql,v 1.68 2010-04-22 15:58:55 matthew Exp $
 --
 
 -- global_seq
@@ -91,6 +91,14 @@ create table petition (
     overseas text,
     telephone text not null,
     org_url text not null,
+    address_type text not null default '' check (
+        address_type in (
+            'home',
+            'work',
+            'study',
+            ''
+        )
+    ),
 
     -- metadata
     creationtime timestamp not null,
