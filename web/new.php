@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.90 2010-04-23 16:30:13 matthew Exp $
+// $Id: new.php,v 1.91 2010-04-23 17:15:57 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -278,7 +278,12 @@ function petition_form_main($data = array(), $errors = array()) {
 <p><strong><?
     echo $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
-        $body = db_getRow('select id, name from body where id=?', $data['body']);
+        if (OPTION_SITE_DOMAINS) {
+            global $site_name;
+            $body = db_getRow('select id, name from body where ref=?', $site_name);
+        } else {
+            $body = db_getRow('select id, name from body where id=?', $data['body']);
+        }
         print "<input type='hidden' name='body' value='$body[id]'>";
         print $body['name'];
         echo ' to';

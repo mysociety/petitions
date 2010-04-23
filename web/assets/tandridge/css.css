@@ -5,6 +5,7 @@
 }
 
 #new_you label.radio {
+    display: inline;
     float: none;
     width: auto;
 }
