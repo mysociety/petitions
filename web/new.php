@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.87 2010-04-23 12:16:54 matthew Exp $
+// $Id: new.php,v 1.88 2010-04-23 12:53:00 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -352,11 +352,7 @@ function petition_form_you($data = array(), $errors = array()) {
             'organisation' =>   _('Organisation'),
             'address' =>        _('Address'),
             'postcode' =>       _('UK postcode'),
-    );
-    if (cobrand_creation_ask_for_address_type()) {
-        $fields['address_type'] = _('Type of address');
-    }
-    $fields['overseas'] = array(
+            'overseas' => array(
                 '-- Select --',
                 'Expatriate',
                 'Armed Forces',
@@ -377,7 +373,11 @@ function petition_form_you($data = array(), $errors = array()) {
                 'S. Georgia and the S. Sandwich Islands',
                 'Tristan da Cunha',
                 'Turks and Caicos Islands',
-            );
+            ),
+    );
+    if (cobrand_creation_ask_for_address_type()) {
+        $fields['address_type'] = _('Type of address');
+    }
     $fields['telephone'] = _('Telephone number');
 
     if (!array_key_exists('token', $data)) {
@@ -397,7 +397,7 @@ function petition_form_you($data = array(), $errors = array()) {
         } elseif ($name == 'overseas') {
             if (!cobrand_creation_within_area_only()) {
 ?>
-<p><label for="overseas">Or, if you're an
+<p><label class="long" for="overseas">Or, if you're an
 expatriate, you're in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>
 <select name="overseas" id="overseas">

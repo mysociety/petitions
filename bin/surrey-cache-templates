@@ -46,7 +46,9 @@ output('elmbridge', $header, $footer);
 # Tandridge
 $header = get('http://www.tandridge.gov.uk/template_header_new.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - Tandridge District Council/;
-$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css"></head>};
+$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css">
+<link rel="stylesheet" type="text/css" href="/assets/tandridge/css.css">
+</head>};
 $footer = get('http://www.tandridge.gov.uk/template_footer_new.asp');
 output('tandridge', $header, $footer);
 
