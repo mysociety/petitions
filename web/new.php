@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.89 2010-04-23 15:01:17 matthew Exp $
+// $Id: new.php,v 1.90 2010-04-23 16:30:13 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -310,8 +310,7 @@ you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government
 <p>Please select a category for your petition:
 <select name="category">
 <option value="">-- Select a category --</option><?
-    global $global_petition_categories;
-    foreach ($global_petition_categories as $id => $category) {
+    foreach (cobrand_categories() as $id => $category) {
         if (!$id) continue;
         print '<option';
         if (array_key_exists('category', $data) && $id == $data['category'])
@@ -511,8 +510,11 @@ function step_main_error_check($data) {
     global $global_petition_categories;
     if (!array_key_exists('category', $data)
       || !$data['category']
-      || !array_key_exists($data['category'], $global_petition_categories))
+      || !array_key_exists($data['category'], cobrand_categories())) {
         $errors['category'] = 'Please select a category';
+    } elseif (!cobrand_category_okay($data['category'])) {
+        $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
+    }
 
     $pet_today_arr = explode('-', $pet_today);
     $deadline_limit_years = 1; # in years

@@ -4,3 +4,7 @@
     width: 12em;
 }
 
+#new_you label.radio {
+    float: none;
+    width: auto;
+}

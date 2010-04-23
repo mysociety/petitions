@@ -29,3 +29,44 @@ function cobrand_creator_must_be() {
         return 'British citizen or resident';
     }
 }
+
+function cobrand_category_okay($category_id) {
+    global $site_name;
+    if (in_array($site_name, array('tandridge')) && 
+        in_array($category_id, array(3, 6, 7, 10, 11, 13, 14, 15, 18)))
+        return false;
+    if (in_array($site_name, array('surreycc')) &&
+        in_array($category_id, array(1, 2, 4, 5, 8, 9, 17)))
+        return false;
+    return true;
+}
+
+function cobrand_categories() {
+    global $site_name;
+    if (in_array($site_name, array('tandridge', 'surreycc'))) {
+        return array(
+            1 => 'Building Regulations',
+            2 => 'Council Tax Collection',
+            3 => 'Education',
+            4 => 'Elections',
+            5 => 'Environmental Health',
+            6 => 'Fire & Rescue',
+            7 => 'Highways',
+            8 => 'Housing',
+            9 => 'Leisure & Recreation',
+            10 => 'Libraries',
+            11 => 'Passenger Transport',
+            12 => 'Planning Applications',
+            13 => 'Social Services',
+            14 => 'Strategic Planning',
+            15 => 'Transportation Planning',
+            16 => 'Trading Standards',
+            17 => 'Waste Collection',
+            18 => 'Waste Disposal',
+        );
+    }
+
+    global $global_petition_categories;
+    return $global_petition_categories;
+}
+
