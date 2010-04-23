@@ -6,12 +6,13 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.85 2010-03-31 17:03:30 matthew Exp $
+// $Id: new.php,v 1.86 2010-04-23 12:01:37 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
 require_once '../phplib/token.php';
+require_once '../phplib/cobrand.php';
 require_once '../../phplib/datetime.php';
 require_once '../../phplib/mapit.php';
 
@@ -272,17 +273,11 @@ function petition_form_main($data = array(), $errors = array()) {
     } else {
         $step = 2;
     }
-    if (OPTION_SITE_TYPE == 'one' && !preg_match('#council#i', OPTION_SITE_PETITIONED)) {
-        $must_be = 'British citizen or resident';
-    } else {
-        $must_be = 'council resident';
-    }
-
-    ?>
+?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of 3 &#8211; Your petition</h2>
 <?  errorlist($errors); ?>
 
-<p>Please note that you must be a <?=$must_be?> to create a petition.</p>
+<p>Please note that you must be a <?=cobrand_creator_must_be()?> to create a petition.</p>
 
 <p><strong><?
     echo $petition_prefix;
@@ -347,25 +342,25 @@ function petition_form_you($data = array(), $errors = array()) {
     } else {
         $step = 1;
     }
-    if (OPTION_SITE_TYPE == 'one' && !preg_match('#council#i', OPTION_SITE_PETITIONED)) {
-        $must_be = 'British citizen or resident';
-    } else {
-        $must_be = 'council resident';
-    }
-    ?>
+
+?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step?> of 3 &#8211; About you</h2>
 <?
     errorlist($errors);
 ?>
 <div id="new_you">
-<p>Please note that you must be a <?=$must_be ?> to create a petition.</p><?
+<p>Please note that you must be a <?=cobrand_creator_must_be() ?> to create a petition.</p><?
 
     $fields = array(
             'name'  =>          _('Your name'),
             'organisation' =>   _('Organisation'),
             'address' =>        _('Address'),
             'postcode' =>       _('UK postcode'),
-            'overseas' =>         array(
+    );
+    if (cobrand_creation_address_type()) {
+        $fields['address_type'] = _('Type of address');
+    }
+    $fields['overseas'] = array(
                 '-- Select --',
                 'Expatriate',
                 'Armed Forces',
@@ -386,9 +381,8 @@ function petition_form_you($data = array(), $errors = array()) {
                 'S. Georgia and the S. Sandwich Islands',
                 'Tristan da Cunha',
                 'Turks and Caicos Islands',
-            ),
-            'telephone' =>      _('Telephone number'),
-        );
+            );
+    $fields['telephone'] = _('Telephone number');
 
     if (!array_key_exists('token', $data)) {
         $fields['email'] = _('Your email');
@@ -402,9 +396,9 @@ function petition_form_you($data = array(), $errors = array()) {
         if (!array_key_exists($name, $data))
             $data[$name] = '';
         
-        if ($name == 'address')
+        if ($name == 'address') {
             textarea($name, $data[$name], 30, 4, $errors);
-        elseif ($name == 'overseas') {
+        } elseif ($name == 'overseas') {
             if (OPTION_SITE_TYPE == 'one' && !preg_match('#council#i', OPTION_SITE_PETITIONED)) { ?>
 
 <p><label for="overseas">Or, if you're an
@@ -420,6 +414,11 @@ the Armed Forces without a postcode, please select from this list:</label>
 </select></p>
         <?
             }
+        } elseif ($name == 'address_type') {
+            print '<input type="radio" id="address_type_home" name="address_type" value="home">
+<label class="radio" for="address_type_home">Home</label>
+<input type="radio" id="address_type_work" name="address_type" value="work">
+<label class="radio" for="address_type_work">Work</label>';
         } else {
             $size = 20;
             if ($name == 'postcode')
@@ -564,6 +563,14 @@ function step_you_error_check(&$data) {
         }
     }
 
+    if (cobrand_creation_address_type()) {
+        if (!isset($data['address_type']) || !in_array($data['address_type'], array('home','work'))) {
+            $errors['address_type'] = 'Please specify your address type';
+        }
+    } else {
+        $data['address_type'] = null;
+    }
+
     $vars = array(
         'name' => 'name',
         'address' => 'postal address',
@@ -612,7 +619,12 @@ longer be valid.
 <li>Postcode: <strong><?=$data['postcode'] ?></strong></li>
 <? } elseif ($data['overseas']) { ?>
 <li><strong><?=$data['overseas'] ?></strong></li>
-<? } ?>
+<?
+    }
+    if (cobrand_creation_address_type()) {
+        echo '<li>Address type: <strong>' . $data['address_type'] . '</strong></li>';
+    }
+?>
 <li>Telephone: <strong><?=$data['telephone'] ?></strong></li>
 </ul>
 
@@ -719,7 +731,7 @@ function petition_create($data) {
                         id, body_id, detail, content,
                         deadline, rawdeadline,
                         email, name, ref, 
-                        organisation, address,
+                        organisation, address, address_type,
                         postcode, overseas, telephone, org_url,
                         comments, creationtime, category,
                         status, laststatuschange, lastupdate
@@ -735,7 +747,7 @@ function petition_create($data) {
                     $data['id'], $data['body'], $data['detail'], $data['pet_content'],
                     $data['deadline'], $data['rawdeadline'],
                     $data['email'], $data['name'], $data['ref'],
-                    $data['organisation'], $data['address'],
+                    $data['organisation'], $data['address'], $data['address_type'],
                     $data['postcode'], $data['overseas'], $data['telephone'], '',
                     $data['comments'], $data['category']);
             db_commit();
