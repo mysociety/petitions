@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.88 2010-04-23 12:53:00 matthew Exp $
+// $Id: new.php,v 1.89 2010-04-23 15:01:17 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -551,7 +551,7 @@ function step_you_error_check(&$data) {
     if ($data['postcode'] && $data['overseas'])
         $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
 
-    if (OPTION_SITE_TYPE == 'multiple' && $data['postcode'] && validate_postcode($data['postcode'])) {
+    if (cobrand_creation_within_area_only() && $data['postcode'] && validate_postcode($data['postcode'])) {
         $areas = mapit_get_voting_areas($data['postcode']);
         $body = db_getRow('SELECT * FROM body WHERE area_id in (' . join(',', array_values($areas)) . ')');
         if ($body) {
