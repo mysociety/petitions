@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.91 2010-04-23 17:15:57 matthew Exp $
+// $Id: new.php,v 1.92 2010-04-23 17:32:22 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -415,9 +415,11 @@ the Armed Forces without a postcode, please select from this list:</label>
         <?
             }
         } elseif ($name == 'address_type') {
-            print '<input type="radio" id="address_type_home" name="address_type" value="home">
+            $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
+            $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
+            print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . '>
 <label class="radio" for="address_type_home">Home</label>
-<input type="radio" id="address_type_work" name="address_type" value="work">
+<input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . '>
 <label class="radio" for="address_type_work">Work</label>';
         } else {
             $size = 20;
