@@ -8,18 +8,24 @@
  * 
  */
 
-function cobrand_creation_address_type() {
+function cobrand_creation_ask_for_address_type() {
     global $site_name;
     if ($site_name == 'tandridge') return true;
     return false;
 }
 
+function cobrand_creation_within_area_only() {
+    return false;
+}
+
 function cobrand_creator_must_be() {
-    if (OPTION_SITE_TYPE == 'one' && !preg_match('#council#i', OPTION_SITE_PETITIONED)) {
-        return 'British citizen or resident';
-    } elseif (cobrand_creation_address_type()) {
-        return 'council resident or work within the area of the council';
+    if (cobrand_creation_within_area_only()) {
+        if (cobrand_creation_ask_for_address_type()) {
+            return 'council resident or work within the area of the council';
+        } else {
+            return 'council resident';
+        }
     } else {
-        return 'council resident';
+        return 'British citizen or resident';
     }
 }

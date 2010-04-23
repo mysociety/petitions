@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.86 2010-04-23 12:01:37 matthew Exp $
+// $Id: new.php,v 1.87 2010-04-23 12:16:54 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -222,8 +222,6 @@ function textarea($name, $val, $cols, $rows, $errors) {
             $cols, $rows,
             array_key_exists($name, $errors) ? ' class="error"' : '',
             htmlspecialchars(is_null($val) ? '' : $val));
-    if (array_key_exists($name, $errors))
-        print '<br /><span class="errortext">'. $errors[$name] . '</span>';
 }
 
 function textfield($name, $val, $size, $errors, $after = '') {
@@ -234,8 +232,6 @@ function textfield($name, $val, $size, $errors, $after = '') {
             array_key_exists($name, $errors) ? ' class="error"' : '');
     if ($after)
         print ' <small>' . $after . '</small>';
-    if (array_key_exists($name, $errors))
-        print '<br /><span class="errortext">'. $errors[$name] . '</span>';
 }
 
 /* petition_search_first
@@ -357,7 +353,7 @@ function petition_form_you($data = array(), $errors = array()) {
             'address' =>        _('Address'),
             'postcode' =>       _('UK postcode'),
     );
-    if (cobrand_creation_address_type()) {
+    if (cobrand_creation_ask_for_address_type()) {
         $fields['address_type'] = _('Type of address');
     }
     $fields['overseas'] = array(
@@ -399,8 +395,8 @@ function petition_form_you($data = array(), $errors = array()) {
         if ($name == 'address') {
             textarea($name, $data[$name], 30, 4, $errors);
         } elseif ($name == 'overseas') {
-            if (OPTION_SITE_TYPE == 'one' && !preg_match('#council#i', OPTION_SITE_PETITIONED)) { ?>
-
+            if (!cobrand_creation_within_area_only()) {
+?>
 <p><label for="overseas">Or, if you're an
 expatriate, you're in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>
@@ -432,6 +428,8 @@ the Armed Forces without a postcode, please select from this list:</label>
                 $after = '(please use a full name e.g. Mr John Smith)';
             textfield($name, $data[$name], $size, $errors, $after);
         }
+        if (array_key_exists($name, $errors))
+            print '<br /><span class="errortext">'. $errors[$name] . '</span>';
 
         if ($name == 'org_url' || $name == 'organisation')
             print " <small>(optional)</small>";
@@ -546,7 +544,7 @@ function step_you_error_check(&$data) {
 
     if (!$data['postcode'] && !$data['overseas']) {
         $errors['postcode'] = 'Please enter a valid postcode';
-        if (OPTION_SITE_TYPE == 'one') {
+        if (!cobrand_creation_within_area_only()) {
             $errors['postcode'] .= ' or choose an option from the drop-down menu';
         }
     }
@@ -563,7 +561,7 @@ function step_you_error_check(&$data) {
         }
     }
 
-    if (cobrand_creation_address_type()) {
+    if (cobrand_creation_ask_for_address_type()) {
         if (!isset($data['address_type']) || !in_array($data['address_type'], array('home','work'))) {
             $errors['address_type'] = 'Please specify your address type';
         }
@@ -621,7 +619,7 @@ longer be valid.
 <li><strong><?=$data['overseas'] ?></strong></li>
 <?
     }
-    if (cobrand_creation_address_type()) {
+    if (cobrand_creation_ask_for_address_type()) {
         echo '<li>Address type: <strong>' . $data['address_type'] . '</strong></li>';
     }
 ?>
