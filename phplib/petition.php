@@ -6,7 +6,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org; WWW: http://www.mysociety.org
  *
- * $Id: petition.php,v 1.56 2009-12-08 12:50:53 matthew Exp $
+ * $Id: petition.php,v 1.57 2010-04-23 19:41:58 matthew Exp $
  * 
  */
 
@@ -118,8 +118,6 @@ class Petition {
 
     // Internal function to calculate some values from data
     function _calc() {
-        global $global_petition_categories;
-
         if (!array_key_exists('rejection_hidden_parts', $this->data))
             $this->data['rejection_hidden_parts'] = 0;
         if (!array_key_exists('signers', $this->data)) $this->data['signers'] = -1;
@@ -147,7 +145,7 @@ class Petition {
         $this->data['sentence'] = $this->sentence();
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
-        $this->data['category'] = $global_petition_categories[$this->data['category']];
+        $this->data['category'] = cobrand_category($this->data['category']);
 
         if (array_key_exists('rejection_second_categories', $this->data)
             && $this->data['rejection_second_categories']) {

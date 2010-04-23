@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: list.php,v 1.66 2010-03-03 12:35:20 matthew Exp $
+// $Id: list.php,v 1.67 2010-04-23 19:41:58 matthew Exp $
 
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
@@ -49,7 +49,7 @@ if ($q_sort == "default") {
 if ($q_sort == "creationtime" || $q_sort == 'laststatuschange')
     $q_sort = "date";
 if ($q_cat == 'default') $q_cat = null;
-if (!array_key_exists($q_cat, $global_petition_categories)) $q_cat = null;
+if (!array_key_exists($q_cat, cobrand_categories())) $q_cat = null;
 
 # count() is far too slow - many seconds for a count of live petitions :-/
 $key = $status;
@@ -92,7 +92,7 @@ $qrows = db_query($qrows, $sql_params);
 
 $heading = '';
 if ($q_cat) {
-    $heading = $global_petition_categories[$q_cat] . ' - ';
+    $heading = cobrand_category($q_cat) . ' - ';
 }
 if ($q_type == 'open') {
     if ($rss)
@@ -135,7 +135,7 @@ if (!$rss) {
     if (OPTION_SITE_NAME == 'sbdc') print '<h2>View petitions</h2>';
 
     if ($q_cat) {
-        print '<h3>You are viewing petitions in the "' . $global_petition_categories[$q_cat] . '" category</h3>';
+        print '<h3>You are viewing petitions in the "' . cobrand_category($q_cat) . '" category</h3>';
     }
 
     $first = '<span class="greyed">First</span>';
@@ -260,7 +260,6 @@ else {
 }
 
 function list_front() {
-    global $global_petition_categories;
     page_header('List petitions');
 ?>
 <h2 class="page_title_border">List petitions...</h2>
@@ -273,7 +272,7 @@ function list_front() {
 <h2 class="page_title_border">By category</h2>
 <?
     print '<ul style="font-size:125%">';
-    foreach ($global_petition_categories as $id => $cat) {
+    foreach (cobrand_categories() as $id => $cat) {
         if ($cat == 'None') continue;
         print '<li style="margin-bottom: 0.5em;"><a href="/list/open?cat=' . $id . '">' . $cat . '</a></li>';
     }

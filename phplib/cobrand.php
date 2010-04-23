@@ -70,3 +70,7 @@ function cobrand_categories() {
     return $global_petition_categories;
 }
 
+function cobrand_category($id) {
+    $categories = cobrand_categories();
+    return $categories[$id];
+}
