@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.93 2010-04-23 18:17:21 matthew Exp $
+// $Id: new.php,v 1.94 2010-04-23 18:18:39 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -575,7 +575,7 @@ function step_you_error_check(&$data) {
             $errors['address_type'] = 'Please specify your address type';
         }
     } else {
-        $data['address_type'] = null;
+        $data['address_type'] = '';
     }
 
     $vars = array(
