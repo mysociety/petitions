@@ -5,7 +5,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: index.php,v 1.63 2010-03-19 13:44:23 matthew Exp $
+// $Id: index.php,v 1.64 2010-04-27 10:41:17 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -117,7 +117,7 @@ function petition_row($petition, $c) {
 
 function front_most_recent($recent) {
     echo "<div id='most_recent'>
-<h3 class='page_title_border'>Five most recent petitions</h3>
+<h3 class='page_title_border'>Most recent petitions</h3>
 <p>We the undersigned petition";
     if (OPTION_SITE_TYPE == 'multiple') {
         echo ': <ul>';
@@ -141,7 +141,7 @@ function front_most_recent($recent) {
 function front_most_popular($most) {
 ?>
 <div id="most_popular">
-<h3 class="page_title_border">Five most popular open petitions</h3>
+<h3 class="page_title_border">Most popular open petitions</h3>
 <p>We the undersigned petition <?=OPTION_SITE_PETITIONED?> to&hellip;</p>
 <ul>
 <?
@@ -166,7 +166,7 @@ function front_how_it_works() {
 <h3 class="page_title_border" style="clear: both">How it works</h3>
 
 <p>You can view and sign any <a href="/list">current petitions</a>, and see
-<?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED."'s"?> response to any
+<?=OPTION_SITE_NAME=='number10' ? 'the Government' : 'our' ?> response to any
 <a href="/list/closed">completed petitions</a>.
 <? if (OPTION_SITE_NAME == 'number10') { ?>
 If you have signed a petition that has reached more than 500 signatures
