@@ -233,12 +233,6 @@ p.petition_view_tabs {
     padding: 0.3em;
 }
 
-#new_you label {
-    display: block;
-    float: left;
-    width: 12em;
-}
-
 div#signatories {
    clear: left;
 }
