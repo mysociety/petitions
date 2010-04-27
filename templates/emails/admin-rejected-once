@@ -2,7 +2,7 @@ Subject: Your petition has been rejected
 
 Hi,
 
-I'm sorry to inform you that your petition has been rejected.
+We are sorry to inform you that your petition has been rejected.
 
 Your petition was classed as being in the following categories:
 <?=$values['rejection_categories']?>

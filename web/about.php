@@ -5,7 +5,7 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: matthew@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: about.php,v 1.14 2010-01-14 18:26:15 matthew Exp $
+// $Id: about.php,v 1.15 2010-04-27 10:05:25 matthew Exp $
 
 // Load configuration file
 require_once "../phplib/pet.php";
@@ -33,7 +33,7 @@ non-partisan political websites, like
 strictly neutral on party political issues, and the e-petition service is
 within its remit to build websites which give people simple, tangible benefits
 in the civic and community aspects of their lives. For more information about
-mySociety and its work, visit <a href="http://www.mysociety.org/">its
+mySociety and its work, <a href="http://www.mysociety.org/">visit the mySociety
 website</a>.</p>
 
 <p>The e-petition system has been designed to be transparent and trustworthy.
@@ -64,7 +64,7 @@ non-partisan political websites, like
 strictly neutral on party political issues, and the e-petition service is
 within its remit to build websites which give people simple, tangible benefits
 in the civic and community aspects of their lives. For more information about
-mySociety and its work, visit <a href="http://www.mysociety.org/">its
+mySociety and its work, <a href="http://www.mysociety.org/">visit the mySociety
 website</a>.</p>
 
 <p>The e-petition system has been designed to be transparent and trustworthy.

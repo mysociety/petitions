@@ -8,7 +8,7 @@
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.15 2009-12-08 16:52:19 matthew Exp $';
+my $rcsid = ''; $rcsid .= '$Id: reject.cgi,v 1.16 2010-04-27 10:05:26 matthew Exp $';
 
 use strict;
 
@@ -49,11 +49,11 @@ sub main () {
         Petitions::Page::header($q, $title);
     $html .= $q->h2({-class=>'page_title_border'}, 'Rejected petition');
     $html .= Petitions::Page::display_box($q, $p);
+    $html .= Petitions::detail($p);
     $html .= $q->start_div({-id => 'signatories'})
         . $q->h3('Petition Rejected');
     $html .= Petitions::Page::reject_box($q, $p);
     $html .= $q->end_div();
-    $html .= Petitions::detail($p);
     my $stat = 'View.' . $p->{ref};
     $html .= Petitions::Page::footer($q, $stat);
     utf8::encode($html);

@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.95 2010-04-23 19:41:58 matthew Exp $
+// $Id: new.php,v 1.96 2010-04-27 10:05:25 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -69,7 +69,7 @@ function check_edited_petition(&$data) {
     $petition = db_getRow('select * from petition where id = ?', $id);
 
     if ($petition['status'] != 'rejectedonce')
-        err("I'm afraid you cannot edit a petition in status \"${petition['status']}\"", E_USER_NOTICE);
+        err("Sorry, you cannot edit a petition in status \"${petition['status']}\"", E_USER_NOTICE);
  
     /* Fill out data with data from database. */
     $petition['pet_content'] = $petition['content'];
@@ -606,7 +606,7 @@ function preview_petition($data, $errors = array()) {
     startform();
     ?>
 <p>Now please read through your petition, above, and check the details thoroughly.
-<strong>Read carefully</strong> &ndash; we can't let you change the wording of your petition once people have started to sign up to it.
+<strong>Read carefully</strong> &ndash; we cannot let you change the wording of your petition once people have started to sign up to it.
 People who sign up to a petition are signing up to the specific wording of
 the petition. If you change the wording, then their signatures would no
 longer be valid.
@@ -644,7 +644,7 @@ of this page in your name, and that you agree to the terms and conditions below.
 <?
     if (OPTION_SITE_APPROVAL) {
 ?>
-<br />If you have any special requests for the web team concerning your petition, please include them
+<br />If you have any special requests concerning your petition, please include them
 here:</p>
 <p>
 <textarea name="comments" rows="7" cols="40"><? if (isset($data['comments'])) print htmlspecialchars($data['comments']) ?></textarea>
@@ -764,14 +764,14 @@ function petition_create($data) {
         if (OPTION_SITE_APPROVAL) {
 ?>
     <p class="noprint loudmessage">We have sent you an email to confirm
-    that we've received your petition details. In order for us to approve
+    that we have received your petition details. In order for us to approve
     your petition, we need you to open this email and click on an activation
     link, which will send your petition details to our team for approval.</p>
 <?
         } else {
 ?>
     <p class="noprint loudmessage">We have sent you an email to confirm
-    that we've received your petition details. In order for us to show
+    that we have received your petition details. In order for us to show
     your petition, we need you to open this email and click on the activation
     link in it.</p>
 <?
