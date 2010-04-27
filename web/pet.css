@@ -5,7 +5,7 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: francis@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: pet.css,v 1.36 2010-04-27 13:40:11 matthew Exp $
+ * $Id: pet.css,v 1.37 2010-04-27 16:36:01 matthew Exp $
  *
  */
 
@@ -147,6 +147,9 @@ div#errors {
 div#errors ul {
     margin: 0;
     padding: 0 0 0 1.5em;
+}
+div#errors > p {
+    margin-top: 0;
 }
 
 input.error, input[type=text].error, select.error, input[type=radio].error, textarea.error {

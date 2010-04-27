@@ -8,6 +8,14 @@
  * 
  */
 
+function cobrand_creation_category_first() {
+    global $site_name;
+    if (in_array($site_name, array('tandridge', 'surreycc'))) {
+        return true;
+    }
+    return false;
+}
+
 function cobrand_creation_ask_for_address_type() {
     global $site_name;
     if (cobrand_creation_within_area_only()) return true;

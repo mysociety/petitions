@@ -6,7 +6,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.96 2010-04-27 10:05:25 matthew Exp $
+// $Id: new.php,v 1.97 2010-04-27 16:36:01 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -35,14 +35,15 @@ if (get_http_var('tostepmain')
         }
     } elseif (OPTION_CREATION_DISABLED) {
         page_closed_message();
-    } elseif (OPTION_SITE_NAME != 'number10') { # Only Number 10 has this at the moment
-        if (OPTION_SITE_TYPE == 'one') {
-            petition_form_main();
-        } else {
-            petition_form_you();
-        }
-    } else {
+    } elseif (OPTION_SITE_NAME == 'number10') {
+        # Special search for Number 10
         petition_search_first();
+    } elseif (cobrand_creation_category_first()) {
+        petition_form_category();
+    } elseif (OPTION_SITE_TYPE == 'one') {
+        petition_form_main();
+    } else {
+        petition_form_you();
     }
 }
 $contents = ob_get_contents();
@@ -108,7 +109,12 @@ function petition_form_submitted() {
         return;
     }
 
-    if (OPTION_SITE_TYPE == 'one') {
+    if (cobrand_creation_category_first()) {
+        if (petition_submitted_category($data)) return;
+        if (petition_submitted_main($data)) return;
+        if (petition_submitted_you($data)) return;
+        petition_submitted_preview($data);
+    } elseif (OPTION_SITE_TYPE == 'one') {
         if (petition_submitted_main($data)) return;
         if (petition_submitted_you($data)) return;
         petition_submitted_preview($data);
@@ -117,6 +123,15 @@ function petition_form_submitted() {
         if (petition_submitted_main($data)) return;
         petition_submitted_preview($data);
     }
+}
+
+function petition_submitted_category(&$data) {
+    $errors = step_category_error_check($data);
+    if (sizeof($errors)) {
+        petition_form_category($data, $errors);
+        return true;
+    }
+    return false;
 }
 
 function petition_submitted_main(&$data) {
@@ -251,6 +266,56 @@ If so, please add your name to that petition.</p>
     pet_search_form();
 }
 
+function petition_form_step($step) {
+    if ($step == 'category') return 1;
+    if (cobrand_creation_category_first())
+        $steps = array('', 'category', 'main', 'you');
+    elseif (OPTION_SITE_TYPE == 'one')
+        $steps = array('', 'main', 'you');
+    else
+        $steps = array('', 'you', 'main');
+
+    $key = array_search($step, $steps);
+    return $key;
+}
+
+function petition_form_steps() {
+    if (cobrand_creation_category_first())
+        return 4;
+    return 3;
+}
+
+/* petition_form_category
+ * If we need to ask for category to route people appropriately */
+function petition_form_category($data = array(), $errors = array()) {
+    startform();
+    $step = petition_form_step('category');
+?>
+<h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Petition category</h2>
+<?  errorlist($errors); ?>
+
+<p>Please note that you must be a <?=cobrand_creator_must_be()?> to create a petition.</p>
+
+<p>First you must pick the relevant category for your petition. This is because the council
+is only responsible for certain matters, and we need to make sure you are routed to the
+appropriate place.
+
+<select name="category">
+<option value="">-- Select a category --</option><?
+    foreach (cobrand_categories() as $id => $category) {
+        if (!$id) continue;
+        print '<option';
+        if (array_key_exists('category', $data) && $id == $data['category'])
+            print ' selected="selected"'; # I hate XHTML
+        print ' value="' . $id . '">' . $category . '</option>';
+    }
+?>
+</select></p>
+<?
+    nextprevbuttons(null, null, 'tostepmain', null);
+    endform($data);
+}
+
 /* petition_form_main [DATA [ERRORS]]
  * Display the first stage of the petitions form. */
 function petition_form_main($data = array(), $errors = array()) {
@@ -264,13 +329,9 @@ function petition_form_main($data = array(), $errors = array()) {
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
     startform();
-    if (OPTION_SITE_TYPE == 'one') {
-        $step = 1;
-    } else {
-        $step = 2;
-    }
+    $step = petition_form_step('main');
 ?>
-<h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of 3 &#8211; Your petition</h2>
+<h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Your petition</h2>
 <?  errorlist($errors); ?>
 
 <p>Please note that you must be a <?=cobrand_creator_must_be()?> to create a petition.</p>
@@ -312,6 +373,9 @@ you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government
 <br /><small>This gives your petition an easy web address. e.g. http://<?=OPTION_WEB_DOMAIN ?>/badgers</small>
 </p>
 
+<?
+    if (!cobrand_creation_category_first()) {
+?>
 <p>Please select a category for your petition:
 <select name="category">
 <option value="">-- Select a category --</option><?
@@ -325,6 +389,8 @@ you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government
 ?>
 </select></p>
 <?
+    }
+
     if (OPTION_SITE_TYPE == 'one') {
         nextprevbuttons(null, null, 'tostepyou', null);
     } else {
@@ -337,14 +403,9 @@ you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government
  * Display the "about you" (second) section of the petition creation form. */
 function petition_form_you($data = array(), $errors = array()) {
     startform();
-    if (OPTION_SITE_TYPE == 'one') {
-        $step = 2;
-    } else {
-        $step = 1;
-    }
-
+    $step = petition_form_step('you');
 ?>
-<h2 class="page_title_border">New petition &#8211; Part <?=$step?> of 3 &#8211; About you</h2>
+<h2 class="page_title_border">New petition &#8211; Part <?=$step?> of <?=petition_form_steps()?> &#8211; About you</h2>
 <?
     errorlist($errors);
 ?>
@@ -451,6 +512,18 @@ the Armed Forces without a postcode, please select from this list:</label>
     }
     print '</div>';
     endform($data);
+}
+
+function step_category_error_check($data) {
+    $errors = array();
+    if (!array_key_exists('category', $data)
+      || !$data['category']
+      || !array_key_exists($data['category'], cobrand_categories())) {
+        $errors['category'] = 'Please select a category';
+    } elseif (!cobrand_category_okay($data['category'])) {
+        $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
+    }
+    return $errors;
 }
 
 /* step_main_error_check DATA
@@ -565,7 +638,7 @@ function step_you_error_check(&$data) {
         if ($body) {
             $data['body'] = $body['id'];
         } else {
-            $errors['postcode'] = 'We do not have any body covering your postcode, sorry.';
+            $errors['postcode'] = 'Sorry, that postcode is not within the correct area.';
         }
     }
 
@@ -597,7 +670,7 @@ function preview_error_check($data) {
 function preview_petition($data, $errors = array()) {
     errorlist($errors);
 ?>
-<h2 class="page_title_border">New petition &#8211; Part 3 of 3</h2>
+<h2 class="page_title_border">New petition &#8211; Part <?=petition_form_steps()?> of <?=petition_form_steps()?></h2>
 <p>Your petition, with short name <em><?=$data['ref'] ?></em>, will look like this:</p>
 <?
     $partial_petition = new Petition($data);
