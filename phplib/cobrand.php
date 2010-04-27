@@ -81,3 +81,14 @@ function cobrand_category($id) {
     $categories = cobrand_categories();
     return $categories[$id];
 }
+
+# This function could be run from cron, so can't just use site_name
+function cobrand_vhost_name() {
+    if (strpos(OPTION_SITE_NAME, ',')) {
+        $sites = explode(',', OPTION_SITE_NAME);
+        $site_name = $sites[0];
+    } else {
+        $site_name = OPTION_SITE_NAME;
+    }
+    return $site_name;
+}

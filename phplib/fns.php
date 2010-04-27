@@ -5,8 +5,9 @@
 // Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: fns.php,v 1.19 2010-03-03 12:35:20 matthew Exp $
+// $Id: fns.php,v 1.20 2010-04-27 13:31:20 matthew Exp $
 
+require_once 'cobrand.php';
 require_once "../../phplib/evel.php";
 require_once '../../phplib/utility.php';
 
@@ -80,7 +81,12 @@ function pet_send_email_template($to, $template_name, $values, $headers = array(
         
     $values['signature'] = _("-- the ePetitions team");
 
-    $template = file_get_contents("../templates/emails/$template_name");
+    $site_name = cobrand_vhost_name();
+    if (file_exists("../templates/emails/$site_name/$template_name")) {
+        $template = file_get_contents("../templates/emails/$site_name/$template_name");
+    } else {
+        $template = file_get_contents("../templates/emails/$template_name");
+    }
     $template = _($template);
 
     $spec = array(
