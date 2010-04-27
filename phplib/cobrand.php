@@ -10,15 +10,22 @@
 
 function cobrand_creation_ask_for_address_type() {
     global $site_name;
+    if (cobrand_creation_within_area_only()) return true;
     if ($site_name == 'tandridge') return true;
     return false;
 }
 
 function cobrand_creation_within_area_only() {
+    global $site_name;
+    if ($site_name == 'surreycc') return true;
     return false;
 }
 
 function cobrand_creator_must_be() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return 'resident of, or have a business with a registered address in, Surrey County Council';
+    }
     if (cobrand_creation_within_area_only()) {
         if (cobrand_creation_ask_for_address_type()) {
             return 'council resident or work within the area of the council';
