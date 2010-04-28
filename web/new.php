@@ -8,7 +8,7 @@ ini_set('display_startup_errors', 'On');
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.100 2010-04-28 14:30:36 matthew Exp $
+// $Id: new.php,v 1.101 2010-04-28 14:31:23 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -480,7 +480,7 @@ function step_category_error_check($data) {
       || !array_key_exists($data['category'], cobrand_categories())) {
         $errors['category'] = 'Please select a category';
     } elseif (!cobrand_category_okay($data['category'])) {
-        $errors['category'] = 'You have selected a category for which this council is not responsible. Please visit your other council&rsquo;s site to create a petition in this category.';
+        $errors['category'] = 'You have selected a category for which this council is not responsible. Please visit your other council\'s site to create a petition in this category.';
     }
     return $errors;
 }
