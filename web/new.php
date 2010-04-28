@@ -1,4 +1,6 @@
 <?
+ini_set('display_errors', 'On');
+ini_set('display_startup_errors', 'On');
 //
 // new.php:
 // New petitions form; also handles resubmission of rejected-once petitions.
@@ -6,7 +8,7 @@
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.97 2010-04-27 16:36:01 matthew Exp $
+// $Id: new.php,v 1.98 2010-04-28 14:05:05 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -28,22 +30,14 @@ if (get_http_var('tostepmain')
     if ($token && OPTION_SITE_APPROVAL) {
         $data = array('token' => $token);
         check_edited_petition($data);
-        if (OPTION_SITE_TYPE == 'one') {
-            petition_form_main($data);
-        } else {
-            petition_form_you($data);
-        }
+        petition_form_first($data);
     } elseif (OPTION_CREATION_DISABLED) {
         page_closed_message();
     } elseif (OPTION_SITE_NAME == 'number10') {
         # Special search for Number 10
         petition_search_first();
-    } elseif (cobrand_creation_category_first()) {
-        petition_form_category();
-    } elseif (OPTION_SITE_TYPE == 'one') {
-        petition_form_main();
     } else {
-        petition_form_you();
+        petition_form_first();
     }
 }
 $contents = ob_get_contents();
@@ -109,30 +103,36 @@ function petition_form_submitted() {
         return;
     }
 
-    if (cobrand_creation_category_first()) {
-        if (petition_submitted_category($data)) return;
-        if (petition_submitted_main($data)) return;
-        if (petition_submitted_you($data)) return;
-        petition_submitted_preview($data);
-    } elseif (OPTION_SITE_TYPE == 'one') {
-        if (petition_submitted_main($data)) return;
-        if (petition_submitted_you($data)) return;
-        petition_submitted_preview($data);
-    } else {
-        if (petition_submitted_you($data)) return;
-        if (petition_submitted_main($data)) return;
-        petition_submitted_preview($data);
+    if (cobrand_creation_category_first())
+        $steps = array('', 'category', 'main', 'you', 'preview');
+    elseif (OPTION_SITE_TYPE == 'multiple')
+        $steps = array('', 'you', 'main', 'preview');
+    elseif (OPTION_SITE_TYPE == 'one')
+        $steps = array('', 'main', 'you', 'preview');
+
+    foreach ($steps as $i => $step) {
+        if (!$step) continue;
+        call_user_func('petition_submitted_' . $step, $data);
+        if (get_http_var('tostep' . $step)) {
+            call_user_func('petition_form_' . $step, $data, $i);
+            return;
+        }
+        $errors = call_user_func('step_' . $step . '_error_check', $data);
+        if (sizeof($errors)) {
+            call_user_func('petition_form_' . $step, $data, $i, $errors);
+            return;
+        }
     }
+    petition_create($data);
 }
 
-function petition_submitted_category(&$data) {
-    $errors = step_category_error_check($data);
-    if (sizeof($errors)) {
-        petition_form_category($data, $errors);
-        return true;
-    }
-    return false;
+function petition_submitted_category($data) {
+    return; # Dummy function for loop, doesn't do anything
 }
+
+/*
+ * Functions to tidy up incoming data
+ */
 
 function petition_submitted_main(&$data) {
     global $pet_time;
@@ -143,18 +143,6 @@ function petition_submitted_main(&$data) {
     if (OPTION_SITE_TYPE == 'one') {
         $data['body'] = null;
     }
-
-    if (get_http_var('tostepmain')) {
-        petition_form_main($data);
-        return true;
-    }
-    $errors = step_main_error_check($data);
-    if (sizeof($errors)) {
-        petition_form_main($data, $errors);
-        return true;
-    }
-
-    return false;
 }
 
 function petition_submitted_you(&$data) {
@@ -162,40 +150,17 @@ function petition_submitted_you(&$data) {
         $data['name'] = '';
     if (array_key_exists('overseas', $data) && $data['overseas']=='-- Select --') 
         $data['overseas'] = '';
-
-    if (get_http_var('tostepyou')) {
-        petition_form_you($data);
-        return true;
-    }
-    $errors = step_you_error_check($data);
-    if (sizeof($errors)) {
-        petition_form_you($data, $errors);
-        return true;
-    }
-
-    return false;
 }
 
 function petition_submitted_preview(&$data) {
     if (!array_key_exists('comments', $data))
         $data['comments'] = '';
-
-    if (get_http_var('tosteppreview')) {
-        preview_petition($data);
-        return;
-    }
-    $errors = preview_error_check($data);
-    if (sizeof($errors)) {
-        preview_petition($data, $errors);
-        return;
-    }
-
-    petition_create($data);
 }
 
 /* 
  * Various HTML utilities for these forms
  */
+
 function startform() {
     print '<form accept-charset="utf-8" method="post" action="/new" name="newpetition">';
 }
@@ -266,17 +231,14 @@ If so, please add your name to that petition.</p>
     pet_search_form();
 }
 
-function petition_form_step($step) {
-    if ($step == 'category') return 1;
-    if (cobrand_creation_category_first())
-        $steps = array('', 'category', 'main', 'you');
-    elseif (OPTION_SITE_TYPE == 'one')
-        $steps = array('', 'main', 'you');
-    else
-        $steps = array('', 'you', 'main');
-
-    $key = array_search($step, $steps);
-    return $key;
+function petition_form_first($data = array()) {
+    if (cobrand_creation_category_first()) {
+        petition_form_category($data);
+    } elseif (OPTION_SITE_TYPE == 'one') {
+        petition_form_main($data);
+    } else {
+        petition_form_you($data);
+    }
 }
 
 function petition_form_steps() {
@@ -287,9 +249,8 @@ function petition_form_steps() {
 
 /* petition_form_category
  * If we need to ask for category to route people appropriately */
-function petition_form_category($data = array(), $errors = array()) {
+function petition_form_category($data = array(), $step = 1, $errors = array()) {
     startform();
-    $step = petition_form_step('category');
 ?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Petition category</h2>
 <?  errorlist($errors); ?>
@@ -318,7 +279,7 @@ appropriate place.
 
 /* petition_form_main [DATA [ERRORS]]
  * Display the first stage of the petitions form. */
-function petition_form_main($data = array(), $errors = array()) {
+function petition_form_main($data = array(), $step = 1, $errors = array()) {
     global $petition_prefix;
     if (OPTION_SITE_NAME == 'number10') {
         echo 'There are 5 stages to the petition process:';
@@ -329,7 +290,6 @@ function petition_form_main($data = array(), $errors = array()) {
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
     startform();
-    $step = petition_form_step('main');
 ?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Your petition</h2>
 <?  errorlist($errors); ?>
@@ -401,9 +361,8 @@ you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government
 
 /* petition_form_you [DATA [ERRORS]]
  * Display the "about you" (second) section of the petition creation form. */
-function petition_form_you($data = array(), $errors = array()) {
+function petition_form_you($data = array(), $step = 1, $errors = array()) {
     startform();
-    $step = petition_form_step('you');
 ?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step?> of <?=petition_form_steps()?> &#8211; About you</h2>
 <?
@@ -662,15 +621,15 @@ function step_you_error_check(&$data) {
     return $errors;
 }
 
-function preview_error_check($data) {
+function step_preview_error_check($data) {
     $errors = array();
     return $errors;
 }
 
-function preview_petition($data, $errors = array()) {
+function petition_form_preview($data, $step = 1, $errors = array()) {
     errorlist($errors);
 ?>
-<h2 class="page_title_border">New petition &#8211; Part <?=petition_form_steps()?> of <?=petition_form_steps()?></h2>
+<h2 class="page_title_border">New petition &#8211; Part <?=$step?> of <?=petition_form_steps()?></h2>
 <p>Your petition, with short name <em><?=$data['ref'] ?></em>, will look like this:</p>
 <?
     $partial_petition = new Petition($data);
