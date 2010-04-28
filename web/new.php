@@ -8,7 +8,7 @@ ini_set('display_startup_errors', 'On');
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.98 2010-04-28 14:05:05 matthew Exp $
+// $Id: new.php,v 1.99 2010-04-28 14:21:54 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -112,12 +112,12 @@ function petition_form_submitted() {
 
     foreach ($steps as $i => $step) {
         if (!$step) continue;
-        call_user_func('petition_submitted_' . $step, $data);
+        call_user_func('petition_submitted_' . $step, &$data);
         if (get_http_var('tostep' . $step)) {
             call_user_func('petition_form_' . $step, $data, $i);
             return;
         }
-        $errors = call_user_func('step_' . $step . '_error_check', $data);
+        $errors = call_user_func('step_' . $step . '_error_check', &$data);
         if (sizeof($errors)) {
             call_user_func('petition_form_' . $step, $data, $i, $errors);
             return;
@@ -134,7 +134,7 @@ function petition_submitted_category($data) {
  * Functions to tidy up incoming data
  */
 
-function petition_submitted_main(&$data) {
+function petition_submitted_main($data) {
     global $pet_time;
     if (!array_key_exists('rawdeadline', $data)) $data['rawdeadline'] = '';
     if (preg_match('#^\s*\d+\s*$#', $data['rawdeadline'])) $data['rawdeadline'] .= ' months';
@@ -145,14 +145,14 @@ function petition_submitted_main(&$data) {
     }
 }
 
-function petition_submitted_you(&$data) {
+function petition_submitted_you($data) {
     if (array_key_exists('name', $data) && $data['name']==_('<Enter your name>')) 
         $data['name'] = '';
     if (array_key_exists('overseas', $data) && $data['overseas']=='-- Select --') 
         $data['overseas'] = '';
 }
 
-function petition_submitted_preview(&$data) {
+function petition_submitted_preview($data) {
     if (!array_key_exists('comments', $data))
         $data['comments'] = '';
 }
@@ -571,7 +571,7 @@ function step_main_error_check($data) {
 
 /* step_you_error_check DATA
  * */
-function step_you_error_check(&$data) {
+function step_you_error_check($data) {
     global $pet_today;
     $errors = array();
     if (!validate_email($data['email'])) $errors['email'] = _('Please enter a valid email address');
