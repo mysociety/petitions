@@ -5,7 +5,7 @@
 # for the test harness to access.
 # 
 # Hook this up with something like this in /etc/aliases...
-#   petharness: "| /home/francis/devel/mysociety/pet/bin/test-mailin"
+#   petharness: "| /home/francis/devel/petitions/bin/test-mailin"
 # ... or some other appropriate way.
 #
 # Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.

@@ -15,10 +15,10 @@ EXTENSION=".png"
 #EXTENSION=".svg"
 
 cd `dirname $0`
-cd ../../
+cd ../
 source shlib/deployfns
 
-read_conf pet/conf/general
+read_conf conf/general
 
 if [ $OPTION_PET_DB_NAME = 'pet-surrey' ]; then
     START_DATE=2010-03-01
@@ -69,5 +69,5 @@ END
 #echo "gpscript $GPSCRIPT"
 
 export GDFONTPATH=/usr/share/fonts/truetype/ttf-bitstream-vera
-gnuplot < $GPSCRIPT > pet/web-admin/pet-live-signups$EXTENSION
+gnuplot < $GPSCRIPT > web-admin/pet-live-signups$EXTENSION
 

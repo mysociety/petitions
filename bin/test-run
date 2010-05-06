@@ -119,8 +119,8 @@ if ($petsignupd_pid == 0) {
 
 # Syntax check all .php files
 date_print("Syntax check all PHP files...");
-$wth->php_check_syntax("../../pet/");
-$wth->php_check_syntax("../../pet/templates/emails/", qr//);
+$wth->php_check_syntax("../");
+$wth->php_check_syntax("../templates/emails/", qr//);
 
 # Run tests specified
 foreach (@actions) {

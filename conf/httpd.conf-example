@@ -5,11 +5,11 @@
 # # ePetitions
 # <VirtualHost *:80>
 #     ServerName pet.owl
-#     DocumentRoot /home/francis/devel/mysociety/pet/web/
-#     <Directory /home/francis/devel/mysociety/pet/web>
-#         Include /home/francis/devel/mysociety/pet/conf/httpd.conf
+#     DocumentRoot /home/francis/devel/petitions/web/
+#     <Directory /home/francis/devel/petitions/web>
+#         Include /home/francis/devel/petitions/conf/httpd.conf
 #     </Directory>
-#     Alias /admin/ /home/francis/devel/mysociety/pet/web-admin/
+#     Alias /admin/ /home/francis/devel/petitions/web-admin/
 # </VirtualHost>
 #
 # You also need to enable .php files and .cgi files to run as PHP

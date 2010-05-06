@@ -15,7 +15,7 @@
 !!(* if ($hostname eq "steak" || $hostname eq 'balti' || $vhost eq 'petitions.surreycc.gov.uk') { *)!!
 
 NAME=!!(*= $daemon_name *)!!
-DAEMON=/data/vhost/!!(*= $vhost *)!!/mysociety/pet/bin/petsignupd
+DAEMON=/data/vhost/!!(*= $vhost *)!!/petitions/bin/petsignupd
 PIDFILE=/data/vhost/!!(*= $vhost *)!!/petsignupd.pid
 DUSER=!!(*= $user *)!!
 
