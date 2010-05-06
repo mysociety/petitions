@@ -9,13 +9,11 @@
 
 # Work out which site we're on
 $site_name = null;
-$domains = false;
 if (strpos(OPTION_SITE_NAME, ',')) {
     $sites = explode(',', OPTION_SITE_NAME);
     foreach ($sites as $s) {
         if ($_SERVER['HTTP_HOST'] == "petitions.$s.gov.uk") {
             $site_name = $s;
-            $domains = true;
             break;
         }
     }
@@ -23,7 +21,6 @@ if (strpos(OPTION_SITE_NAME, ',')) {
 } else {
     $site_name = OPTION_SITE_NAME;
 }
-define('OPTION_SITE_DOMAINS', $domains);
 
 /* page_header TITLE [PARAMS]
  * Print top part of HTML page, with the given TITLE. This prints up to the
