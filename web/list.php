@@ -71,8 +71,6 @@ if ($q_sort == 'date' || $q_sort == 'signers') {
 }
 
 $sql_params = array($status);
-if ($q_cat) $sql_params[] = $q_cat;
-$sql_params[] = PAGE_SIZE;
 $qrows = "
     SELECT petition.*, '$pet_today' <= petition.deadline AS open,
         cached_signers as signers,
@@ -85,11 +83,14 @@ if (OPTION_SITE_TYPE == 'multiple') {
             WHERE status = ? AND body.id = body_id ";
     if (OPTION_SITE_DOMAINS) {
         # Only want to show ones for this body
-        $qrows .= ' AND body.ref = ' . $site_name;
+        $qrows .= ' AND body.ref = ?';
+        $sql_params[] = $site_name;
     }
 } else {
     $qrows .= " FROM petition WHERE status = ? ";
 }
+if ($q_cat) $sql_params[] = $q_cat;
+$sql_params[] = PAGE_SIZE;
 $qrows .= ($q_cat ? "AND category = ? " : "") .
            "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset";
 /* PG bug: mustn't quote parameter of offset */
