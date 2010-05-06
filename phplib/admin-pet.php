@@ -6,12 +6,13 @@
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
- * $Id: admin-pet.php,v 1.135 2010-04-06 10:13:41 matthew Exp $
+ * $Id: admin-pet.php,v 1.136 2010-05-06 12:30:59 matthew Exp $
  * 
  */
 
 require_once "../phplib/pet.php";
 require_once "../phplib/petition.php";
+require_once '../phplib/cobrand.php';
 require_once "../../phplib/db.php";
 require_once "../../phplib/utility.php";
 require_once "../../phplib/importparams.php";
@@ -226,8 +227,8 @@ class ADMIN_PAGE_PET_SEARCH {
             $out['signers'] = $this->search_signers($q, $search);
         } elseif ($search) {
             $q = db_query($search_pet . "
-                and (name ilike '%'||?||'%' or lower(email) ilike '%'||?||'%')
-                order by lower(email)", array($search, $search));
+                and (name ilike '%'||?||'%' or lower(email) like '%'||?||'%' or lower(ref) = ?)
+                order by lower(email)", array($search, $search, $search));
             $out['petitions'] = $this->search_petitions($q, $search);
             $q = db_query($search_sign . "
                 and (signer.name ilike '%'||?||'%' or lower(signer.email) ilike '%'||?||'%')
@@ -337,31 +338,17 @@ function petition_admin_navigation($page, $array = array()) {
     print '<div id="admin_nav">';
     petition_admin_search_form($search);
     print "<p>View petitions of status: ";
-    if ($status == 'draft') {
-        print '<strong>Draft</strong> / '; # (' . $found . ') / ';
-        print '<a href="?page=pet&amp;o=live">Live</a> / ';
-        print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
-        print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
-    } elseif ($status == 'live') {
-        print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
-        print '<strong>Live</strong> / '; # (' . $found . ') / ';
-        print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
-        print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
-    } elseif ($status == 'finished') {
-        print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
-        print '<a href="?page=pet&amp;o=live">Live</a> / ';
-        print '<strong>Finished</strong> / '; # (' . $found . ') / ';
-        print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
-    } elseif ($status == 'rejected') {
-        print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
-        print '<a href="?page=pet&amp;o=live">Live</a> / ';
-        print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
-        print '<strong>Rejected</strong> / '; # (' . $found . ')';
-    } else {
-        print '<a href="?page=pet&amp;o=draft">Draft</a> / ';
-        print '<a href="?page=pet&amp;o=live">Live</a> / ';
-        print '<a href="?page=pet&amp;o=finished">Finished</a> / ';
-        print '<a href="?page=pet&amp;o=rejected">Rejected</a>';
+    $statuses = array(
+        'draft' => 'Draft',
+        'live' => 'Live',
+        'finished' => 'Finished',
+        'rejected' => 'Rejected',
+    );
+    $c = 0;
+    foreach ($statuses as $k => $v) {
+        if ($c++) print ' / ';
+        if ($status == $k) print '<strong>' . $v . '</strong>';
+        else print '<a href="?page=pet&amp;o=' . $k . '">' . $v . '</a>';
     }
     print " </p>";
     print '</div>';
@@ -371,7 +358,7 @@ function petition_admin_navigation($page, $array = array()) {
 function petition_admin_search_form($search='') { ?>
 <form name="petition_admin_search" method="get" action="./">
 <input type="hidden" name="page" value="petsearch">
-Search for user&rsquo;s name/email: <input type="text" name="search" value="<?=htmlspecialchars($search) ?>" size="30">
+Search for user&rsquo;s name/email, or petition reference: <input type="text" name="search" value="<?=htmlspecialchars($search) ?>" size="30">
 <input type="submit" value="Search">
 </form>
 <?
@@ -554,12 +541,17 @@ petitions.</p>';
 
         $count = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$status' order by id desc limit 1") - 1;
 
-        if ($page>0) {
-            print '<p><a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page-1).'">Previous '.$page_limit.'</a>';
+        print '<p>';
+        if ($page > 0) {
+            print '<a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page-1).'">Previous '.$page_limit.'</a>';
+        }
+        if ($page > 0 && $page < floor($count/$page_limit)) {
+            print ' | ';
         }
         if ($page < floor($count/$page_limit)) {
-            print ' | <a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page+1).'">Next '.$page_limit.'</a></p>';
+            print '<a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page+1).'">Next '.$page_limit.'</a>';
         }
+        print '</p>';
         $this->petition_header($sort, $status);
         $a = 0;
         foreach ($found as $row) {

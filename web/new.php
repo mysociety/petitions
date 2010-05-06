@@ -1,6 +1,4 @@
 <?
-ini_set('display_errors', 'On');
-ini_set('display_startup_errors', 'On');
 //
 // new.php:
 // New petitions form; also handles resubmission of rejected-once petitions.
@@ -8,7 +6,7 @@ ini_set('display_startup_errors', 'On');
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
 //
-// $Id: new.php,v 1.101 2010-04-28 14:31:23 matthew Exp $
+// $Id: new.php,v 1.102 2010-05-06 12:30:59 matthew Exp $
 
 require_once '../phplib/pet.php';
 require_once '../phplib/fns.php';
@@ -20,24 +18,32 @@ require_once '../../phplib/mapit.php';
 
 $page_title = 'Create a new petition';
 ob_start();
+
+if (cobrand_creation_category_first())
+    $steps = array('', 'category', 'main', 'you', 'preview');
+elseif (OPTION_SITE_TYPE == 'multiple')
+    $steps = array('', 'you', 'main', 'preview');
+elseif (OPTION_SITE_TYPE == 'one')
+    $steps = array('', 'main', 'you', 'preview');
+
 if (get_http_var('tostepmain')
     || get_http_var('tostepyou')
     || get_http_var('tosteppreview')
     || get_http_var('tocreate')) {
-    petition_form_submitted();
+    petition_form_submitted($steps);
 } else {
     $token = get_http_var('token');
     if ($token && OPTION_SITE_APPROVAL) {
         $data = array('token' => $token);
         check_edited_petition($data);
-        petition_form_first($data);
+        call_user_func('petition_form_' . $steps[1], $steps, 1, $data);
     } elseif (OPTION_CREATION_DISABLED) {
         page_closed_message();
     } elseif (OPTION_SITE_NAME == 'number10') {
         # Special search for Number 10
         petition_search_first();
     } else {
-        petition_form_first();
+        call_user_func('petition_form_' . $steps[1], $steps, 1);
     }
 }
 $contents = ob_get_contents();
@@ -79,7 +85,7 @@ function check_edited_petition(&$data) {
     return true;
 }
 
-function petition_form_submitted() {
+function petition_form_submitted($steps) {
     $errors = array();
     $data = array();
 
@@ -103,23 +109,16 @@ function petition_form_submitted() {
         return;
     }
 
-    if (cobrand_creation_category_first())
-        $steps = array('', 'category', 'main', 'you', 'preview');
-    elseif (OPTION_SITE_TYPE == 'multiple')
-        $steps = array('', 'you', 'main', 'preview');
-    elseif (OPTION_SITE_TYPE == 'one')
-        $steps = array('', 'main', 'you', 'preview');
-
     foreach ($steps as $i => $step) {
         if (!$step) continue;
         call_user_func('petition_submitted_' . $step, &$data);
         if (get_http_var('tostep' . $step)) {
-            call_user_func('petition_form_' . $step, $data, $i);
+            call_user_func('petition_form_' . $step, $steps, $i, $data);
             return;
         }
         $errors = call_user_func('step_' . $step . '_error_check', &$data);
         if (sizeof($errors)) {
-            call_user_func('petition_form_' . $step, $data, $i, $errors);
+            call_user_func('petition_form_' . $step, $steps, $i, $data, $errors);
             return;
         }
     }
@@ -165,18 +164,16 @@ function startform() {
     print '<form accept-charset="utf-8" method="post" action="/new" name="newpetition">';
 }
 
-function nextprevbuttons($prev, $prevdesc, $next, $nextdesc) {
+function nextprevbuttons($steps, $i) {
     print '<p align="right">';
-    if (!is_null($next)) {
-        if (is_null($nextdesc)) $nextdesc = _('Next');
-        printf('<input type="submit" name="%s" value="%s" />',
-                htmlspecialchars($next), htmlspecialchars($nextdesc));
-        if (!is_null($prev)) print "<br />";
+    if ($i < count($steps)) {
+        printf('<input type="submit" name="tostep%s" value="%s" />',
+                $steps[$i+1], _('Next'));
+        if ($i > 1) print "<br />";
     }
-    if (!is_null($prev)) {
-        if (is_null($prevdesc)) $prevdesc = _('Previous');
-        printf('<input type="submit" name="%s" value="%s" />',
-                htmlspecialchars($prev), htmlspecialchars($prevdesc));
+    if ($i > 1) {
+        printf('<input type="submit" name="tostep%s" value="%s" />',
+                $steps[$i-1], _('Previous'));
     }
     print '</p>';
 }
@@ -231,16 +228,6 @@ If so, please add your name to that petition.</p>
     pet_search_form();
 }
 
-function petition_form_first($data = array()) {
-    if (cobrand_creation_category_first()) {
-        petition_form_category($data);
-    } elseif (OPTION_SITE_TYPE == 'one') {
-        petition_form_main($data);
-    } else {
-        petition_form_you($data);
-    }
-}
-
 function petition_form_steps() {
     if (cobrand_creation_category_first())
         return 4;
@@ -249,7 +236,7 @@ function petition_form_steps() {
 
 /* petition_form_category
  * If we need to ask for category to route people appropriately */
-function petition_form_category($data = array(), $step = 1, $errors = array()) {
+function petition_form_category($steps, $step, $data = array(), $errors = array()) {
     startform();
 ?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Petition category</h2>
@@ -273,13 +260,13 @@ appropriate place.
 ?>
 </select></p>
 <?
-    nextprevbuttons(null, null, 'tostepmain', null);
+    nextprevbuttons($steps, $step);
     endform($data);
 }
 
 /* petition_form_main [DATA [ERRORS]]
  * Display the first stage of the petitions form. */
-function petition_form_main($data = array(), $step = 1, $errors = array()) {
+function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     global $petition_prefix;
     if (OPTION_SITE_NAME == 'number10') {
         echo 'There are 5 stages to the petition process:';
@@ -330,7 +317,7 @@ you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government
     <?
     textfield('ref', $data['ref'], 16, $errors);
     ?>
-<br /><small>This gives your petition an easy web address. e.g. http://<?=OPTION_WEB_DOMAIN ?>/badgers</small>
+<br /><small>This gives your petition an easy web address. e.g. http://<?=$_SERVER['HTTP_HOST'] ?>/badgers</small>
 </p>
 
 <?
@@ -351,17 +338,13 @@ you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government
 <?
     }
 
-    if (OPTION_SITE_TYPE == 'one') {
-        nextprevbuttons(null, null, 'tostepyou', null);
-    } else {
-        nextprevbuttons('tostepyou', null, 'tosteppreview', null);
-    }
+    nextprevbuttons($steps, $step);
     endform($data);
 }
 
 /* petition_form_you [DATA [ERRORS]]
  * Display the "about you" (second) section of the petition creation form. */
-function petition_form_you($data = array(), $step = 1, $errors = array()) {
+function petition_form_you($steps, $step, $data = array(), $errors = array()) {
     startform();
 ?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step?> of <?=petition_form_steps()?> &#8211; About you</h2>
@@ -464,11 +447,7 @@ the Armed Forces without a postcode, please select from this list:</label>
             print '</p>';
     }
 
-    if (OPTION_SITE_TYPE == 'one') {
-        nextprevbuttons('tostepmain', null, 'tosteppreview', null);
-    } else {
-        nextprevbuttons(null, null, 'tostepmain', null);
-    }
+    nextprevbuttons($steps, $step);
     print '</div>';
     endform($data);
 }
@@ -626,7 +605,7 @@ function step_preview_error_check($data) {
     return $errors;
 }
 
-function petition_form_preview($data, $step = 1, $errors = array()) {
+function petition_form_preview($steps, $step, $data, $errors = array()) {
     errorlist($errors);
 ?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step?> of <?=petition_form_steps()?></h2>
