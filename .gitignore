@@ -6,6 +6,7 @@ _Inline
 /web/down.html
 /bin/log_mailbox
 /conf/general
+/conf/general.deployed
 /conf/httpd.conf.deployed
 /conf/httpd.conf
 /web-admin/pet-live-signups.png
