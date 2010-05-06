@@ -1709,7 +1709,7 @@ sub make_signer_email ($$) {
         : $petition->{body_name};
 
     $h{url} = mySociety::Config::get('BASE_URL');
-    $h{url} = 'petitions.' $petition->{body_ref} . '.gov.uk' if mySociety::Config::get('SITE_DOMAINS');
+    $h{url} = 'petitions.' . $petition->{body_ref} . '.gov.uk' if mySociety::Config::get('SITE_DOMAINS');
 
     $h{url} .= Petitions::url($petition->{body_ref}, $petition->{ref});
     $h{url} .= Petitions::Token::make('s', $signer->{id});
