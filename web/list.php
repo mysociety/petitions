@@ -83,6 +83,10 @@ if (OPTION_SITE_TYPE == 'multiple') {
     $qrows .= ", body.ref as body_ref, body.name as body_name
             FROM petition, body
             WHERE status = ? AND body.id = body_id ";
+    if (OPTION_SITE_DOMAINS) {
+        # Only want to show ones for this body
+        $qrows .= ' AND body.ref = ' . $site_name;
+    }
 } else {
     $qrows .= " FROM petition WHERE status = ? ";
 }
