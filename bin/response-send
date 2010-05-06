@@ -37,7 +37,7 @@ chdir(dirname($_SERVER['SCRIPT_FILENAME']));
 require_once '../conf/general';
 require_once "../phplib/petcli.php";
 require_once '../phplib/fns.php';
-require_once '../../phplib/db.php';
+require_once '../commonlib/phplib/db.php';
 
 $switches = $options[0];
 $args = $options[1];

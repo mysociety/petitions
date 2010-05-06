@@ -1,4 +1,4 @@
-#!/usr/bin/perl -I../perllib -I../../perllib
+#!/usr/bin/perl -I../perllib -I../commonlib/perllib
 #
 # Petitions/HTMLEmail.pm:
 # HTML email stuff for the petitions site.

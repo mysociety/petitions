@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -I../perllib -I../../perllib
+#!/usr/bin/perl -w -I../perllib -I../commonlib/perllib
 #
 # reject.cgi:
 # Used because ref might be libellous, so refer by ID number instead

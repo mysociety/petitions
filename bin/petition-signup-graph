@@ -16,7 +16,7 @@ EXTENSION=".png"
 
 cd `dirname $0`
 cd ../
-source shlib/deployfns
+source commonlib/shlib/deployfns
 
 read_conf conf/general
 

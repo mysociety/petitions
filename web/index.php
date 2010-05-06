@@ -9,7 +9,7 @@
 
 // Load configuration file
 require_once "../phplib/pet.php";
-require_once "../../phplib/conditional.php";
+require_once "../commonlib/phplib/conditional.php";
 
 if (OPTION_SITE_TYPE == 'multiple') {
     $recent = db_getAll("select petition.ref, content,

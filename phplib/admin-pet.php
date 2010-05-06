@@ -13,10 +13,10 @@
 require_once "../phplib/pet.php";
 require_once "../phplib/petition.php";
 require_once '../phplib/cobrand.php';
-require_once "../../phplib/db.php";
-require_once "../../phplib/utility.php";
-require_once "../../phplib/importparams.php";
-require_once '../../phplib/datetime.php';
+require_once "../commonlib/phplib/db.php";
+require_once "../commonlib/phplib/utility.php";
+require_once "../commonlib/phplib/importparams.php";
+require_once '../commonlib/phplib/datetime.php';
 
 class ADMIN_PAGE_PET_SUMMARY {
     function ADMIN_PAGE_PET_SUMMARY() {

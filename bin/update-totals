@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -I../../perllib -I../perllib
+#!/usr/bin/perl -w -I../commonlib/perllib -I../perllib
 
 # Oh god, this is awful. As someone else said quite frequently. :)
 # 
@@ -25,7 +25,7 @@
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
 use lib "$FindBin::Bin/../perllib";
-use lib "$FindBin::Bin/../../perllib";
+use lib "$FindBin::Bin/../commonlib/perllib";
 chdir $FindBin::Bin;
 
 use strict;

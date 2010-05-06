@@ -11,9 +11,9 @@ require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
 require_once '../phplib/cobrand.php';
-require_once '../../phplib/db.php';
-require_once '../../phplib/importparams.php';
-require_once '../../phplib/urls.php';
+require_once '../commonlib/phplib/db.php';
+require_once '../commonlib/phplib/importparams.php';
+require_once '../commonlib/phplib/urls.php';
 
 define('PAGE_SIZE', 50);
 

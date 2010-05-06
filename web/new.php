@@ -13,8 +13,8 @@ require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
 require_once '../phplib/token.php';
 require_once '../phplib/cobrand.php';
-require_once '../../phplib/datetime.php';
-require_once '../../phplib/mapit.php';
+require_once '../commonlib/phplib/datetime.php';
+require_once '../commonlib/phplib/mapit.php';
 
 $page_title = 'Create a new petition';
 ob_start();

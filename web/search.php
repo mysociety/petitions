@@ -10,8 +10,8 @@
 require_once "../phplib/pet.php";
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
-require_once '../../phplib/db.php';
-require_once '../../phplib/importparams.php';
+require_once '../commonlib/phplib/db.php';
+require_once '../commonlib/phplib/importparams.php';
 
 $search = trim(get_http_var('q', true));
 if (!$search) $search = trim(get_http_var('s', true));

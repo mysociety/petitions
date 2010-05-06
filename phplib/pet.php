@@ -15,8 +15,8 @@
 
 // Load configuration file
 require_once "../conf/general";
-require_once "../../phplib/error.php";
-require_once "../../phplib/db.php";
+require_once "../commonlib/phplib/error.php";
+require_once "../commonlib/phplib/db.php";
 require_once 'page.php';
 require_once 'fns.php';
 

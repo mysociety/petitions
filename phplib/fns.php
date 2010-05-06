@@ -8,8 +8,8 @@
 // $Id: fns.php,v 1.20 2010-04-27 13:31:20 matthew Exp $
 
 require_once 'cobrand.php';
-require_once "../../phplib/evel.php";
-require_once '../../phplib/utility.php';
+require_once "../commonlib/phplib/evel.php";
+require_once '../commonlib/phplib/utility.php';
 
 define('MSG_ADMIN', 1);
 define('MSG_CREATOR', 2);

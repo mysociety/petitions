@@ -10,9 +10,9 @@
  * 
  */
 
-require_once '../../phplib/db.php';
-require_once '../../phplib/random.php';
-require_once '../../phplib/BaseN.php';
+require_once '../commonlib/phplib/db.php';
+require_once '../commonlib/phplib/random.php';
+require_once '../commonlib/phplib/BaseN.php';
 
 /* token_make WHAT ID
  * Make a token identifying the given ID (of a petition or signer). WHAT

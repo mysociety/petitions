@@ -18,7 +18,7 @@ my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.156 2010-03-12 19:00:35 matthew Ex
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
 use lib "$FindBin::Bin/../perllib";
-use lib "$FindBin::Bin/../../perllib";
+use lib "$FindBin::Bin/../commonlib/perllib";
 
 use mySociety::Config;
 BEGIN {
