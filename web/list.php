@@ -215,7 +215,7 @@ if ($ntotal > 0) {
             if (!$petition->rejected_show_part('content'))
                 print 'Petition details cannot be shown &mdash; ';
             print '<a href="/';
-            if (OPTION_SITE_TYPE == 'multiple') {
+            if (OPTION_SITE_TYPE == 'multiple' && !OPTION_SITE_DOMAINS) {
                 print $petition->body_ref() . '/';
             }
             print $petition->rejected_show_part('ref') ? $petition->ref() . '/' : 'reject?id=' . $petition->id();

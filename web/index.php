@@ -101,7 +101,7 @@ function petition_row($petition, $c) {
     print '<li';
     if ($c%2) print ' class="a"';
     print '><a href="/';
-    if (OPTION_SITE_TYPE == 'multiple') {
+    if (OPTION_SITE_TYPE == 'multiple' && !OPTION_SITE_DOMAINS) {
         print $petition['body_ref'] . '/">' . $petition['body_name'] . '</a> to <a href="/';
         print $petition['body_ref'] . '/';
     }

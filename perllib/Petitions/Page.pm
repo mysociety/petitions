@@ -31,7 +31,7 @@ use mySociety::WatchUpdate;
 use Petitions;
 
 # Work out which site we're on
-sub template_dir {
+sub site_name {
     my $site_name;
     if (mySociety::Config::get('SITE_NAME') =~ /,/) { 
         my @sites = split /,/, mySociety::Config::get('SITE_NAME');
@@ -102,7 +102,7 @@ sub header ($$%) {
     }
 
     # html header shared with PHP
-    my $site_name = template_dir();
+    my $site_name = site_name();
     my $out = read_file('../templates/' . $site_name . '/head.html');
     utf8::decode($out); # binmode argument on read_file simply just sets O_BINARY
     if (!$out) {
@@ -148,7 +148,7 @@ sub header ($$%) {
 sub footer ($$) {
     my ($q, $stat_code) = @_;
     
-    my $site_name = template_dir();
+    my $site_name = site_name();
     my $out = read_file('../templates/' . $site_name . '/foot.html');
     utf8::decode($out);
 

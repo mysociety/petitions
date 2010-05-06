@@ -317,7 +317,7 @@ Given a BODY (can be undef) and a REF, construct a URL for this petition.
 =cut
 sub url ($$) {
     my ($body, $ref) = @_;
-    return "/$body/$ref/" if mySociety::Config::get('SITE_TYPE') eq 'multiple';
+    return "/$body/$ref/" if mySociety::Config::get('SITE_TYPE') eq 'multiple' && !mySociety::Config::get('SITE_DOMAINS');
     return "/$ref/";
 }
 

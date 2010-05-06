@@ -231,7 +231,7 @@ sub confirm_page ($$$$) {
             my $t = sprintf('%x', int(time()) - 1_000_000_000);
             $t .= "." . substr(hmac_sha1_hex($t, Petitions::DB::secret()), 0, 6);
             my $url = "/$ref/?signed=$t";
-            $url = "/$body_ref$url" if $body_ref;
+            $url = "/$body_ref$url" if $body_ref && !mySociety::Config::get('SITE_DOMAINS');
             print $q->redirect($url);
             return;
         }
@@ -261,7 +261,11 @@ sub main () {
 
     my $qp_body;
     if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
-        $qp_body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
+        if (mySociety::Config::get('SITE_DOMAINS')) {
+            $qp_body = Petitions::Page::site_name();
+        } else {
+            $qp_body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
+        }
         if (!defined($qp_body)) {
             print $q->redirect("/");
             return;

@@ -37,7 +37,11 @@ sub main () {
 
     my $qp_body;
     if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
-        $qp_body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
+        if (mySociety::Config::get('SITE_DOMAINS')) {
+            $qp_body = Petitions::Page::site_name();
+        } else {
+            $qp_body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
+        }
         if (!defined($qp_body)) {
             print $q->redirect("/");
             return;
