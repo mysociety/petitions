@@ -1,0 +1,14 @@
+div#petition_actions {
+    border: none;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    margin-top: 1em;
+    width: 45%;
+}
+

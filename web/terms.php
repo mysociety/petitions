@@ -57,7 +57,7 @@ option of altering and resubmitting the petition so it can be
 accepted.</p>
 
 <p>If you decide not to resubmit your petition, or if the second
-iteration is also rejected, we will list your petition and the
+one is also rejected, we will list your petition and the
 reason(s) for not accepting it on this website. We will publish the
 full text of your petition, unless the content is illegal or offensive.
 </p>
