@@ -15,41 +15,41 @@ use LWP::Simple;
 my ($header, $footer);
 
 # Surrey
-$header = get('http://www1.surreycc.gov.uk/scctemplate/petitions/header1.asp');
+$header = get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/header1.asp');
 $header .= <<EOF;
 <title>Surrey County Council - PARAM_TITLE</title>
 <link rel="stylesheet" type="text/css" href="/pet.css">
 <link rel="stylesheet" type="text/css" href="/assets/surreycc/css.css">
 EOF
-$header .= get('http://www1.surreycc.gov.uk/scctemplate/petitions/header2.asp');
+$header .= get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/header2.asp');
 $header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>/PARAM_RSS_LINKS\nPARAM_SUBJECTS/;
 $header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>//g;
 $header =~ s/(<meta name="DC\.Identifier".*?")http.*?"/$1PARAM_DC_IDENTIFIER/;
-$footer = get('http://www1.surreycc.gov.uk/scctemplate/petitions/footer.asp');
+$footer = get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/footer.asp');
 output('surreycc', $header, $footer);
 
 # Surrey Heath
-$header = get('http://www.surreyheath.gov.uk/general_header.asp');
+$header = get_page('http://www.surreyheath.gov.uk/general_header.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - /;
 $header =~ s/<\*\*page_title\*\*>/PARAM_TITLE/;
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css"></head>};
-$footer = get('http://www.surreyheath.gov.uk/general_footer.asp');
+$footer = get_page('http://www.surreyheath.gov.uk/general_footer.asp');
 output('surreyheath', $header, $footer);
 
 # Elmbridge
-$header = get('http://www.elmbridge.gov.uk/website_header.asp');
+$header = get_page('http://www.elmbridge.gov.uk/website_header.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - /;
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css"></head>};
-$footer = get('http://www.elmbridge.gov.uk/website_footer.asp');
+$footer = get_page('http://www.elmbridge.gov.uk/website_footer.asp');
 output('elmbridge', $header, $footer);
 
 # Tandridge
-$header = get('http://www.tandridge.gov.uk/template_header_new.asp');
+$header = get_page('http://www.tandridge.gov.uk/template_header_new.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - Tandridge District Council/;
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css">
 <link rel="stylesheet" type="text/css" href="/assets/tandridge/css.css">
 </head>};
-$footer = get('http://www.tandridge.gov.uk/template_footer_new.asp');
+$footer = get_page('http://www.tandridge.gov.uk/template_footer_new.asp');
 output('tandridge', $header, $footer);
 
 sub output {
@@ -61,7 +61,7 @@ sub output {
         if $footer;
 }
 
-sub get($) {
+sub get_page {
     my $url = shift;
     my $r = LWP::Simple::get($url);
     return $r || '';
