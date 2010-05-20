@@ -15,7 +15,7 @@ page_header('Questions and Answers');
 
 $contact_email = str_replace('@', '&#64;', OPTION_CONTACT_EMAIL);
 
-$faq = '../templates/' . $site_group . 'faq.html';
+$faq = '../templates/' . $site_group . '/faq.html';
 if (file_exists($faq)) {
     include_once $faq;
 } else {
