@@ -107,6 +107,15 @@ petition via this website giving details of the Government’s response.
 petition, but will not have access to your personal details; these are stored
 by mySociety.</p>
 <?
+    } elseif (substr(OPTION_SITE_NAME, 0, 8) == 'woking') {
+?>
+<p>Once your petition has closed, usually provided there are
+<?=cobrand_signature_threshold() ?> signatures or more, it will be passed to
+the relevant officials at the council for a response.</p>
+<p>We will be able to email the petition organiser and everyone who has signed the
+petition, but will not have access to your personal details; these are stored
+by mySociety.</p>
+<?
     } else {
 ?>
 <p>We are working on ways for councils to officially respond to petitions.
