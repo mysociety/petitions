@@ -432,7 +432,7 @@ the Armed Forces without a postcode, please select from this list:</label>
                 $size = 15;
             $after = '';
             if ($name == 'email2')
-                $after = '<br />(we need your email so we can get in touch with you when your petition completes, and so on)';
+                $after = '<br />(we need your email so we can get in touch with you when your petition finishes, and so on)';
             elseif ($name == 'name')
                 $after = '(please use a full name e.g. Mr John Smith)';
             textfield($name, $data[$name], $size, $errors, $after);

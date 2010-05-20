@@ -50,7 +50,7 @@ appear on the site.</p>
 <h3>Step <?=$n++?>: Petition approval</h3>
 
 <p>Officials <?=OPTION_SITE_NAME=='number10'?'at Downing Street':''?> will check your petition to make sure that it meets
-the basic requirements set out in our <a href="/terms">acceptable use policy</a><?=OPTION_SITE_NAME=='number10'?' and the Civil Service code':''?>.</p>
+the basic requirements set out in our <a href="/terms">terms and conditions</a><?=OPTION_SITE_NAME=='number10'?' and the Civil Service code':''?>.</p>
 
 <p>If for any reason we cannot accept the petition, we will write to you to explain
 why. You will be able to edit and resubmit your petition if you wish.</p>
@@ -78,7 +78,7 @@ you chose when you created your petition, and anyone will be able to
 come to the website and sign it. As the petition creator, your name
 and your organisation, if you have specified one, will be displayed.</p>
 
-<p>They will be asked to give their name and address and an email address that we
+<p>People who wish to sign a petition will be asked to give their name and address and an email address that we
 can verify. The system is designed to identify duplicate names and addresses, and
 will not allow someone to sign a petition more than once. Anyone signing a
 petition will be sent an email asking them to click a link to confirm that they
