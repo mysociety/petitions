@@ -50,8 +50,7 @@ appear on the site.</p>
 <h3>Step <?=$n++?>: Petition approval</h3>
 
 <p>Officials <?=OPTION_SITE_NAME=='number10'?'at Downing Street':''?> will check your petition to make sure that it meets
-the basic requirements set out in our <a href="/terms">acceptable use policy</a>
-<?=OPTION_SITE_NAME=='number10'?'and the Civil Service code':''?>.</p>
+the basic requirements set out in our <a href="/terms">acceptable use policy</a><?=OPTION_SITE_NAME=='number10'?' and the Civil Service code':''?>.</p>
 
 <p>If for any reason we cannot accept the petition, we will write to you to explain
 why. You will be able to edit and resubmit your petition if you wish.</p>
