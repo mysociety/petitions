@@ -1,6 +1,8 @@
 _Inline
 /templates/elmbridge
 /templates/surreyheath
+/templates/surreycc/head.html
+/templates/surreycc/foot.html
 /templates/tandridge
 /web/down.html
 /bin/log_mailbox
