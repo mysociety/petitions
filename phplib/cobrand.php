@@ -149,9 +149,7 @@ order for the petition service to comply with the law,
 you must not include: </p>
 
 <ul>
-<li>Party political material. This website is a
-Government site. Party political content cannot be published, under the
-<a href="http://www.civilservice.gov.uk/civilservicecode">normal rules governing the Civil Service</a>.
+<li>Party political material.
 Please note, this does not mean it is not permissible to petition on
 controversial issues. For example, this party political petition
 would not be permitted: "We petition the council to change the Conservative Cabinet's policy on education",
@@ -191,11 +189,6 @@ for purely frivolous purposes);</li>
 <li>Freedom of Information requests. This is not the right channel
 for FOI requests; information about the appropriate procedure can be
 found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
-<li>nominations for Honours. These have been accepted in the past but
-this is not the appropriate channel; accordingly, from 6 March 2008 we
-are rejecting such petitions and directing petitioners to
-<a href="http://www.direct.gov.uk/honours">http://www.direct.gov.uk/honours</a> where
-nominations for Honours can be made directly to the appropriate department.</li>
 </ul>
 
 <p>We will strive to ensure that petitions that do not meet our
@@ -212,18 +205,6 @@ sign the petition.</p>
 
 <li>Please don't use 'shouting' capital letters excessively as they
 can make petitions fall foul of our 'impossible to read' criteria.</li>
-
-<li>We receive a lot of petitions on devolved matters. If your
-petition relates to the powers devolved to parts of the UK, such as
-the Welsh Assembly or Scottish Parliament, you should approach those
-bodies directly as these things are outside the remit of the Prime
-Minister. This also applies to matters relating to London, such as
-the Underground, which should be directed to the Greater London
-Assembly and the Mayor's Office.</li>
-
-<li>We also receive petitions about decisions that are clearly private
-sector decisions, such as whether to re-introduce a brand of breakfast
-cereal. These are also outside the remit of the Prime Minister.</li>
 
 <li>We cannot accept petitions which call upon the council to "recognise" or
 "acknowledge" something, as they do not clearly call for a
