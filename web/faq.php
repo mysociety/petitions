@@ -171,14 +171,14 @@ You can decide how long your petition can run for and we will carry it for up to
 
 <dd>
 <? if (OPTION_SITE_NAME == 'number10') { ?>
-<p>Once your petition has closed, usually provided there are 500 signatures or more, it
+<p>Once your petition has closed, usually provided there are <?=cobrand_signature_threshold() ?> signatures or more, it
 will be passed to officials who work for the Prime Minister in Downing
 Street, or sent to the relevant Government department for a response.</p>
 
 <p>Every person who signs such a petition will receive an email detailing the
 Government's response to the issues raised.</p>
 <? } else { ?>
-<p>Once your petition has closed, usually provided there are 500 signatures or more, it
+<p>Once your petition has closed, usually provided there are <?=cobrand_signature_threshold() ?> signatures or more, it
 will be passed to the relevant officials at the council for a response.</p>
 
 <p>Every person who signs such a petition will receive an email detailing the

@@ -169,7 +169,7 @@ function front_how_it_works() {
 <?=OPTION_SITE_NAME=='number10' ? 'the Government' : 'our' ?> response to any
 <a href="/list/closed">completed petitions</a>.
 <? if (OPTION_SITE_NAME == 'number10') { ?>
-If you have signed a petition that has reached more than 500 signatures
+If you have signed a petition that has reached more than <?=cobrand_signature_threshold() ?> signatures
 by the time it closes, you will be sent a response from
 <?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> by email.
 <? } ?>

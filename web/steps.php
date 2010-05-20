@@ -24,7 +24,7 @@ function petition_form_intro() {
 address and email address, and the title and text of your petition. You will also be
 asked to give a short, one-word name for your petition. This will be used to
 give your petition a unique URL (website address) that you can use to publicise
-your petition.</p>
+your petition if you wish.</p>
 
 <p>You will be able to specify a start and finish date for your petition, and we
 can host your petition for up to 12 months.</p>
@@ -50,8 +50,8 @@ appear on the site.</p>
 <h3>Step <?=$n++?>: Petition approval</h3>
 
 <p>Officials <?=OPTION_SITE_NAME=='number10'?'at Downing Street':''?> will check your petition to make sure that it meets
-the basic requirements set out in our <a href="/terms">acceptable use policy</a> and the
-Civil Service code.</p>
+the basic requirements set out in our <a href="/terms">acceptable use policy</a>
+<?=OPTION_SITE_NAME=='number10'?'and the Civil Service code':''?>.</p>
 
 <p>If for any reason we cannot accept the petition, we will write to you to explain
 why. You will be able to edit and resubmit your petition if you wish.</p>
@@ -94,13 +94,19 @@ display the names of signatories, unless they have opted not to be shown.</p>
 <?
     if (OPTION_SITE_NAME == 'number10') {
 ?>
-<p>When a serious petition closes, usually provided there are 500 signatures or more,
+<p>When a serious petition closes, usually provided there are <?=cobrand_signature_threshold() ?> signatures or more,
 officials at Downing Street will ensure you get a response to the issues you
 raise. Depending on the nature of the petition, this may be from the Prime
 Minister, or he may ask one of his Ministers or officials to respond.
 
 <p>We will email the petition organiser and everyone who has signed the
 petition via this website giving details of the Government’s response.
+<?
+    } elseif (substr(OPTION_SITE_NAME, 0, 8) == 'surreycc') {
+?>
+<p>We will be able to email the petition organiser and everyone who has signed the
+petition, but will not have access to your personal details; these are stored
+by mySociety.</p>
 <?
     } else {
 ?>

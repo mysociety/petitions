@@ -48,7 +48,7 @@ will not be placed on the website);</li>
 <li>a duration for the petition.</li>
 </ul>
 
-<? terms_and_conditions(); ?>
+<? cobrand_terms_and_conditions(); ?>
 
 <p>Petitions that do not follow these guidelines cannot be accepted. In
 these cases, you will be informed in writing of the reason(s) your
@@ -90,8 +90,9 @@ petition as a last resort.
 </p>
 
 <p>Please note that to keep the system manageable, and justify use of
-resources, we can usually only respond to serious petitions of 500
-signatures or more.</p>
+resources, we can usually only respond to
+<?=(OPTION_SITE_NAME=='number10' ? 'serious' : '') ?>
+petitions of <?=cobrand_signature_threshold() ?> signatures or more.</p>
 
 <?
 

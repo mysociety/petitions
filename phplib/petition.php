@@ -18,6 +18,12 @@ if (OPTION_SITE_TYPE == 'one') {
 }
 
 /* Must keep this synchronised with constraint in schema. */
+$remit = 'Outside the remit or powers of ';
+if (OPTION_SITE_NAME == 'number10') {
+    $remit .= 'the Prime Minister and Government';
+} else {
+    $remit .= OPTION_SITE_PETITIONED;
+}
 $global_rejection_categories = array(
     1 => 'Party political material',
     2 => 'Potentially libellous, false, or defamatory statements',
@@ -31,7 +37,7 @@ $global_rejection_categories = array(
     512 => 'Statements that don\'t actually request any action',
     1024 => 'Commercial endorsement, promotion of any product, service or publication, or statements that amount to adverts',
     2048 => 'Duplicate - this is similar to and/or overlaps with an existing petition or petitions',
-    4096 => 'Outside the remit or powers of the Prime Minister and Government',
+    4096 => $remit,
     8192 => 'False or incomplete name or address information',
     16384 => 'Issues for which an e-petition is not the appropriate channel',
     32768 => 'Intended to be humorous, or has no point about government policy',

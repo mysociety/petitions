@@ -404,6 +404,12 @@ sub reject_box ($$) {
     }
  
     # Must keep this synchronised with constraint in schema, and list in phplib/petition.php
+    my $remit = 'It was outside the remit or powers of ';
+    if (mySociety::Config::get('SITE_NAME') eq 'number10') {
+        $remit .= 'the Prime Minister and Government';
+    } else {
+        $remit .= mySociety::Config::get('SITE_PETITIONED');
+    }
     my %categories = (
         1 => 'It contained party political material',
         2 => 'It contained potentially libellous, false, or defamatory statements',
@@ -417,7 +423,7 @@ sub reject_box ($$) {
         512 => 'It doesn\'t actually request any action',
         1024 => 'It was commercial endorsement, promotion of a product, service or publication, or statements that amounted to adverts',
         2048 => 'It was similar to and/or overlaps with an existing petition or petitions',
-        4096 => 'It was outside the remit or powers of the Prime Minister and Government',
+        4096 => $remit,
         8192 => 'It contained false or incomplete name or address information',
         16384 => 'It was an issue for which an e-petition is not the appropriate channel',
         32768 => 'It was intended to be humorous, or have no point about government policy',

@@ -670,7 +670,7 @@ here:</p>
 
 <h3 class="page_title_border">Terms and Conditions</h3>
 
-<? terms_and_conditions(); ?>
+<? cobrand_terms_and_conditions(); ?>
 
 <p>Petitioners may freely disagree with
 <?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> or

@@ -40,12 +40,13 @@ class ADMIN_PAGE_PET_STATS {
             where creationtime>=? and creationtime<$end_interval
             and status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')",
             $from['iso'], $to['iso']);
-        $closed_less500 = db_getOne("select count(*) from petition
-            where deadline>=? and deadline<=? and cached_signers<500
-            and status='finished'", $from['iso'], $to['iso']);
-        $closed_more500 = db_getOne("select count(*) from petition
-            where deadline>=? and deadline<=? and cached_signers>=500
-            and status='finished'", $from['iso'], $to['iso']);
+        $threshold = cobrand_signature_threshold();
+        $closed_less = db_getOne("select count(*) from petition
+            where deadline>=? and deadline<=? and cached_signers<?
+            and status='finished'", $from['iso'], $to['iso'], $threshold);
+        $closed_more = db_getOne("select count(*) from petition
+            where deadline>=? and deadline<=? and cached_signers>=?
+            and status='finished'", $from['iso'], $to['iso'], $threshold);
         $signatures = db_getOne("select count(*) from signer
             where signtime>=? and signtime<$end_interval
             and emailsent='confirmed' and showname='t'",
@@ -61,23 +62,23 @@ class ADMIN_PAGE_PET_STATS {
             $from['iso'], $to['iso']);
         $petitions_closed = db_getAll("select ref from petition
             left join message on petition.id=petition_id and circumstance='government-response'
-            where deadline>=? and deadline<=? and cached_signers>=500 and status='finished'
-            and petition_id is null order by deadline", $from['iso'], $to['iso']);
+            where deadline>=? and deadline<=? and cached_signers>=? and status='finished'
+            and petition_id is null order by deadline", $from['iso'], $to['iso'], $threshold);
         $from_pretty = prettify($from['iso']);
         $to_pretty = prettify($to['iso']);
         echo <<<EOF
 <h2>Statistics for $from_pretty to $to_pretty</h2>
 <ul>
 <li>Number of petitions submitted: $petitions_submitted
-<li>Petitions closed with fewer than 500 signatures: $closed_less500
-<li>Petitions closed with 500 signatures or more: $closed_more500
+<li>Petitions closed with fewer than $threshold signatures: $closed_less
+<li>Petitions closed with $threshold signatures or more: $closed_more
 <li>Number of signatures placed: $signatures
 <li>Number of petitions responded to: $responses
 <li>Number of signatures emailed government responses: $responded_sigs
 </ul>
 EOF;
         if (count($petitions_closed)) {
-            echo '<h3>Closed petitions with 500 signatures or more that have not received a response</h3> <ul>';
+            echo '<h3>Closed petitions with ' . $threshold . ' signatures or more that have not received a response</h3> <ul>';
             foreach ($petitions_closed as $p) {
                 echo '<li><a href="?page=pet&amp;petition=', $p['ref'], '">', $p['ref'], '</a></li>';
             }
@@ -823,8 +824,7 @@ Deadline: ';
     }
 
     function display_categories($current = 0) {
-        global $global_rejection_categories;
-        foreach ($global_rejection_categories as $n => $category) {
+        foreach (cobrand_admin_rejection_categories() as $n => $category) {
             print '<br><input type="checkbox" name="rejection_cats[]"';
             if ($current & $n)
                 print ' checked';
@@ -861,16 +861,7 @@ function rejection_text(obj) {
 <ul>
 
 <?
-        $autotext = array(
-'Please supply full name and address information.',
-'Please address the excessive use of capital letters; they make your petition hard to read.',
-'Your title should be a clear call for action, preferably starting with a verb, and not a name or statement.',
-'Comments about the petitions system should be sent to number10@petitions.pm.gov.uk.',
-'Individual legal cases are a matter for direct communication with the Home Office.',
-'This is a devolved matter and should be directed to the Scottish Executive / Welsh Assembly / Northern Ireland Executive as appropriate.',
-'This is a matter for direct communication with Parliament.',
-'The Cabinet Office is actively seeking nominations for honours from the public. Please go to http://www.direct.gov.uk/honours',
-        );
+        $autotext = cobrand_admin_rejection_snippets();
         foreach ($autotext as $t) {
             echo '<li><a style="cursor:pointer;" onclick="rejection_text(this);">', $t, '</a>';
         }
