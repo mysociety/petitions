@@ -49,9 +49,11 @@ if (OPTION_SITE_NAME == 'sbdc' || strpos(OPTION_SITE_NAME, 'surrey')!==false) {
     front_actions();
     front_intro_text();
     front_most_popular($most);
-    print '<div style="float: left; text-align: center; padding-top:0.5em; width: 45%; padding: 5px;">';
-    pet_search_form(array('front'=>true));
-    print '</div>';
+    if (OPTION_SITE_NAME == 'sbdc') {
+        print '<div style="float: left; text-align: center; padding-top:0.5em; width: 45%; padding: 5px;">';
+        pet_search_form(array('front'=>true));
+        print '</div>';
+    }
     front_most_recent($recent);
     front_how_it_works();
 } else {
