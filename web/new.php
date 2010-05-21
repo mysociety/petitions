@@ -245,7 +245,7 @@ function petition_form_category($steps, $step, $data = array(), $errors = array(
 <p>Please note that you must be a <?=cobrand_creator_must_be()?> to create a petition.</p>
 
 <p>First you must pick the relevant category for your petition. This is because the council
-is only responsible for certain matters, and we need to make sure you are routed to the
+is only responsible for certain matters, and we need to make sure you are taken to the
 appropriate place.
 
 <select name="category">
@@ -570,13 +570,13 @@ function step_you_error_check($data) {
     if ($data['postcode'] && $data['overseas'])
         $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
 
-    if (cobrand_creation_within_area_only() && $data['postcode'] && validate_postcode($data['postcode'])) {
+    if (($area = cobrand_creation_within_area_only()) && $data['postcode'] && validate_postcode($data['postcode'])) {
         $areas = mapit_get_voting_areas($data['postcode']);
         $body = db_getRow('SELECT * FROM body WHERE area_id in (' . join(',', array_values($areas)) . ')');
         if ($body) {
             $data['body'] = $body['id'];
         } else {
-            $errors['postcode'] = 'Sorry, that postcode is not within the correct area.';
+            $errors['postcode'] = "Sorry, that postcode is not within $area.";
         }
     }
 

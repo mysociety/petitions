@@ -25,14 +25,15 @@ function cobrand_creation_ask_for_address_type() {
 
 function cobrand_creation_within_area_only() {
     global $site_name;
-    if ($site_name == 'surreycc' || $site_name == 'woking') return true;
-    return false;
+    if ($site_name == 'surreycc') return 'Surrey';
+    if ($site_name == 'woking') return 'Woking';
+    return '';
 }
 
 function cobrand_creator_must_be() {
     global $site_name;
     if ($site_name == 'surreycc') {
-        return 'resident of, or have a business with a registered address in, Surrey County Council';
+        return 'resident of Surrey, or have a business with a registered address in Surrey,';
     }
     if ($site_name == 'woking') {
         return 'member of the Council or a registered Elector in the Borough of Woking';
