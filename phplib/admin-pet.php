@@ -353,7 +353,8 @@ function petition_admin_navigation($page, $array = array()) {
     }
     print " </p>";
     print '</div>';
-    print "<h2>Admin interface: $page->navname</h2>";
+    if (OPTION_SITE_NAME == 'sbdc') 
+        print "<h2>Admin interface: $page->navname</h2>";
 }
 
 function petition_admin_search_form($search='') { ?>

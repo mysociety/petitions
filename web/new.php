@@ -92,6 +92,10 @@ function petition_form_submitted($steps) {
     if (!array_key_exists('token', $data) && get_http_var('token'))
         $data['token'] = get_http_var('token');
     
+    if (isset($_GET['category'])) {
+        $data['category'] = intval($_GET['category']);
+    }
+
     foreach (array_keys($_POST) as $field) {
         $data[$field] = get_http_var($field);
     }
@@ -240,7 +244,16 @@ function petition_form_category($steps, $step, $data = array(), $errors = array(
     startform();
 ?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Petition category</h2>
-<?  errorlist($errors); ?>
+<?
+    if (array_key_exists('category_wrong', $errors)) { ?>
+<div id="errors">
+<p><?=$errors['category_wrong'] ?></p>
+</div>
+<?
+    } else {
+        errorlist($errors);
+    }
+?>
 
 <p>Please note that you must be a <?=cobrand_creator_must_be()?> to create a petition.</p>
 
@@ -459,7 +472,14 @@ function step_category_error_check($data) {
       || !array_key_exists($data['category'], cobrand_categories())) {
         $errors['category'] = 'Please select a category';
     } elseif (!cobrand_category_okay($data['category'])) {
-        $errors['category'] = 'You have selected a category for which this council is not responsible. Please visit your other council\'s site to create a petition in this category.';
+        if ($url = cobrand_category_wrong_action($data['category'])) {
+            $errors['category_wrong'] = 'You have selected a category for which this
+council is not responsible.
+<a href="' . $url . '">Go to the petition website of the correct council for this category</a>.';
+        } else {
+            $errors['category_wrong'] = 'You have selected a category for which this
+council is not responsible. Please visit your other council\'s site to
+create a petition in this category.';
     }
     return $errors;
 }
