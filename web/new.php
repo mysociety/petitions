@@ -26,7 +26,12 @@ elseif (OPTION_SITE_TYPE == 'multiple')
 elseif (OPTION_SITE_TYPE == 'one')
     $steps = array('', 'main', 'you', 'preview');
 
-if (get_http_var('tostepmain')
+if (get_http_var('toothercouncil')) {
+    if ($url = cobrand_category_wrong_action(get_http_var('category'), get_http_var('council'))) {
+        header("Location: $url");
+        exit;
+    }
+} elseif (get_http_var('tostepmain')
     || get_http_var('tostepyou')
     || get_http_var('tosteppreview')
     || get_http_var('tostepcategory')
@@ -478,9 +483,16 @@ function step_category_error_check($data) {
 council is not responsible.
 <a href="' . $url . '">Go to the petition website of the correct council for this category</a>.';
         } else {
-            $errors['category_wrong'] = 'You have selected a category for which this
-council is not responsible. Please visit your other council\'s site to
-create a petition in this category.';
+            # XXX
+            $errors['category_wrong'] = '
+<input type="hidden" name="category" value="' . htmlspecialchars($data['category']) . '">
+You have selected a category for which this council is not responsible. Please
+pick your council in order to be taken to their petition site:
+<select name="council">
+<option value="Tandridge">Tandridge District Council</option>
+</select>
+<input type="submit" name="toothercouncil" value="Go">
+';
         }
     }
     return $errors;
