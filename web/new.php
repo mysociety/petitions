@@ -480,6 +480,7 @@ council is not responsible.
             $errors['category_wrong'] = 'You have selected a category for which this
 council is not responsible. Please visit your other council\'s site to
 create a petition in this category.';
+        }
     }
     return $errors;
 }
