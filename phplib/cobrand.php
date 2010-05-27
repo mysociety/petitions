@@ -64,13 +64,29 @@ function cobrand_category_wrong_action($category_id, $area='') {
     global $site_name, $site_group;
     if ($site_group == 'surreycc') {
         if ($site_name != 'surreycc') {
-            return 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
+            $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
+            return 'You have selected a category for which this council is not
+            responsible. <a href="' . $url . '">Go to Surrey County Council\'s petition website
+            to create a petition in this category</a>.'; 
         }
-        if ($area == 'Tandridge') {
-            return 'http://petitions.tandridge.gov.uk/new?tostepmain=1&category=' . $category_id;
+        if ($area) {
+            # $area is set if we're being called as a result of the form below
+            if (in_array($area, array('tandridge'))) {
+                return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            }
+        } else {
+            return '
+            <input type="hidden" name="category" value="' . $category_id . '"> 
+            You have selected a category for which this council is not responsible. Please 
+            pick your council in order to be taken to their petition site: 
+            <select name="council"> 
+            <option value="tandridge">Tandridge District Council</option> 
+            </select> 
+            <input type="submit" name="toothercouncil" value="Go"> 
+            '; 
         }
-        return null;
     }
+    return null;
 }
 
 function cobrand_categories() {

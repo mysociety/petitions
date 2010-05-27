@@ -27,7 +27,7 @@ elseif (OPTION_SITE_TYPE == 'one')
     $steps = array('', 'main', 'you', 'preview');
 
 if (get_http_var('toothercouncil')) {
-    if ($url = cobrand_category_wrong_action(get_http_var('category'), get_http_var('council'))) {
+    if ($url = cobrand_category_wrong_action(intval(get_http_var('category')), get_http_var('council'))) {
         header("Location: $url");
         exit;
     }
@@ -478,22 +478,7 @@ function step_category_error_check($data) {
       || !array_key_exists($data['category'], cobrand_categories())) {
         $errors['category'] = 'Please select a category';
     } elseif (!cobrand_category_okay($data['category'])) {
-        if ($url = cobrand_category_wrong_action($data['category'])) {
-            $errors['category_wrong'] = 'You have selected a category for which this
-council is not responsible.
-<a href="' . $url . '">Go to the petition website of the correct council for this category</a>.';
-        } else {
-            # XXX
-            $errors['category_wrong'] = '
-<input type="hidden" name="category" value="' . htmlspecialchars($data['category']) . '">
-You have selected a category for which this council is not responsible. Please
-pick your council in order to be taken to their petition site:
-<select name="council">
-<option value="Tandridge">Tandridge District Council</option>
-</select>
-<input type="submit" name="toothercouncil" value="Go">
-';
-        }
+        $errors['category_wrong'] = cobrand_category_wrong_action($data['category']);
     }
     return $errors;
 }
