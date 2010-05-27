@@ -29,6 +29,7 @@ elseif (OPTION_SITE_TYPE == 'one')
 if (get_http_var('tostepmain')
     || get_http_var('tostepyou')
     || get_http_var('tosteppreview')
+    || get_http_var('tostepcategory')
     || get_http_var('tocreate')) {
     petition_form_submitted($steps);
 } else {

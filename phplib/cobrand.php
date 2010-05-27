@@ -64,7 +64,7 @@ function cobrand_category_wrong_action($category_id, $area='') {
     global $site_name, $site_group;
     if ($site_group == 'surreycc') {
         if ($site_name != 'surreycc') {
-            return 'http://petitions.surrey.gov.uk/new?tostepmain=1&category=' . $category_id;
+            return 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
         }
         if ($area == 'Tandridge') {
             return 'http://petitions.tandridge.gov.uk/new?tostepmain=1&category=' . $category_id;
