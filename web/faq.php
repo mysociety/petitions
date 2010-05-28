@@ -9,6 +9,7 @@
 
 // Load configuration file
 require_once "../phplib/pet.php";
+require_once "../phplib/cobrand.php";
 
 header('Cache-Control: max-age=300');
 page_header('Questions and Answers');
