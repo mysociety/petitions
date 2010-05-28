@@ -12,6 +12,7 @@
  */
 
 require_once "../conf/general";
+require_once 'cobrand.php';
 require_once '../commonlib/phplib/phpcli.php';
 require_once '../commonlib/phplib/db.php';
 
@@ -20,3 +21,4 @@ $pet_today = db_getOne('select ms_current_date()');
 $pet_timestamp = substr(db_getOne('select ms_current_timestamp()'), 0, 19);
 $pet_time = strtotime($pet_timestamp);
 
+$site_group = cobrand_site_group();

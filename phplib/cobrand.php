@@ -132,14 +132,14 @@ function cobrand_signature_threshold() {
 }
 
 # This function could be run from cron, so can't just use site_name
-function cobrand_vhost_name() {
+function cobrand_site_group() {
     if (strpos(OPTION_SITE_NAME, ',')) {
         $sites = explode(',', OPTION_SITE_NAME);
-        $site_name = $sites[0];
+        $site_group = $sites[0];
     } else {
-        $site_name = OPTION_SITE_NAME;
+        $site_group = OPTION_SITE_NAME;
     }
-    return $site_name;
+    return $site_group;
 }
 
 function cobrand_admin_rejection_snippets() {

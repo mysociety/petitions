@@ -7,7 +7,6 @@
 //
 // $Id: fns.php,v 1.20 2010-04-27 13:31:20 matthew Exp $
 
-require_once 'cobrand.php';
 require_once "../commonlib/phplib/evel.php";
 require_once '../commonlib/phplib/utility.php';
 
@@ -81,9 +80,9 @@ function pet_send_email_template($to, $template_name, $values, $headers = array(
         
     $values['signature'] = _("-- the ePetitions team");
 
-    $site_name = cobrand_vhost_name();
-    if (file_exists("../templates/emails/$site_name/$template_name")) {
-        $template = file_get_contents("../templates/emails/$site_name/$template_name");
+    global $site_group;
+    if (file_exists("../templates/emails/$site_group/$template_name")) {
+        $template = file_get_contents("../templates/emails/$site_group/$template_name");
     } else {
         $template = file_get_contents("../templates/emails/$template_name");
     }
