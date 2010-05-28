@@ -21,12 +21,12 @@ if (OPTION_SITE_NAME == 'number10') {
 ?>
 
 <p>Downing Street is working in partnership with the non-partisan
-charitable project mySociety to provide a service to allow citizens,
+mySociety to provide a service to allow citizens,
 charities and campaign groups to set up petitions that are hosted on
 the Downing Street website, enabling anyone to address and deliver a
 petition directly to the Prime Minister.</p>
 
-<p>mySociety is a charitable project that runs many of the UK's best-known
+<p>mySociety is the project of a registered charity, and runs many of the UK's best-known
 non-partisan political websites, like
 <a href="http://www.hearfromyourmp.com/">HearFromYourMP</a> and
 <a href="http://www.theyworkforyou.com/">TheyWorkForYou</a>. mySociety is
@@ -57,7 +57,7 @@ the reason why it could not be hosted.</p>
 We've taken that experience to create this site which lets you create
 petitions for your local council.
 
-<p>mySociety is a charitable project that runs many of the UK's best-known
+<p>mySociety is the project of a registered charity, and runs many of the UK's best-known
 non-partisan political websites, like
 <a href="http://www.hearfromyourmp.com/">HearFromYourMP</a> and
 <a href="http://www.theyworkforyou.com/">TheyWorkForYou</a>. mySociety is

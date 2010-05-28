@@ -39,7 +39,7 @@ issues raised in the petition.  In the future we may introduce a facility to
 enable the creator of the petition to send you a maximum of two messages as
 well; they will not have access to any of your details.</p>
 
-<p>mySociety, a charitable organisation, operates the e-petition service on our
+<p>mySociety, the project of a registered charity, operates the e-petition service on our
 behalf. mySociety's parent charity UKCOD is registered under the Data
 Protection Act and, as our supplier, adheres to the terms of this privacy
 policy. mySociety is not permitted to use the information that you provide us
