@@ -252,7 +252,7 @@ if ($ntotal > 0) {
         print "<br style=\"clear: both;\" />$navlinks";
 } else {
     if (!$rss)
-        print '<p>There are currently no petitions in that category.</p>';
+        print '<p>There are currently no petitions in this category.</p>';
 }
 
 if ($rss)
