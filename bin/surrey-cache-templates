@@ -24,7 +24,7 @@ EOF
 $header .= get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/header2.asp');
 $header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>/PARAM_RSS_LINKS\nPARAM_SUBJECTS/;
 $header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>//g;
-$header =~ s/(<meta name="DC\.Identifier".*?")http.*?"/$1PARAM_DC_IDENTIFIER/;
+$header =~ s/(<meta name="DC\.Identifier".*?")http.*?"/$1PARAM_DC_IDENTIFIER"/;
 $footer = get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/footer.asp');
 output('surreycc', $header, $footer);
 
