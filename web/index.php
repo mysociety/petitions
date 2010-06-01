@@ -9,6 +9,7 @@
 
 // Load configuration file
 require_once "../phplib/pet.php";
+require_once "../phplib/cobrand.php";
 require_once "../commonlib/phplib/conditional.php";
 
 if (OPTION_SITE_TYPE == 'multiple') {
