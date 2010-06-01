@@ -13,17 +13,25 @@ require_once "../phplib/cobrand.php";
 require_once "../commonlib/phplib/conditional.php";
 
 if (OPTION_SITE_TYPE == 'multiple') {
+    $body = '';
+    $params = array();
+    if (OPTION_SITE_DOMAINS) {
+        $body = 'and body.ref = ?';
+        $params[] = $site_name;
+    }
     $recent = db_getAll("select petition.ref, content,
         body.ref as body_ref, body.name as body_name
     from petition, body
     where status = 'live' and body_id = body.id
-    order by laststatuschange desc limit 5");
+    $body
+    order by laststatuschange desc limit 5", $params);
     $most = db_getAll("
     select petition.ref, content, cached_signers,
         body.ref as body_ref, body.name as body_name
     from petition, body
     where status = 'live' and body_id = body.id
-    order by cached_signers desc limit 5");
+    $body
+    order by cached_signers desc limit 5", $params);
 } else {
     $recent = db_getAll("select ref, content from petition
     where status = 'live'
