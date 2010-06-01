@@ -260,9 +260,18 @@ class Petition {
     }
 
     // URLs
-    function url_main() {
-        $url = OPTION_BASE_URL . '/';
-        if ($this->rejected_show_part('ref'))
+    function domain() {
+        if (OPTION_SITE_DOMAINS) {
+            $domain = 'http://petitions.' . $this->body_ref() . '.gov.uk';
+        } else {
+            $domain = OPTION_BASE_URL;
+        }
+        return $domain;
+    }
+
+    function url_main($in_creation=false) {
+        $url = $this->domain() . '/';
+        if ($this->rejected_show_part('ref') || $in_creation)
             $url .= $this->h_ref . '/';
         else
             $url .= 'reject?id=' . $this->id();

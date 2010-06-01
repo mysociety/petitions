@@ -310,6 +310,19 @@ sub sentence ($;$$) {
     return $sentence;
 }
 
+=item domain
+
+Returns the base URL, adjusted if we're given a body.
+
+=cut
+sub domain ($) {
+    my ($body) = @_;
+    if (mySociety::Config::get('SITE_DOMAINS')) {
+        return "http://petitions.$body.gov.uk";
+    }
+    return mySociety::Config::get('BASE_URL');
+}
+
 =item url BODY REF
 
 Given a BODY (can be undef) and a REF, construct a URL for this petition.
@@ -319,6 +332,19 @@ sub url ($$) {
     my ($body, $ref) = @_;
     return "/$body/$ref/" if mySociety::Config::get('SITE_TYPE') eq 'multiple' && !mySociety::Config::get('SITE_DOMAINS');
     return "/$ref/";
+}
+
+=item absolute_url PETITION
+
+Given a petition object (returned by get() ), just calls the
+above two to construct a full URL.
+
+=cut
+sub absolute_url($) {
+    my $p = shift;
+    my $url = domain($p->{body_ref});
+    $url .= url($p->{body_ref}, $p->{ref});
+    return $url;
 }
 
 =item detail PETITION

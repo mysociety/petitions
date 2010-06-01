@@ -160,16 +160,12 @@ function send_pending_messages() {
             $data['url'] = pb_person_make_signon_url(null, $petition->creator_email(), 
                 "GET", $petition->url_announce(), $params);
         } elseif ($msg['circumstance'] == 'rejected-once') {
-            $data['url'] = OPTION_BASE_URL . '/' . $petition->ref() . '/' . token_make('e', $petition->id());
+            $data['url'] = $petition->url_main(true) . '/' . token_make('e', $petition->id());
         } elseif ($msg['circumstance'] == 'approved') {
-            $data['url'] = OPTION_BASE_URL . '/' . $petition->ref() . '/';
+            $data['url'] = $petition->url_main();
         } elseif ($msg['circumstance'] == 'rejected-timeout') {
-            if (!$petition->rejected_show_part('ref')) {
-                $data['url'] = OPTION_BASE_URL . '/reject?id=' . $petition->id();
-            } else {
-                $data['url'] = OPTION_BASE_URL . '/' . $petition->ref() . '/';
-            }
-            $data['rejected_url'] = OPTION_BASE_URL . '/list/rejected';
+            $data['url'] = $petition->url_main();
+            $data['rejected_url'] = $petition->domain() . '/list/rejected';
         }
         if ($msg['circumstance'] == 'rejected-once' || $msg['circumstance'] == 'rejected-again'
             || $msg['circumstance'] == 'rejected-timeout') {

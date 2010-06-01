@@ -609,8 +609,8 @@ petitions.</p>';
         $petition_obj = new Petition($pdata);
 #        $petition_obj->render_box(array('showdetails' => true));
 
-        print "<h2>Petition &lsquo;<a href=\"" . OPTION_BASE_URL . '/' .
-            $pdata['ref'] . '/">' . $pdata['ref'] . '</a>&rsquo;';
+        print '<h2>Petition &lsquo;<a href="' . $petition_obj->url_main()
+            . '">' . $pdata['ref'] . '</a>&rsquo;';
         print "</h2>";
 
         print "<ul><li>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  privacy($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
