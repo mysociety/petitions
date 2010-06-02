@@ -71,16 +71,27 @@ function cobrand_category_wrong_action($category_id, $area='') {
         }
         if ($area) {
             # $area is set if we're being called as a result of the form below
-            if (in_array($area, array('tandridge'))) {
+            if (in_array($area, array('tandridge')))
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
-            }
+            if ($area == 'reigate-banstead')
+                return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/';
+            if ($area == 'surreyheath')
+                return 'http://www.surreyheath.gov.uk/council/epetitions/';
+            if ($area == 'waverley')
+                return 'http://www.waverley.gov.uk/site/scripts/documents_info.php?documentID=955';
+            if ($area == 'woking')
+                return 'http://www.woking.gov.uk/council/about/epetitions';
         } else {
             return '
             <input type="hidden" name="category" value="' . $category_id . '"> 
             You have selected a category for which this council is not responsible. Please 
             pick your council in order to be taken to their petition site: 
             <select name="council"> 
+            <option value="reigate-banstead">Reigate &amp; Banstead Borough Council</option> 
+            <option value="surreyheath">Surrey Heath Borough Council</option> 
             <option value="tandridge">Tandridge District Council</option> 
+            <option value="waverley">Waverley Borough Council</option> 
+            <option value="woking">Woking Borough Council</option> 
             </select> 
             <input type="submit" name="toothercouncil" value="Go"> 
             '; 
