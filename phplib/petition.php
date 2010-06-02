@@ -278,6 +278,12 @@ class Petition {
         return $url;
     }
 
+    function from_name() {
+        if (OPTION_SITE_MULTIPLE)
+            return $this->body_name();
+        return OPTION_CONTACT_NAME;
+    }
+
     // Write history to log file 
     function log_event($message, $editor) {
         $q = db_query("insert into petition_log (petition_id, whenlogged, message, editor)

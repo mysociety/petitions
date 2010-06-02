@@ -347,6 +347,18 @@ sub absolute_url($) {
     return $url;
 }
 
+=item from_name PETITION
+
+Given a petition object, returns the body name if we're on a
+multiple site, or the site-wide CONTACT_NAME if not.
+
+=cut
+sub from_name($) {
+    my $p = shift;
+    return $p->{body_name} if mySociety::Config::get('SITE_TYPE') eq 'multiple';
+    return mySociety::Config::get('CONTACT_NAME');
+}
+
 =item detail PETITION
 
 =cut

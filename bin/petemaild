@@ -1715,9 +1715,7 @@ sub make_signer_email ($$) {
     $h{sentence} = Petitions::sentence($petition);
     $h{signature} = '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the petitions system. ]';
 
-    my $from_name = mySociety::Config::get('CONTACT_NAME');
-    $from_name = $petition->{body_name} if mySociety::Config::get('SITE_TYPE') eq 'multiple';
-
+    my $from_name = Petitions::from_name($petition);
     return mySociety::Email::construct_email({
                 _template_ => $sig_template,
                 _parameters_ => \%h,
@@ -1759,9 +1757,7 @@ sub make_petition_email ($) {
 
     $h{signature} = '[ This email has been automatically sent by the petitions system ]';
 
-    my $from_name = mySociety::Config::get('CONTACT_NAME');
-    $from_name = $petition->{body_name} if mySociety::Config::get('SITE_TYPE') eq 'multiple';
-
+    my $from_name = Petitions::from_name($petition);
     return mySociety::Email::construct_email ({
                 _template_ => $pet_template,
                 _parameters_ => \%h,

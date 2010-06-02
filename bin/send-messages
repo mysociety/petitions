@@ -199,7 +199,7 @@ function send_pending_messages() {
             # goes direct to exim instead of through EvEl.
 
             $date = "Date: " . date("r") . "\n";
-            $from = 'From: "' . OPTION_CONTACT_NAME . '" <' . OPTION_CONTACT_EMAIL . ">\n";
+            $from = 'From: "' . $petition->from_name() . '" <' . OPTION_CONTACT_EMAIL . ">\n";
             $to = "To: " . $petition->creator_email() . "\n";
             $precedence = "Precedence: bulk\n";
 
