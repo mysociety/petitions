@@ -155,7 +155,7 @@ function pet_search_form($params=array()) {
     }
 }
 
-function pet_create_response_email($type, $ref, $subject, $body) {
+function pet_create_response_email($type, $url, $subject, $body) {
     if ($type == 'html')
         $type = 'email';
 
@@ -163,7 +163,7 @@ function pet_create_response_email($type, $ref, $subject, $body) {
         0 => array('pipe', 'r'), 
         1 => array('pipe', 'w'),
     );
-    $result = proc_open("./create-preview $type $ref", $descriptorspec, $pipes);
+    $result = proc_open("./create-preview $type $url", $descriptorspec, $pipes);
 
     fwrite($pipes[0], "$subject\n\n$body");
     fclose($pipes[0]);

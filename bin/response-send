@@ -137,10 +137,12 @@ function do_signer_query() {
 
 function get_message_array($message_id) {
     $message_array = db_getRow(
-        "SELECT fromaddress, emailsubject, emailbody, ref
+        "SELECT petition.id, fromaddress, emailsubject, emailbody
         FROM message, petition
         WHERE message.petition_id = petition.id
             AND message.id=?",  $message_id);
+    $petition = new Petition($message_array['id']);
+    $message_array['petition'] = $petition;
     return $message_array;
 }
 
@@ -168,7 +170,7 @@ function pump_message_to_exim($message_id) {
         return;
     }
 
-    $batched_smtp .= "DATA\r\nFrom: \"" . OPTION_CONTACT_NAME . "\" <" . OPTION_CONTACT_EMAIL . ">\r\n";
+    $batched_smtp .= "DATA\r\nFrom: \"" . $message['petition']->from_name() . "\" <" . OPTION_CONTACT_EMAIL . ">\r\n";
     $batched_smtp .= "To: \"" . OPTION_RESPONSE_SEND_TO_NAME . "\" <" . OPTION_CONTACT_EMAIL . ">\r\nPrecedence: bulk\r\n";
     $batched_smtp .= $message['message_body'];
     $batched_smtp .= "\r\n.\r\n";
@@ -205,7 +207,8 @@ function create_message_body($message) {
         $type = 'plain';
         $headers = "Subject: " . $message['emailsubject'] . "\r\n";
     }
-    $out = pet_create_response_email($type, $message['ref'], $message['emailsubject'], $message['emailbody']);
+    $out = pet_create_response_email($type, $message['petition']->url_main(),
+        $message['emailsubject'], $message['emailbody']);
     return $headers . $out;
 }
 

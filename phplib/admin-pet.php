@@ -148,7 +148,7 @@ EOF;
         $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
         $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
         print <<<EOF
-<h2>Government responses</h2>
+<h2>Responses</h2>
 <p>$responses responses sent, to $unique_responses unique petitions
 EOF;
 
@@ -978,7 +978,11 @@ EOF;
             return;
         }
 
-        $email_subject = sprintf("Government response to petition '%s'", $p->ref());
+        if (OPTION_SITE_NAME == 'number10') {
+            $email_subject = sprintf("Government response to petition '%s'", $p->ref());
+        } else {
+            $email_subject = sprintf("Response to petition '%s'", $p->ref());
+        }
         importparams(
             array('message_id', '/^[1-9]\d*$/',      '',     null),
             array('message_subject', '//', '', $email_subject),
@@ -1032,7 +1036,7 @@ EOF;
                         join('</li><li>' , $errors) . '</li></ul></div>';
                 print '<h2>Preview</h2>';
                 $out = $this->respond_generate($q_html_mail ? 'html' : 'plain',
-                    $p->ref(), "$q_message_subject\n\n$email");
+                    $p->url_main(), "$q_message_subject\n\n$email");
                 if ($q_html_mail) {
                     $out = preg_replace('#^.*?<body>#s', '', $out);
                     $out = preg_replace('#</body>.*$#s', '', $out);
@@ -1043,7 +1047,7 @@ EOF;
             }
 ?>
 <p>You are responding to the petition '<?=$p->ref() ?>'.
-To do links in an HTML mail, write them as e.g. <kbd>[http://www.number10.gov.uk/ Number 10 homepage]</kbd>.
+To do links in an HTML mail, write them as e.g. <kbd>[http://www.culture.gov.uk/ Department of Culture]</kbd>.
 </p>
 <form name="petition_admin_respond" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
 <input type="hidden" name="respond" value="1">
@@ -1072,12 +1076,12 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.number10.gov.uk
         print '<p><em>Your response has been recorded and will be sent out shortly.</em></p>';
     }
 
-    function respond_generate($pp, $ref, $input) {
+    function respond_generate($pp, $url, $input) {
         $descriptorspec = array(
             0 => array('pipe', 'r'),
             1 => array('pipe', 'w'),
         );
-        $pp = proc_open("../bin/create-preview $pp $ref", $descriptorspec, $pipes);
+        $pp = proc_open("../bin/create-preview $pp $url", $descriptorspec, $pipes);
         fwrite($pipes[0], $input);
         fclose($pipes[0]);
         $out = '';

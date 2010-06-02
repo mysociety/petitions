@@ -190,7 +190,7 @@ function send_pending_messages() {
                 $type = 'plain';
                 $subject = "Subject: " . $msg['emailsubject'] . "\n";
             }
-            $out = pet_create_response_email($type, $petition->ref(), $msg['emailsubject'], $msg['emailbody']);
+            $out = pet_create_response_email($type, $petition->url_main(), $msg['emailsubject'], $msg['emailbody']);
 
             verbose("sending message #${msg['id']} as raw $type to evel_send, subject '${msg['emailsubject']}'");
 

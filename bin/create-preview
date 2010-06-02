@@ -3,7 +3,7 @@
 # create-html-preview:
 # Used to create government response mail (preview)
 # 
-# Command line arguments are type (html, plain, or email), petition ref, and
+# Command line arguments are type (html, plain, or email), petition URL, and
 # optionally email address to send proof to.
 # Pass in, as STDIN or filename in 4th argument:
 # <Subject>\n\n<Initial paragraph>\n\n\n<Paragraphs of text, separated by \n\n>
@@ -14,9 +14,9 @@ use strict;
 use Net::SMTP;
 use Petitions::HTMLEmail;
 
-my ($type, $ref, $email) = (shift, shift, shift);
-unless ($type && $ref) {
-    print "Usage: $0 TYPE REF [EMAIL] [FILENAME]\n";
+my ($type, $url, $email) = (shift, shift, shift);
+unless ($type && $url) {
+    print "Usage: $0 TYPE URL [EMAIL] [FILENAME]\n";
     exit;
 }
 unless (!$email || $type eq 'email') {
@@ -31,7 +31,7 @@ $text =~ s/^$subject\n+//;
 $text =~ s/\n+$//;
 $text .= "
 
-[http://petitions.number10.gov.uk/$ref/ Petition information]
+[$url Petition information]
 
 If you would like to opt out of receiving further mail on this or any other petitions you signed, please email [optout\@petitions.pm.gov.uk]";
 my $out;
