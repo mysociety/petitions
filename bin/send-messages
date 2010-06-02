@@ -39,7 +39,7 @@ foreach ($switches as $switch) {
     if ($switch[0]=='--help') {
 ?>
 
-No10 Petitions message sending script. This is responsible for sending
+Petitions message sending script. This is responsible for sending
 out government responses to petitions and so forth. It should be run
 periodically from cron.
 

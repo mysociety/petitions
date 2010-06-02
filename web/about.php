@@ -41,7 +41,7 @@ For legal and anti-spam reasons this site cannot host every petition submitted,
 but the rule is to accept everything that meets the terms and conditions of use.</p>
 
 <p>No petition will be rejected unless it violates these terms. And even when
-petitions cannot be hosted No10 will still publish as much of rejected
+petitions cannot be hosted Number 10 will still publish as much of rejected
 petitions as is consistent with legal and anti-spam requirements, including
 the reason why it could not be hosted.</p>
 
