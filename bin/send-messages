@@ -160,7 +160,7 @@ function send_pending_messages() {
             $data['url'] = pb_person_make_signon_url(null, $petition->creator_email(), 
                 "GET", $petition->url_announce(), $params);
         } elseif ($msg['circumstance'] == 'rejected-once') {
-            $data['url'] = $petition->url_main(true) . '/' . token_make('e', $petition->id());
+            $data['url'] = $petition->url_main(true) . token_make('e', $petition->id());
         } elseif ($msg['circumstance'] == 'approved') {
             $data['url'] = $petition->url_main();
         } elseif ($msg['circumstance'] == 'rejected-timeout') {
