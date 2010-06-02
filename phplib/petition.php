@@ -279,7 +279,7 @@ class Petition {
     }
 
     function from_name() {
-        if (OPTION_SITE_MULTIPLE)
+        if (OPTION_SITE_TYPE=='multiple')
             return $this->body_name();
         return OPTION_CONTACT_NAME;
     }
