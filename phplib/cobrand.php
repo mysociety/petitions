@@ -73,6 +73,8 @@ function cobrand_category_wrong_action($category_id, $area='') {
             # $area is set if we're being called as a result of the form below
             if (in_array($area, array('tandridge')))
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            if ($area == 'spelthorne')
+                return 'http://www.spelthorne.gov.uk/epetitions.htm';
             if ($area == 'reigate-banstead')
                 return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/';
             if ($area == 'surreyheath')
@@ -87,7 +89,13 @@ function cobrand_category_wrong_action($category_id, $area='') {
             You have selected a category for which this council is not responsible. Please 
             pick your council in order to be taken to their petition site: 
             <select name="council"> 
+            <!-- <option value="elmbridge">Elmbridge Borough Council</option> -->
+            <!-- <option value="epsom-ewell">Epsom and Ewell Borough Council</option> -->
+            <!-- <option value="guildford">Guildford Borough Council</option> -->
+            <!-- <option value="molevalley">Mole Valley District Council</option> -->
             <option value="reigate-banstead">Reigate &amp; Banstead Borough Council</option> 
+            <!-- <option value="runnymede">Runnymede Borough Council</option> -->
+            <option value="spelthorne">Spelthorne Borough Council</option>
             <option value="surreyheath">Surrey Heath Borough Council</option> 
             <option value="tandridge">Tandridge District Council</option> 
             <option value="waverley">Waverley Borough Council</option> 
