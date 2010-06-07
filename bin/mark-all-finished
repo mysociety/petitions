@@ -1,0 +1,25 @@
+#!/usr/bin/php -q
+<?php
+/* 
+ * mark-all-finished:
+ * One-off script to close all open petitions
+ *
+ * Copyright (c) 2010 UK Citizens Online Democracy. All rights reserved.
+ * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
+ *
+ */
+
+chdir(dirname($_SERVER['SCRIPT_FILENAME']));
+require_once "../phplib/petcli.php";
+require_once '../phplib/fns.php';
+require_once '../phplib/petition.php';
+require_once '../commonlib/phplib/db.php';
+
+$q = db_query("select id from petition where status='live'");
+while ($petition = db_fetch_array($q)) {
+    $p = new Petition($petition['id']);
+    $current_deadline = $p->data['deadline'];
+    db_query("update petition set deadline='2010-06-06', status='finished', lastupdate = ms_current_timestamp() where id=?", $petition['id']);
+    $p->log_event("Script altered deadline of petition from $current_deadline to 2010-06-06", 'mark-all-finished');
+}
+#db_commit();
