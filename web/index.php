@@ -140,7 +140,11 @@ function front_most_recent($recent) {
         petition_row($petition, $c++);
     }
     if (!count($recent)) {
-        print '<li>None, you can <a href="/new">create a petition</a>.</li>';
+        if (OPTION_CREATION_DISABLED) {
+            print '<li><em>There are currently no petitions.</em></li>';
+        } else {
+            print '<li><em>None</em>; you can <a href="/new">create a petition</a>.</li>';
+        }
     }
 ?>
 </ul>
@@ -161,7 +165,11 @@ function front_most_popular($most) {
         petition_row($petition, $c++);
     }
     if (!count($most)) {
-        print '<li>None, you can <a href="/new">create a petition</a>.</li>';
+        if (OPTION_CREATION_DISABLED) {
+            print '<li><em>There are currently no petitions.</em></li>';
+        } else {
+            print '<li><em>None</em>; you can <a href="/new">create a petition</a>.</li>';
+        }
     }
 ?>
 </ul>
