@@ -73,6 +73,8 @@ function cobrand_category_wrong_action($category_id, $area='') {
             # $area is set if we're being called as a result of the form below
             if (in_array($area, array('tandridge')))
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            if ($area == 'epsom-ewell')
+                return 'http://www.epsom-ewell.gov.uk/EEBC/Council/E-petitions.htm';
             if ($area == 'spelthorne')
                 return 'http://www.spelthorne.gov.uk/epetitions.htm';
             if ($area == 'reigate-banstead')
@@ -90,7 +92,7 @@ function cobrand_category_wrong_action($category_id, $area='') {
             pick your council in order to be taken to their petition site: 
             <select name="council"> 
             <!-- <option value="elmbridge">Elmbridge Borough Council</option> -->
-            <!-- <option value="epsom-ewell">Epsom and Ewell Borough Council</option> -->
+            <option value="epsom-ewell">Epsom and Ewell Borough Council</option>
             <!-- <option value="guildford">Guildford Borough Council</option> -->
             <!-- <option value="molevalley">Mole Valley District Council</option> -->
             <option value="reigate-banstead">Reigate &amp; Banstead Borough Council</option> 
