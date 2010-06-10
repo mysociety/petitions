@@ -212,10 +212,11 @@ function textarea($name, $val, $cols, $rows, $errors) {
 }
 
 function textfield($name, $val, $size, $errors, $after = '') {
-    printf('<input type="text" name="%s" id="%s" size="%d" value="%s"%s />',
+    printf('<input type="text" name="%s" id="%s" size="%d" value="%s"%s%s />',
             htmlspecialchars($name), htmlspecialchars($name),
             $size,
             htmlspecialchars(is_null($val) ? '' : $val),
+            $name=='organisation' ? '' : ' aria-required="true"',
             array_key_exists($name, $errors) ? ' class="error"' : '');
     if ($after)
         print ' <small>' . $after . '</small>';
@@ -302,8 +303,8 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 
 <p>Please note that you must be a <?=cobrand_creator_must_be()?> to create a petition.</p>
 
-<p><strong><?
-    echo $petition_prefix;
+<p><?
+    echo '<strong><label for="pet_content">' . $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
         if (OPTION_SITE_DOMAINS) {
             $body = db_getRow('select id, name from body where ref=?', $site_name);
@@ -314,7 +315,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
         print $body['name'];
         echo ' to';
     }
-    echo '...</strong> <br />';
+    echo '...</label></strong> <br />';
     textfield('pet_content', $data['pet_content'], 70, $errors);
     echo '<br />';
     echo '(Please write a sentence';
@@ -326,18 +327,18 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     echo ' to take.)';
 ?>
 </p>
-<p>More details about your petition (do not use block capitals &ndash; 1000 characters maximum):<br />
+<p><label for="detail">More details about your petition (do not use block capitals &ndash; 1000 characters maximum):</label><br />
     <?
     textarea('detail', $data['detail'], 40, 7, $errors);
     ?>
 </p>
-<p>Requested duration:
+<p><label for="rawdeadline">Requested duration:</label>
     <?
     textfield('rawdeadline', $data['rawdeadline'], 15, $errors, '(e.g. "2 months"; maximum 1 year)');
     ?>
 </p>
 
-<p><?=_('Choose a short name for your petition (6 to 16 letters):') ?>
+<p><label for="ref"><?=_('Choose a short name for your petition (6 to 16 letters):') ?></label>
     <?
     textfield('ref', $data['ref'], 16, $errors);
     ?>
@@ -347,8 +348,8 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 <?
     if (!cobrand_creation_category_first()) {
 ?>
-<p>Please select a category for your petition:
-<select name="category">
+<p><label for="category">Please select a category for your petition:</label>
+<select name="category" id="category" aria-required="true">
 <option value="">-- Select a category --</option><?
     foreach (cobrand_categories() as $id => $category) {
         if (!$id) continue;
@@ -397,7 +398,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
 
     foreach ($fields as $name => $desc) {
         if (is_string($desc))
-            printf('<p><label>%s:</label> ', htmlspecialchars($desc));
+            printf('<p><label for="%s">%s:</label> ', $name, htmlspecialchars($desc));
 
         if (!array_key_exists($name, $data))
             $data[$name] = '';
