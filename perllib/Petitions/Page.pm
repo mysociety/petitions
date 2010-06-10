@@ -359,19 +359,19 @@ the Armed Forces without a postcode, please select from this list:</label>',
           $q->p( $must . ' Please enter your name only; signatures containing other text may be removed by the petitions team.'),
           $q->p("I, ",
                 $q->textfield(
-                    -name => 'name', -id => 'name', -size => 20
+                    -name => 'name', -id => 'name', -size => 20, -aria_required => 'true'
                 ),
                 ", sign up to the petition."
             )
         . $q->p( '<label for="email">Your email:</label>',
-                $q->textfield(-name => 'email', -size => 20, -id => 'email'))
+                $q->textfield(-name => 'email', -size => 20, -id => 'email', -aria_required => 'true'))
         . $q->p( '<label for="email2">Confirm email:</label>',
-                $q->textfield(-name => 'email2', -size => 20, -id => 'email2'))
+                $q->textfield(-name => 'email2', -size => 20, -id => 'email2', -aria_required => 'true'))
         . $q->p($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
         )
         . $q->div({-id => 'signFormRight' },
           $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
-                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:95%') ),
+                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:95%', -aria_required => 'true') ),
           $q->p( '<label for="postcode">' . $postcode_label . '</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),

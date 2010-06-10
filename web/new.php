@@ -665,8 +665,9 @@ of this page in your name, and that you agree to the terms and conditions below.
 <?
     if (OPTION_SITE_APPROVAL) {
 ?>
-<br /><label for="comments">If you have any special requests concerning your petition, please include them
-here:</label></p>
+<br /><label for="comments">If you have any special requests concerning your
+petition, or information about your petition you would like us to know that you
+do not wish to be public, please include them here:</label></p>
 <p>
 <?
         textarea('comments', $data['comments'], 40, 7, false, $errors);
