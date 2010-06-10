@@ -203,10 +203,11 @@ function errorlist($errors) {
                 . '</li></ul></div>';
 }
 
-function textarea($name, $val, $cols, $rows, $errors) {
-    printf('<textarea name="%s" cols="%d" rows="%d"%s>%s</textarea>',
-            htmlspecialchars($name),
+function textarea($name, $val, $cols, $rows, $required, $errors) {
+    printf('<textarea id="%s" name="%s" cols="%d" rows="%d"%s%s>%s</textarea>',
+            htmlspecialchars($name), htmlspecialchars($name),
             $cols, $rows,
+            $required ? ' aria-required="true"' : '',
             array_key_exists($name, $errors) ? ' class="error"' : '',
             htmlspecialchars(is_null($val) ? '' : $val));
 }
@@ -329,7 +330,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 </p>
 <p><label for="detail">More details about your petition (do not use block capitals &ndash; 1000 characters maximum):</label><br />
     <?
-    textarea('detail', $data['detail'], 40, 7, $errors);
+    textarea('detail', $data['detail'], 40, 7, false, $errors);
     ?>
 </p>
 <p><label for="rawdeadline">Requested duration:</label>
@@ -404,7 +405,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
             $data[$name] = '';
         
         if ($name == 'address') {
-            textarea($name, $data[$name], 30, 4, $errors);
+            textarea($name, $data[$name], 30, 4, true, $errors);
         } elseif ($name == 'overseas') {
             if (!cobrand_creation_within_area_only()) {
 ?>
@@ -664,11 +665,11 @@ of this page in your name, and that you agree to the terms and conditions below.
 <?
     if (OPTION_SITE_APPROVAL) {
 ?>
-<br />If you have any special requests concerning your petition, please include them
-here:</p>
+<br /><label for="comments">If you have any special requests concerning your petition, please include them
+here:</label></p>
 <p>
-<textarea name="comments" rows="7" cols="40"><? if (isset($data['comments'])) print htmlspecialchars($data['comments']) ?></textarea>
 <?
+        textarea('comments', $data['comments'], 40, 7, false, $errors);
     }
 ?>
 </p>
