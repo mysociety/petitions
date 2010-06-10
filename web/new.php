@@ -286,7 +286,7 @@ appropriate place.
 /* petition_form_main [DATA [ERRORS]]
  * Display the first stage of the petitions form. */
 function petition_form_main($steps, $step, $data = array(), $errors = array()) {
-    global $petition_prefix;
+    global $petition_prefix, $site_name, $site_group;
     if (OPTION_SITE_NAME == 'number10') {
         echo 'There are 5 stages to the petition process:';
         echo petition_breadcrumbs(0);
@@ -306,7 +306,6 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     echo $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
         if (OPTION_SITE_DOMAINS) {
-            global $site_name;
             $body = db_getRow('select id, name from body where ref=?', $site_name);
         } else {
             $body = db_getRow('select id, name from body where id=?', $data['body']);
@@ -317,9 +316,15 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     }
     echo '...</strong> <br />';
     textfield('pet_content', $data['pet_content'], 70, $errors);
+    echo '<br />';
+    echo '(Please write a sentence';
+    if ($site_group != 'surreycc') {
+        echo ', preferably starting with a verb,';
+    }
+    echo ' that describes what action you would like';
+    echo OPTION_SITE_NAME=='number10' ? 'the Prime Minister or Government' : OPTION_SITE_PETITIONED;
+    echo ' to take.)';
 ?>
-<br />(Please write a sentence, preferably starting with a verb, that describes what action 
-you would like <?=OPTION_SITE_NAME=='number10'?'the Prime Minister or Government':OPTION_SITE_PETITIONED?> to take.)
 </p>
 <p>More details about your petition (do not use block capitals &ndash; 1000 characters maximum):<br />
     <?
@@ -378,28 +383,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
             'organisation' =>   _('Organisation'),
             'address' =>        _('Address'),
             'postcode' =>       _('UK postcode'),
-            'overseas' => array(
-                '-- Select --',
-                'Expatriate',
-                'Armed Forces',
-                'Anguilla',
-                'Ascension Island',
-                'Bermuda',
-                'British Antarctic Territory',
-                'British Indian Ocean Territory',
-                'British Virgin Islands',
-                'Cayman Islands',
-                'Channel Islands',
-                'Falkland Islands',
-                'Gibraltar',
-                'Isle of Man',
-                'Montserrat',
-                'Pitcairn Island',
-                'St Helena',
-                'S. Georgia and the S. Sandwich Islands',
-                'Tristan da Cunha',
-                'Turks and Caicos Islands',
-            ),
+            'overseas' =>       cobrand_overseas_dropdown(),
     );
     if (cobrand_creation_ask_for_address_type()) {
         $fields['address_type'] = _('Type of address');

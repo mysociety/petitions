@@ -49,6 +49,39 @@ function cobrand_creator_must_be() {
     }
 }
 
+function cobrand_overseas_dropdown() {
+    global $site_group;
+    if ($site_group == 'surreycc') {
+        return array(
+            '-- Select --',
+            'Armed Forces',
+            'Non UK address'
+        );
+    }
+    return array(
+        '-- Select --',
+        'Expatriate',
+        'Armed Forces',
+        'Anguilla',
+        'Ascension Island',
+        'Bermuda',
+        'British Antarctic Territory',
+        'British Indian Ocean Territory',
+        'British Virgin Islands',
+        'Cayman Islands',
+        'Channel Islands',
+        'Falkland Islands',
+        'Gibraltar',
+        'Isle of Man',
+        'Montserrat',
+        'Pitcairn Island',
+        'St Helena',
+        'S. Georgia and the S. Sandwich Islands',
+        'Tristan da Cunha',
+        'Turks and Caicos Islands',
+    );
+}
+
 function cobrand_category_okay($category_id) {
     global $site_name;
     if (in_array($site_name, array('tandridge', 'woking')) && 

@@ -19,3 +19,6 @@ form#signForm label {
     width: 8em;
 }
 
+.loudmessage {
+    font-size: 100%;
+}

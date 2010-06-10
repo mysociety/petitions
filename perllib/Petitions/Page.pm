@@ -48,6 +48,18 @@ sub site_name {
     return $site_name;
 }
 
+# Work out which group of sites we're on
+sub site_group {
+    my $site_group;
+    if (mySociety::Config::get('SITE_NAME') =~ /,/) {
+        my @sites = split /,/, mySociety::Config::get('SITE_NAME');
+        $site_group = $sites[0];
+    } else {
+        $site_group = mySociety::Config::get('SITE_NAME');
+    }
+    return $site_group;
+}
+
 sub do_fastcgi {
     my $func = shift;
 
@@ -294,31 +306,39 @@ sub sign_box ($$) {
         $must = 'You must be a British citizen or resident to sign the petition.';
     }
 
+    my $overseas = [ '-- Select --' ];
+    if (site_group() eq 'surreycc') {
+        push @$overseas, (
+            'Armed Forces',
+            'Non UK address',
+        );
+    } else {
+        push @$overseas, (
+            'Expatriate',
+            'Armed Forces',
+            'Anguilla',
+            'Ascension Island',
+            'Bermuda',
+            'British Antarctic Territory',
+            'British Indian Ocean Territory',
+            'British Virgin Islands',
+            'Cayman Islands',
+            'Channel Islands',
+            'Falkland Islands',
+            'Gibraltar',
+            'Isle of Man',
+            'Montserrat',
+            'Pitcairn Island',
+            'St Helena',
+            'S. Georgia and the S. Sandwich Islands',
+            'Tristan da Cunha',
+            'Turks and Caicos Islands',
+        );
+    }
     my $expat = $q->p( '<label class="wide" for="overseas">Or, if you\'re an
         expatriate, you\'re in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>', 
-            $q->popup_menu(-name=>'overseas', -id=>'overseas', -style=>'width:100%', -values=>[
-                '-- Select --',
-                'Expatriate',
-                'Armed Forces',
-                'Anguilla',
-                'Ascension Island',
-                'Bermuda',
-                'British Antarctic Territory',
-                'British Indian Ocean Territory',
-                'British Virgin Islands',
-                'Cayman Islands',
-                'Channel Islands',
-                'Falkland Islands',
-                'Gibraltar',
-                'Isle of Man',
-                'Montserrat',
-                'Pitcairn Island',
-                'St Helena',
-                'S. Georgia and the S. Sandwich Islands',
-                'Tristan da Cunha',
-                'Turks and Caicos Islands',
-                ])
+        $q->popup_menu(-name=>'overseas', -id=>'overseas', -style=>'width:100%', -values=> $overseas)
     );
 
     my $postcode_label = 'UK postcode:';
