@@ -372,7 +372,7 @@ sub detail ($) {
     $detail =~ s/\n\n+/<\/p> <p>/g;
     if ($detail) {
         $detail = <<EOF;
-<div id="detail"><a name="detail"></a>
+<div id="more_detail"><a name="detail"></a>
 <h3 class="page_title_border">More details from petition creator</h3>
 <p>$detail</p></div>
 EOF
