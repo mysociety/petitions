@@ -8,6 +8,8 @@
 // $Id: steps.php,v 1.15 2010-01-14 18:26:15 matthew Exp $
 
 require_once '../phplib/pet.php';
+require_once '../phplib/cobrand.php';
+
 $page_title = _('Create a new petition');
 page_header($page_title, array());
 petition_form_intro();
