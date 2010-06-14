@@ -301,7 +301,7 @@ sub sign_box ($$) {
 
     my $must;
     if ($p->{body_area_id} || ($p->{body_name} && $p->{body_name} =~ /council/i) || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
-        $must = 'You must be a council resident to sign the petition.';
+        $must = 'You need to live, work or study within the council area to sign the petition.';
     } else {
         $must = 'You must be a British citizen or resident to sign the petition.';
     }
