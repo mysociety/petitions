@@ -295,7 +295,7 @@ contains misleading information we reserve the right to post an
 interim response to highlight this point to anyone visiting to 
 sign the petition.</p>
 
-<h3>Common causes for rejection</h3>
+<h2>Common causes for rejection</h2>
 
 <p>In order to help you avoid common problems, we've produced this list:</p>
 
@@ -518,3 +518,13 @@ function cobrand_terms_elsewhere() {
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+e-petitions?opendocument';
     return null;
 }
+
+function cobrand_main_heading($text) {
+    global $site_name;
+    if ($site_name == 'surreycc')
+        return "<h2>$text</h2>";
+    elseif ($site_name == 'number10')
+        return "<h3 class='page_title_border'>$text</h3>";
+    return "<h3>$text</h3>";
+}
+

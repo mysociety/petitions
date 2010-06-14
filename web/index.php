@@ -127,9 +127,9 @@ function petition_row($petition, $c) {
 }
 
 function front_most_recent($recent) {
-    echo "<div id='most_recent'>
-<h3 class='page_title_border'>Most recent petitions</h3>
-<p>We the undersigned petition";
+    echo "<div id='most_recent'>";
+    echo cobrand_main_heading('Most recent petitions');
+    echo '<p>We the undersigned petition';
     if (OPTION_SITE_TYPE == 'multiple') {
         echo ': <ul>';
     } else {
@@ -154,12 +154,10 @@ function front_most_recent($recent) {
 }
 
 function front_most_popular($most) {
-?>
-<div id="most_popular">
-<h3 class="page_title_border">Most popular open petitions</h3>
-<p>We the undersigned petition <?=OPTION_SITE_PETITIONED?> to&hellip;</p>
-<ul>
-<?
+    echo 'div id="most_popular">';
+    echo cobrand_main_heading('Most popular open petitions');
+    echo '<p>We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to&hellip;</p>';
+    echo '<ul>';
     $c = 1;
     foreach ($most as $petition) {
         petition_row($petition, $c++);
@@ -179,11 +177,9 @@ function front_most_popular($most) {
 }
 
 function front_how_it_works() {
+    echo '<div id="front_how">';
+    echo cobrand_main_heading('How it works');
 ?>
-
-<div id="front_how">
-<h3 class="page_title_border" style="clear: both">How it works</h3>
-
 <p>You can view and sign any <a href="/list">current petitions</a>, and see
 <?=OPTION_SITE_NAME=='number10' ? 'the Government' : 'our' ?> response to any
 <a href="/list/closed">completed petitions</a>.

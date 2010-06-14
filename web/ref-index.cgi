@@ -29,6 +29,7 @@ use mySociety::WatchUpdate;
 
 use Petitions;
 use Petitions::Page;
+use Cobrand;
 
 # accept_loop
 # Accept and handle FastCGI requests.
@@ -145,11 +146,11 @@ sub main () {
     $html .= Petitions::Page::display_box($q, $p, detail=>1);
     $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
     if ($p->{status} eq 'live' && (my $disabled = mySociety::Config::get('SIGNING_DISABLED'))) {
-        $html .= $q->h3('Sign a petition')
+        $html .= Cobrand::main_heading('Sign a petition')
             if $p->{response};
         $html .= $disabled;
     } elsif ($p->{status} eq 'live' && !$show_signed_box) {
-        $html .= $q->h3('Sign a petition')
+        $html .= Cobrand::main_heading('Sign a petition')
             if $p->{response};
         $html .= Petitions::Page::sign_box($q, $p);
     }
@@ -158,7 +159,7 @@ sub main () {
         $html .= Petitions::Page::signatories_box($q, $p);
     } else {
         $html .= $q->start_div({-id => 'signatories'})
-            . $q->h3('Petition Rejected');
+            . Cobrand::main_heading('Petition Rejected');
         $html .= Petitions::Page::reject_box($q, $p);
         $html .= $q->end_div();
     }

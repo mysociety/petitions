@@ -755,7 +755,6 @@ function petition_create($data) {
 
         global $page_title;
         $page_title = _("Thank you for resubmitting your petition");
-        echo "<h2>$page_title</h2>";
 ?>
     <p class="noprint loudmessage">We have resubmitted your petition for approval. 
     You'll be notified shortly with the results.</p>
@@ -798,7 +797,6 @@ function petition_create($data) {
 
         global $page_title;
         $page_title = _('Now check your email');
-        echo "<h2>$page_title</h2>";
         if (OPTION_SITE_APPROVAL) {
 ?>
     <p class="noprint loudmessage">We have sent you an email to confirm

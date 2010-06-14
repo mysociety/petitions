@@ -29,6 +29,7 @@ use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
 
 use Petitions;
+use Cobrand;
 
 # Work out which site we're on
 sub site_name {
@@ -406,7 +407,7 @@ sub response_box ($$) {
         $title .= ' ' . (@responses-$i) if @responses > 1;
         $title .= ', ' . Petitions::pretty_date($responsedate);
         $title .= ', while petition was still open' if ($responsedate lt $p->{deadline});
-        $out .= $q->h3({ -class => 'page_title_border' }, $title) .
+        $out .= Cobrand::main_heading($title) .
             mySociety::HTMLUtil::nl2br(mySociety::HTMLUtil::ms_make_clickable(ent($response)));
     }
     $out .= '</div>';
@@ -480,7 +481,7 @@ sub signatories_box ($$) {
 
     my $html =
         $q->start_div({-id => 'signatories'})
-            . $q->h3({-class => 'page_title_border' }, '<a name="signers"></a>Current signatories');
+            . Cobrand::main_heading('<a name="signers"></a>Current signatories');
 
     if ($p->{signers} == 1 && !$q->param('signed')) {
         $html .=

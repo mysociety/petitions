@@ -24,6 +24,7 @@ use mySociety::Web qw(ent);
 
 use Petitions;
 use Petitions::Page;
+use Cobrand;
 
 # accept_loop
 # Accept and handle FastCGI requests.
@@ -51,7 +52,7 @@ sub main () {
     $html .= Petitions::Page::display_box($q, $p);
     $html .= Petitions::detail($p);
     $html .= $q->start_div({-id => 'signatories'})
-        . $q->h3('Petition Rejected');
+        . Cobrand::main_heading('Petition Rejected');
     $html .= Petitions::Page::reject_box($q, $p);
     $html .= $q->end_div();
     my $stat = 'View.' . $p->{ref};
