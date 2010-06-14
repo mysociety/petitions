@@ -112,6 +112,8 @@ function cobrand_category_wrong_action($category_id, $area='') {
                 return 'http://www.spelthorne.gov.uk/epetitions.htm';
             if ($area == 'reigate-banstead')
                 return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/';
+            if ($area == 'runnymede')
+                return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.bbcf55f3a4a758ceb14229a7af8ca028/';
             if ($area == 'surreyheath')
                 return 'http://www.surreyheath.gov.uk/council/epetitions/';
             if ($area == 'waverley')
@@ -129,7 +131,7 @@ function cobrand_category_wrong_action($category_id, $area='') {
             <!-- <option value="guildford">Guildford Borough Council</option> -->
             <!-- <option value="molevalley">Mole Valley District Council</option> -->
             <option value="reigate-banstead">Reigate &amp; Banstead Borough Council</option> 
-            <!-- <option value="runnymede">Runnymede Borough Council</option> -->
+            <option value="runnymede">Runnymede Borough Council</option>
             <option value="spelthorne">Spelthorne Borough Council</option>
             <option value="surreyheath">Surrey Heath Borough Council</option> 
             <option value="tandridge">Tandridge District Council</option> 

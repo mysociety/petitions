@@ -22,3 +22,10 @@ form#signForm label {
 .loudmessage {
     font-size: 100%;
 }
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #02614D;
+}
+.petition_view_tabs span {
+    background-color: #02614D;
+}
