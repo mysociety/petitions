@@ -55,6 +55,7 @@ my ($wth, $action, $verbose, $pause, $multispawn) = mySociety::WebTestHarness::s
     actions => \@actions,
     actions_desc => \%actions_desc,
     dbname => 'PET',
+    no_validate_html => 1,
 });
 
 # Set up options
