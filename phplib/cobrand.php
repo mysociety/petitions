@@ -138,7 +138,7 @@ function cobrand_category_wrong_action($category_id, $area='') {
             <option value="waverley">Waverley Borough Council</option> 
             <option value="woking">Woking Borough Council</option> 
             </select> 
-            <input type="submit" name="toothercouncil" value="Go"> 
+            <input type="submit" name="toothercouncil" value="Go" class="button">
             '; 
         }
     }

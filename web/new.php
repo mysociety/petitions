@@ -177,13 +177,11 @@ function startform() {
 function nextprevbuttons($steps, $i) {
     print '<p align="right">';
     if ($i < count($steps)) {
-        printf('<input type="submit" name="tostep%s" value="%s" />',
-                $steps[$i+1], _('Next'));
+        submit_button('tostep' . $steps[$i+1], 'Next');
         if ($i > 1) print "<br />";
     }
     if ($i > 1) {
-        printf('<input type="submit" name="tostep%s" value="%s" />',
-                $steps[$i-1], _('Previous'));
+        submit_button('tostep' . $steps[$i-1], 'Previous');
     }
     print '</p>';
 }
@@ -221,6 +219,10 @@ function textfield($name, $val, $size, $errors, $after = '') {
             array_key_exists($name, $errors) ? ' class="error"' : '');
     if ($after)
         print ' <small>' . $after . '</small>';
+}
+
+function submit_button($name, $value) {
+    printf('<input type="submit" name="%s" value="%s" class="button" />', $name, $value);
 }
 
 /* petition_search_first
@@ -634,7 +636,9 @@ longer be valid.
 </p>
 
 <p align="right">
-<input type="submit" name="tostepmain" value="Change petition text" />
+<?
+    submit_button('tostepmain', 'Change petition text');
+?>
 </p>
 
 <p>Please also check your contact details:</p>
@@ -656,7 +660,9 @@ longer be valid.
 </ul>
 
 <p align="right">
-<input type="submit" name="tostepyou" value="Change my contact details" />
+<?
+    submit_button('tostepyou', 'Change my contact details');
+?>
 </p>
 
 <p>When you're happy with your petition, <strong>click "Create"</strong> to
@@ -676,7 +682,9 @@ do not wish to be public, please include them here:</label></p>
 </p>
 
 <p align="right">
-<input type="submit" name="tocreate" value="Create" />
+<?
+    submit_button('tocreate', 'Create');
+?>
 </p>
 
 <h3 class="page_title_border">Terms and Conditions</h3>
@@ -689,7 +697,9 @@ call for changes of policy. There will be no attempt to exclude critical views
 and decisions will not be made on a party political basis.</p>
 
 <p align="right">
-<input type="submit" name="tocreate" value="Create" />
+<?
+    submit_button('tocreate', 'Create');
+?>
 </p>
 
 <?
