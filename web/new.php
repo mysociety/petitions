@@ -429,7 +429,7 @@ the Armed Forces without a postcode, please select from this list:</label>
         } elseif ($name == 'address_type') {
             $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
             $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
-            printf('<p><span class="label">%s:</label> ', $name, 'Type of address');
+            print '<p><span class="label">Type of address:</span> ';
             print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . ' />
 <label class="radio" for="address_type_home">Home</label>
 <input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . ' />
