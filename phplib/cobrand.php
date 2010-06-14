@@ -505,3 +505,10 @@ recognisable action.</li>
     }
 }
 
+function cobrand_rss_explanation_link() {
+    global $site_name;
+    if ($site_name == 'surreycc')
+        return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/RSS+feeds?opendocument';
+    return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
+}
+

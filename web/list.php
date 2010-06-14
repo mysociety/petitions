@@ -261,7 +261,7 @@ if ($rss)
 else {
 ?>
 <p align="right"><a href="<?=url_new("/rss/list/$q_type", true, 'offset', null, 'type', null) ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $heading ?>" /> RSS</a>
-| <a href="http://news.bbc.co.uk/1/hi/help/3223484.stm">What is RSS?</a></p>
+| <a href="<?=cobrand_rss_explanation_link() ?>">What is RSS?</a></p>
 <?
     page_footer('List.' . $q_type);
 }

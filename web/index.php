@@ -86,11 +86,11 @@ function front_actions() {
     echo '<div id="petition_actions"> <ul>';
     if (!OPTION_CREATION_DISABLED) {
         echo '<li id="action_create"><a href="/new"><img src="/images/clipboard-add.gif" alt="" class="noborder"
-/><br />Create a Petition</a></li>';
+/><br />Create a petition</a></li>';
     }
 
     echo '<li id="action_view"><a href="/list"><img src="/images/clipboard-write.gif" alt="" class="noborder"
-/><br />View Petitions</a></li>
+/><br />View petitions</a></li>
 </ul>
 </div>';
 }
@@ -148,7 +148,7 @@ function front_most_recent($recent) {
     }
 ?>
 </ul>
-<p align="right"><a href="/list/open?sort=date" title="More recent petitions">More</a></p>
+<p align="right"><a href="/list/open?sort=date">More recent petitions</a></p>
 </div>
 <?
 }
@@ -173,7 +173,7 @@ function front_most_popular($most) {
     }
 ?>
 </ul>
-<p align="right"><a href="/list/open?sort=signers" title="More popular petitions">More</a></p>
+<p align="right"><a href="/list/open?sort=signers">More popular petitions</a></p>
 </div>
 <?
 }
