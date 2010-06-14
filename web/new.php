@@ -270,7 +270,7 @@ function petition_form_category($steps, $step, $data = array(), $errors = array(
 
 <p>First you must pick the relevant category for your petition. This is because the council
 is only responsible for certain matters, and we need to make sure you are taken to the
-appropriate place.
+appropriate place.</p>
 
 <p><label for="category">Category:</label>
 <select name="category" id="category">
@@ -316,7 +316,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
         } else {
             $body = db_getRow('select id, name from body where id=?', $data['body']);
         }
-        print "<input type='hidden' name='body' value='$body[id]'>";
+        print "<input type='hidden' name='body' value='$body[id]' />";
         print $body['name'];
         echo ' to';
     }
@@ -429,9 +429,9 @@ the Armed Forces without a postcode, please select from this list:</label>
         } elseif ($name == 'address_type') {
             $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
             $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
-            print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . '>
+            print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . ' />
 <label class="radio" for="address_type_home">Home</label>
-<input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . '>
+<input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . ' />
 <label class="radio" for="address_type_work">Work</label>';
         } else {
             $size = 20;

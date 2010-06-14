@@ -145,6 +145,7 @@ sub header ($$%) {
     $out =~ s/PARAM_SUBJECTS/$subjects/;
     $out =~ s/PARAM_DC_IDENTIFIER/$ent_url/;
     $out =~ s/PARAM_TITLE/$ent_title/g;
+    $out =~ s/PARAM_H1/$ent_title/g;
     $out =~ s/PARAM_DEV_WARNING/$devwarning/;
     $out =~ s/PARAM_RSS_LINKS//g;
     $out =~ s/PARAM_BODYID//g;
@@ -377,7 +378,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         ),
         $expat,
         $q->p( { -id => 'signatureSubmit', -align => 'right' },
-            $q->submit(-name => 'submit', -value => 'Sign')
+            $q->submit({ -class => 'button' }, -name => 'submit', -value => 'Sign')
         )
         )
         . $q->end_form();
