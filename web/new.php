@@ -272,7 +272,8 @@ function petition_form_category($steps, $step, $data = array(), $errors = array(
 is only responsible for certain matters, and we need to make sure you are taken to the
 appropriate place.
 
-<select name="category">
+<p><label for="category">Category:</label>
+<select name="category" id="category">
 <option value="">-- Select a category --</option><?
     foreach (cobrand_categories() as $id => $category) {
         if (!$id) continue;

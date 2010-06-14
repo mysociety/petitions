@@ -131,9 +131,9 @@ function cobrand_category_wrong_action($category_id, $area='') {
         } else {
             return '
             <input type="hidden" name="category" value="' . $category_id . '"> 
-            You have selected a category for which this council is not responsible. Please 
-            pick your council in order to be taken to their petition site: 
-            <select name="council"> 
+            You have selected a category for which this council is not responsible. <label for="council_pick">Please
+            pick your council in order to be taken to their petition site:</label>
+            <select name="council" id="council_pick">
             <!-- <option value="elmbridge">Elmbridge Borough Council</option> -->
             <option value="epsom-ewell">Epsom and Ewell Borough Council</option>
             <!-- <option value="guildford">Guildford Borough Council</option> -->
