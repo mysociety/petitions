@@ -23,6 +23,11 @@ form#signForm label {
     font-size: 100%;
 }
 
+input.error, input[type=text].error, select.error, input[type=radio].error, textarea.error {
+    border: solid 1px #df0000;
+    background-color: #ffefef;
+}
+
 p.petition_view_tabs {
     border-bottom: solid 2px #02614D;
 }
