@@ -119,6 +119,7 @@ else {
             'rss'=> array(
                     $heading => url_new("/rss/list/$q_type", true, 'offset', null, 'type', null)
              ),
+             'h1' => 'List petitions',
     ));
 }
 

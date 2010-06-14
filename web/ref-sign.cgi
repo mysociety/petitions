@@ -12,6 +12,7 @@ my $rcsid = ''; $rcsid .= '$Id: ref-sign.cgi,v 1.58 2010-03-31 15:29:34 matthew 
 use strict;
 
 use Digest::HMAC_SHA1 qw(hmac_sha1 hmac_sha1_hex);
+use Error qw(:try);
 use MIME::Base64;
 use utf8;
 use POSIX;
@@ -100,10 +101,14 @@ sub signup_page ($$) {
         if (defined($qp_postcode) && defined($qp_overseas));
 
     if (mySociety::Config::get('SITE_TYPE') eq 'multiple' && $qp_postcode && $p->{body_area_id}) {
-        my $areas = mySociety::MaPit::get_voting_areas($qp_postcode);
-        unless (grep { $p->{body_area_id} == $_ } values %$areas) {
-            $errors{postcode} = 'You can only sign a petition for the council where you live.'
-        }
+        try {
+            my $areas = mySociety::MaPit::get_voting_areas($qp_postcode);
+            unless (grep { $p->{body_area_id} == $_ } values %$areas) {
+                $errors{postcode} = 'You can only sign a petition for the council where you live.'
+            }
+        } catch RABX::Error with {
+            $errors{postcode} = 'Sorry, that postcode was not recognised.';
+        };
     }
 
     if (!keys(%errors)) {
