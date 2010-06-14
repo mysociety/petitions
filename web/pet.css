@@ -117,7 +117,7 @@ div#most_popular {
 p.petition_view_tabs {
     border-bottom: solid 2px #4F8718; /* b9adb1; */
     margin: 0;
-    padding: 1em 0 0.2em;
+    padding: 1em 0 0.5em;
 }
 .petition_view_tabs span {
     font-weight: bold;
@@ -195,7 +195,7 @@ ol#breadcrumbs li.hilight {
     font-size: 150%;
 }
 
-#new_you label {
+#new_you label, #new_you span.label {
     font-weight: bold;
     display: block;
     float: left;

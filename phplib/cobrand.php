@@ -512,3 +512,9 @@ function cobrand_rss_explanation_link() {
     return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
 }
 
+function cobrand_terms_elsewhere() {
+    global $site_name;
+    if ($site_name == 'surreycc')
+        return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+e-petitions?opendocument';
+    return null;
+}

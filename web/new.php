@@ -392,7 +392,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
             'overseas' =>       cobrand_overseas_dropdown(),
     );
     if (cobrand_creation_ask_for_address_type()) {
-        $fields['address_type'] = _('Type of address');
+        $fields['address_type'] = true;
     }
     $fields['telephone'] = _('Telephone number');
 
@@ -429,6 +429,7 @@ the Armed Forces without a postcode, please select from this list:</label>
         } elseif ($name == 'address_type') {
             $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
             $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
+            printf('<p><span class="label">%s:</label> ', $name, 'Type of address');
             print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . ' />
 <label class="radio" for="address_type_home">Home</label>
 <input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . ' />
@@ -673,7 +674,8 @@ of this page in your name, and that you agree to the terms and conditions below.
 <?
     if (OPTION_SITE_APPROVAL) {
 ?>
-<br /><label for="comments">If you have any special requests concerning your
+</p>
+<p><label for="comments">If you have any special requests concerning your
 petition, or information about your petition you would like us to know that you
 do not wish to be public, please include them here:</label></p>
 <p>

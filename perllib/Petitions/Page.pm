@@ -461,7 +461,8 @@ sub reject_box ($$) {
         $out .= $q->li($categories{$k}) if ($reject_cats & $k);
     }
     $out .= "</ul>\n";
-    $out .= $q->p('Additional information about this rejection:<br />' . $reject_reason);
+    $out .= $q->p('Additional information about this rejection:<br />' . $reject_reason)
+        if $reject_reason;
     return $out;
 }
 
