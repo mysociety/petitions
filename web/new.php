@@ -195,7 +195,7 @@ function endform($data = null) {
 
 function errorlist($errors) {
     if (sizeof($errors))
-        print '<div id="errors"><p>Please check the following and try again:</p><ul><li>'
+        print cobrand_error_div_start() . '<p>Please check the following and try again:</p><ul><li>'
                 . join('</li><li>',
                     array_map('htmlspecialchars', array_values($errors)))
                 . '</li></ul></div>';
@@ -255,8 +255,9 @@ function petition_form_category($steps, $step, $data = array(), $errors = array(
 ?>
 <h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Petition category</h2>
 <?
-    if (array_key_exists('category_wrong', $errors)) { ?>
-<div id="errors">
+    if (array_key_exists('category_wrong', $errors)) {
+        print cobrand_error_div_start();
+?>
 <p><?=$errors['category_wrong'] ?></p>
 </div>
 <?

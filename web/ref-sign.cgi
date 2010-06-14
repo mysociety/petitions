@@ -154,8 +154,10 @@ sub signup_page ($$) {
     } 
     
     if (keys(%errors)) {
+        my $div_attr = { -id => 'errors' };
+        $div_attr = { -class => 'scc-error' } if Petitions::Page::site_name() eq 'surreycc';
         $html .=
-            $q->div({ -id => 'errors' },
+            $q->div($div_attr,
                 $q->ul(
                     $q->li([
                         map { ent($_) } values(%errors)

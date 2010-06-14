@@ -49,6 +49,14 @@ function cobrand_creator_must_be() {
     }
 }
 
+function cobrand_error_div_start() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        print '<div class="scc-error">';
+    }
+    print '<div id="errors">';
+}
+
 function cobrand_overseas_dropdown() {
     global $site_group;
     if ($site_group == 'surreycc') {
