@@ -164,7 +164,7 @@ if (!$rss) {
     }
     $navlinks = '<p style="clear: both;" class="petition_view_tabs">' . $views . "</p>\n";
     if ($ntotal > 0) {
-        $navlinks .= '<p align="center" style="font-size: 89%">' . _('Sort by'). ': ';
+        $navlinks .= '<p class="list_sort_by">' . _('Sort by'). ': ';
         $arr = array(
                      'date'=>_('Start date'), 
                      'deadline'=>_('Deadline'), 

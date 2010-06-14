@@ -135,6 +135,11 @@ tr.a, li.a {
     color: #999999;
 }
 
+.list_sort_by {
+    text-align: center;
+    font-size: 89%;
+}
+
 /* Errors */
 
 div#errors {

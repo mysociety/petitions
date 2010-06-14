@@ -29,3 +29,8 @@ p.petition_view_tabs {
 .petition_view_tabs span {
     background-color: #02614D;
 }
+
+.list_sort_by {
+    text-align: left;
+}
+
