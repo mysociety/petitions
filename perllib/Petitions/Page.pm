@@ -252,7 +252,7 @@ sub display_box ($$%) {
                     : '');
     }
     my $details = '';
-    $details = '<a href="#detail"><small>More details</small></a>'
+    $details = '<a href="#detail" id="to_detail">More details</a>'
         if (exists($params{detail}) && $p->{detail} && Petitions::show_part($p, 'detail'));
     return
         $q->div({ -class => 'petition_box' },
@@ -378,7 +378,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         ),
         $expat,
         $q->p( { -id => 'signatureSubmit', -align => 'right' },
-            $q->submit({ -class => 'button' }, -name => 'submit', -value => 'Sign')
+            $q->submit({ -class => 'button' }, 'submit', 'Sign and submit')
         )
         )
         . $q->end_form();

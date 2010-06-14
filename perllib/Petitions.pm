@@ -306,7 +306,7 @@ sub sentence ($;$$) {
     }
     $sentence = 'This petition cannot be shown.' unless Petitions::show_part($p, 'content');
     $sentence = ent($sentence) if ($html);
-    $sentence .= '.' unless $sentence =~ /\.$/;
+    $sentence .= '.' if $sentence !~ /\.$/ && !$short;
     return $sentence;
 }
 
