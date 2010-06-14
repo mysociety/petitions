@@ -378,7 +378,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         ),
         $expat,
         $q->p( { -id => 'signatureSubmit', -align => 'right' },
-            $q->submit({ -class => 'button' }, 'submit', 'Sign and submit')
+            $q->submit(-class => 'button', -name => 'submit', -value => 'Sign and submit')
         )
         )
         . $q->end_form();
