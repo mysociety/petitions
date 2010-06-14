@@ -154,7 +154,7 @@ function front_most_recent($recent) {
 }
 
 function front_most_popular($most) {
-    echo 'div id="most_popular">';
+    echo '<div id="most_popular">';
     echo cobrand_main_heading('Most popular open petitions');
     echo '<p>We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to&hellip;</p>';
     echo '<ul>';

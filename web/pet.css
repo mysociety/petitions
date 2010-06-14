@@ -244,12 +244,14 @@ div#signFormRight {
 div#signatories {
    float: left;
    width: 47%;
+   margin-bottom: 1em;
 }
 
 #more_detail {
     float: right;
     width: 47%;
     clear: both;
+    margin-bottom: 1em;
 }
 
 div#success {
