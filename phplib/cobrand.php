@@ -114,7 +114,8 @@ function cobrand_category_wrong_action($category_id, $area='') {
         if ($area) {
             # $area is set if we're being called as a result of the form below
             if (in_array($area, array('tandridge')))
-                return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+                return '/tandridge';
+                #return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
             if ($area == 'epsom-ewell')
                 return 'http://www.epsom-ewell.gov.uk/EEBC/Council/E-petitions.htm';
             if ($area == 'molevalley')
