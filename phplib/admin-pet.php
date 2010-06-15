@@ -213,13 +213,17 @@ class ADMIN_PAGE_PET_SEARCH {
         $search = strtolower(get_http_var('search'));
         petition_admin_navigation($this, array('search'=>$search));
         petition_admin_perform_actions();
-        $search_pet = "select id, ref, name, email, status, date_trunc('second', creationtime) as creationtime
-            from petition where status in ('sentconfirm', 'draft', 'live', 'resubmitted', 'finished') ";
-        $search_sign = "select signer.id, ref, signer.name, signer.email, emailsent,
+        $search_pet = "select petition.id, petition.ref, petition.name, email,
+                status, date_trunc('second', creationtime) as creationtime
+            from petition LEFT JOIN body ON body_id=body.id
+            where status in ('sentconfirm', 'draft', 'live', 'resubmitted', 'finished') ";
+        $search_sign = "select signer.id, petition.ref, signer.name, signer.email, emailsent,
                 date_trunc('second', signtime) as signtime
-            from signer, petition
+            from signer, petition LEFT JOIN body ON body_id=body.id
             where signer.petition_id = petition.id
             and showname = 't' and emailsent in ('sent', 'confirmed') and signer.email!='' ";
+        $search_pet .= cobrand_admin_site_restriction();
+        $search_sign .= cobrand_admin_site_restriction();
         $out = array();
         if ($search && validate_email($search)) {
             $q = db_query($search_pet . "and lower(email) = ?", array($search));
@@ -430,6 +434,8 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($status == 'rejected')
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
         
+        $status_query .= cobrand_admin_site_restriction();
+
         $surge = '';
         if ($status == 'live')
             $surge = "(SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day' and emailsent = 'confirmed') AS surge,";
@@ -444,20 +450,21 @@ class ADMIN_PAGE_PET_MAIN {
                 message.id AS message_id
             FROM petition
             LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
+            LEFT JOIN body ON body.id = petition.body_id
             WHERE $status_query
             " .  ($order ? ' ORDER BY ' . $order : '')
             . ' OFFSET ' . $offset . ' LIMIT ' . $page_limit);
         $found = array();
         while ($r = db_fetch_array($q)) {
-            $row = "";
+            $p = new Petition($r);
 
+            $row = "";
             $row .= '<td>' . (isset($r['surge']) ? $r['surge'] : '') . '</td>';
             $row .= '<td>';
             if ($r['status']=='live' || $r['status']=='finished' || $r['status']=='rejected')
-                $row .= '<a href="' . OPTION_BASE_URL . '/' . $r['ref'] . '">';
-            $row .= $r['ref'];
-            if ($r['status']=='live' || $r['status']=='finished' || $r['status']=='rejected')
-                $row .= '</a>';
+                $row .= '<a href="' . $p->url_main() . '">' . $r['ref'] . '</a>';
+            else
+                $row .= $r['ref'];
             $row .= '<br>(<a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>)';
             $row .= '</td>';
             $row .= '<td>' . trim_characters(htmlspecialchars($r['content']),0,100);
@@ -600,7 +607,7 @@ petitions.</p>';
             $sel_query_part .= ' WHERE';
         }
 
-        $q = db_query("$sel_query_part lower(petition.ref) = ?", strtolower($petition));
+        $q = db_query("$sel_query_part lower(petition.ref) = ?" . cobrand_admin_site_restriction(), strtolower($petition));
         $pdata = db_fetch_array($q);
         if (!$pdata) {
             printf("Petition '%s' not found", htmlspecialchars($petition));
