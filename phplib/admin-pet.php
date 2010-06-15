@@ -441,7 +441,7 @@ class ADMIN_PAGE_PET_MAIN {
             $surge = "(SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND signtime > ms_current_timestamp() - interval '1 day' and emailsent = 'confirmed') AS surge,";
 
         $q = db_query("
-            SELECT petition.*,
+            SELECT petition.*, body.name as body_name, body.ref as body_ref,
                 date_trunc('second',laststatuschange) AS laststatuschange,
                 (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
                 (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
