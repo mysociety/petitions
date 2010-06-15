@@ -116,6 +116,8 @@ function cobrand_category_wrong_action($category_id, $area='') {
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
             if ($area == 'epsom-ewell')
                 return 'http://www.epsom-ewell.gov.uk/EEBC/Council/E-petitions.htm';
+            if ($area == 'molevalley')
+                return 'http://www.molevalley.gov.uk/index.cfm?articleid=9694';
             if ($area == 'spelthorne')
                 return 'http://www.spelthorne.gov.uk/epetitions.htm';
             if ($area == 'reigate-banstead')
@@ -137,7 +139,7 @@ function cobrand_category_wrong_action($category_id, $area='') {
             <!-- <option value="elmbridge">Elmbridge Borough Council</option> -->
             <option value="epsom-ewell">Epsom and Ewell Borough Council</option>
             <!-- <option value="guildford">Guildford Borough Council</option> -->
-            <!-- <option value="molevalley">Mole Valley District Council</option> -->
+            <option value="molevalley">Mole Valley District Council</option>
             <option value="reigate-banstead">Reigate &amp; Banstead Borough Council</option> 
             <option value="runnymede">Runnymede Borough Council</option>
             <option value="spelthorne">Spelthorne Borough Council</option>
