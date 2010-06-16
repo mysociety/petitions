@@ -278,10 +278,18 @@ class Petition {
         return $url;
     }
 
+    # Used from cron to get name for From: header
     function from_name() {
         if (OPTION_SITE_TYPE=='multiple')
             return $this->body_name();
         return OPTION_CONTACT_NAME;
+    }
+
+    # Used from cron to get relevant admin email for this petition
+    function admin_email() {
+        if (OPTION_SITE_TYPE=='multiple')
+            return $this->body_ref() . '@' . OPTION_EMAIL_DOMAIN;
+        return OPTION_CONTACT_EMAIL;
     }
 
     // Write history to log file 

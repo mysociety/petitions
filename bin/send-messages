@@ -97,12 +97,13 @@ function send_pending_messages() {
         
         $f = false;
         $headers = array();
+        $to = $petition->admin_email();
         if (isset($msg['emailtemplatename'])) {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
-            $f = pet_send_email_template(OPTION_CONTACT_EMAIL, $msg['emailtemplatename'], $data, $headers);
+            $f = pet_send_email_template($to, $msg['emailtemplatename'], $data, $headers);
         } else {
             verbose("sending message #${msg['id']} as raw email, subject '${msg['emailsubject']}'");
-            $f = pet_send_email(OPTION_CONTACT_EMAIL, $msg['emailsubject'], $msg['emailbody'], $headers);
+            $f = pet_send_email($to, $msg['emailsubject'], $msg['emailbody'], $headers);
         }
 
         if ($f)
@@ -199,7 +200,7 @@ function send_pending_messages() {
             # goes direct to exim instead of through EvEl.
 
             $date = "Date: " . date("r") . "\n";
-            $from = 'From: "' . $petition->from_name() . '" <' . OPTION_CONTACT_EMAIL . ">\n";
+            $from = 'From: "' . $petition->from_name() . '" <' . $petition->admin_email() . ">\n";
             $to = "To: " . $petition->creator_email() . "\n";
             $precedence = "Precedence: bulk\n";
 

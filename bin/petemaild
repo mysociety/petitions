@@ -1716,12 +1716,13 @@ sub make_signer_email ($$) {
     $h{signature} = '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the petitions system. ]';
 
     my $from_name = Petitions::from_name($petition);
+    my $from_email = Petitions::admin_email($petition);
     return mySociety::Email::construct_email({
                 _template_ => $sig_template,
                 _parameters_ => \%h,
 
                 To => [[$signer->{email}, $signer->{name}]],
-                From => [ mySociety::Config::get('CONTACT_EMAIL'), $from_name ],
+                From => [ $from_email, $from_name ],
                 'Message-ID' => message_id('signer', $signer->{id})
             });
 }
@@ -1758,12 +1759,13 @@ sub make_petition_email ($) {
     $h{signature} = '[ This email has been automatically sent by the petitions system ]';
 
     my $from_name = Petitions::from_name($petition);
+    my $from_email = Petitions::admin_email($petition);
     return mySociety::Email::construct_email ({
                 _template_ => $pet_template,
                 _parameters_ => \%h,
 
                 To => [[$petition->{email}, $petition->{name}]],
-                From => [ mySociety::Config::get('CONTACT_EMAIL'), $from_name ],
+                From => [ $from_email, $from_name ],
                 'Message-ID' => message_id('petition', $petition->{id})
             });
 }

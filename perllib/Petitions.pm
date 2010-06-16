@@ -360,6 +360,18 @@ sub from_name($) {
     return mySociety::Config::get('CONTACT_NAME');
 }
 
+=item admin_email PETITION
+
+Given a petition object, returns the email to be used for admin contact about it.
+
+=cut
+sub admin_email($) {
+    my $p = shift;
+    return $p->{body_ref} . '@' . mySociety::Config::get('EMAIL_DOMAIN')
+        if mySociety::Config::get('SITE_TYPE') eq 'multiple';
+    return mySociety::Config::get('CONTACT_EMAIL');
+}
+
 =item detail PETITION
 
 =cut
