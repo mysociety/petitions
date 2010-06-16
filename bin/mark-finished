@@ -70,7 +70,7 @@ function find_newly_finished_petitions() {
                     LEFT JOIN body ON body_id=body.id
                 where '$pet_today' > deadline
                     and status = 'live'
-                for update");
+                for update of petition");
     while ($petition = db_fetch_array($q)) {
         verbose("petition #${petition['id']} (${petition['ref']}) has finished");
         db_query("update petition set status='finished', lastupdate = ms_current_timestamp()
@@ -104,7 +104,7 @@ function find_timed_out_rejected_petitions() {
                     LEFT JOIN body ON body_id=body.id
                 where '$pet_timestamp' > laststatuschange + interval '29 days'
                     and status = 'rejectedonce'
-                for update");
+                for update of petition");
     while ($petition = db_fetch_array($q)) {
         verbose("petition #${petition['id']} (${petition['ref']}) has timed out from rejectedonce to rejected");
         db_query("update petition set status='rejected',  
