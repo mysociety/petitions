@@ -96,8 +96,10 @@ function send_pending_messages() {
         verbose("message #${msg['id']} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
         
         $f = false;
-        $headers = array();
         $to = $petition->admin_email();
+        $headers = array(
+             'From' => '"' . $petition->from_name() . '" <' . $to . '>',
+        );
         if (isset($msg['emailtemplatename'])) {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
             $f = pet_send_email_template($to, $msg['emailtemplatename'], $data, $headers);
@@ -175,7 +177,9 @@ function send_pending_messages() {
         }
 
         // Make any extra headers
-        $headers = array();
+        $headers = array(
+             'From' => '"' . $petition->from_name() . '" <' . $petition->admin_email() . '>',
+        );
 
         // Send with template or raw appropriately
         $f = false;
