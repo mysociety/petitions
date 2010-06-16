@@ -54,7 +54,7 @@ if (!array_key_exists($q_cat, cobrand_categories())) $q_cat = null;
 
 # count() is far too slow - many seconds for a count of live petitions :-/
 $key = $status;
-if (OPTION_SITE_MULTIPLE) $key .= "_$site_name";
+if (OPTION_SITE_TYPE=='multiple') $key .= "_$site_name";
 if ($q_cat) $key .= "_$q_cat";
 $ntotal = db_getOne("select value from stats where key='cached_petitions_$key'");
 
