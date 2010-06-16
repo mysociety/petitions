@@ -232,7 +232,7 @@ class ADMIN_PAGE_PET_SEARCH {
             $out['signers'] = $this->search_signers($q, $search);
         } elseif ($search) {
             $q = db_query($search_pet . "
-                and (name ilike '%'||?||'%' or lower(email) like '%'||?||'%' or lower(ref) = ?)
+                and (petition.name ilike '%'||?||'%' or lower(email) like '%'||?||'%' or lower(petition.ref) = ?)
                 order by lower(email)", array($search, $search, $search));
             $out['petitions'] = $this->search_petitions($q, $search);
             $q = db_query($search_sign . "
