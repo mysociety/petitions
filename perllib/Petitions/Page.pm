@@ -303,9 +303,10 @@ sub sign_box ($$) {
 
     my $must;
     if ($p->{body_area_id} || ($p->{body_name} && $p->{body_name} =~ /council/i) || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
-        $must = 'You need to live, work or study within the council area to sign the petition.';
+        $must = '';
+        #$must = 'You need to live, work or study within the council area to sign the petition. ';
     } else {
-        $must = 'You must be a British citizen or resident to sign the petition.';
+        $must = 'You must be a British citizen or resident to sign the petition. ';
     }
 
     my $overseas = [ '-- Select --' ];
@@ -358,7 +359,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         . $body_ref
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
         . $q->div({ -id => 'signFormLeft' }, 
-          $q->p( $must . ' Please enter your name only; signatures containing other text may be removed by the petitions team.'),
+          $q->p( $must . 'Please enter your name only; signatures containing other text may be removed by the petitions team.'),
           $q->p("I, ",
                 $q->textfield(
                     -name => 'name', -id => 'name', -size => 20, -aria_required => 'true'
