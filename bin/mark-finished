@@ -66,7 +66,8 @@ function find_newly_finished_petitions() {
     }
         
     $q = db_query("
-                select * from petition
+                select petitions.*, body.ref AS body_ref from petition
+                    LEFT JOIN body ON body_id=body.id
                 where '$pet_today' > deadline
                     and status = 'live'
                 for update");
@@ -75,13 +76,8 @@ function find_newly_finished_petitions() {
         db_query("update petition set status='finished', lastupdate = ms_current_timestamp()
             where id=?", $petition['id']);
         $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition['id'], time());
-        $cat = $petition['category'];
-        if (!db_do("update stats set value = value::integer + 1 where key='cached_petitions_finished'"))
-            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_finished', 1)");
-        if (!db_do("update stats set value = value::integer + 1 where key='cached_petitions_finished_$cat'"))
-            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_finished_$cat', 1)");
-        db_query("update stats set value = value::integer - 1 where key='cached_petitions_live'");
-        db_query("update stats set value = value::integer - 1 where key='cached_petitions_live_$cat'");
+        stats_change($petition['body_ref'], $petition['category'], 'cached_petitions_finished', '+1');
+        stats_change($petition['body_ref'], $petition['category'], 'cached_petitions_live', '-1');
     }
     db_commit();
     verbose("finished newly finished petitions");
@@ -104,7 +100,8 @@ function find_timed_out_rejected_petitions() {
     }
         
     $q = db_query("
-                select * from petition
+                select petitions.*, body.ref AS body_ref from petition
+                    LEFT JOIN body ON body_id=body.id
                 where '$pet_timestamp' > laststatuschange + interval '29 days'
                     and status = 'rejectedonce'
                 for update");
@@ -116,11 +113,7 @@ function find_timed_out_rejected_petitions() {
             laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
             where id=?", $petition['id']);
         $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition['id'], time());
-        $cat = $petition['category'];
-        if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_rejected'"))
-            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_rejected', 1)");
-        if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_rejected_$cat'"))
-            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_rejected_$cat', 1)");
+        stats_change($petition['body_ref'], $petition['category'], 'cached_petitions_rejected', '+1');
         pet_send_message(intval($petition['id']), MSG_ADMIN, MSG_CREATOR, 'rejected-timeout', 'admin-rejected-timeout');
     }
     db_commit();
@@ -132,5 +125,18 @@ $memcache = new Memcache;
 $memcache->connect('localhost', 11211);
 find_newly_finished_petitions();
 find_timed_out_rejected_petitions();
+
+function stats_change($body_ref, $cat, $key, $a) {
+    if (!db_do("update stats set value = value::integer $a where key = '$key'"))
+        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '$key', '1')");
+    if (!db_do("update stats set value = value::integer $a where key = '${key}_$cat'"))
+        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_$cat', 1)");
+    if ($body_ref) {
+        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}'"))
+            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}', '1')");
+        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}_$cat'"))
+            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}_$cat', 1)");
+    }
+}
 
 

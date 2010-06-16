@@ -943,10 +943,7 @@ EOF;
             $memcache = new Memcache;
             $memcache->connect('localhost', 11211);
             $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $id, time());
-            if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_rejected'")) {
-                db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_rejected', '1')");
-            # db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected_$cat'");
-            }
+            stats_change($p, 'cached_petitions_rejected', '+1');
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason", http_auth_user());
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
@@ -1155,10 +1152,7 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.culture.gov.uk/
             $memcache->connect('localhost', 11211);
             $memcache->set(OPTION_PET_DB_NAME . 'signers:' . $petition_id, 1);
             $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
-            if (!db_do("update stats set value = value::integer + 1 where key = 'cached_petitions_live'")) {
-                db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), 'cached_petitions_live', '1')");
-            }
-            #db_query("update stats set value = value + 1 where key = 'cached_petitions_live_$cat'");
+            stats_change($p, 'cached_petitions_live', '+1');
             $p->log_event("Admin approved petition", http_auth_user());
         } else {
             $p->log_event("Bad approval", http_auth_user());
@@ -1188,13 +1182,13 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.culture.gov.uk/
                 $p->log_event("Admin removed petition with reason '$reason'", http_auth_user());
                 db_query("update petition set status='sentconfirm', laststatuschange=ms_current_timestamp(),
                     lastupdate=ms_current_timestamp() where id=?", $p->id());
-                db_query("update stats set value = value::integer - 1 where key = 'cached_petitions_$status'");
+                stats_change($p, "cached_petitions_$status", '-1');
                 $message = 'That petition has been removed from the site';
             } elseif ($type == 'redraft') {
                 $p->log_event("Admin redrafted petition with reason '$reason'", http_auth_user());
                 db_query("update petition set status='draft', laststatuschange=ms_current_timestamp(),
                     lastupdate=ms_current_timestamp() where id=?", $p->id());
-                db_query("update stats set value = value::integer - 1 where key = 'cached_petitions_$status'");
+                stats_change($p, "cached_petitions_$status", '-1');
                 db_query('delete from signer where petition_id=?', $p->id());
                 $message = 'That petition has been moved back into the draft state';
             }
@@ -1352,3 +1346,16 @@ function privacy($e) {
     if (OPTION_ADMIN_PUBLIC) return '<em>hidden in public interface</em>';
     return htmlspecialchars($e);
 }
+
+function stats_change($p, $key, $a) {
+    if (!db_do("update stats set value = value::integer $a where key = '$key'")) {
+        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '$key', '1')");
+    }
+    if ($body_ref = $p->body_ref()) {
+        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}'")) {
+            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}', '1')");
+        }
+    }
+    # db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected_$cat'");
+}
+

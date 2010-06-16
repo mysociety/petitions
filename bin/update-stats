@@ -65,6 +65,8 @@ dbh()->commit();
 dbh()->do("delete from stats where key like 'cached\_petitions\_%'");
 dbh()->do("insert into stats (whencounted, key, value) select current_timestamp, 'cached_petitions_'||status, count(*) from petition where status in ('live','finished','rejected') group by status");
 dbh()->do("insert into stats (whencounted, key, value) select current_timestamp, 'cached_petitions_'||status||'_'||category, count(*) from petition where status in ('live','finished','rejected') group by category,status");
+dbh()->do("insert into stats (whencounted, key, value) select current_timestamp, 'cached_petitions_'||status||'_'||body.ref, count(*) from petition LEFT JOIN body ON body_id=body.id where status in ('live','finished','rejected') group by status,body.ref");
+dbh()->do("insert into stats (whencounted, key, value) select current_timestamp, 'cached_petitions_'||status||'_'||body.ref||'_'||category, count(*) from petition LEFT JOIN body ON body_id=body.id where status in ('live','finished','rejected') group by category,status,body.ref");
 dbh()->commit();
 
 # Most prolific signers
