@@ -178,7 +178,7 @@ class Petition {
     function creationtime() { return $this->data['creationtime']; }
     function creationdate() { return substr($this->data['creationtime'], 0, 10); }
 
-    function body_ref() { return $this->data['body_ref']; }
+    function body_ref() { return OPTION_SITE_MULTIPLE ? $this->data['body_ref'] : ''; }
     function body_name() { return $this->data['body_name']; }
 
     // Parameters:
