@@ -116,6 +116,8 @@ function cobrand_category_wrong_action($category_id, $area='') {
             if (in_array($area, array('tandridge')))
                 return '/tandridge';
                 #return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            if ($area == 'elmbridge')
+                return 'http://www.elmbridge.gov.uk/Council/information/petition.htm';
             if ($area == 'epsom-ewell')
                 return 'http://www.epsom-ewell.gov.uk/EEBC/Council/E-petitions.htm';
             if ($area == 'molevalley')
@@ -138,7 +140,7 @@ function cobrand_category_wrong_action($category_id, $area='') {
             You have selected a category for which this council is not responsible. <label for="council_pick">Please
             pick your council in order to be taken to their petition site:</label>
             <select name="council" id="council_pick">
-            <!-- <option value="elmbridge">Elmbridge Borough Council</option> -->
+            <option value="elmbridge">Elmbridge Borough Council</option>
             <option value="epsom-ewell">Epsom and Ewell Borough Council</option>
             <!-- <option value="guildford">Guildford Borough Council</option> -->
             <option value="molevalley">Mole Valley District Council</option>
