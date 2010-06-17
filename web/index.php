@@ -201,9 +201,9 @@ along with the reasons why.
     if (OPTION_SITE_NAME == 'number10') {
 ?>
 A list of <a href="/list/rejected">rejected petitions</a>
-is available on this website.</p>
+is available on this website.
 <?
     }
-    echo '</div>';
+    echo '</p></div>';
 }
 
