@@ -12,7 +12,17 @@ use File::Slurp;
 use FindBin;
 use LWP::Simple;
 
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
+use mySociety::DBHandle qw(dbh);
+use mySociety::Memcached;
+mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
+use Petitions;
+
 my ($header, $footer);
+my $template_root = "$FindBin::Bin/../templates";
 
 # Surrey
 $header = get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/header1.asp');
@@ -57,11 +67,33 @@ output('tandridge', $header, $footer);
 
 sub output {
     my ($dir, $header, $footer) = @_;
-    mkdir("$FindBin::Bin/../templates/$dir");
-    write_file("$FindBin::Bin/../templates/$dir/head.html", { atomic => 1 }, \$header)
-        if $header;
-    write_file("$FindBin::Bin/../templates/$dir/foot.html", { atomic => 1 }, \$footer)
-        if $footer;
+
+    my $flush = 0;
+
+    my $template_dir = "$template_root/$dir";
+    mkdir($template_dir);
+
+    if ($header) {
+        my $current_header = read_file("$template_dir/head.html");
+        if ($current_header ne $header) {
+            write_file("$template_dir/head.html", { atomic => 1 }, \$header);
+            $flush = 1;
+        }
+    }
+    if ($footer) {
+        my $current_footer = read_file("$template_dir/foot.html");
+        if ($current_footer ne $footer) {
+            write_file("$template_dir/foot.html", { atomic => 1 }, \$footer);
+            $flush = 1;
+        }
+    }
+
+    if ($flush) {
+        my $ids = dbh()->selectcol_arrayref('select id from petition where body_id=(select id from body where ref=?)', {}, $dir);
+        foreach (@$ids) {
+            mySociety::Memcached::set("lastupdate:$_", time());
+        }
+    }
 }
 
 sub get_page {
