@@ -131,7 +131,7 @@ function front_most_recent($recent) {
     echo cobrand_main_heading('Most recent petitions');
     echo '<p>We the undersigned petition';
     if (OPTION_SITE_TYPE == 'multiple') {
-        echo ': <ul>';
+        echo ':</p> <ul>';
     } else {
         echo ' ' . OPTION_SITE_PETITIONED . " to&hellip;</p> <ul>";
     }
