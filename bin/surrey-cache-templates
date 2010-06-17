@@ -12,6 +12,9 @@ use File::Slurp;
 use FindBin;
 use LWP::Simple;
 
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../commonlib/perllib";
+ 
 use mySociety::Config;
 BEGIN {
     mySociety::Config::set_file("$FindBin::Bin/../conf/general");
