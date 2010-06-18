@@ -141,6 +141,7 @@ if (!$rss) {
 
     pet_search_form(array('float'=>true));
     if (OPTION_SITE_NAME == 'sbdc') print '<h2>View petitions</h2>';
+    if ($site_name == 'tandridge') print '<h1>List petitions</h1>';
 
     if ($q_cat) {
         print '<h3>You are viewing petitions in the "' . cobrand_category($q_cat) . '" category</h3>';
