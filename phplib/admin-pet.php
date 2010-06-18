@@ -842,6 +842,67 @@ Deadline: ';
         }
     }
 
+    function forward($id) {
+        if (http_auth_user()!='matthew') return;
+        $p = new Petition($id);
+        $status = $p->status();
+        $from_body = $p->body_name();
+
+        if ($status != 'draft' && $status != 'resubmitted') {
+            $p->log_event("Bad forwarding", http_auth_user());
+            db_commit();
+            err("Should only be able to forward petitions in draft or resubmitted state");
+        }
+
+        $reason = get_http_var('reason');
+        $to_body = get_http_var('to_body');
+        $errors = array();
+        if (!$reason) $errors[] = 'Please give a reason';
+        if (!$to_body) $errors[] = 'Please specify which body to forward the petition to';
+
+        if (get_http_var('submit') && !sizeof($errors)) {
+            db_query("
+                    UPDATE petition
+                    SET body_id = (SELECT id FROM body WHERE ref=?)
+                    WHERE id=?", $to_body, $id);
+            $p->log_event("Admin forwarded petition from $from_body to $to_body. Reason: $reason", http_auth_user());
+            $template = 'admin-forwarded';
+            $circumstance = 'forwarded';
+            # pet_send_message($id, MSG_ADMIN, MSG_CREATOR, $circumstance, $template);
+            db_commit();
+            print '<p><em>That petition has been forwarded.</em></p>';
+        } else {
+            if (get_http_var('submit') && sizeof($errors))
+                print '<div id="errors"><ul><li>' .
+                    join('</li><li>' , $errors) . '</li></ul></div>';
+?>
+<form name="petition_admin_forward" action="<?=$this->self_link?>" accept-charset="utf-8" method="post"
+onsubmit="this.submit_button.disabled=true">
+<input type="hidden" name="submit" value="1">
+<input type="hidden" name="petition_id" value="<?=$petition_id ?>">
+<p>You are forwarding the <em><?=$p->ref() ?></em> petition to another body for them to approve or reject.
+Do this for petitions for which you are not the appropriate body to contact, but another council is
+(if the correct body is e.g. a central government department, instead reject this petition with the outside remit criteria).
+</p>
+
+<p><label for="to_body">Please pick the body to forward this petition to:</label>
+<br><select id="to_body" name="to_body"><option>-- Pick a body --</option>
+<?
+    $bodies = db_getAll('select ref,name from body');
+    foreach ($bodies as $body) {
+        print '<option value="' . $body['ref'] . '">' . $body['name'] . '</option>';
+    }
+?>
+</select></p>
+<p><label for="reason">Please give the reason for forwarding this petition (this will be forwarded to the petition creator to let them know):</label>
+<br><textarea id="reason" name="reason" rows="5" cols="40"></textarea></p>
+<p><input type="submit" name="submit_button" value="Forward petition"></p>
+</form>
+<hr>
+<?
+        }
+    }
+
     function reject_form($id) {
         $p = new Petition($id); ?>
 <p>You have chosen to reject the petition '<?=$p->ref() ?>'.</p>
@@ -1179,19 +1240,19 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.culture.gov.uk/
 
         if (get_http_var('submit') && !sizeof($errors)) {
             if ($type == 'remove') {
-                $p->log_event("Admin removed petition with reason '$reason'", http_auth_user());
-                db_query("update petition set status='sentconfirm', laststatuschange=ms_current_timestamp(),
-                    lastupdate=ms_current_timestamp() where id=?", $p->id());
-                stats_change($p, "cached_petitions_$status", '-1');
+                $action = 'removed';
+                $new_status = 'sentconfirm';
                 $message = 'That petition has been removed from the site';
             } elseif ($type == 'redraft') {
-                $p->log_event("Admin redrafted petition with reason '$reason'", http_auth_user());
-                db_query("update petition set status='draft', laststatuschange=ms_current_timestamp(),
-                    lastupdate=ms_current_timestamp() where id=?", $p->id());
-                stats_change($p, "cached_petitions_$status", '-1');
+                $action = 'redrafted';
+                $new_status ='draft';
                 db_query('delete from signer where petition_id=?', $p->id());
                 $message = 'That petition has been moved back into the draft state';
             }
+            $p->log_event("Admin $action petition with reason '$reason'", http_auth_user());
+            db_query("update petition set status='$new_status', laststatuschange=ms_current_timestamp(),
+                lastupdate=ms_current_timestamp() where id=?", $p->id());
+            stats_change($p, "cached_petitions_$status", '-1');
             db_commit();
             print "<p><em>$message</em></p>";
         } else {
@@ -1323,6 +1384,9 @@ can be rejected properly.</p>
             $this->redraft($petition_id, 'redraft');
         } elseif (get_http_var('remove')) {
             $this->redraft($petition_id, 'remove');
+        } elseif (get_http_var('forward')) {
+            $this->forward($petition_id);
+            $petition_id = null; $petition = null;
         } elseif (get_http_var('change_criteria')) {
             $this->change_criteria($petition_id);
         }
