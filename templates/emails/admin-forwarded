@@ -1,0 +1,20 @@
+Subject: Your petition has been forwarded
+
+Hello,
+
+This email is just to let you know that your petition has been forwarded to the
+team at <?=$values['petitioned']?>, for the following reason:
+
+<?=$values['reason']?>
+
+Your petition now reads:
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+Thanks for submitting your petition.
+
+<?=$values['signature']?>
+

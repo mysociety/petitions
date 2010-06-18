@@ -861,14 +861,9 @@ Deadline: ';
         if (!$to_body) $errors[] = 'Please specify which body to forward the petition to';
 
         if (get_http_var('submit') && !sizeof($errors)) {
-            db_query("
-                    UPDATE petition
-                    SET body_id = (SELECT id FROM body WHERE ref=?)
-                    WHERE id=?", $to_body, $petition_id);
+            $p->forward($to_body);
             $p->log_event("Admin forwarded petition from $from_body to $to_body. Reason: $reason", http_auth_user());
-            $template = 'admin-forwarded';
-            $circumstance = 'forwarded';
-            # pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, $circumstance, $template);
+            pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'forwarded', 'admin-forwarded');
             db_commit();
             print '<p><em>That petition has been forwarded.</em></p>';
         } else {

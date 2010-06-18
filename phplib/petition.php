@@ -315,5 +315,16 @@ class Petition {
             return false;
         return true;
     }
+
+    // Change who this petition is for
+    function forward($body_ref) {
+        $body = db_getRow("SELECT * FROM body WHERE ref=?", $body_ref);
+        db_query("UPDATE petition
+            SET body_id = ?
+            WHERE id=?", $body['id'], $this->id());
+        $this->data['body_name'] = $body['name'];
+        $this->data['body_ref'] = $body['ref'];
+    }
+
 }
 
