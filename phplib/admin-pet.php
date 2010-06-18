@@ -842,9 +842,9 @@ Deadline: ';
         }
     }
 
-    function forward($id) {
+    function forward($petition_id) {
         if (http_auth_user()!='matthew') return;
-        $p = new Petition($id);
+        $p = new Petition($petition_id);
         $status = $p->status();
         $from_body = $p->body_name();
 
@@ -864,11 +864,11 @@ Deadline: ';
             db_query("
                     UPDATE petition
                     SET body_id = (SELECT id FROM body WHERE ref=?)
-                    WHERE id=?", $to_body, $id);
+                    WHERE id=?", $to_body, $petition_id);
             $p->log_event("Admin forwarded petition from $from_body to $to_body. Reason: $reason", http_auth_user());
             $template = 'admin-forwarded';
             $circumstance = 'forwarded';
-            # pet_send_message($id, MSG_ADMIN, MSG_CREATOR, $circumstance, $template);
+            # pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, $circumstance, $template);
             db_commit();
             print '<p><em>That petition has been forwarded.</em></p>';
         } else {
