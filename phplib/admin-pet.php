@@ -878,6 +878,7 @@ Deadline: ';
 ?>
 <form name="petition_admin_forward" action="<?=$this->self_link?>" accept-charset="utf-8" method="post"
 onsubmit="this.submit_button.disabled=true">
+<input type="hidden" name="forward" value="1">
 <input type="hidden" name="submit" value="1">
 <input type="hidden" name="petition_id" value="<?=$petition_id ?>">
 <p>You are forwarding the <em><?=$p->ref() ?></em> petition to another body for them to approve or reject.
