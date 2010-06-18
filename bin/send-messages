@@ -180,6 +180,10 @@ function send_pending_messages() {
                 $data['rejection_reason'] = "\nFurther information: " . $data['rejection_reason'];
         }
 
+        # Any variables passed in when message was created
+        $vars = unserialize($msg['emailtemplatevars']);
+        if ($vars) $data = array_merge($data, $vars);
+
         // Make any extra headers
         $headers = array(
              'From' => '"' . $petition->from_name() . '" <' . $petition->admin_email() . '>',
