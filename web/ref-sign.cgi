@@ -211,14 +211,12 @@ sub confirm_page ($$$$) {
                         "Thank you for creating your petition.");
             if (mySociety::Config::get('SITE_APPROVAL')) {
                 $html .=
-                    $q->p({ -class => 'noprint loudmessage',
-                        -align => 'center' }, "
+                    $q->p({ -class => 'noprint loudmessage' }, "
                         It has been entered on our system and will now go to
                         $message for approval.");
             } else {
                 $html .=
-                    $q->p({ -class => 'noprint loudmessage',
-                        -align => 'center' }, "
+                    $q->p({ -class => 'noprint loudmessage' }, "
                         It is now available on our site.");
             }
             $html .= Petitions::Page::footer($q, 'Confirm_Petition');
