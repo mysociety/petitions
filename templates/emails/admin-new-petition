@@ -1,6 +1,6 @@
 Subject: New petition submitted
 
-Petition reference: <?=$values['ref']?> (<?=$values['id']?>)
+Petition reference: <?=$values['ref']?>
 
 Submitted: <?=$values['creationtime']?>
 
