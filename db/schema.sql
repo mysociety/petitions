@@ -274,6 +274,7 @@ create table message (
     sendtolatesigners boolean not null,
     -- content of message
     emailtemplatename text,
+    emailtemplatevars text,
     emailsubject text, -- LLL
     emailbody text, -- LLL
 

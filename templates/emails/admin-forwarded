@@ -2,8 +2,8 @@ Subject: A petition has been forwarded to you
 
 Hi,
 
-The following petition has now been forwarded to you for
-appraisal. The reason given was:
+The following petition has now been forwarded to you by
+<?=$values['from_body']?> for appraisal. The reason given was:
 
 <?=$values['reason']?>
 

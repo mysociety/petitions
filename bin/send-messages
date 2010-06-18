@@ -93,6 +93,10 @@ function send_pending_messages() {
         if ($data['comments'])
                 $data['comments_blurb'] = "The creator added the following comments for you:\n" . $data['comments'] . "\n\n-----\n\n";
 
+        # Any variables passed in when message was created
+        $vars = unserialize($msg['emailtemplatevars']);
+        if ($vars) $data = array_merge($data, $vars);
+
         verbose("message #${msg['id']} is for petition #" . $petition->id() . " (" . $petition->ref() . "); circumstance '${msg['circumstance']}'");
         
         $f = false;

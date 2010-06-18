@@ -2,8 +2,9 @@ Subject: Your petition has been forwarded
 
 Hello,
 
-This email is just to let you know that your petition has been forwarded to the
-team at <?=$values['petitioned']?>, for the following reason:
+This email is just to let you know that your petition has been forwarded
+<?=$values['from_body']?> to the team at <?=$values['petitioned']?>, for the
+following reason:
 
 <?=$values['reason']?>
 

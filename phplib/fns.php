@@ -22,7 +22,7 @@ define('MSG_ALL', MSG_ADMIN | MSG_CREATOR | MSG_SIGNERS);
  * MSG_SIGNERS. The message will appear to come from SENDER, which must be
  * MSG_ADMIN or MSG_CREATOR; CIRCUMSTANCE indicates the reason for its
  * sending. */
-function pet_send_message($petition_id, $sender, $recips, $circumstance, $template) {
+function pet_send_message($petition_id, $sender, $recips, $circumstance, $template, $vars = null) {
     if(!is_int($petition_id))
         err("ID must be integer in pet_send_message");
 
@@ -41,7 +41,7 @@ function pet_send_message($petition_id, $sender, $recips, $circumstance, $templa
                 circumstance_count,
                 fromaddress,
                 sendtoadmin, sendtocreator, sendtosigners, sendtolatesigners,
-                emailtemplatename
+                emailtemplatename, emailtemplatevars
             ) values (
                 ?,
                 ?,
@@ -50,7 +50,7 @@ function pet_send_message($petition_id, $sender, $recips, $circumstance, $templa
                                 and circumstance = ?), 0) + 1,
                 ?,
                 ?, ?, ?, 'f', -- XXX
-                ?
+                ?, ?
             )",
             $petition_id,
             $circumstance,
@@ -60,7 +60,7 @@ function pet_send_message($petition_id, $sender, $recips, $circumstance, $templa
                 ($recips & MSG_ADMIN) ? 't' : 'f',
                 ($recips & MSG_CREATOR) ? 't' : 'f',
                 ($recips & MSG_SIGNERS) ? 't' : 'f',
-            $template);
+            $template, serialize($vars));
 }
 
 // $to can be one recipient address in a string, or an array of addresses

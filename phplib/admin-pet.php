@@ -864,8 +864,12 @@ Deadline: ';
         if (get_http_var('submit') && !sizeof($errors)) {
             $p->forward($to_body);
             $p->log_event("Admin forwarded petition from $from_body to $to_body. Reason: $reason", http_auth_user());
-            pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'forwarded', 'petition-forwarded');
-            pet_send_message($petition_id, MSG_ADMIN, MSG_ADMIN, 'forwarded', 'admin-forwarded');
+            $vars = array(
+                'reason' => $reason,
+                'from_body' => $from_body,
+            );
+            pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'forwarded', 'petition-forwarded', $vars);
+            pet_send_message($petition_id, MSG_ADMIN, MSG_ADMIN, 'forwarded', 'admin-forwarded', $vars);
             db_commit();
             print '<p><em>That petition has been forwarded.</em></p>';
         } else {
