@@ -244,7 +244,7 @@ function cobrand_admin_rejection_categories() {
 }
 
 function cobrand_admin_site_restriction() {
-    global $site_group, $site_name;
+    global $site_group;
     if ($site_group != 'surreycc') return '';
     if (in_array(http_auth_user(), array('surreycc', 'tandridge')))
         return " AND body.ref='" . http_auth_user() . "' ";
