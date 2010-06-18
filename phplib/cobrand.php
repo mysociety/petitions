@@ -530,7 +530,7 @@ function cobrand_rss_explanation_link() {
 function cobrand_terms_elsewhere() {
     global $site_name;
     if ($site_name == 'surreycc')
-        return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+e-petitions?opendocument';
+        return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
     return null;
 }
 
