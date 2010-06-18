@@ -707,6 +707,7 @@ Deadline: ';
             $got_signer_count = db_getOne('select count(*) from message_signer_recipient where message_id = ?', $r['id']);
 
             $whom = array();
+            if ($r['sendtoadmin'] == 't') { $whom[] = 'admin'; }
             if ($r['sendtocreator'] == 't') { $whom[] = 'creator'; }
             if ($r['sendtosigners'] == 't') { $whom[] = 'signers'; }
             if ($r['sendtolatesigners'] == 't') { $whom[] = 'late signers'; }
