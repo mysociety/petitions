@@ -266,7 +266,7 @@ function petition_form_category($steps, $step, $data = array(), $errors = array(
     }
 ?>
 
-<p>Please note that you must be a <?=cobrand_creator_must_be()?> to create a petition.</p>
+<p>Please note that you must <?=cobrand_creator_must_be()?> to create a petition.</p>
 
 <p>First you must pick the relevant category for your petition. This is because the council
 is only responsible for certain matters, and we need to make sure you are taken to the
@@ -306,7 +306,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 <h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Your petition</h2>
 <?  errorlist($errors); ?>
 
-<p>Please note that you must be a <?=cobrand_creator_must_be()?> to create a petition.</p>
+<p>Please note that you must <?=cobrand_creator_must_be()?> to create a petition.</p>
 
 <p><?
     echo '<strong><label for="pet_content">' . $petition_prefix;
@@ -382,7 +382,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
     errorlist($errors);
 ?>
 <div id="new_you">
-<p>Please note that you must be a <?=cobrand_creator_must_be() ?> to create a petition.</p><?
+<p>Please note that you must <?=cobrand_creator_must_be() ?> to create a petition.</p><?
 
     $fields = array(
             'name'  =>          _('Your name'),

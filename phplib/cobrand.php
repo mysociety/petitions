@@ -33,19 +33,19 @@ function cobrand_creation_within_area_only() {
 function cobrand_creator_must_be() {
     global $site_name;
     if ($site_name == 'surreycc') {
-        return 'resident of Surrey, or have a business with a registered address in Surrey,';
+        return 'live, work or study at a Surrey registered address';
     }
     if ($site_name == 'woking') {
-        return 'member of the Council or a registered Elector in the Borough of Woking';
+        return 'be a member of the Council or a registered Elector in the Borough of Woking';
     }
     if (cobrand_creation_within_area_only()) {
         if (cobrand_creation_ask_for_address_type()) {
-            return 'council resident or work within the area of the council';
+            return 'be a council resident or work within the area of the council';
         } else {
-            return 'council resident';
+            return 'be a council resident';
         }
     } else {
-        return 'British citizen or resident';
+        return 'be a British citizen or resident';
     }
 }
 
