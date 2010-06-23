@@ -129,12 +129,9 @@ function petition_row($petition, $c) {
 function front_most_recent($recent) {
     echo "<div id='most_recent'>";
     echo cobrand_main_heading('Most recent petitions');
-    echo '<p>We the undersigned petition';
-    if (OPTION_SITE_TYPE == 'multiple') {
-        echo ':</p> <ul>';
-    } else {
-        echo ' ' . OPTION_SITE_PETITIONED . " to&hellip;</p> <ul>";
-    }
+    # If cross-site in future, will need to display name within each row
+    echo '<p>We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to&hellip;</p>';
+    echo '<ul>';
     $c = 1;
     foreach ($recent as $petition) {
         petition_row($petition, $c++);
