@@ -107,8 +107,8 @@ function cobrand_category_wrong_action($category_id, $area='') {
     if ($site_group == 'surreycc') {
         if ($site_name != 'surreycc') {
             $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
-            return 'You have selected a category for which this council is not
-            responsible. <a href="' . $url . '">Go to Surrey County Council\'s petition website
+            return 'You are petitioning about something which isn\'t the responsibility of your district council,
+            but instead of Surrey County Council. <a href="' . $url . '">Go to Surrey County Council\'s petition website
             to create a petition in this category</a>.'; 
         }
         if ($area) {
@@ -139,8 +139,9 @@ function cobrand_category_wrong_action($category_id, $area='') {
         } else {
             return '
             <input type="hidden" name="category" value="' . $category_id . '"> 
-            You have selected a category for which this council is not responsible. <label for="council_pick">Please
-            pick your council in order to be taken to their petition site:</label>
+            You are petitioning about something which isn\'t the responsibility of Surrey Council Council,
+            but instead of your district council. <label for="council_pick">Please
+            pick your district council in order to be taken to their petition site:</label>
             <select name="council" id="council_pick">
             <option value="elmbridge">Elmbridge Borough Council</option>
             <option value="epsom-ewell">Epsom and Ewell Borough Council</option>
