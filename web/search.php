@@ -102,13 +102,14 @@ function search($search) {
 */
 
     // Searching for text in petitions - stored in strings $live, $finished printed later
-    $q = db_query($petition_select . ' FROM petition
-                WHERE (status = \'live\' OR status = \'finished\')
-                    AND (content ILIKE \'%\' || ? || \'%\' OR 
-                         detail ILIKE \'%\' || ? || \'%\' OR 
-                         ref ILIKE \'%\' || ? || \'%\')
-                ORDER BY deadline DESC', array($search, $search, $search));
-                    #AND lower(ref) <> ?
+    $q = db_query("$petition_select FROM petition
+        LEFT JOIN body ON body_id = body.id
+        WHERE (status = 'live' OR status = 'finished')
+            AND (content ILIKE '%' || ? || '%' OR 
+                 detail ILIKE '%' || ? || '%' OR 
+                 ref ILIKE '%' || ? || '%')
+        ORDER BY deadline DESC", array($search, $search, $search));
+        #AND lower(ref) <> ?
     $finished = ''; $live = '';
     if (db_num_rows($q)) {
         $success = 1;
