@@ -507,7 +507,7 @@ Second bullet point'
     $wth->browser_follow_link(text_regex => qr/admin/);
     $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
                 fields => { }, button => 'respond') or die "Failed to submit write response button";
-    $wth->browser_check_contents('already sent two responses');
+    $wth->browser_check_contents('already sent 2 responses');
 
     comment("Check to see signatures are scrubbed");
     set_pet_date('1989-12-31');
