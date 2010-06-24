@@ -107,7 +107,7 @@ function search($search) {
         WHERE (status = 'live' OR status = 'finished')
             AND (content ILIKE '%' || ? || '%' OR 
                  detail ILIKE '%' || ? || '%' OR 
-                 ref ILIKE '%' || ? || '%')
+                 petition.ref ILIKE '%' || ? || '%')
         ORDER BY deadline DESC", array($search, $search, $search));
         #AND lower(ref) <> ?
     $finished = ''; $live = '';
