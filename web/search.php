@@ -82,7 +82,7 @@ function search($search) {
     // General query
     global $pet_today;
     $petition_select = "SELECT petition.*, '$pet_today' <= petition.deadline AS open,
-        cached_signers ";
+        cached_signers, body.ref as body_ref, body.name as body_name ";
 
     // Exact petition reference match
 /*    if (!$rss) {
