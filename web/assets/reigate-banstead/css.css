@@ -19,6 +19,7 @@ div#front_how {
 
 p.petition_view_tabs {
     border-bottom: solid 2px #62c355;
+    padding-bottom: 0.25em;
 }
 .petition_view_tabs span {
     background-color: #62c355;
