@@ -252,9 +252,7 @@ function petition_form_steps() {
  * If we need to ask for category to route people appropriately */
 function petition_form_category($steps, $step, $data = array(), $errors = array()) {
     startform();
-?>
-<h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Petition category</h2>
-<?
+    print cobrand_create_heading('New petition &#8211; Part ' . $step . ' of ' . petition_form_steps() . ' &#8211; Petition category');
     if (array_key_exists('category_wrong', $errors)) {
         print cobrand_error_div_start();
 ?>
@@ -302,9 +300,9 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
     startform();
+    print cobrand_create_heading('New petition &#8211; Part ' . $step . ' of ' . petition_form_steps() . ' &#8211; Your petition');
+    errorlist($errors);
 ?>
-<h2 class="page_title_border">New petition &#8211; Part <?=$step ?> of <?=petition_form_steps()?> &#8211; Your petition</h2>
-<?  errorlist($errors); ?>
 
 <p>Please note that you must <?=cobrand_creator_must_be()?> to create a petition.</p>
 
@@ -376,9 +374,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
  * Display the "about you" (second) section of the petition creation form. */
 function petition_form_you($steps, $step, $data = array(), $errors = array()) {
     startform();
-?>
-<h2 class="page_title_border">New petition &#8211; Part <?=$step?> of <?=petition_form_steps()?> &#8211; About you</h2>
-<?
+    print cobrand_create_heading('New petition &#8211; Part ' . $step . ' of ' . petition_form_steps() . ' &#8211; About you');
     errorlist($errors);
 ?>
 <div id="new_you">
@@ -622,8 +618,8 @@ function step_preview_error_check($data) {
 
 function petition_form_preview($steps, $step, $data, $errors = array()) {
     errorlist($errors);
+    print cobrand_create_heading('New petition &#8211; Part ' . $step . ' of ' . petition_form_steps());
 ?>
-<h2 class="page_title_border">New petition &#8211; Part <?=$step?> of <?=petition_form_steps()?></h2>
 <p>Your petition, with short name <em><?=$data['ref'] ?></em>, will look like this:</p>
 <?
     $partial_petition = new Petition($data);

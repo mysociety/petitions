@@ -9,8 +9,8 @@
  */
 
 function cobrand_creation_category_first() {
-    global $site_name;
-    if (in_array($site_name, array('tandridge', 'surreycc', 'woking'))) {
+    global $site_group;
+    if ($site_group == 'surreycc') {
         return true;
     }
     return false;
@@ -26,13 +26,14 @@ function cobrand_creation_ask_for_address_type() {
 function cobrand_creation_within_area_only() {
     global $site_name;
     if ($site_name == 'surreycc') return 'Surrey';
+    if ($site_name == 'reigate-banstead') return 'Surrey';
     if ($site_name == 'woking') return 'Woking';
     return '';
 }
 
 function cobrand_creator_must_be() {
     global $site_name;
-    if ($site_name == 'surreycc') {
+    if ($site_name == 'surreycc' || $site_name == 'reigate-banstead') {
         return 'live, work or study at a Surrey registered address';
     }
     if ($site_name == 'woking') {
@@ -93,7 +94,7 @@ function cobrand_overseas_dropdown() {
 function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
     if ($site_group != 'surreycc') return true;
-    if (in_array($site_name, array('tandridge', 'woking')) && 
+    if ($site_name != 'surreycc' && 
         in_array($category_id, array(4, 6, 7, 10, 12, 13, 16)))
         return false;
     if ($site_name == 'surreycc' &&
@@ -542,6 +543,15 @@ function cobrand_main_heading($text) {
     elseif ($site_name == 'number10')
         return "<h3 class='page_title_border'>$text</h3>";
     return "<h3>$text</h3>";
+}
+
+function cobrand_create_heading($text) {
+    global $site_name;
+    if ($site_name == 'reigate-banstead')
+        return "<h3>$text</h3>";
+    elseif ($site_name == 'number10')
+        return "<h2 class='page_title_border'>$text</h2>";
+    return "<h2>$text</h2>";
 }
 
 function cobrand_allowed_responses() {
