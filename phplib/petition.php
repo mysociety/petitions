@@ -10,6 +10,8 @@
  * 
  */
 
+require_once 'cobrand.php';
+
 // Textual content
 if (OPTION_SITE_TYPE == 'one') {
     $petition_prefix = 'We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to';
