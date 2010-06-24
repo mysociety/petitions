@@ -1040,9 +1040,10 @@ EOF;
             return;
         }
 
-        $n = db_getOne("select id from message where petition_id = ? and circumstance = 'government-response' and circumstance_count = 1", $petition_id);
+        $allowed_responses = cobrand_allowed_responses();
+        $n = db_getOne("select id from message where petition_id = ? and circumstance = 'government-response' and circumstance_count = " . ($allowed_responses-1), $petition_id);
         if (!is_null($n)) {
-            print '<p><em>You have already sent two responses to this petition!</em></p>';
+            print '<p><em>You have already sent ' . $allowed_responses . ' responses to this petition!</em></p>';
             return;
         }
 

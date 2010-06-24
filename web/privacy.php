@@ -59,9 +59,9 @@ that "signatures" collected are genuine.  Your name (but no other details) will
 be published on the petition on the website.</p>
 
 <p>We will only use the information you provide us for this purpose, and,
-unless you ask us not to, to write to you a maximum of two times about the
+unless you ask us not to, to write to you a maximum of two/three times about the
 issues raised in the petition. ???  In the future we may introduce a facility to
-enable the creator of the petition to send you a maximum of two messages as
+enable the creator of the petition to send you a maximum of two/three messages as
 well; they will not have access to any of your details.</p>
 
 <? }

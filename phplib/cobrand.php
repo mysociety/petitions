@@ -544,3 +544,9 @@ function cobrand_main_heading($text) {
     return "<h3>$text</h3>";
 }
 
+function cobrand_allowed_responses() {
+    global $site_name;
+    if ($site_name == 'reigate-banstead')
+        return 3;
+    return 2;
+}
