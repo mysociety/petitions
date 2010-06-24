@@ -3,6 +3,10 @@
     width: 100%;
 }
 
+div#petition_actions ul li {
+    list-style: none;
+}
+
 div#petition_actions {
     border: none;
 }
