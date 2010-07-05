@@ -101,11 +101,12 @@ function cobrand_overseas_dropdown() {
 function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
     if ($site_group != 'surreycc') return true;
-    if ($site_name != 'surreycc' && 
-        in_array($category_id, array(4, 6, 7, 10, 12, 13, 16)))
+    $county_only = array(4, 6, 7, 10, 12, 13, 16);
+    if ($site_name == 'tandridge') $county_only[] = 11; # Planning not okay in Tandridge
+    if ($site_name != 'surreycc' && in_array($category_id, $county_only))
         return false;
-    if ($site_name == 'surreycc' &&
-        in_array($category_id, array(1, 2, 3, 5, 8, 9, 15)))
+    $district_only = array(1, 2, 3, 5, 8, 9, 15);
+    if (in_array($category_id, $district_only))
         return false;
     return true;
 }
@@ -114,10 +115,19 @@ function cobrand_category_wrong_action($category_id, $area='') {
     global $site_name, $site_group;
     if ($site_group == 'surreycc') {
         if ($site_name != 'surreycc') {
-            $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
-            return 'You are petitioning about something which isn\'t the responsibility of your district council,
-            but instead of Surrey County Council. <a href="' . $url . '">Go to Surrey County Council\'s petition website
-            to create a petition in this category</a>.'; 
+            if ($category_id == 11) { # Planning
+                return "You cannot create a petition about a planning
+application. For further information on the Council's procedures and how you
+can express your views, see the
+<a href='http://www.tandridge.gov.uk/Planning/planninginteractive/default.htm'>planning
+applications</a> section.";
+            } else {
+                $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
+                return "You are petitioning about something which isn't the
+responsibility of your district council, but instead of Surrey County Council.
+<a href='$url'>Go to Surrey County Council's petition website to create a
+petition in this category</a>."; 
+            }
         }
         if ($area) {
             # $area is set if we're being called as a result of the form below

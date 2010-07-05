@@ -335,7 +335,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     textarea('detail', $data['detail'], 40, 7, false, $errors);
     ?>
 </p>
-<p><label for="rawdeadline">Requested duration:</label>
+<p><label for="rawdeadline">How long would you like your petition to accept signatures for?</label>
     <?
     $deadline_limits = cobrand_creation_deadline_limit();
     if ($deadline_limits['years'] && $deadline_limits['months']) {
