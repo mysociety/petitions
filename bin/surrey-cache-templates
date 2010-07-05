@@ -58,14 +58,14 @@ $footer = get_page('http://www.elmbridge.gov.uk/website_footer.asp');
 output('elmbridge', $header, $footer);
 
 # Tandridge
-$header = get_page('http://www.tandridge.gov.uk/template_header_new.asp');
+$header = get_page('http://www.tandridge.gov.uk/petitions_header.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - Tandridge District Council/;
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css">
 <link rel="stylesheet" type="text/css" href="/assets/tandridge/css.css">
 </head>};
 $header .= "<div id='mysociety'>\n";
 $footer = "</div>\n";
-$footer .= get_page('http://www.tandridge.gov.uk/template_footer_new.asp');
+$footer .= get_page('http://www.tandridge.gov.uk/petitions_footer.asp');
 output('tandridge', $header, $footer);
 
 sub output {
