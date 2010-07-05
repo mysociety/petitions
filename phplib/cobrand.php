@@ -283,7 +283,7 @@ function cobrand_petition_guidelines() {
 <li>It should state what action the petitioner wishes the council to take. The petition will be returned to you to edit if it is unclear what action is being sought.</li>
 <li>The petition author's contact address (this will not be placed on the website); </li>
 <li>A duration for the petition ie the deadline you want people to sign by (maximum of six months).</li>
-<li>10 signatures or more for a petition to be referred to the committee or council meeting (if less than 10 signatures, please see <a href="/faq/faq.htm?mode=20&amp;pk_faq=478">What if my petitions does not have 10 signatures).</a></li>
+<li>10 signatures or more for a petition to be referred to the committee or council meeting (if less than 10 signatures, please see <a href="http://www.tandridge.gov.uk/faq/faq.htm?mode=20&amp;pk_faq=478">What if my petitions does not have 10 signatures).</a></li>
 </ul>
 
 <h4>What is not allowed?</h4>
@@ -313,8 +313,8 @@ function cobrand_petition_guidelines() {
 
 <p>Further information on the Council's procedures and how you can express your views are available here: </p>
 <ul>
-<li><a href="/Planning/planninginteractive/default.htm" title="Planning online">Planning applications</a></li>
-<li><a href="/YourCouncil/consultation.htm" title="Consultation">Consultation</a></li>
+<li><a href="http://www.tandridge.gov.uk/Planning/planninginteractive/default.htm" title="Planning online">Planning applications</a></li>
+<li><a href="http://www.tandridge.gov.uk/YourCouncil/consultation.htm" title="Consultation">Consultation</a></li>
 </ul>
 
 <h4>Why might we reject your petition?</h4>
@@ -330,7 +330,7 @@ function cobrand_petition_guidelines() {
 <li>Statements that amount to advertisements.</li>
 <li>Petitions intended to be humorous, or which have no point about council policy.</li>
 <li>Issues for which an e-petition is not the appropriate channel (for example, correspondence about a personal issue).</li>
-<li>Freedom of Information requests. This is not the right channel for FOI requests - <a href="/YourCouncil/DataProtectionFreedomofInformation/freedom_of_information.htm" title="Freedom of information ">Freedom of information.</a></li>
+<li>Freedom of Information requests. This is not the right channel for FOI requests - <a href="http://www.tandridge.gov.uk/YourCouncil/DataProtectionFreedomofInformation/freedom_of_information.htm" title="Freedom of information ">Freedom of information.</a></li>
 </ul>
 
 <p><a href="/terms">Full terms and conditions</a></p>
