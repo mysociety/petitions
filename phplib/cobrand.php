@@ -8,6 +8,13 @@
  * 
  */
 
+function cobrand_creation_deadline_limit() {
+    global $site_name;
+    if ($site_name == 'tandridge')
+        return array('years' => 0, 'months' => 6);
+    return array('years' => 1, 'months' => 0);
+}
+
 function cobrand_creation_category_first() {
     global $site_group;
     if ($site_group == 'surreycc') {
