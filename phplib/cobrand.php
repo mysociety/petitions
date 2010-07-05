@@ -270,9 +270,73 @@ function cobrand_admin_site_restriction() {
     return '';
 }
 
-function cobrand_terms_and_conditions() {
-    global $site_group;
-    if ($site_group == 'surreycc') {
+function cobrand_petition_guidelines() {
+    global $site_group, $site_name;
+    if ($site_name == 'tandridge') {
+?>
+
+<p>The petition must refer to a matter that is relevant to the functions of a district council. Petitions submitted to the council must include: </p>
+
+<ul>
+<li>The title or subject of the petition. </li>
+<li>A clear and concise statement covering the subject of the petition. </li>
+<li>It should state what action the petitioner wishes the council to take. The petition will be returned to you to edit if it is unclear what action is being sought.</li>
+<li>The petition author's contact address (this will not be placed on the website); </li>
+<li>A duration for the petition ie the deadline you want people to sign by (maximum of six months).</li>
+<li>10 signatures or more for a petition to be referred to the committee or council meeting (if less than 10 signatures, please see <a href="/faq/faq.htm?mode=20&amp;pk_faq=478">What if my petitions does not have 10 signatures).</a></li>
+</ul>
+
+<h2>What is not allowed?</h2>
+<p>A petition will not be accepted where: </p>
+
+<ul>
+<li>It is considered to be vexatious, abusive or otherwise inappropriate. </li>
+<li>It does not follow the guidelines set out above.</li>
+<li>It refers to a development plan, or specific planning matter, including planning applicants.</li>
+<li>It refers to a decision for which there is an existing right of appeal. </li>
+<li>It is a duplicate or near duplicate of a similar petition received or submitted within the previous 12 months. </li>
+<li>It refers to a specific licensing application.</li>
+</ul>
+
+<p>The information in a petition must be submitted in good faith. For the petition service to comply with the law, you must not include: </p>
+<ul>
+<li>Party political material. This does not mean it is not permissible to petition on controversial issues. For example, this party political petition would not be permitted: &quot;we petition the council to change the conservative adminstration's policy on housing&quot;, but this non-party political version would be: &quot;we petition the council to change its policy on housing&quot;. </li>
+<li>Potentially libellous, false, or defamatory statements. </li>
+<li>Information which may be protected by an injunction or court order (for example, the identities of children in custody disputes).</li>
+<li>Material which is potentially confidential, commercially sensitive, or which may cause personal distress or loss.</li>
+<li>Any commercial endorsement, promotion of any product, service or publication.</li>
+<li>The names of individual officials of public bodies, unless they are part of the senior management of those organisations.</li>
+<li>The names of family members of elected representatives or officials of public bodies.</li>
+<li>The names of individuals, or information where they may be identified, in relation to criminal accusations.</li>
+<li>Language which is offensive, intemperate, or provocative. This not only includes swear words and insults, but any language which people could reasonably take offence to. </li>
+</ul>
+
+<p>Further information on the Council's procedures and how you can express your views are available here: </p>
+<ul>
+<li><a href="/Planning/planninginteractive/default.htm" title="Planning online">Planning applications</a></li>
+<li><a href="/YourCouncil/consultation.htm" title="Consultation">Consultation</a></li>
+</ul>
+
+<h2>Why we might reject your petition?</h2>
+<p>Petitions which do not follow the guidelines above cannot be accepted. In these cases, you will be informed in writing of the reason(s) your petition has been refused. If this happens, we will give you the option of altering and resubmitting the petition so it can be accepted.</p>
+<p>If you decide not to resubmit your petition, or if the second one is also rejected, we will list your petition and the reason(s) for not accepting it on this website. We will publish the full text of your petition, unless the content is illegal or offensive. </p>
+<p>We reserve the right to reject: </p>
+
+<ul>
+<li>Petitions similar to and/or overlap with an existing petition or petitions.</li>
+<li>Petitions which ask for things outside the remit or powers of the council. </li>
+<li>Statements that don't request any action. We cannot accept petitions which call upon the council to &quot;recognise&quot; or &quot;acknowledge&quot; something, as they do not call for a recognisable action. </li>
+<li>Wording that is impossible to understand. Please don't use capital letters excessively as they can make petitions hard to read. </li>
+<li>Statements that amount to advertisements.</li>
+<li>Petitions intended to be humorous, or which have no point about council policy.</li>
+<li>Issues for which an e-petition is not the appropriate channel (for example, correspondence about a personal issue).</li>
+<li>Freedom of Information requests. This is not the right channel for FOI requests - <a href="/YourCouncil/DataProtectionFreedomofInformation/freedom_of_information.htm" title="Freedom of information ">Freedom of information.</a></li>
+</ul>
+
+<p><a href="/terms">Full terms and conditions</a></p>
+
+<?
+    } elseif ($site_group == 'surreycc') {
 ?>
 
 <p>

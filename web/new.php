@@ -55,6 +55,7 @@ if (get_http_var('toothercouncil')) {
 $contents = ob_get_contents();
 ob_end_clean();
 page_header($page_title, array());
+if ($site_name == 'tandridge') print "<h1>$page_title</h1>";
 print $contents;
 page_footer('Create');
 
@@ -702,9 +703,9 @@ do not wish to be public, please include them here:</label></p>
 ?>
 </p>
 
-<h3 class="page_title_border">Terms and Conditions</h3>
+<h3 class="page_title_border">Petition Guidelines</h3>
 
-<? cobrand_terms_and_conditions(); ?>
+<? cobrand_petition_guidelines(); ?>
 
 <p>Petitioners may freely disagree with
 <?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> or
