@@ -286,7 +286,7 @@ function cobrand_petition_guidelines() {
 <li>10 signatures or more for a petition to be referred to the committee or council meeting (if less than 10 signatures, please see <a href="/faq/faq.htm?mode=20&amp;pk_faq=478">What if my petitions does not have 10 signatures).</a></li>
 </ul>
 
-<h2>What is not allowed?</h2>
+<h4>What is not allowed?</h4>
 <p>A petition will not be accepted where: </p>
 
 <ul>
@@ -317,7 +317,7 @@ function cobrand_petition_guidelines() {
 <li><a href="/YourCouncil/consultation.htm" title="Consultation">Consultation</a></li>
 </ul>
 
-<h2>Why we might reject your petition?</h2>
+<h4>Why might we reject your petition?</h4>
 <p>Petitions which do not follow the guidelines above cannot be accepted. In these cases, you will be informed in writing of the reason(s) your petition has been refused. If this happens, we will give you the option of altering and resubmitting the petition so it can be accepted.</p>
 <p>If you decide not to resubmit your petition, or if the second one is also rejected, we will list your petition and the reason(s) for not accepting it on this website. We will publish the full text of your petition, unless the content is illegal or offensive. </p>
 <p>We reserve the right to reject: </p>
