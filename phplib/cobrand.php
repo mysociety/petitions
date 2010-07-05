@@ -106,7 +106,7 @@ function cobrand_category_okay($category_id) {
     if ($site_name != 'surreycc' && in_array($category_id, $county_only))
         return false;
     $district_only = array(1, 2, 3, 5, 8, 9, 15);
-    if (in_array($category_id, $district_only))
+    if ($site_name == 'surreycc' && in_array($category_id, $district_only))
         return false;
     return true;
 }
