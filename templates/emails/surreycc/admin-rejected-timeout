@@ -4,7 +4,7 @@ Hello,
 
     This is an automatic email to let you know that the petition
 you submitted 4 weeks ago has now been published on the rejected
-petitions page, <http://<?=$values['rejected_url']?>>.
+petitions page, <<?=$values['rejected_url']?>>.
 This is because you chose not to edit and resubmit your petition
 in the time since we asked you to change your original submission.
 
