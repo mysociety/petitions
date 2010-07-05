@@ -533,6 +533,8 @@ function cobrand_terms_elsewhere() {
     global $site_name;
     if ($site_name == 'surreycc')
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
+    if ($site_name == 'tandridge')
+        return 'http://www.tandridge.gov.uk/YourCouncil/CouncillorsMeetings/petitions/terms.htm';
     return null;
 }
 
