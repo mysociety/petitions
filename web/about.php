@@ -46,7 +46,7 @@ petitions as is consistent with legal and anti-spam requirements, including
 the reason why it could not be hosted.</p>
 
 <p>If you have any questions about the service, please contact
-<a href="mailto:number10&#64;petitions.pm.gov.uk">number10&#64;petitions.pm.gov.uk</a>.
+<a href="mailto:petitions&#64;hmg.gov.uk">petitions&#64;hmg.gov.uk</a>.
 </p>
 
 <?

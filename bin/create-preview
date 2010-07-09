@@ -29,11 +29,13 @@ $text =~ s/\r//g;
 my ($subject) = $text =~ /^(.*)\n+/;
 $text =~ s/^$subject\n+//;
 $text =~ s/\n+$//;
+my $optout_domain = 'hmg.gov.uk';
+my $optout_user = 'optoutpetitions';
 $text .= "
 
 [$url Petition information]
 
-If you would like to opt out of receiving further mail on this or any other petitions you signed, please email [optout\@petitions.pm.gov.uk]";
+If you would like to opt out of receiving further mail on this or any other petitions you signed, please email [$optout_user\@$optout_domain]";
 my $out;
 if ($type eq 'html') {
     $out = Petitions::HTMLEmail::create_html($text, $subject);

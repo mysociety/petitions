@@ -243,7 +243,7 @@ function cobrand_admin_rejection_snippets() {
         return $snippets;
     }
     array_push($snippets,
-'Comments about the petitions system should be sent to number10@petitions.pm.gov.uk.',
+'Comments about the petitions system should be sent to petitions@hmg.gov.uk.',
 'Individual legal cases are a matter for direct communication with the Home Office.',
 'This is a devolved matter and should be directed to the Scottish Executive / Welsh Assembly / Northern Ireland Executive as appropriate.',
 'This is a matter for direct communication with Parliament.',
