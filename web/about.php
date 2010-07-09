@@ -12,6 +12,8 @@ require_once "../phplib/pet.php";
 
 header('Cache-Control: max-age=300');
 page_header('About e-petitions');
+$contact_email = str_replace('@', '&#64;', OPTION_CONTACT_EMAIL);
+
 ?>
 
 <h2 class="page_title_border">Introduction to e-petitions</h2>
@@ -46,7 +48,7 @@ petitions as is consistent with legal and anti-spam requirements, including
 the reason why it could not be hosted.</p>
 
 <p>If you have any questions about the service, please contact
-<a href="mailto:petitions&#64;hmg.gov.uk">petitions&#64;hmg.gov.uk</a>.
+<a href="mailto:<?=$contact_email?>"><?=$contact_email?></a>.
 </p>
 
 <?
