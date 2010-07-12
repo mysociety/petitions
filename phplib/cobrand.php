@@ -132,8 +132,7 @@ petition in this category</a>.";
         if ($area) {
             # $area is set if we're being called as a result of the form below
             if (in_array($area, array('tandridge')))
-                return '/tandridge';
-                #return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+                return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
             if ($area == 'elmbridge')
                 return 'http://www.elmbridge.gov.uk/Council/information/petition.htm';
             if ($area == 'epsom-ewell')
