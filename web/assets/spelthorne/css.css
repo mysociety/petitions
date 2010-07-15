@@ -1,0 +1,26 @@
+div#most_recent {
+    float: right;
+}
+
+#most_popular h3 {
+    margin-top: 0;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+/*
+form#signForm label {
+    width: 8em;
+}
+*/
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #0099cc;
+}
+.petition_view_tabs span {
+    background-color: #0099cc;
+}
+
