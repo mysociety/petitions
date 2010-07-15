@@ -238,7 +238,7 @@ function cobrand_admin_rejection_snippets() {
 'Please address the excessive use of capital letters; they make your petition hard to read.',
 'Your title should be a clear call for action, preferably starting with a verb, and not a name or statement.',
     );
-    if ($site_group == 'surreycc') {
+    if ($site_group == 'surreycc' || $site_group == 'lichfielddc') {
         return $snippets;
     }
     array_push($snippets,
