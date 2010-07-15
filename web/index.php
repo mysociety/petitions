@@ -52,7 +52,7 @@ page_header('Introduction to e-petitions', array(
     )
 ));
 
-if (OPTION_SITE_NAME == 'sbdc' || strpos(OPTION_SITE_NAME, 'surrey')!==false) {
+if (OPTION_SITE_NAME == 'sbdc' || strpos(OPTION_SITE_NAME, 'surrey')!==false || OPTION_SITE_NAME=='lichfielddc') {
     if (OPTION_SITE_NAME == 'sbdc')
         echo '<h2>Make or sign petitions through this official Borsetshire District Council petitions website</h2>';
     front_actions();
