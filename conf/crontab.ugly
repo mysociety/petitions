@@ -36,8 +36,10 @@ MAILTO=mysociety@petitions.pm.gov.uk
 30 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock "/data/vhost/!!(*= $vhost *)!!/petitions/bin/update-totals all" || echo "stalled?"
 
 # On every web host machine, as makes files
+!!(* if ($vhost ne 'petitions.lichfielddc.gov.uk') { *)!!
 45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/petitions/bin/petition-signup-graph
 45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/petitions/bin/petition-creation-graph
+!!(* } *)!!
 
 !!(* } *)!!
 

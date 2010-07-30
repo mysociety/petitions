@@ -30,11 +30,16 @@ function cobrand_creation_ask_for_address_type() {
     return false;
 }
 
+# If creation should be limited to a particular area, this
+# function should return a two-element array, consisting of
+# the name of the area, and either an area ID that the
+# creator must be within, or null if the creator can be in
+# any area in the site database.
 function cobrand_creation_within_area_only() {
     global $site_name;
-    if ($site_name == 'surreycc') return 'Surrey';
-    if ($site_name == 'reigate-banstead') return 'Surrey';
-    if ($site_name == 'woking') return 'Woking';
+    if ($site_name == 'surreycc') return array('Surrey', null);
+    if ($site_name == 'reigate-banstead') return array('Surrey', null);
+    if ($site_name == 'woking') return array('Woking', 2449);
     return '';
 }
 
@@ -44,7 +49,7 @@ function cobrand_creator_must_be() {
         return 'live, work or study at a Surrey registered address';
     }
     if ($site_name == 'woking') {
-        return 'be a member of the Council or a registered Elector in the Borough of Woking';
+        return 'live, work or study in the Borough of Woking';
     }
     if (cobrand_creation_within_area_only()) {
         if (cobrand_creation_ask_for_address_type()) {
