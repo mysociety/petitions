@@ -596,13 +596,15 @@ function step_you_error_check($data) {
         $areas = mapit_get_voting_areas($data['postcode']);
         if (is_object($areas)) { # RABX Error
             $errors['postcode'] = 'Sorry, we did not recognise that postcode.';
+        } elseif ($area[1] && !in_array($area[1], $areas)) {
+            $errors['postcode'] = sprintf("Sorry, that postcode is not within %s", $area[0]);
         } else {
             $body = db_getRow('SELECT * FROM body WHERE area_id in (' . join(',', array_values($areas)) . ')');
             if ($body) {
                 if (!OPTION_SITE_DOMAINS)
                     $data['body'] = $body['id'];
             } else {
-                $errors['postcode'] = "Sorry, that postcode is not within $area.";
+                $errors['postcode'] = sprintf("Sorry, that postcode is not within %s", $area[0]);
             }
         }
     }
