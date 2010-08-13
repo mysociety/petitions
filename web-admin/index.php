@@ -32,7 +32,7 @@ if (!OPTION_ADMIN_PUBLIC) {
     );
 }
 
-if (OPTION_SITE_NAME == 'sbdc') {
+if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
     ob_start(); # As footer wants to output total length
     page_header('Admin', array('admin'=>1));
     admin_page_display(str_replace("http://", "", OPTION_BASE_URL), $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
