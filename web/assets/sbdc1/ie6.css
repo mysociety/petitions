@@ -1,0 +1,30 @@
+/* IE6 doesn't understand position: fixed */
+#message {
+    position: absolute;
+}
+
+/* Getting links working again; thanks to http://www.satzansatz.de/cssd/tmp/alphatransparency.html */
+#message_wrap {
+    zoom: 1;
+}
+#message a {
+    position: relative;
+    z-index: 1;
+}
+
+/* On the navigation, the cursor disappears, but links continue to work */
+#nav a {
+    cursor: pointer;
+}
+
+/* IE6 doesn't know about max-width */
+#wrapper {
+    width: 60em;
+}
+#main {
+    width: 45em;
+}
+#admin #main {
+    width: 57em;
+}
+
