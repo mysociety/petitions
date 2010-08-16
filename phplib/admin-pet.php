@@ -357,7 +357,7 @@ function petition_admin_navigation($page, $array = array()) {
     }
     print " </p>";
     print '</div>';
-    if (OPTION_SITE_NAME == 'sbdc') 
+    if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') 
         print "<h2>Admin interface: $page->navname</h2>";
 }
 

@@ -142,7 +142,7 @@ function pet_search_form($params=array()) {
 <input type="text" name="qt" id="q" size="11" maxlength="1000" value="" />&nbsp;<input type="submit" value="Go" /></p>
 </form>
 <?
-    } elseif (OPTION_SITE_NAME == 'sbdc') {
+    } elseif (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
 ?>
 <form<?
         if (isset($params['float'])) print ' style="float:right"';
