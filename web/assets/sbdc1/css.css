@@ -332,3 +332,11 @@ form#signForm label {
     background-image: url("/assets/sbdc1/right-corner.png");
 }
 
+#footer li.credit_admin, #admin #footer li.credit_normal{
+    display: none
+}
+#admin #footer li.credit_admin{
+    display: inline-block;
+    color: #666666;
+}
+
