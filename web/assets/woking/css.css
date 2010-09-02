@@ -1,0 +1,20 @@
+div#petition_actions {
+    margin-top: 30px;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #990000;
+}
+.petition_view_tabs span {
+    background-color: #990000;
+}
+
