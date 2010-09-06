@@ -1,3 +1,7 @@
+div#errors {
+    margin-top: 20px;
+}
+
 div#petition_actions {
     border: none;
     margin-top: 30px;
