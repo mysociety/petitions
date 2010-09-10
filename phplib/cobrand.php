@@ -107,7 +107,7 @@ function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
     if ($site_group != 'surreycc') return true;
     $county_only = array(4, 6, 7, 10, 12, 13, 16);
-    if ($site_name == 'tandridge') $county_only[] = 11; # Planning not okay in Tandridge
+    if ($site_name == 'tandridge' || $site_name == 'reigate-banstead') $county_only[] = 11; # Planning not okay in Tandridge
     if ($site_name != 'surreycc' && in_array($category_id, $county_only))
         return false;
     $district_only = array(1, 2, 3, 5, 8, 9, 15);
@@ -120,11 +120,17 @@ function cobrand_category_wrong_action($category_id, $area='') {
     global $site_name, $site_group;
     if ($site_group == 'surreycc') {
         if ($site_name != 'surreycc') {
-            if ($category_id == 11) { # Planning
+            if ($site_name == 'tandridge' && $category_id == 11) { # Planning
                 return "You cannot create a petition about a planning
 application. For further information on the Council's procedures and how you
 can express your views, see the
 <a href='http://www.tandridge.gov.uk/Planning/planninginteractive/default.htm'>planning
+applications</a> section.";
+            } elseif ($site_name == 'reigate-banstead' && $category_id == 11) { # Planning
+                return "You cannot create a petition about a planning
+application. For further information on the Council's procedures and how you
+can express your views, see the
+<a href='http://www.reigate-banstead.gov.uk/planning/'>planning
 applications</a> section.";
             } else {
                 $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
