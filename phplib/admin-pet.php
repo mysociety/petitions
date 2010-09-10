@@ -852,7 +852,8 @@ Deadline: ';
         if ($status != 'draft' && $status != 'resubmitted') {
             $p->log_event("Bad forwarding", http_auth_user());
             db_commit();
-            err("Should only be able to forward petitions in draft or resubmitted state");
+            print '<p><em>That petition appears to already have been dealt with.</em></p>';
+            return;
         }
 
         $reason = get_http_var('reason');
@@ -1014,7 +1015,8 @@ EOF;
         } else {
             $p->log_event("Bad rejection", http_auth_user());
             db_commit();
-            err("Should only be able to reject petitions in draft or resubmitted state");
+            print '<p><em>That petition appears to already have been dealt with.</em></p>';
+            return;
         }
         pet_send_message($id, MSG_ADMIN, MSG_CREATOR, $circumstance, $template);
         db_commit();
@@ -1031,12 +1033,12 @@ EOF;
         if ($status != 'finished' && $status != 'live') {
             $p->log_event("Bad response state", http_auth_user());
             db_commit();
-            err("Should only be able to respond to petitions in live or finished state");
+            print '<p><em>You cannot respond to a petition unless it is live or closed</em></p>';
             return;
         }
 
         if (OPTION_RESPONSE_DISABLED) {
-            err("Currently petition responses cannot be sent");
+            print '<p><em>Currently petition responses cannot be sent</em></p>';
             return;
         }
 
@@ -1222,7 +1224,8 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.culture.gov.uk/
         } else {
             $p->log_event("Bad approval", http_auth_user());
             db_commit();
-            err("Should only be able to approve petitions in draft or resubmitted state");
+            print '<p><em>That petition appears to have already been dealt with.</em></p>';
+            return;
         }
         pet_send_message($petition_id, MSG_ADMIN, MSG_CREATOR, 'approved', 'petition-approved');
         db_commit();
