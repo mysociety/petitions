@@ -1117,9 +1117,14 @@ EOF;
                 }
             }
 ?>
-<p>You are responding to the petition '<?=$p->ref() ?>'.
-To do links in an HTML mail, write them as e.g. <kbd>[http://www.culture.gov.uk/ Department of Culture]</kbd>.
-</p>
+<p style="font-size: 150%">You are responding to the petition '<?=$p->ref() ?>'.
+This response will be sent to <strong>all signers</strong>, not just the creator.
+To email the creator, you can directly email <a href="mailto:<?=$p->creator_email()?>"><?=$p->creator_email()?></a>.</p>
+
+<?          if (cobrand_admin_allow_html_response()) { ?>
+<p>To do links in an HTML mail, write them as e.g. <kbd>[http://www.culture.gov.uk/ Department of Culture]</kbd>.</p>
+<?          } ?>
+
 <form name="petition_admin_respond" action="<?=$this->self_link?>" accept-charset="utf-8" method="post">
 <input type="hidden" name="respond" value="1">
 <input type="hidden" name="petition_id" value="<?=$petition_id ?>">
@@ -1132,7 +1137,9 @@ To do links in an HTML mail, write them as e.g. <kbd>[http://www.culture.gov.uk/
 <br><textarea id="message_body" name="message_body" rows="20" cols="72"><?=$q_h_message_body ?></textarea></p>
 <p><label for="message_links">Further Information:</label>
 <br><textarea id="message_links" name="message_links" rows="10" cols="72"><?=$q_h_message_links ?></textarea></p>
+<?          if (cobrand_admin_allow_html_response()) { ?>
 <p><input type="checkbox" name="html_mail" value="1"<?=($q_html_mail?' checked':'')?>> Send as an HTML email?</p>
+<?          } ?>
 <input type="submit" name="respond" value="Preview">
 <?          if ($q_n > 0 && !sizeof($errors)) { ?>
 <input type="submit" name="submit" value="Send">

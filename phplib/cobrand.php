@@ -278,6 +278,12 @@ function cobrand_admin_site_restriction() {
     return " AND body.ref='" . http_auth_user() . "' ";
 }
 
+function cobrand_admin_allow_html_response() {
+    global $site_name;
+    if ($site_name == 'number10') return true;
+    return false;
+}
+
 function cobrand_petition_guidelines() {
     global $site_group, $site_name;
     if ($site_name == 'tandridge') {
@@ -345,6 +351,9 @@ function cobrand_petition_guidelines() {
 
 <?
     } elseif ($site_group == 'surreycc') {
+        $foi_link = 'http://www.ico.gov.uk/';
+        if ($site_name == 'reigate-banstead')
+            $foi_link = 'http://www.reigate-banstead.gov.uk/council_and_democracy/about_the_council/access_to_information/freedom_of_information_act_2000/';
 ?>
 
 <p>
@@ -392,7 +401,7 @@ for purely frivolous purposes);</li>
 (for example, correspondence about a personal issue);</li>
 <li>Freedom of Information requests. This is not the right channel
 for FOI requests; information about the appropriate procedure can be
-found at <a href="http://www.ico.gov.uk/">http://www.ico.gov.uk/</a>.</li>
+found at <a href="<?=$foi_link?>"><?=$foi_link?></a>.</li>
 </ul>
 
 <p>We will strive to ensure that petitions that do not meet our
@@ -647,7 +656,7 @@ function cobrand_create_heading($text) {
 
 function cobrand_allowed_responses() {
     global $site_name;
-    if ($site_name == 'reigate-banstead')
-        return 3;
-    return 2;
+    if ($site_name == 'surrey' || $site_name == 'tandridge' || $site_name == 'number10')
+        return 2;
+    return 8;
 }

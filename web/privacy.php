@@ -48,10 +48,10 @@ for its own purposes.</p>
 <? } else { ?>
 
 <p>If you create an e-petition on this website, you will be
-required to provide us with basic personal information ??? so that we can contact
+required to provide us with basic personal information so that we can contact
 you about your petition. The information will only be used for this purpose,
 although we may need to pass your details to the relevant department
-to enable them to respond to the issues you raise. ???</p>
+to enable them to respond to the issues you raise.</p>
 
 <p>If you sign an e-petition on this website, you will be
 required to provide us with basic personal information to enable us to verify
@@ -59,9 +59,9 @@ that "signatures" collected are genuine.  Your name (but no other details) will
 be published on the petition on the website.</p>
 
 <p>We will only use the information you provide us for this purpose, and,
-unless you ask us not to, to write to you a maximum of two/three times about the
-issues raised in the petition. ???  In the future we may introduce a facility to
-enable the creator of the petition to send you a maximum of two/three messages as
+unless you ask us not to, to write to you about the
+issues raised in the petition. In the future we may introduce a facility to
+enable the creator of the petition to send you a small number of messages as
 well; they will not have access to any of your details.</p>
 
 <? }
