@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w -I../perllib -I../commonlib/perllib
+#!/usr/bin/perl -w
 
 # create-html-preview:
 # Used to create government response mail (preview)
@@ -12,6 +12,13 @@
 
 use strict;
 use Net::SMTP;
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../commonlib/perllib";
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
 use Petitions::HTMLEmail;
 
 my ($type, $url, $email) = (shift, shift, shift);
@@ -29,13 +36,12 @@ $text =~ s/\r//g;
 my ($subject) = $text =~ /^(.*)\n+/;
 $text =~ s/^$subject\n+//;
 $text =~ s/\n+$//;
-my $optout_domain = 'hmg.gov.uk';
-my $optout_user = 'optoutpetitions';
+my $optout = mySociety::Config::get('OPTOUT_EMAIL');
 $text .= "
 
 [$url Petition information]
 
-If you would like to opt out of receiving further mail on this or any other petitions you signed, please email [$optout_user\@$optout_domain]";
+If you would like to opt out of receiving further mail on this or any other petitions you signed, please email [$optout]";
 my $out;
 if ($type eq 'html') {
     $out = Petitions::HTMLEmail::create_html($text, $subject);

@@ -227,7 +227,8 @@ function cobrand_signature_threshold() {
     global $site_name;
     if ($site_name == 'number10') return 500;
     if ($site_name == 'surreycc') return 100;
-    if ($site_name == 'woking') return 10;
+    if (in_array($site_name, array('woking', 'tandridge'))) return 10;
+    if (in_array($site_name, array('surreyheath', 'waverley') return 50;
     return 100;
 }
 
