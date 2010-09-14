@@ -275,7 +275,11 @@ function cobrand_admin_rejection_categories() {
 function cobrand_admin_site_restriction() {
     global $site_group;
     if ($site_group != 'surreycc') return '';
-    return " AND body.ref='" . http_auth_user() . "' ";
+
+    $sites = explode(',', OPTION_SITE_NAME);
+    if (in_array(http_auth_user(), $sites))
+        return " AND body.ref='" . http_auth_user() . "' ";
+    return '';
 }
 
 function cobrand_admin_allow_html_response() {
