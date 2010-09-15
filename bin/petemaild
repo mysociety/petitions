@@ -1687,9 +1687,24 @@ sub get_template($) {
     my $template = shift;
     my $site_name = mySociety::Config::get('SITE_NAME');
     if (-e "$FindBin::Bin/../templates/$site_name/emails/$template") {
-        return File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/$template");
+        return scalar File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/$template");
     }
-    return File::Slurp::read_file("$FindBin::Bin/../templates/emails/$template");
+    return scalar File::Slurp::read_file("$FindBin::Bin/../templates/emails/$template");
+}
+
+sub email_params($) {
+    my ($petition) = @_;
+    my %h = (
+        detail => $petition->{detail},
+        content => $petition->{content},
+        petitioned => mySociety::Config::get('SITE_TYPE') eq 'one'
+            ? mySociety::Config::get('SITE_PETITIONED')
+            : $petition->{body_name},
+        creator_name => $petition->{name},
+    );
+    $h{content} =~ s/\r|\n/ /g;
+    ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
+    return %h;
 }
 
 # make_duplicate_email SIGNER PETITION
@@ -1698,16 +1713,9 @@ sub get_template($) {
 sub make_duplicate_email ($$) {
     my ($signer, $petition) = @_;
 
-    my %h = (
-        detail => $petition->{detail},
-        content => $petition->{content},
-        user_name => $signer->{name},
-        creator_name => $petition->{name},
-        sentence => Petitions::sentence($petition),
-        signature => '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the petitions system. ]',
-    );
-    $h{content} =~ s/\r|\n/ /g;
-    ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
+    my %h = email_params($petition);
+    $h{user_name} = $signer->{name};
+    $h{sentence} = Petitions::sentence($petition);
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
@@ -1726,17 +1734,10 @@ sub make_duplicate_email ($$) {
 sub make_signer_email ($$) {
     my ($signer, $petition) = @_;
     
-    my %h = (
-        detail => $petition->{detail},
-        content => $petition->{content},
-        user_name => $signer->{name},
-        creator_name => $petition->{name},
-        sentence => Petitions::sentence($petition),
-        signature => '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the petitions system. ]',
-        url => make_url($signer->{email}, Petitions::absolute_url($petition) . Petitions::Token::make('s', $signer->{id})),
-    );
-    $h{content} =~ s/\r|\n/ /g;
-    ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
+    my %h = email_params($petition);
+    $h{user_name} = $signer->{name};
+    $h{sentence} = Petitions::sentence($petition);
+    $h{url} = make_url($signer->{email}, Petitions::absolute_url($petition) . Petitions::Token::make('s', $signer->{id}));
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
@@ -1755,18 +1756,9 @@ sub make_signer_email ($$) {
 sub make_petition_email ($) {
     my $petition = shift;
 
-    my %h = (
-        detail => $petition->{detail},
-        content => $petition->{content},
-        petitioned => mySociety::Config::get('SITE_TYPE') eq 'one'
-            ? mySociety::Config::get('SITE_PETITIONED')
-            : $petition->{body_name},
-        creator_name => $petition->{name},
-        signature => '[ This email has been automatically sent by the petitions system ]',
-        url => make_url($petition->{email}, Petitions::absolute_url($petition) . Petitions::Token::make('p', $petition->{id})),
-    );
-    $h{content} =~ s/\r|\n/ /g;
-    ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
+    my %h = email_params($petition);
+    $h{signature} = '[ This email has been automatically sent by the petitions system ]';
+    $h{url} =make_url($petition->{email}, Petitions::absolute_url($petition) . Petitions::Token::make('p', $petition->{id}));
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
@@ -1920,7 +1912,7 @@ sub database_child_process ($) {
             my ($id, $email, $queuedtime);
             if ($s->{emailsent} eq 'pending') {
                 $id = "s-$s->{id}";
-                $email =make_signer_email($s, $p);
+                $email = make_signer_email($s, $p);
                 $queuedtime = $s->{t};
             } else {
                 $id = "p-$s->{id}";
