@@ -23,8 +23,6 @@ use File::Slurp qw(read_file);
 
 use mySociety::DBHandle qw(dbh);
 use mySociety::HTMLUtil;
-use mySociety::Memcached;
-mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
 use mySociety::Web qw(ent);
 use mySociety::WatchUpdate;
 
@@ -491,9 +489,6 @@ sub signatories_box ($$) {
         return $html;
     }
     
-    my $cached = mySociety::Memcached::get("signatures:$p->{ref}");
-    return decode('utf8', $cached) if $cached;
-
     my $st;
     my $showall = $q->param('showall') ? 1 : 0;      # ugh
     my $reverse = 0;
@@ -556,7 +551,6 @@ sub signatories_box ($$) {
     }
 
     $html .= "</div>";
-    mySociety::Memcached::set("signatures:$p->{ref}", encode('utf8', $html), 60);
     return $html;
 }
 

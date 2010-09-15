@@ -9,9 +9,9 @@
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=mysociety@petitions.pm.gov.uk
 
-!!(* if ($hostname eq "steak" || $hostname eq 'balti' || $vhost eq 'petitions.surreycc.gov.uk') { *)!!
+!!(* if ($hostname eq "steak" || $hostname eq 'balti' || $hostname eq 'whisky') { *)!!
 
-# On just the database/daemon machine (currently steak for live, balti for dev)
+# On just the database/daemon machine (currently steak for Number 10, balti for dev, whisky for councils)
 
 # Frequently, on one machine only as not concurrent. I think, haven't checked.
 */15 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/send-messages.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/send-messages || echo "stalled?"
@@ -29,11 +29,7 @@ MAILTO=mysociety@petitions.pm.gov.uk
 
 !!(* } *)!!
 
-!!(* if (($hostname ne "steak" && $hostname ne 'balti') || $vhost eq 'petitions.surreycc.gov.uk') { *)!!
-
-# Hourly, check that the database petition signer totals are in sync with the db cache and memcache
-# On web host machine as memcache is local
-30 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-totals.lock "/data/vhost/!!(*= $vhost *)!!/petitions/bin/update-totals all" || echo "stalled?"
+!!(* if ($hostname ne "steak" && $hostname ne 'balti') { *)!!
 
 # On every web host machine, as makes files
 !!(* if ($vhost ne 'petitions.lichfielddc.gov.uk') { *)!!

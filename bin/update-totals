@@ -77,7 +77,6 @@ foreach (@$r) {
         where id=? and cached_signers!=?",
         {}, $_->{count}, $_->{id}, $_->{count});
     dbh()->commit();
-    mySociety::Memcached::set("signers:$_->{id}", $_->{count});
     mySociety::Memcached::set("lastupdate:$_->{id}", time());
 }
 

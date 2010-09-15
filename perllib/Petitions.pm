@@ -146,9 +146,6 @@ sub get ($;$$) {
     return undef unless $p && @$p > 0;
     $p->[0]->{category} = $petition_categories{$p->[0]->{category}};
 
-    my $signers = mySociety::Memcached::get('signers:' . $p->[0]->{id});
-    $p->[0]->{signers} = $signers if $signers;
-
     return $p->[0] if @$p == 1;
     my $o = shift @$p;
     foreach (@$p) {

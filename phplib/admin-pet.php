@@ -302,11 +302,6 @@ function petition_admin_perform_actions() {
         foreach ($sigs_by_petition as $petition_id => $sigs) {
             db_query("update petition set cached_signers = cached_signers $change " . count($sigs) . ',
                 lastupdate = ms_current_timestamp() where id = ?', $petition_id);
-            if ($change == '+') {
-                $memcache->increment(OPTION_PET_DB_NAME . 'signers:' . $petition_id, count($sigs));
-            } else {
-                $memcache->decrement(OPTION_PET_DB_NAME . 'signers:' . $petition_id, count($sigs));
-            }
             $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
             $p = new Petition($petition_id);
             $p->log_event($log . join(',', $sigs), http_auth_user());
@@ -1223,7 +1218,6 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 WHERE id=?", $petition_id);
             $memcache = new Memcache;
             $memcache->connect('localhost', 11211);
-            $memcache->set(OPTION_PET_DB_NAME . 'signers:' . $petition_id, 1);
             $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
             stats_change($p, 'cached_petitions_live', '+1');
             $p->log_event("Admin approved petition", http_auth_user());

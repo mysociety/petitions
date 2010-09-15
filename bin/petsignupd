@@ -132,7 +132,9 @@ sub do_pending () {
     }
 
     foreach my $id (keys(%$signercount)) {
-        mySociety::Memcached::incr("signers:$id", $signercount->{$id});
+        dbh()->do('update petition set cached_signers = cached_signers + ?,
+                   lastupdate = ms_current_timestamp()
+                   where id = ?', {}, $signercount->{$id}, $id);
         mySociety::Memcached::set("lastupdate:$id", time());
     }
     
