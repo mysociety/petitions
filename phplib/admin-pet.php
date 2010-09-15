@@ -844,7 +844,6 @@ Deadline: ';
     }
 
     function forward($petition_id) {
-        if (http_auth_user()!='matthew') return;
         $p = new Petition($petition_id);
         $status = $p->status();
         $from_body = $p->body_name();
