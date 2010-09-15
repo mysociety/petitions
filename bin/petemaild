@@ -1683,48 +1683,70 @@ sub make_url {
     return $url;
 }
 
+sub get_template($) {
+    my $template = shift;
+    my $site_name = mySociety::Config::get('SITE_NAME');
+    if (-e "$FindBin::Bin/../templates/$site_name/emails/$template") {
+        return File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/$template");
+    }
+    return File::Slurp::read_file("$FindBin::Bin/../templates/emails/$template");
+}
+
+# make_duplicate_email SIGNER PETITION
+# Make an email for SIGNER signing PETITION, telling them they've already done
+# so. Returns on-the-wire text of the email.
+sub make_duplicate_email ($$) {
+    my ($signer, $petition) = @_;
+
+    my %h = (
+        detail => $petition->{detail},
+        content => $petition->{content},
+        user_name => $signer->{name},
+        creator_name => $petition->{name},
+        sentence => Petitions::sentence($petition),
+        signature => '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the petitions system. ]',
+    );
+    $h{content} =~ s/\r|\n/ /g;
+    ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
+
+    my $from_name = Petitions::from_name($petition);
+    my $from_email = Petitions::admin_email($petition);
+    return mySociety::Email::construct_email({
+        _template_ => get_template('signature-duplicate'),
+        _parameters_ => \%h,
+        To => [[$signer->{email}, $signer->{name}]],
+        From => [ $from_email, $from_name ],
+        'Message-ID' => message_id('signer', $signer->{id})
+    });
+}
+
 # make_signer_email SIGNER PETITION
 # Make a confirmation email for SIGNER signing PETITION. Returns on-the-wire
 # text of the email.
 sub make_signer_email ($$) {
     my ($signer, $petition) = @_;
     
-    my $site_name = mySociety::Config::get('SITE_NAME');
-    my $sig_template;
-    if (-e "$FindBin::Bin/../templates/$site_name/emails/signature-confirm") {
-        $sig_template = File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/signature-confirm");
-    } else {
-        $sig_template = File::Slurp::read_file("$FindBin::Bin/../templates/emails/signature-confirm");
-    }
-
-    my %h = ( );
-    $h{detail} = $petition->{detail};
-    $h{content} = $petition->{content};
+    my %h = (
+        detail => $petition->{detail},
+        content => $petition->{content},
+        user_name => $signer->{name},
+        creator_name => $petition->{name},
+        sentence => Petitions::sentence($petition),
+        signature => '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the petitions system. ]',
+        url => make_url($signer->{email}, Petitions::absolute_url($petition) . Petitions::Token::make('s', $signer->{id})),
+    );
     $h{content} =~ s/\r|\n/ /g;
     ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
-    $h{user_name} = $signer->{name};
-
-    $h{petitioned} = mySociety::Config::get('SITE_TYPE') eq 'one'
-        ? mySociety::Config::get('SITE_PETITIONED')
-        : $petition->{body_name};
-
-    $h{url} = Petitions::absolute_url($petition);
-    $h{url} .= Petitions::Token::make('s', $signer->{id});
-    $h{url} = make_url($signer->{email}, $h{url});
-    $h{creator_name} = $petition->{name};
-    $h{sentence} = Petitions::sentence($petition);
-    $h{signature} = '[ Please do not reply to this email, it will not confirm your signature. This email has been automatically sent by the petitions system. ]';
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
     return mySociety::Email::construct_email({
-                _template_ => $sig_template,
-                _parameters_ => \%h,
-
-                To => [[$signer->{email}, $signer->{name}]],
-                From => [ $from_email, $from_name ],
-                'Message-ID' => message_id('signer', $signer->{id})
-            });
+        _template_ => get_template('signature-confirm'),
+        _parameters_ => \%h,
+        To => [[$signer->{email}, $signer->{name}]],
+        From => [ $from_email, $from_name ],
+        'Message-ID' => message_id('signer', $signer->{id})
+    });
 }
 
 # make_petition_email PETITION
@@ -1733,41 +1755,28 @@ sub make_signer_email ($$) {
 sub make_petition_email ($) {
     my $petition = shift;
 
-    my $site_name = mySociety::Config::get('SITE_NAME');
-    my $pet_template;
-    if (-e "$FindBin::Bin/../templates/$site_name/emails/petition-confirm") {
-        $pet_template = File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/petition-confirm");
-    } else {
-        $pet_template = File::Slurp::read_file("$FindBin::Bin/../templates/emails/petition-confirm");
-    }
-
-    my %h = ( );
-    $h{detail} = $petition->{detail};
-    $h{creator_name} = $petition->{name};
-
-    $h{petitioned} = mySociety::Config::get('SITE_TYPE') eq 'one'
-        ? mySociety::Config::get('SITE_PETITIONED')
-        : $petition->{body_name};
-
-    $h{url} = Petitions::absolute_url($petition);
-    $h{url} .= Petitions::Token::make('p', $petition->{id});
-    $h{url} = make_url($petition->{email}, $h{url});
-    $h{content} = $petition->{content};
+    my %h = (
+        detail => $petition->{detail},
+        content => $petition->{content},
+        petitioned => mySociety::Config::get('SITE_TYPE') eq 'one'
+            ? mySociety::Config::get('SITE_PETITIONED')
+            : $petition->{body_name},
+        creator_name => $petition->{name},
+        signature => '[ This email has been automatically sent by the petitions system ]',
+        url => make_url($petition->{email}, Petitions::absolute_url($petition) . Petitions::Token::make('p', $petition->{id})),
+    );
     $h{content} =~ s/\r|\n/ /g;
     ($h{content_truncated} = $h{content}) =~ s/^(.{100}).{3,}$/$1.../;
-
-    $h{signature} = '[ This email has been automatically sent by the petitions system ]';
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
     return mySociety::Email::construct_email ({
-                _template_ => $pet_template,
-                _parameters_ => \%h,
-
-                To => [[$petition->{email}, $petition->{name}]],
-                From => [ $from_email, $from_name ],
-                'Message-ID' => message_id('petition', $petition->{id})
-            });
+        _template_ => get_template('petition-confirm'),
+        _parameters_ => \%h,
+        To => [[$petition->{email}, $petition->{name}]],
+        From => [ $from_email, $from_name ],
+        'Message-ID' => message_id('petition', $petition->{id})
+    });
 }
 
 # database_child_process SOCKET
@@ -1781,9 +1790,9 @@ sub database_child_process ($) {
     my @queue = ( );
     
     my $st_s = dbh()->prepare("
-                    select id, petition_id, email, name,
+                    select id, petition_id, email, name, emailsent,
                         extract(epoch from signtime) as t
-                    from signer where emailsent = 'pending'
+                    from signer where emailsent in ('pending', 'duplicate')
                         and id > ?
                     order by petition_id");
         # "order by petition_id" so that we only need to cache data about one
@@ -1844,6 +1853,14 @@ sub database_child_process ($) {
                                              # inefficient, can be done with error catching instead
                             $docommit = 1;
                         } elsif ($id =~ /^p-([1-9]\d*)$/) {
+                            my $signer_id = $1;
+                            # Whether the message about duplicate signature was sent or not,
+                            # we don't actually mind - just set the signature back to confirmed.
+                            dbh()->do("update signer set emailsent = 'confirmed'
+                                where id = ?", {}, $signer_id);
+                            dbh()->commit();
+                            $docommit = 1;
+                        } elsif ($id =~ /^p-([1-9]\d*)$/) {
                             my $petition_id = $1;
                             dbh()->do("
                                     update petition set status = ?
@@ -1899,20 +1916,25 @@ sub database_child_process ($) {
 
             # XXX decide what we're doing about return-path. Possibly we should
             # VERP it.
-
-            my $id = "s-$s->{id}";
+            my $bounce = 'bounces@' . mySociety::Config::get('EMAIL_DOMAIN');
+            my ($id, $email, $queuedtime);
+            if ($s->{emailsent} eq 'pending') {
+                $id = "s-$s->{id}";
+                $email =make_signer_email($s, $p);
+                $queuedtime = $s->{t};
+            } else {
+                $id = "p-$s->{id}";
+                $email = make_duplicate_email($s, $p);
+                $queuedtime = time();
+            }
             push(@queue,
                     new Source::Packet(
                         Source::Packet::TYPE_NEWMESSAGE,
                         new Queue::Message(
-                            $id,
-                            'bounces@' . mySociety::Config::get('EMAIL_DOMAIN'),
-                            $s->{email},
-                            make_signer_email($s, $p),
-                            $s->{t},
+                            $id, $bounce, $s->{email}, $email, $queuedtime,
                             undef       # set in parent process
                         )))
-                unless (exists($already{"s-$s->{id}"}));
+                unless (exists($already{$id}));
             $already{$id} = 1;
             ++$nmessages;
 

@@ -200,6 +200,7 @@ create table signer (
         'sent',             -- successfully sent
         'failed',           -- permanent failure
         'confirmed'         -- confirm link clicked
+        'duplicate'         -- has signed petition again
         )
     ),
     check (
