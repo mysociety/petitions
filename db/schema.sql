@@ -199,7 +199,7 @@ create table signer (
         'pending',          -- not sent yet
         'sent',             -- successfully sent
         'failed',           -- permanent failure
-        'confirmed'         -- confirm link clicked
+        'confirmed',        -- confirm link clicked
         'duplicate'         -- has signed petition again
         )
     ),
