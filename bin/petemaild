@@ -65,8 +65,9 @@ my $stderronly = 0;
 # stderronly FLAG
 # If FLAG is true, set future logging to go to standard error only; if false,
 # to syslog as well.
-sub stderronly ($) {
-    $stderronly = shift;
+sub stderronly (;$) {
+    $stderronly = $_[0] if defined $_[0];
+    return $stderronly;
 }
 
 sub do_output ($$) {
@@ -1882,7 +1883,7 @@ sub database_child_process ($) {
         last if ($didclose);
 
         my $fullscan = 0;
-        if ($Log::stderronly || $last_full_scan < time() - 300) {
+        if (Log::stderronly() || $last_full_scan < time() - 300) {
             $fullscan = 1;
             $last_full_scan = time();
             Log::print('debug', "doing full scan of database");
