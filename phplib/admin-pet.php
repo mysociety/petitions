@@ -450,8 +450,11 @@ class ADMIN_PAGE_PET_MAIN {
             " .  ($order ? ' ORDER BY ' . $order : '')
             . ' OFFSET ' . $offset . ' LIMIT ' . $page_limit);
         $found = array();
+        $already = array();
         while ($r = db_fetch_array($q)) {
             $p = new Petition($r);
+            if (isset($already[$r['id']])) continue;
+            $already[$r['id']] = true;
 
             $row = "";
             $row .= '<td>' . (isset($r['surge']) ? $r['surge'] : '') . '</td>';
