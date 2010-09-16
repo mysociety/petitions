@@ -1882,7 +1882,7 @@ sub database_child_process ($) {
         last if ($didclose);
 
         my $fullscan = 0;
-        if ($last_full_scan < time() - 300) {
+        if ($Log::stderronly || $last_full_scan < time() - 300) {
             $fullscan = 1;
             $last_full_scan = time();
             Log::print('debug', "doing full scan of database");
