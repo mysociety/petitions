@@ -357,8 +357,11 @@ function cobrand_petition_guidelines() {
 <?
     } elseif ($site_group == 'surreycc') {
         $foi_link = 'http://www.ico.gov.uk/';
-        if ($site_name == 'reigate-banstead')
+        $foi_text = $foi_link;
+        if ($site_name == 'reigate-banstead') {
             $foi_link = 'http://www.reigate-banstead.gov.uk/council_and_democracy/about_the_council/access_to_information/freedom_of_information_act_2000/';
+            $foi_text = 'Freedom Of Information Act 2000';
+        }
 ?>
 
 <p>
@@ -406,7 +409,7 @@ for purely frivolous purposes);</li>
 (for example, correspondence about a personal issue);</li>
 <li>Freedom of Information requests. This is not the right channel
 for FOI requests; information about the appropriate procedure can be
-found at <a href="<?=$foi_link?>"><?=$foi_link?></a>.</li>
+found at <a href="<?=$foi_link?>"><?=$foi_text?></a>.</li>
 </ul>
 
 <p>We will strive to ensure that petitions that do not meet our

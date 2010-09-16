@@ -21,6 +21,10 @@ div#front_how {
     width: 45%;
 }
 
+.loudmessage {
+    font-size: 100%;
+}
+
 p.petition_view_tabs {
     border-bottom: solid 2px #62c355;
     padding-bottom: 0.25em;
