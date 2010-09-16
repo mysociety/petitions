@@ -1716,6 +1716,7 @@ sub make_duplicate_email ($$) {
     my %h = email_params($petition);
     $h{user_name} = $signer->{name};
     $h{sentence} = Petitions::sentence($petition);
+    $h{url} = make_url($signer->{email}, Petitions::absolute_url($petition));
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);

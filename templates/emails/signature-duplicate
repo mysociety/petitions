@@ -6,10 +6,10 @@ You just filled in the form to sign up to the petition given at
 the bottom of this email. You are already signed up to this
 petition, so you don't need to do anything.
 
+<?=$values['url']?>
 
 The petition was created by <?=$values['creator_name']?> and reads:
 
 '<?=$values['sentence']?>'
 
-[ Please do not reply to this email; it has been automatically sent
-  by the petitions system. ]
+[ Please do not reply to this email; it has been automatically sent by the petitions system. ]
