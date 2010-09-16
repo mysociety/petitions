@@ -1845,7 +1845,7 @@ sub database_child_process ($) {
                             dbh()->commit(); # XXX added later by Matthew in case of crashes; maybe
                                              # inefficient, can be done with error catching instead
                             $docommit = 1;
-                        } elsif ($id =~ /^p-([1-9]\d*)$/) {
+                        } elsif ($id =~ /^d-([1-9]\d*)$/) {
                             my $signer_id = $1;
                             # Whether the message about duplicate signature was sent or not,
                             # we don't actually mind - just set the signature back to confirmed.
@@ -1916,7 +1916,7 @@ sub database_child_process ($) {
                 $email = make_signer_email($s, $p);
                 $queuedtime = $s->{t};
             } else {
-                $id = "p-$s->{id}";
+                $id = "d-$s->{id}";
                 $email = make_duplicate_email($s, $p);
                 $queuedtime = time();
             }
