@@ -23,7 +23,7 @@ function cobrand_creation_sentence_help() {
 
 function cobrand_creation_deadline_limit() {
     global $site_name;
-    if ($site_name == 'tandridge')
+    if ($site_name == 'tandridge') #  || $site_name == 'surreycc')
         return array('years' => 0, 'months' => 6);
     return array('years' => 1, 'months' => 0);
 }
@@ -63,6 +63,9 @@ function cobrand_creator_must_be() {
     }
     if ($site_name == 'woking') {
         return 'live, work or study in the Borough of Woking';
+    }
+    if ($site_name == 'elmbridge') {
+        return 'live, work or study within Elmbridge (including under 18s)';
     }
     if (cobrand_creation_within_area_only()) {
         if (cobrand_creation_ask_for_address_type()) {
