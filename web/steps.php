@@ -10,12 +10,18 @@
 require_once '../phplib/pet.php';
 require_once '../phplib/cobrand.php';
 
+if ($url = cobrand_steps_elsewhere()) {
+    header("Location: $url");
+    exit;
+}
+
 $page_title = _('Create a new petition');
 page_header($page_title, array());
 petition_form_intro();
 page_footer('Step-by-step_guide');
 
 function petition_form_intro() {
+    global $site_name;
     $n = 1;
 ?>
 <h2 class="page_title_border">Step-by-step guide to making petitions</h2>
@@ -103,26 +109,18 @@ Minister, or he may ask one of his Ministers or officials to respond.
 <p>We will email the petition organiser and everyone who has signed the
 petition via this website giving details of the Government’s response.
 <?
-    } elseif (substr(OPTION_SITE_NAME, 0, 8) == 'surreycc') {
-?>
-<p>We will be able to email the petition organiser and everyone who has signed the
-petition, but will not have access to your personal details; these are stored
-by mySociety.</p>
-<?
-    } elseif (substr(OPTION_SITE_NAME, 0, 8) == 'woking') {
+    } elseif ($site_name == 'woking') {
 ?>
 <p>Once your petition has closed, usually provided there are
 <?=cobrand_signature_threshold() ?> signatures or more, it will be passed to
-the relevant officials at the council for a response.</p>
-<p>We will be able to email the petition organiser and everyone who has signed the
-petition, but will not have access to your personal details; these are stored
-by mySociety.</p>
+the relevant officials at the council for a response.
+We will be able to email the petition organiser and everyone who has signed the
+petition, and responses will also be published on this website.</p>
 <?
     } else {
 ?>
-<p>We are working on ways for councils to officially respond to petitions.
-They will be able to email the petition organiser and everyone who has signed
-the petition, and will not have access to your personal details.</p>
+<p>If the council responds, it will be emailed to everyone who has
+signed the e-petition. The response will also be published on this website.</p>
 <?
     }
 ?>

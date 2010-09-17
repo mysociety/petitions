@@ -635,12 +635,24 @@ function cobrand_rss_explanation_link() {
     return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
 }
 
+# If a body hosts their own T&Cs page, this function returns its location
 function cobrand_terms_elsewhere() {
     global $site_name;
     if ($site_name == 'surreycc')
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
     if ($site_name == 'tandridge')
         return 'http://www.tandridge.gov.uk/YourCouncil/CouncillorsMeetings/petitions/terms.htm';
+    if ($site_name == 'reigate-banstead')
+        return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
+    return null;
+}
+
+function cobrand_steps_elsewhere() {
+    global $site_name;
+    if ($site_name == 'surreycc')
+        return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Step+by+step+guide+to+e-petitions?opendocument';
+    if ($site_name == 'reigate-banstead')
+        return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/stepbystep/index.asp';
     return null;
 }
 
