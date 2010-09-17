@@ -55,7 +55,7 @@ if (get_http_var('toothercouncil')) {
 $contents = ob_get_contents();
 ob_end_clean();
 page_header($page_title, array());
-if ($site_name == 'tandridge') print "<h1>$page_title</h1>";
+cobrand_extra_heading($page_title);
 print $contents;
 page_footer('Create');
 
@@ -291,7 +291,7 @@ appropriate place.</p>
 /* petition_form_main [DATA [ERRORS]]
  * Display the first stage of the petitions form. */
 function petition_form_main($steps, $step, $data = array(), $errors = array()) {
-    global $petition_prefix, $site_name, $site_group;
+    global $petition_prefix, $site_name;
     if (OPTION_SITE_NAME == 'number10') {
         echo 'There are 5 stages to the petition process:';
         echo petition_breadcrumbs(0);
@@ -322,13 +322,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     echo '...</label></strong> <br />';
     textfield('pet_content', $data['pet_content'], 70, $errors);
     echo '<br />';
-    echo '(Please write a sentence';
-    if ($site_group != 'surreycc') {
-        echo ', preferably starting with a verb,';
-    }
-    echo ' that describes what action you would like ';
-    echo OPTION_SITE_NAME=='number10' ? 'the Prime Minister or Government' : OPTION_SITE_PETITIONED;
-    echo ' to take.)';
+    echo cobrand_creation_sentence_help();
 ?>
 </p>
 <p><label for="detail">More details about your petition (do not use block capitals &ndash; 1000 characters maximum):</label><br />

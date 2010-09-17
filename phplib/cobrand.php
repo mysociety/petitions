@@ -8,6 +8,19 @@
  * 
  */
 
+# The help sentence printed under the main content of a petition's input box.
+function cobrand_creation_sentence_help() {
+    global $site_group;
+    $out = '(Please write a sentence';
+    if ($site_group != 'surreycc') {
+        $out .= ', preferably starting with a verb,';
+    }
+    $out .= ' that describes what action you would like ';
+    $out .= OPTION_SITE_NAME=='number10' ? 'the Prime Minister or Government' : OPTION_SITE_PETITIONED;
+    $out .= ' to take.)';
+    return $out;
+}
+
 function cobrand_creation_deadline_limit() {
     global $site_name;
     if ($site_name == 'tandridge')
@@ -287,6 +300,8 @@ function cobrand_admin_allow_html_response() {
     return false;
 }
 
+# A bit of a yucky function, containing slightly varying guidelines
+# for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {
     global $site_group, $site_name;
     if ($site_name == 'tandridge') {
@@ -626,6 +641,8 @@ recognisable action.</li>
     }
 }
 
+# If a body has their own explanation of RSS, this function returns it;
+# otherwise the BBC RSS help page.
 function cobrand_rss_explanation_link() {
     global $site_name;
     if ($site_name == 'surreycc')
@@ -670,6 +687,14 @@ function cobrand_create_heading($text) {
     elseif ($site_name == 'number10')
         return "<h2 class='page_title_border'>$text</h2>";
     return "<h2>$text</h2>";
+}
+
+# Currently used on creation and list pages to supply a
+# main heading that one council asked for.
+function cobrand_extra_heading($text) {
+    global $site_name;
+    if ($site_name == 'tandridge')
+        print "<h1>$text</h1>";
 }
 
 function cobrand_allowed_responses() {
