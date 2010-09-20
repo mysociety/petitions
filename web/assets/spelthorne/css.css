@@ -3,6 +3,12 @@ h2 {
     font-size: 136%; /* Combined with 110% to match 150% of span.ycsubtitle(!) */
 }
 
+h3 {
+    color: #0099cc;
+    font-size: 136%;
+    margin-top: 1em;
+}
+
 small {
     font-size: 100%;
 }
