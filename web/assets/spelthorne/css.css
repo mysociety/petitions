@@ -1,3 +1,8 @@
+/* From .text in main CSS file */
+#center_column_standard {
+    font: 110%/130% Arial,Verdana,Helvetica,sans-serif;
+}
+
 div#most_recent {
     float: right;
 }
@@ -16,6 +21,10 @@ form#signForm label {
     width: 8em;
 }
 */
+
+.loudmessage {
+    font-size: 100%;
+}
 
 p.petition_view_tabs {
     border-bottom: solid 2px #0099cc;

@@ -122,7 +122,6 @@ function page_footer($stat_code = '') {
     }
 
     print $contents;
-    header('Content-Length: ' . ob_get_length());
 }
 
 /* page_check_ref REFERENCE

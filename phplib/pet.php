@@ -28,7 +28,15 @@ err_set_handler_display('pet_handle_error');
  * display a clean error page when something goes wrong. Obviously if we're
  * displaying an error, a redirect, an image or anything else this will break
  * horribly.*/
-ob_start();
+function ob_callback($s) {
+    global $site_name;
+    if ($site_name == 'spelthorne') {
+        $s = str_replace('email', 'e-mail', $s);
+    }
+    header('Content-Length: ' . ob_get_length());
+    return $s;
+}
+ob_start('ob_callback');
 
 $locale_current = ''; # To *not* use English suffixes in dates
 
