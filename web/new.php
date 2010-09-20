@@ -441,7 +441,7 @@ the Armed Forces without a postcode, please select from this list:</label>
                 $size = 15;
             $after = '';
             if ($name == 'email2')
-                $after = '<br />(we need your email so we can get in touch with you e.g. when your petition finishes)';
+                $after = '<br />(We need your email so we can get in touch with you e.g. when your petition finishes)';
             elseif ($name == 'name')
                 $after = '(please use a full name e.g. Mr John Smith)';
             textfield($name, $data[$name], $size, $errors, $after);
@@ -668,7 +668,7 @@ longer be valid.
 <?
     }
     if (cobrand_creation_ask_for_address_type()) {
-        echo '<li>Address type: <strong>' . $data['address_type'] . '</strong></li>';
+        echo '<li>Address type: <strong>' . ucfirst($data['address_type']) . '</strong></li>';
     }
 ?>
 <li>Telephone: <strong><?=$data['telephone'] ?></strong></li>
