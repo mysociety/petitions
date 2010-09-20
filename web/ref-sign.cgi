@@ -69,8 +69,16 @@ sub signup_page ($$) {
         Petitions::Page::header($q, 'Signature addition');
 
     my $qp_name = $q->param('name');
-    my $qp_email = i_check_email($q->param('email'));
-    my $qp_email2 = i_check_email($q->param('email2'));
+    my ($qp_email, $qp_email2);
+    if ($q->param('e-mail')) {
+        $qp_email = $q->param('e-mail');
+        $qp_email2 = $q->param('e-mail2');
+    } else {
+        $qp_email = $q->param('email');
+        $qp_email2 = $q->param('email2');
+    }
+    $qp_email = i_check_email($qp_email);
+    $qp_email2 = i_check_email($qp_email2);
     my $qp_address = $q->param('address');
     my $qp_postcode = $q->param('postcode');
     $qp_postcode =~ s/[^a-z0-9]//ig;
@@ -174,6 +182,7 @@ sub signup_page ($$) {
     }
     $html .= Petitions::Page::footer($q, 'Sign.' . $p->{ref});
 
+    $html =~ s/email/e-mail/ if $p->{body_ref} eq 'spelthorne';
     utf8::encode($html);
     print $q->header(-content_length => length($html)), $html;
 }
