@@ -1763,7 +1763,6 @@ sub make_petition_email ($) {
     my $petition = shift;
 
     my %h = email_params($petition);
-    $h{signature} = '[ This email has been automatically sent by the petitions system ]';
     $h{url} =make_url($petition->{email}, Petitions::absolute_url($petition) . Petitions::Token::make('p', $petition->{id}));
 
     my $from_name = Petitions::from_name($petition);
