@@ -189,7 +189,7 @@ EOF
     $stat .= '.signed' if ($show_signed_box);
     $html .= Petitions::Page::footer($q, $stat);
 
-    $html =~ s/email/e-mail/ if $p->{body_ref} eq 'spelthorne';
+    $html =~ s/email/e-mail/ if $p->{body_ref} && $p->{body_ref} eq 'spelthorne';
     utf8::encode($html);
 
     print $q->header(

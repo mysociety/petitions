@@ -182,7 +182,7 @@ sub signup_page ($$) {
     }
     $html .= Petitions::Page::footer($q, 'Sign.' . $p->{ref});
 
-    $html =~ s/email/e-mail/ if $p->{body_ref} eq 'spelthorne';
+    $html =~ s/email/e-mail/ if $p->{body_ref} && $p->{body_ref} eq 'spelthorne';
     utf8::encode($html);
     print $q->header(-content_length => length($html)), $html;
 }
