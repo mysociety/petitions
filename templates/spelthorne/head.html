@@ -48,7 +48,12 @@ document.write("cmoi");
 
 <!-- Import extra css -->
 
+<!--[if IE]> 
+<style type="text/css" media="screen">@import "http://www.spelthorne.gov.uk/your_council.css";</style>
+<![endif]-->
+<![if !IE]>
 <style type="text/css" media="screen">@import "http://www.spelthorne.gov.uk/your_council-ff.css";</style>
+<![endif]>
 
 <link rel='stylesheet' href='/pet.css' type='text/css'>
 <link rel='stylesheet' href='/assets/spelthorne/css.css' type='text/css'>
