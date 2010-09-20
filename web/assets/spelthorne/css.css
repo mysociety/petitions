@@ -3,6 +3,12 @@ h2 {
     font-size: 136%; /* Combined with 110% to match 150% of span.ycsubtitle(!) */
 }
 
+h3 {
+    color: #0099cc;
+    font-size: 136%;
+    margin-top: 1em;
+}
+
 small {
     font-size: 100%;
 }
@@ -10,6 +16,11 @@ small {
 /* From .text in main CSS file */
 #center_column_standard {
     font: 110%/130% Arial,Verdana,Helvetica,sans-serif;
+}
+
+div#petition_actions {
+    border: none;
+    font-size: 100%;
 }
 
 div#most_recent {
