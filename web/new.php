@@ -569,6 +569,10 @@ function step_main_error_check($data) {
 function step_you_error_check($data) {
     global $pet_today;
     $errors = array();
+
+    if (isset($data['e-mail'])) { $data['email'] = $data['e-mail']; unset($data['e-mail']); }
+    if (isset($data['e-mail2'])) { $data['email2'] = $data['e-mail2']; unset($data['e-mail2']); }
+
     if (!validate_email($data['email'])) $errors['email'] = _('Please enter a valid email address');
     if (isset($data['email']) && isset($data['email2']) && $data['email'] != $data['email2'])
         $errors['email2'] = 'Please make sure your email addresses match';
