@@ -18,6 +18,11 @@ small {
     font: 110%/130% Arial,Verdana,Helvetica,sans-serif;
 }
 
+div#petition_actions {
+    border: none;
+    font-size: 100%;
+}
+
 div#most_recent {
     float: right;
 }
