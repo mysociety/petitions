@@ -409,6 +409,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
         
         if ($name == 'address') {
             textarea($name, $data[$name], 30, 4, true, $errors);
+            cobrand_creation_address_help();
         } elseif ($name == 'overseas') {
             if (!cobrand_creation_within_area_only()) {
 ?>

@@ -24,6 +24,13 @@ function cobrand_creation_sentence_help() {
     return $out;
 }
 
+function cobrand_creation_address_help() {
+    global $site_name;
+    if ($site_name == 'spelthorne') {
+        print '(Please use the address where you live, work or study in Spelthorne)';
+    }
+}
+
 function cobrand_creation_deadline_limit() {
     global $site_name;
     if ($site_name == 'tandridge') #  || $site_name == 'surreycc')
