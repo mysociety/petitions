@@ -10,14 +10,17 @@
 
 # The help sentence printed under the main content of a petition's input box.
 function cobrand_creation_sentence_help() {
-    global $site_group;
+    global $site_group, $site_name;
     $out = '(Please write a sentence';
     if ($site_group != 'surreycc') {
         $out .= ', preferably starting with a verb,';
     }
     $out .= ' that describes what action you would like ';
     $out .= OPTION_SITE_NAME=='number10' ? 'the Prime Minister or Government' : OPTION_SITE_PETITIONED;
-    $out .= ' to take.)';
+    $out .= ' to take';
+    if ($site_name != 'spelthorne')
+        $out .= '.';
+    $out .= ')';
     return $out;
 }
 
@@ -28,6 +31,11 @@ function cobrand_creation_deadline_limit() {
     return array('years' => 1, 'months' => 0);
 }
 
+function cobrand_creation_example_ref() {
+    global $site_name;
+    if ($site_name == 'spelthorne') return 'recycle';
+    return 'badgers';
+}
 function cobrand_creation_category_first() {
     global $site_group;
     if ($site_group == 'surreycc') {
@@ -52,6 +60,7 @@ function cobrand_creation_within_area_only() {
     global $site_name;
     if ($site_name == 'surreycc') return array('Surrey', null);
     if ($site_name == 'reigate-banstead') return array('Surrey', null);
+    if ($site_name == 'spelthorne') return array('Surrey', null);
     if ($site_name == 'woking') return array('Woking', 2449);
     return '';
 }
@@ -60,6 +69,9 @@ function cobrand_creator_must_be() {
     global $site_name;
     if ($site_name == 'surreycc' || $site_name == 'reigate-banstead') {
         return 'live, work or study at a Surrey registered address';
+    }
+    if ($site_name == 'spelthorne') {
+        return 'live, work or study in Spelthorne';
     }
     if ($site_name == 'woking') {
         return 'live, work or study in the Borough of Woking';
