@@ -24,6 +24,13 @@ function cobrand_creation_sentence_help() {
     return $out;
 }
 
+function cobrand_creation_address_help() {
+    global $site_name;
+    if ($site_name == 'spelthorne') {
+        print '<br>(Please use the address where you live, work or study in Spelthorne)';
+    }
+}
+
 function cobrand_creation_deadline_limit() {
     global $site_name;
     if ($site_name == 'tandridge') #  || $site_name == 'surreycc')
@@ -60,7 +67,7 @@ function cobrand_creation_within_area_only() {
     global $site_name;
     if ($site_name == 'surreycc') return array('Surrey', null);
     if ($site_name == 'reigate-banstead') return array('Surrey', null);
-    if ($site_name == 'spelthorne') return array('Surrey', null);
+    if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
     if ($site_name == 'woking') return array('Woking', 2449);
     return '';
 }

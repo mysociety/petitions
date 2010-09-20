@@ -330,7 +330,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     textarea('detail', $data['detail'], 40, 7, false, $errors);
     ?>
 </p>
-<p><label for="rawdeadline">How long would you like your petition to accept signatures for?</label>
+<p><label for="rawdeadline">For how long would you like your petition to accept signatures?</label>
     <?
     $deadline_limits = cobrand_creation_deadline_limit();
     if ($deadline_limits['years'] && $deadline_limits['months']) {
@@ -409,6 +409,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
         
         if ($name == 'address') {
             textarea($name, $data[$name], 30, 4, true, $errors);
+            cobrand_creation_address_help();
         } elseif ($name == 'overseas') {
             if (!cobrand_creation_within_area_only()) {
 ?>
@@ -441,7 +442,7 @@ the Armed Forces without a postcode, please select from this list:</label>
                 $size = 15;
             $after = '';
             if ($name == 'email2')
-                $after = '<br />(we need your email so we can get in touch with you when your petition finishes, and so on)';
+                $after = '<br />(We need your email so we can get in touch with you e.g. when your petition finishes)';
             elseif ($name == 'name')
                 $after = '(please use a full name e.g. Mr John Smith)';
             textfield($name, $data[$name], $size, $errors, $after);
@@ -569,6 +570,10 @@ function step_main_error_check($data) {
 function step_you_error_check($data) {
     global $pet_today;
     $errors = array();
+
+    if (isset($data['e-mail'])) { $data['email'] = $data['e-mail']; unset($data['e-mail']); }
+    if (isset($data['e-mail2'])) { $data['email2'] = $data['e-mail2']; unset($data['e-mail2']); }
+
     if (!validate_email($data['email'])) $errors['email'] = _('Please enter a valid email address');
     if (isset($data['email']) && isset($data['email2']) && $data['email'] != $data['email2'])
         $errors['email2'] = 'Please make sure your email addresses match';
@@ -664,7 +669,7 @@ longer be valid.
 <?
     }
     if (cobrand_creation_ask_for_address_type()) {
-        echo '<li>Address type: <strong>' . $data['address_type'] . '</strong></li>';
+        echo '<li>Address type: <strong>' . ucfirst($data['address_type']) . '</strong></li>';
     }
 ?>
 <li>Telephone: <strong><?=$data['telephone'] ?></strong></li>
