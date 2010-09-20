@@ -60,7 +60,7 @@ function cobrand_creation_within_area_only() {
     global $site_name;
     if ($site_name == 'surreycc') return array('Surrey', null);
     if ($site_name == 'reigate-banstead') return array('Surrey', null);
-    if ($site_name == 'spelthorne') return array('Surrey', null);
+    if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
     if ($site_name == 'woking') return array('Woking', 2449);
     return '';
 }
