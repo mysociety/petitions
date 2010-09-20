@@ -1684,13 +1684,17 @@ sub make_url {
     return $url;
 }
 
-sub get_template($) {
-    my $template = shift;
+sub get_template($$) {
+    my ($template, $p) = @_;
     my $site_name = mySociety::Config::get('SITE_NAME');
+    my $e;
     if (-e "$FindBin::Bin/../templates/$site_name/emails/$template") {
-        return scalar File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/$template");
+        $e = File::Slurp::read_file("$FindBin::Bin/../templates/$site_name/emails/$template");
+    } else {
+        $e = File::Slurp::read_file("$FindBin::Bin/../templates/emails/$template");
     }
-    return scalar File::Slurp::read_file("$FindBin::Bin/../templates/emails/$template");
+    $e =~ s/email/e-mail/ if $p->{body_ref} eq 'spelthorne';
+    return $e;
 }
 
 sub email_params($) {
@@ -1722,7 +1726,7 @@ sub make_duplicate_email ($$) {
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
     return mySociety::Email::construct_email({
-        _template_ => get_template('signature-duplicate'),
+        _template_ => get_template('signature-duplicate', $petition),
         _parameters_ => \%h,
         To => [[$signer->{email}, $signer->{name}]],
         From => [ $from_email, $from_name ],
@@ -1744,7 +1748,7 @@ sub make_signer_email ($$) {
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
     return mySociety::Email::construct_email({
-        _template_ => get_template('signature-confirm'),
+        _template_ => get_template('signature-confirm', $petition),
         _parameters_ => \%h,
         To => [[$signer->{email}, $signer->{name}]],
         From => [ $from_email, $from_name ],
@@ -1765,7 +1769,7 @@ sub make_petition_email ($) {
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
     return mySociety::Email::construct_email ({
-        _template_ => get_template('petition-confirm'),
+        _template_ => get_template('petition-confirm', $petition),
         _parameters_ => \%h,
         To => [[$petition->{email}, $petition->{name}]],
         From => [ $from_email, $from_name ],
