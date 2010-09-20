@@ -27,7 +27,7 @@ function cobrand_creation_sentence_help() {
 function cobrand_creation_address_help() {
     global $site_name;
     if ($site_name == 'spelthorne') {
-        print '(Please use the address where you live, work or study in Spelthorne)';
+        print '<br>(Please use the address where you live, work or study in Spelthorne)';
     }
 }
 
