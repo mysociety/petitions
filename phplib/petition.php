@@ -305,7 +305,7 @@ class Petition {
           'title' => "'..." .  $this->h_content() . "' -- " . $this->h_name(),
           'description' => htmlspecialchars(trim_characters($this->detail(), 0, 80)),
           'link' => $this->url_main(),
-          'creationtime' => $this->data['creationtime']
+          'pubdate' => $this->data['laststatuschange'],
         );
     }
 

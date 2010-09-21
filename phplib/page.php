@@ -211,7 +211,7 @@ function rss_footer($items) {
       <title><?=$item['title']?></title>
       <link><?=$item['link']?></link>
       <description><?=$item['description']?></description>
-      <pubDate><?=date('r', strtotime($item['creationtime']))?></pubDate>
+      <pubDate><?=date('r', strtotime($item['pubdate']))?></pubDate>
       <guid><?=$item['link']?></guid>
     </item>
 <? } ?>
