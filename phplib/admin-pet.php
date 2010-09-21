@@ -691,51 +691,8 @@ Deadline: ';
             print '</form>';
         }
 
-        // Messages
-        print '<h2>Messages</h2>';
-        $q = db_query('select * from message 
-                where petition_id = ? order by whencreated', $pdata['id']);
-
-        $n = 0;
-        while ($r = db_fetch_array($q)) {
-            if ($n++)
-                print '<hr>';
-
-            $got_creator_count = db_getOne('select count(*) from message_creator_recipient where message_id = ?', $r['id']);
-            $got_signer_count = db_getOne('select count(*) from message_signer_recipient where message_id = ?', $r['id']);
-
-            $whom = array();
-            if ($r['sendtoadmin'] == 't') { $whom[] = 'admin'; }
-            if ($r['sendtocreator'] == 't') { $whom[] = 'creator'; }
-            if ($r['sendtosigners'] == 't') { $whom[] = 'signers'; }
-            if ($r['sendtolatesigners'] == 't') { $whom[] = 'late signers'; }
-
-            print "<p>";
-            print "<strong>". $r['circumstance'] . ' ' . $r['circumstance_count'] . '</strong>';
-            print " created on ". prettify(substr($r['whencreated'], 0, 19));
-            print " to be sent from <strong>" . $r['fromaddress'] . "</strong> to <strong>";
-            print join(", ", $whom) . "</strong>";
-            print "<br>has been queued for ";
-            print "<strong>$got_creator_count creators</strong>";
-            print " and <strong>$got_signer_count signers</strong>";
-            if ($r['emailtemplatename'])
-                print "<br><strong>email template:</strong> " . $r['emailtemplatename'];
-            if ($r['emailsubject'])
-                print "<br><strong>email subject:</strong> " . htmlspecialchars($r['emailsubject']);
-            if ($r['emailbody']) {
-                print '<br><strong>email body:</strong>
-                <div class="message">' .
-                nl2br(ms_make_clickable(htmlspecialchars($r['emailbody']), array('contract'=>true)))
-                ."</div>";
-            }
-
-        }
-        if ($n == 0) {
-            print "No messages yet.";
-        }
-
         // Admin actions
-        print '<h2>Administrator events</h2>';
+        print '<h2>Administrator events and notes</h2>';
         $q = db_query('select * from petition_log 
                 where petition_id = ? order by order_id', $pdata['id']);
 

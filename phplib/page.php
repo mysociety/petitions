@@ -175,6 +175,7 @@ function page_check_ref($ref) {
  * Display header for RSS versions of page  
  */
 function rss_header($title, $description, $params) {
+    $self = OPTION_BASE_URL . $_SERVER['REQUEST_URI'];
     $main_page = OPTION_BASE_URL . str_replace('rss/', '', $_SERVER['REQUEST_URI']);
     $main_page = htmlspecialchars($main_page);
     header('Content-Type: application/xml; charset=utf-8');
@@ -188,15 +189,12 @@ function rss_header($title, $description, $params) {
     }
 ?>
 
-<rdf:RDF
- xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
- xmlns="http://purl.org/rss/1.0/"
->
-
-<channel rdf:about="<?=$main_page?>">
-<title><?=$site_title ?> - <?=$title?></title>
-<link><?=$main_page?></link>
-<description><?=$description?></description>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title><?=$site_title ?> - <?=$title?></title>
+    <link><?=$main_page?></link>
+    <atom:link href="<?=$self?>" rel="self" type="application/rss+xml" />
+    <description><?=$description?></description>
 
 <?
 }
@@ -207,21 +205,18 @@ function rss_header($title, $description, $params) {
  * containing title, link and description
  */
 function rss_footer($items) {
-?> <items> <rdf:Seq>
-<?  foreach ($items as $item) { ?>
-  <rdf:li rdf:resource="<?=$item['link']?>" />
-<? } ?>
- </rdf:Seq>
-</items>
-</channel>
+?> 
 <? foreach ($items as $item) { ?>
-<item rdf:about="<?=$item['link']?>">
-<title><?=$item['title']?></title>
-<link><?=$item['link']?></link>
-<description><?=$item['description']?></description>
-</item>
+    <item>
+      <title><?=$item['title']?></title>
+      <link><?=$item['link']?></link>
+      <description><?=$item['description']?></description>
+      <pubDate><?=date('r', strtotime($item['pubdate']))?></pubDate>
+      <guid><?=$item['link']?></guid>
+    </item>
 <? } ?>
-</rdf:RDF>
+  </channel>
+</rss>
 <?
 }
 
