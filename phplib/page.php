@@ -175,6 +175,7 @@ function page_check_ref($ref) {
  * Display header for RSS versions of page  
  */
 function rss_header($title, $description, $params) {
+    $self = OPTION_BASE_URL . $_SERVER['REQUEST_URI'];
     $main_page = OPTION_BASE_URL . str_replace('rss/', '', $_SERVER['REQUEST_URI']);
     $main_page = htmlspecialchars($main_page);
     header('Content-Type: application/xml; charset=utf-8');
@@ -188,10 +189,11 @@ function rss_header($title, $description, $params) {
     }
 ?>
 
-<rss version="2.0">
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title><?=$site_title ?> - <?=$title?></title>
     <link><?=$main_page?></link>
+    <atom:link href="<?=$self?>" rel="self" type="application/rss+xml" />
     <description><?=$description?></description>
 
 <?
@@ -209,7 +211,7 @@ function rss_footer($items) {
       <title><?=$item['title']?></title>
       <link><?=$item['link']?></link>
       <description><?=$item['description']?></description>
-      <pubDate><?=$item['creationtime']?></pubDate>
+      <pubDate><?=date('r', strtotime($item['creationtime']))?></pubDate>
       <guid><?=$item['link']?></guid>
     </item>
 <? } ?>
