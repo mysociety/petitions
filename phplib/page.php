@@ -188,15 +188,11 @@ function rss_header($title, $description, $params) {
     }
 ?>
 
-<rdf:RDF
- xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
- xmlns="http://purl.org/rss/1.0/"
->
-
-<channel rdf:about="<?=$main_page?>">
-<title><?=$site_title ?> - <?=$title?></title>
-<link><?=$main_page?></link>
-<description><?=$description?></description>
+<rss version="2.0">
+  <channel>
+    <title><?=$site_title ?> - <?=$title?></title>
+    <link><?=$main_page?></link>
+    <description><?=$description?></description>
 
 <?
 }
@@ -207,21 +203,18 @@ function rss_header($title, $description, $params) {
  * containing title, link and description
  */
 function rss_footer($items) {
-?> <items> <rdf:Seq>
-<?  foreach ($items as $item) { ?>
-  <rdf:li rdf:resource="<?=$item['link']?>" />
-<? } ?>
- </rdf:Seq>
-</items>
-</channel>
+?> 
 <? foreach ($items as $item) { ?>
-<item rdf:about="<?=$item['link']?>">
-<title><?=$item['title']?></title>
-<link><?=$item['link']?></link>
-<description><?=$item['description']?></description>
-</item>
+    <item>
+      <title><?=$item['title']?></title>
+      <link><?=$item['link']?></link>
+      <description><?=$item['description']?></description>
+      <pubDate><?=$item['creationtime']?></pubDate>
+      <guid><?=$item['link']?></guid>
+    </item>
 <? } ?>
-</rdf:RDF>
+  </channel>
+</rss>
 <?
 }
 
