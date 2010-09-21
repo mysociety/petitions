@@ -298,7 +298,7 @@ function cobrand_admin_rejection_snippets() {
 
 function cobrand_admin_rejection_categories() {
     global $global_rejection_categories, $site_group;
-    if ($site_group != 'surreycc') {
+    if ($site_group == 'number10') {
         return $global_rejection_categories;
     }
     $categories = $global_rejection_categories;
