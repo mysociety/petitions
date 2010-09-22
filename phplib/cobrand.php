@@ -70,6 +70,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
     if ($site_name == 'woking') return array('Woking', 2449);
     if ($site_name == 'runnymede') return array('Runnymede', 2451);
+    if ($site_name == 'waverley') return array('Waverley', 2447);
     return '';
 }
 
@@ -83,9 +84,10 @@ function cobrand_creator_must_be() {
         return 'live, work or study in the Borough of Woking';
     if ($site_name == 'elmbridge')
         return 'live, work or study within Elmbridge (including under 18s)';
-    if ($site_name == 'runnymede') {
+    if ($site_name == 'runnymede')
         return 'live, work or study within Runnymede';
-    }
+    if ($site_name == 'waverley')
+        return 'live, work or study within Waverley';
     if (cobrand_creation_within_area_only()) {
         if (cobrand_creation_ask_for_address_type()) {
             return 'be a council resident or work within the area of the council';
