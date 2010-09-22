@@ -24,3 +24,33 @@ p.petition_view_tabs {
     background-color: #0C5F5F;
 }
 
+#action_view a:hover, #action_create a:hover{
+    text-decoration: none;
+    color: #1EB53A;
+}
+
+	/*
+	#action_view , #action_create {
+	    border: 1px solid white;
+	}
+	#action_view:hover, #action_create:hover {
+	    border: 1px solid #1EB53A;
+	}
+	*/
+
+#action_view a:active, #action_view a:focus ,
+#action_create a:active, #action_create a:focus {
+    background: transparent; /* prevent yellow from EE styles */
+}
+h3 {
+  margin: 0.333em 0 ;
+}
+
+div#petition_actions {
+    margin-bottom: 1em;
+}
+
+p.petition_view_tabs {
+    margin-bottom: 1em;
+}
+
