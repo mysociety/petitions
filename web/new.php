@@ -429,11 +429,14 @@ the Armed Forces without a postcode, please select from this list:</label>
         } elseif ($name == 'address_type') {
             $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
             $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
+            $checked_study = $data['address_type'] == 'study' ? ' checked' : '';
             print '<p><span class="label">Type of address:</span> ';
             print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . ' />
 <label class="radio" for="address_type_home">Home</label>
 <input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . ' />
-<label class="radio" for="address_type_work">Work</label>';
+<label class="radio" for="address_type_work">Work</label>
+<input type="radio" id="address_type_study" name="address_type" value="study"' . $checked_study . ' />
+<label class="radio" for="address_type_study">Study</label>';
         } else {
             $size = 20;
             if ($name == 'postcode')
@@ -609,7 +612,7 @@ function step_you_error_check($data) {
     }
 
     if (cobrand_creation_ask_for_address_type()) {
-        if (!isset($data['address_type']) || !in_array($data['address_type'], array('home','work'))) {
+        if (!isset($data['address_type']) || !in_array($data['address_type'], array('home','work','study'))) {
             $errors['address_type'] = 'Please specify your address type';
         }
     } else {

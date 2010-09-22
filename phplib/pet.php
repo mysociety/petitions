@@ -31,8 +31,7 @@ err_set_handler_display('pet_handle_error');
 function ob_callback($s) {
     global $site_name;
     if ($site_name == 'spelthorne') {
-        $s = str_replace('email', 'e-mail', $s);
-        $s = str_replace('Email', 'E-mail', $s);
+        $s = str_ireplace('email', 'e-mail', $s);
     }
     header('Content-Length: ' . ob_get_length());
     return $s;

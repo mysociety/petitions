@@ -24,17 +24,13 @@ div#petition_actions {
     line-height: 1.2;
 }
 
-div#most_recent {
-    float: right;
+div#petition_actions ul li {
+    margin-bottom: 1em;
 }
 
-#most_popular h3 {
-    margin-top: 0;
-}
-
-div#front_how {
-    float: left;
-    width: 45%;
+div#petition_actions, div#most_popular, div#most_recent {
+    float: none;
+    width: 99%;
 }
 
 /*
