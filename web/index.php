@@ -43,7 +43,7 @@ if (OPTION_SITE_TYPE == 'multiple') {
     order by cached_signers desc limit 5");
 }
 
-// Lame: send last-modified now to encourage squid to cache us.
+// Lame: send last-modified now to encourage cacheing.
 cond_headers(time());
 header('Cache-Control: max-age=5');
 page_header('Introduction to e-petitions', array(
@@ -52,7 +52,7 @@ page_header('Introduction to e-petitions', array(
     )
 ));
 
-if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1' || strpos(OPTION_SITE_NAME, 'surrey')!==false || OPTION_SITE_NAME=='lichfielddc' || OPTION_SITE_NAME=='waveney' || OPTION_SITE_NAME == 'barrowbc' || OPTION_SITE_NAME == 'epsom-ewell') {
+if (OPTION_SITE_NAME != 'number10') {
     if (OPTION_SITE_NAME == 'sbdc')
         echo '<h2>Make or sign petitions through this official Borsetshire District Council petitions website</h2>';
     front_actions();
@@ -130,7 +130,9 @@ function front_most_recent($recent) {
     echo "<div id='most_recent'>";
     echo cobrand_main_heading('Most recent petitions');
     # If cross-site in future, will need to display name within each row
-    echo '<p>We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to&hellip;</p>';
+    if (count($recent)) {
+        echo '<p>We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to&hellip;</p>';
+    }
     echo '<ul>';
     $c = 1;
     foreach ($recent as $petition) {
@@ -153,7 +155,9 @@ function front_most_recent($recent) {
 function front_most_popular($most) {
     echo '<div id="most_popular">';
     echo cobrand_main_heading('Most popular open petitions');
-    echo '<p>We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to&hellip;</p>';
+    if (count($most)) {
+        echo '<p>We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to&hellip;</p>';
+    }
     echo '<ul>';
     $c = 1;
     foreach ($most as $petition) {
