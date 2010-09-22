@@ -15,4 +15,4 @@ We the undersigned petition <?=$values['petitioned']?> to
 
 Thank you for submitting your petition.
 
-<?=$values['signature']?>
+[ This email has been automatically sent by the petitions system ]
