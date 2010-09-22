@@ -69,23 +69,25 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'reigate-banstead') return array('Surrey', null);
     if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
     if ($site_name == 'woking') return array('Woking', 2449);
+    if ($site_name == 'runnymede') return array('Runnymede', 2451);
+    if ($site_name == 'waverley') return array('Waverley', 2447);
     return '';
 }
 
 function cobrand_creator_must_be() {
     global $site_name;
-    if ($site_name == 'surreycc' || $site_name == 'reigate-banstead') {
+    if ($site_name == 'surreycc' || $site_name == 'reigate-banstead')
         return 'live, work or study at a Surrey registered address';
-    }
-    if ($site_name == 'spelthorne') {
+    if ($site_name == 'spelthorne')
         return 'live, work or study in Spelthorne';
-    }
-    if ($site_name == 'woking') {
+    if ($site_name == 'woking')
         return 'live, work or study in the Borough of Woking';
-    }
-    if ($site_name == 'elmbridge') {
+    if ($site_name == 'elmbridge')
         return 'live, work or study within Elmbridge (including under 18s)';
-    }
+    if ($site_name == 'runnymede')
+        return 'live, work or study within Runnymede';
+    if ($site_name == 'waverley')
+        return 'live, work or study within Waverley';
     if (cobrand_creation_within_area_only()) {
         if (cobrand_creation_ask_for_address_type()) {
             return 'be a council resident or work within the area of the council';
@@ -261,7 +263,7 @@ function cobrand_signature_threshold() {
     if ($site_name == 'number10') return 500;
     if ($site_name == 'surreycc') return 100;
     if (in_array($site_name, array('woking', 'tandridge'))) return 10;
-    if (in_array($site_name, array('surreyheath', 'waverley'))) return 50;
+    if (in_array($site_name, array('surreyheath', 'waverley', 'runnymede'))) return 50;
     return 100;
 }
 

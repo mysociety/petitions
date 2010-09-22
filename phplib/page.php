@@ -91,6 +91,7 @@ function page_header($title, $params = array()) {
     $contents = str_replace("PARAM_H1", isset($params['h1']) ? $params['h1'] : $title, $contents);
     $contents = str_replace("PARAM_DEV_WARNING", $devwarning, $contents);
     $contents = str_replace("PARAM_RSS_LINKS", $rss_links, $contents);
+    $contents = str_replace('PARAM_DATE', date('j-M-Y'), $contents);
 
     $body_id = '';
     if (isset($params['admin'])) $body_id = ' id="admin"';

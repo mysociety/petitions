@@ -148,6 +148,10 @@ sub header ($$%) {
     $out =~ s/PARAM_DEV_WARNING/$devwarning/;
     $out =~ s/PARAM_RSS_LINKS//g;
     $out =~ s/PARAM_BODYID//g;
+
+    my $date = POSIX::strftime('%e-%b-%Y', localtime());
+    $out =~ s/PARAM_DATE/$date/;
+
     # Currently, no need to follow links from CGI-generated pages -
     # no need to index list of names either
     $out =~ s/index,follow/noindex,nofollow/;
