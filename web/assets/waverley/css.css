@@ -1,0 +1,32 @@
+#navigation ul {
+    border-bottom: solid 5px #cccccc;
+}
+
+div.petition_box {
+    background-color: #eeeeee;
+    border: 6px double #ffffff;
+    margin: 16px 0 20px;
+    padding: 10px;
+}
+
+div#petition_actions {
+    border: none;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #093E97;
+    padding-bottom: 0.25em;
+}
+.petition_view_tabs span {
+    background-color: #093E97;
+}
+
