@@ -14,7 +14,7 @@ if (strpos(OPTION_SITE_NAME, ',')) {
     $sites = explode(',', OPTION_SITE_NAME);
     $site_group = $sites[0];
     foreach ($sites as $s) {
-        if ($_SERVER['HTTP_HOST'] == "petitions.$s.gov.uk") {
+        if ($_SERVER['HTTP_HOST'] == "petitions.$s.gov.uk" || $_SERVER['HTTP_HOST'] == "$s.petitions.mysociety.org") {
             $site_name = $s;
             break;
         }
