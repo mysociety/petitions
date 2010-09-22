@@ -1,3 +1,38 @@
+/* mySociety additions */
+
+#content {
+    margin: 0 auto;
+    width: 1000px;
+}
+
+div#petition_actions {
+    border: none;
+    font-size: 100%;
+    margin-top: 1em;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #663366;
+}
+.petition_view_tabs span {
+    background-color: #663366;
+}
+
+#footer {
+    clear: both;
+}
+
+/* END mySociety additions */
+
 /* Header */
 
 body {
