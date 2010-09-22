@@ -30,7 +30,7 @@ div#petition_actions ul li {
 
 div#petition_actions, div#most_popular, div#most_recent {
     float: none;
-    width: auto;
+    width: 99%;
 }
 
 /*
