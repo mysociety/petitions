@@ -71,6 +71,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'woking') return array('Woking', 2449);
     if ($site_name == 'runnymede') return array('Runnymede', 2451);
     if ($site_name == 'waverley') return array('Waverley', 2447);
+    if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
     return '';
 }
 
@@ -90,7 +91,7 @@ function cobrand_creator_must_be() {
         return 'live, work or study within Waverley';
     if (cobrand_creation_within_area_only()) {
         if (cobrand_creation_ask_for_address_type()) {
-            return 'be a council resident or work within the area of the council';
+            return 'live, work or study within the area of the council';
         } else {
             return 'be a council resident';
         }
