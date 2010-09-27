@@ -54,7 +54,7 @@ function cobrand_creation_category_first() {
 function cobrand_creation_ask_for_address_type() {
     global $site_name;
     if (cobrand_creation_within_area_only()) return true;
-    if ($site_name == 'tandridge') return true;
+    if ($site_name == 'tandridge' || $site_name == 'surreyheath') return true;
     return false;
 }
 
@@ -72,6 +72,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'runnymede') return array('Runnymede', 2451);
     if ($site_name == 'waverley') return array('Waverley', 2447);
     if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
+    if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
     return '';
 }
 
@@ -286,7 +287,7 @@ function cobrand_admin_rejection_snippets() {
 'Please address the excessive use of capital letters; they make your petition hard to read.',
 'Your title should be a clear call for action, preferably starting with a verb, and not a name or statement.',
     );
-    if ($site_group == 'surreycc' || $site_group == 'lichfielddc') {
+    if ($site_group != 'number10') {
         return $snippets;
     }
     array_push($snippets,
