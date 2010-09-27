@@ -38,10 +38,10 @@ div#front_how {
 }
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #0C5F5F;
+    border-bottom: solid 2px #E85C14;
 }
 .petition_view_tabs span {
-    background-color: #0C5F5F;
+    background-color: #E85C14;
 }
 
 #action_view a, #action_create a{
@@ -67,4 +67,27 @@ div#petition_actions {
 
 p.petition_view_tabs {
     margin-bottom: 1em;
+}
+
+
+#action_create a, #action_create a:active {
+    background-image: url('/assets/barrowbc/petition_button_create.png');
+}
+#action_view a, #action_view a:active {
+    background-image: url('/assets/barrowbc/petition_button_view.png');
+}
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    display: block;
+    text-align: center;
+    padding-top: 80px;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+}
+
+#action_create a img,  #action_view a img {
+    display: none;
 }
