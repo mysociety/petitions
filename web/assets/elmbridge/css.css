@@ -1,0 +1,30 @@
+#mysociety {
+    float: right;
+    width: 100%;
+}
+
+div#petition_actions {
+    border: none;
+}
+
+div#petition_actions img {
+    border: none;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    margin-top: 1em;
+    width: 45%;
+}
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #2F6749;
+}
+.petition_view_tabs span {
+    background-color: #2F6749;
+}
+

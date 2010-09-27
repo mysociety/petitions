@@ -53,8 +53,12 @@ output('surreyheath', $header, $footer);
 # Elmbridge
 $header = get_page('http://www.elmbridge.gov.uk/website_header.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - /;
-$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css"></head>};
-$footer = get_page('http://www.elmbridge.gov.uk/website_footer.asp');
+$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css">
+<link rel="stylesheet" type="text/css" href="/assets/elmbridge/css.css">
+</head>};
+$header .= "<div id='mysociety'>\n";
+$footer = "</div>\n";
+$footer .= get_page('http://www.elmbridge.gov.uk/website_footer.asp');
 output('elmbridge', $header, $footer);
 
 # Tandridge
