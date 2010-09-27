@@ -2,28 +2,6 @@
 table.ImmTS_Default{padding: 0px;width: 100%;background-color: #FFFFFF;border-collapse: collapse;}table.ImmTS_Default th, table.ImmTS_Default td{padding: 2px;margin: 2px;}table.ImmTS_Default, table.ImmTS_Default th, table.ImmTS_Default td{border: 1px solid black;}table.ImmTS_Default th{background-color: white;color: black;}table.ImmTS_Default tr{vertical-align: top;}.ImmTextAlign_Left{text-align: left;}.ImmTextAlign_Center{text-align: center;}.ImmTextAlign_Right{text-align: right;}.ImmTextAlign_Justify{text-align: justify;}.ImmControlAlign_Left{float: left;clear: both;margin-right: 7px;}.ImmControlAlign_Right{float: right;clear: both;margin-left: 7px;}.ImmVerticalAlign_Top{vertical-align: top !important;}.ImmVerticalAlign_Middle{vertical-align: middle !important;}.ImmVerticalAlign_Bottom{vertical-align: bottom !important;}.ImmUnderline_On{text-decoration: underline;}.ImmIndent_1{margin-left: 20px;}.ImmIndent_2{margin-left: 40px;}.ImmIndent_3{margin-left: 60px;}.ImmIndent_4{margin-left: 80px;}.ImmIndent_5{margin-left: 100px;}.ImmIndent_6{margin-left: 120px;}.ImmIndent_7{margin-left: 140px;}.ImmIndent_8{margin-left: 160px;}.ImmIndent_9{margin-left: 180px;}.ImmIndent_10{margin-left: 200px;}.ImmIndent_11{margin-left: 220px;}.ImmIndent_12{margin-left: 240px;}.ImmIndent_13{margin-left: 260px;}.ImmIndent_14{margin-left: 280px;}.ImmIndent_15{margin-left: 300px;}IMG{border-width: 0px;}
 */
 
-/*
-div#petition_actions {
-    border: none;
-}
-
-div#most_recent {
-    float: right;
-}
-
-div#front_how {
-    float: left;
-    width: 45%;
-}
-
-p.petition_view_tabs {
-    border-bottom: solid 2px #0C5F5F;
-}
-.petition_view_tabs span {
-    background-color: #0C5F5F;
-}
-*/
-
 div#petition_actions {
     border: none;
 }
@@ -48,13 +26,8 @@ p.petition_view_tabs {
     text-decoration: none;
 }
 
-#action_view a:hover, #action_create a:hover{
+#action_view a:hover, #action_create a:hover {
     text-decoration: none;
-}
-
-#action_view a:active, #action_view a:focus ,
-#action_create a:active, #action_create a:focus {
-    background: transparent; /* prevent yellow from EE styles */
 }
 
 h3 {
