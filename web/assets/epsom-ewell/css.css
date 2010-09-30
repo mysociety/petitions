@@ -24,7 +24,7 @@ p.petition_view_tabs {
     background-color: #0C5F5F;
 }
 
-#action_view a:hover, #action_create a:hover{
+#action_view a:hover, #action_create a:hover {
     text-decoration: none;
     color: #1EB53A;
 }

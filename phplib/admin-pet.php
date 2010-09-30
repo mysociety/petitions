@@ -692,7 +692,7 @@ Deadline: ';
         }
 
         // Admin actions
-        print '<h2>Administrator events and notes</h2>';
+        print '<h3>Administrator events and notes</h3>';
         print '<form name="petition_admin_add_note" method="post" action="'
             . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id']
             . '"><label for="add_note">Add note:</label> <input id="add_note" type="text" name="note" value="">
@@ -719,7 +719,7 @@ Deadline: ';
 
         if ($pdata['status'] != 'draft' && $pdata['status'] != 'resubmitted') {
             // Signers
-            print "<h2>Signers (".$pdata['signers'].")</h2>";
+            print "<h3>Signers (".$pdata['signers'].")</h3>";
             $query = "SELECT signer.name as signname, signer.email as signemail,
                          date_trunc('second',signtime) AS signtime,
                          signer.id AS signid, emailsent
