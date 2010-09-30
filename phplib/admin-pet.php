@@ -701,7 +701,7 @@ Deadline: ';
         $q = db_query('select * from petition_log 
                 where petition_id = ? order by order_id', $pdata['id']);
 
-        print '<table cellpadding=4 cellspacing= border=0>';
+        print '<table cellpadding=4 cellspacing=0 border=0>';
         $n = 0;
         print "<tr><th>Time</th><th>User</th><th>Event/note</th></tr>\n";
         while ($r = db_fetch_array($q)) {
