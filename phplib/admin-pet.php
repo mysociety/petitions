@@ -693,20 +693,23 @@ Deadline: ';
 
         // Admin actions
         print '<h2>Administrator events and notes</h2>';
+        print '<form name="petition_admin_add_note" method="post" action="'
+            . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id']
+            . '"><label for="add_note">Add note:</label> <input id="add_note" type="text" name="note" value="">
+            <input type="submit" value="Add"></form>';
+
         $q = db_query('select * from petition_log 
                 where petition_id = ? order by order_id', $pdata['id']);
 
-        print '<table>';
+        print '<table cellpadding=4 cellspacing= border=0>';
         $n = 0;
-        print "<tr><th>Date/time</th><th>Event</th><th>Administrator</th></tr>\n";
+        print "<tr><th>Time</th><th>User</th><th>Event/note</th></tr>\n";
         while ($r = db_fetch_array($q)) {
             print "<tr>";
             $n++;
-
-            print "<td>". prettify(substr($r['whenlogged'], 0, 19)) . "</td>";
-            print "<td>". $r['message'] . "</td>";
+            print "<td>". substr(prettify(substr($r['whenlogged'], 0, 19)), 0, -3) . "</td>";
             print "<td>". ($r['editor'] ? $r['editor'] : "unknown"). "</td>";
-            
+            print "<td>". $r['message'] . "</td>";
             print "</tr>\n";
         }
         if ($n == 0) {
@@ -1318,6 +1321,11 @@ can be rejected properly.</p>
         }
     }
 
+    function add_note($petition_id, $note) {
+        $p = new Petition($petition_id);
+        $p->log_event($note, http_auth_user());
+    }
+
     function display() {
         db_connect();
 
@@ -1356,6 +1364,8 @@ can be rejected properly.</p>
             $petition_id = null; $petition = null;
         } elseif (get_http_var('change_criteria')) {
             $this->change_criteria($petition_id);
+        } elseif (get_http_var('note')) {
+            $this->add_note($petition_id, get_http_var('note'));
         }
 
         // Display page
