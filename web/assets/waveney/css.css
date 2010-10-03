@@ -63,7 +63,12 @@ p.petition_view_tabs {
 #action_create a:hover, #action_view a:hover {
     background-position: center -300px;
     background-color: #ffffff;
-    color: #640000;
+    color: #b80000;
+}
+
+a:hover {
+  color: #b80000; /* Waveney default */
+  background-color: transparent;
 }
 
 #action_create a img,  #action_view a img {
