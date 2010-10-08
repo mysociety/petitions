@@ -33,7 +33,7 @@ function cobrand_creation_address_help() {
 
 function cobrand_creation_deadline_limit() {
     global $site_name;
-    if ($site_name == 'tandridge') #  || $site_name == 'surreycc')
+    if ($site_name == 'tandridge' || $site_name == 'surreycc')
         return array('years' => 0, 'months' => 6);
     return array('years' => 1, 'months' => 0);
 }
