@@ -109,7 +109,7 @@ sub sign_petition_db ($) {
     # First try updating the row.
     if (defined($s) && $s eq 'confirmed') {
         dbh()->do("
-                update signer set emailsent = 'duplicate' -- , signtime = ms_current_timestamp()
+                update signer set emailsent = 'duplicate'
                 where petition_id = (select id from petition where ref = ?)
                     and email = ?", {},
                 map { $r->{$_} } qw(ref email));

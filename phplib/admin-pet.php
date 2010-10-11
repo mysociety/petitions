@@ -618,7 +618,10 @@ petitions.</p>';
             . '">' . $pdata['ref'] . '</a>&rsquo;';
         print "</h2>";
 
-        print "<ul><li>Set by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  privacy($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
+        print "<ul><li>Created by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  privacy($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
+        if ($pdata['address_type']) {
+            print '<li>Address type: ' . $pdata['address_type'];
+        }
         print '<li>Organisation: ';
         print $pdata['organisation'] ? htmlspecialchars($pdata['organisation']) : 'None given';
         if ($pdata['org_url'])
@@ -662,6 +665,7 @@ Deadline: ';
         print '<li>Petition title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
         print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
+        print '<li>Category: ' . htmlspecialchars($petition_obj->data['category']);
         print '</ul>';
 
         if ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted') {
