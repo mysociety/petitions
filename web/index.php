@@ -26,21 +26,23 @@ if (OPTION_SITE_TYPE == 'multiple') {
     $body
     order by laststatuschange desc limit 5", $params);
     $most = db_getAll("
-    select petition.ref, content, cached_signers,
+    select petition.ref, content,
+        cached_signers + coalesce(offline_signers, 0) as signers,
         body.ref as body_ref, body.name as body_name
     from petition, body
     where status = 'live' and body_id = body.id
     $body
-    order by cached_signers desc limit 5", $params);
+    order by signers desc limit 5", $params);
 } else {
     $recent = db_getAll("select ref, content from petition
     where status = 'live'
     order by laststatuschange desc limit 5");
     $most = db_getAll("
-    select ref, content, cached_signers
+    select ref, content,
+        cached_signers + coalesce(offline_signers, 0) as signers
     from petition
     where status = 'live'
-    order by cached_signers desc limit 5");
+    order by signers desc limit 5");
 }
 
 // Lame: send last-modified now to encourage cacheing.
@@ -118,10 +120,10 @@ function petition_row($petition, $c) {
     }
     print $petition['ref'] . '/">';
     print htmlspecialchars($petition['content']) . '</a>';
-    if (isset($petition['cached_signers'])) {
+    if (isset($petition['signers'])) {
         print ' <small>(';
-        print $petition['cached_signers'] . ' signature';
-        print ($petition['cached_signers'] == 1 ? '' : 's') . ')</small>';
+        print $petition['signers'] . ' signature';
+        print ($petition['signers'] == 1 ? '' : 's') . ')</small>';
     }
     print '</li>';
 }

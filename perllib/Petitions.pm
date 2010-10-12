@@ -130,7 +130,7 @@ sub get ($;$$) {
     my $s = "select petition.*,
                 ms_current_date() <= deadline as open";
     $s .= ", message.emailbody as response, message.whencreated as responsetime" if ($govtresponse);
-    $s .= ", cached_signers as signers" unless ($nocount);
+    $s .= ", cached_signers+coalesce(offline_signers,0) as signers" unless ($nocount);
     $s .= ', body.id as body_id, body.ref as body_ref, body.name as body_name, body.area_id as body_area_id' if mySociety::Config::get('SITE_TYPE') eq 'multiple';
     $s .= " from petition";
     $s .= ' inner join body on body.id = body_id' if mySociety::Config::get('SITE_TYPE') eq 'multiple';

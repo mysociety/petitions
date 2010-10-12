@@ -471,7 +471,9 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '<br><select name="category[' . $r['id'] . ']">' . $disp_cat . '</select>';
             }
             $row .= '</td>';
-            $row .= '<td>' . htmlspecialchars($r['signers']) . '</td>';
+            $row .= '<td>' . htmlspecialchars($r['signers']);
+            if (!is_null($r['offline_signers'])) $row .= ' / ' . htmlspecialchars($r['offline_signers']);
+            $row .= '</td>';
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
             $row .= '<td><a href="mailto:' . privacy($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
@@ -724,6 +726,13 @@ Deadline: ';
         if ($pdata['status'] != 'draft' && $pdata['status'] != 'resubmitted') {
             // Signers
             print "<h3>Signers (".$pdata['signers'].")</h3>";
+            print '<form name="petition_admin_offline_signers" method="post" action="' . $this->self_link . '">
+<input type="hidden" name="offline_signers_change" value="1">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<p>If this petition had an offline version, give the number of offline signatures here: ';
+            print '<input type="text" name="offline_signers" size=4 value="' . $pdata['offline_signers'] . '">';
+            print ' <input type="submit" value="Update">';
+            print '</form>';
             $query = "SELECT signer.name as signname, signer.email as signemail,
                          date_trunc('second',signtime) AS signtime,
                          signer.id AS signid, emailsent
@@ -786,7 +795,7 @@ Deadline: ';
                 if ($list_limit && $c >= $list_limit) {
                     print "<p>... only $list_limit signers shown, "; 
                     print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';
-                    print ' (do not press if you are Tom, it will crash your computer :)</p>';
+                    print '</p>';
                 }
             } else {
                 print '<p>Nobody has signed up to this petition.</p>';
@@ -1171,6 +1180,37 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         }
     }
 
+    # Admin function to update the number of offline signers a petition has
+    # Can be both 0 and blank - 0 would imply there was an offline version
+    # and it got no signatures, blank would mean no offline version.
+    function offline_signers($petition_id) {
+        global $pet_today;
+        $p = new Petition($petition_id);
+
+        $new = get_http_var('offline_signers');
+        if ($new === '') $new = null;
+        $old = $p->data['offline_signers'];
+        if (is_null($old)) $old = 'n/a';
+
+        $error = null;
+        if ($new && !ctype_digit($new))
+            $error = 'Please enter a number of signatures';
+
+        if ($error) {
+            print "<p><em>$error</em></p>";
+        } else {
+            db_query('update petition set offline_signers=?, lastupdate = ms_current_timestamp()
+                where id=?', $new, $petition_id);
+            $memcache = new Memcache;
+            $memcache->connect('localhost', 11211);
+            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
+            if ($new === null) $new = 'n/a';
+            $p->log_event("Admin altered number of offline signatures from $old to $new", http_auth_user());
+            db_commit();
+            print '<p><em>Number of offline signatures updated</em></p>';
+        }
+    }
+
     # Approve a petition. Note the approval might have been a few days later,
     # so take account of that and calculate a new deadline
     function approve($petition_id) {
@@ -1359,6 +1399,8 @@ can be rejected properly.</p>
             $this->respond($petition_id);
         } elseif (get_http_var('deadline_change')) {
             $this->change_deadline($petition_id);
+        } elseif (get_http_var('offline_signers_change')) {
+            $this->offline_signers($petition_id);
         } elseif (get_http_var('redraft')) {
             $this->redraft($petition_id, 'redraft');
         } elseif (get_http_var('remove')) {

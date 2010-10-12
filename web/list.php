@@ -74,7 +74,7 @@ if ($q_sort == 'date' || $q_sort == 'signers') {
 $sql_params = array($status);
 $qrows = "
     SELECT petition.*, '$pet_today' <= petition.deadline AS open,
-        cached_signers as signers,
+        cached_signers+coalesce(offline_signers,0) as signers,
         (select count(*) from message where petition.id = message.petition_id
             and circumstance = 'government-response') as responses
 ";

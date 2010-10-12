@@ -486,7 +486,7 @@ sub signatories_box ($$) {
         $q->start_div({-id => 'signatories'})
             . Cobrand::main_heading('<a name="signers"></a>Current signatories');
 
-    if ($p->{signers} == 1 && !$q->param('signed')) {
+    if ($p->{cached_signers} == 1 && !$q->param('signed')) {
         $html .=
             $q->p("So far, only @{[ ent($p->{name}) ]}, the Petition Creator, has signed this petition.")
             . $q->end_div();
@@ -496,7 +496,7 @@ sub signatories_box ($$) {
     my $st;
     my $showall = $q->param('showall') ? 1 : 0;      # ugh
     my $reverse = 0;
-    if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
+    if ($p->{cached_signers} > MAX_PAGE_SIGNERS && !$showall) {
         $html .=
             $q->p("Because there are so many signatories, only the most recent",
                 MAX_PAGE_SIGNERS, "are shown on this page.");
@@ -544,9 +544,14 @@ sub signatories_box ($$) {
         }
     }
 
+    if (defined $p->{offline_signers}) {
+        $html .= '<li>' . $p->{offline_signers} . ' offline signature' .
+            ($p->{offline_signers}==1?'':'s') . '</li>';
+    }
+
     $html .= '</ul>';
     
-    if ($p->{signers} > MAX_PAGE_SIGNERS && !$showall) {
+    if ($p->{cached_signers} > MAX_PAGE_SIGNERS && !$showall) {
         $html .=
             $q->p("Because there are so many signatories, only the most recent",
                 MAX_PAGE_SIGNERS, "are shown on this page.");

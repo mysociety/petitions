@@ -103,6 +103,7 @@ create table petition (
     -- metadata
     creationtime timestamp not null,
     cached_signers integer not null default 1,
+    offline_signers integer,
     
     status text not null default 'unconfirmed' check (
         status in (
