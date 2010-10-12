@@ -112,25 +112,22 @@ sub check_ref ($$) {
     return undef;
 }
 
-=item get REF [NOCOUNT] [GOVTRESPONSE]
+=item get REF [GOVTRESPONSE]
 
-=item get ID [NOCOUNT] [GOVTRESPONSE]
+=item get ID [GOVTRESPONSE]
 
 Return a hash of database fields to values for the petition with the given REF
-or ID, or undef if there is no such petition. Also make up a signers field
-giving the number of people who've signed the petition so far, unless NOCOUNT
-is set, and try and return the Government response(s) if GOVTRESPONSE is set.
+or ID, or undef if there is no such petition. Include total number signers
+based on cached values, and also return petition response(s) if GOVTRESPONSE is set.
 
 =cut
 sub get ($;$$) {
     my $ref = shift;
     return undef unless ($ref);
-    my $nocount = shift;
     my $govtresponse = shift;
-    my $s = "select petition.*,
-                ms_current_date() <= deadline as open";
+    my $s = "select petition.*, ms_current_date() <= deadline as open,
+        cached_signers+coalesce(offline_signers,0) as signers";
     $s .= ", message.emailbody as response, message.whencreated as responsetime" if ($govtresponse);
-    $s .= ", cached_signers+coalesce(offline_signers,0) as signers" unless ($nocount);
     $s .= ', body.id as body_id, body.ref as body_ref, body.name as body_name, body.area_id as body_area_id' if mySociety::Config::get('SITE_TYPE') eq 'multiple';
     $s .= " from petition";
     $s .= ' inner join body on body.id = body_id' if mySociety::Config::get('SITE_TYPE') eq 'multiple';
