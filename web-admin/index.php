@@ -21,6 +21,7 @@ require_once "../commonlib/phplib/admin.php";
 $pages = array(
     new ADMIN_PAGE_PET_MAIN,
     new ADMIN_PAGE_PET_SEARCH,
+    new ADMIN_PAGE_PET_OFFLINE,
     new ADMIN_PAGE_PET_STATS,
 );
 if (!OPTION_ADMIN_PUBLIC) {

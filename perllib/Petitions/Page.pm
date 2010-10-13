@@ -486,7 +486,7 @@ sub signatories_box ($$) {
         $q->start_div({-id => 'signatories'})
             . Cobrand::main_heading('<a name="signers"></a>Current signatories');
 
-    if ($p->{cached_signers} == 1 && !$q->param('signed')) {
+    if ($p->{signers} == 1 && !$q->param('signed')) {
         $html .=
             $q->p("So far, only @{[ ent($p->{name}) ]}, the Petition Creator, has signed this petition.")
             . $q->end_div();

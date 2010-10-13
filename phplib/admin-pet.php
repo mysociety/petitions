@@ -192,6 +192,122 @@ class ADMIN_PAGE_PET_SEARCH {
     }
 }
 
+class ADMIN_PAGE_PET_OFFLINE {
+    function ADMIN_PAGE_PET_OFFLINE () {
+        $this->id = "offline";
+        $this->navname = "Offline petitions";
+    }
+
+    function display() {
+        $data = array();
+        foreach (array( 'body', 'pet_content', 'detail', 'ref', 'category', 'offline_signers', 'rawdeadline', 'name', 'email', 'organisation', 'address', 'postcode', 'telephone' ) as $var) {
+            $data[$var] = get_http_var($var);
+        }
+        $errors = array();
+
+        if (get_http_var('offline_create')) {
+            # Error checking. Bit of overlap with new.php
+            if (OPTION_SITE_TYPE == 'multiple') {
+                if (!$data['body']) {
+                    $errors['body'] = _('Please pick who you wish to petition');
+                } else {
+                    $q = db_query('SELECT ref FROM body WHERE id=?', array($data['body']));
+                    if (!db_num_rows($q))
+                        $errors['body'] = _('Please pick a valid body to petition');
+                }
+            } else {
+                $data['body'] = null;
+            }
+
+            if (!$data['pet_content'])
+                $errors[] = 'Please give the main sentence of the petition';
+            $ddd = preg_replace('#\s#', '', $data['detail']);
+            if (strlen($ddd) > 1000)
+                $errors['detail'] = _('Please make the more details shorter (at most 1000 characters).');
+
+            if (!$data['category'] || !array_key_exists($data['category'], cobrand_categories())) {
+                $errors['category'] = 'Please select a category';
+            } elseif (!cobrand_category_okay($data['category'])) {
+                $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
+            }
+
+            $disallowed_refs = array('contact', 'translate', 'posters', 'graphs', 'privacy', 'reject');
+            if (!$data['ref'])
+                $errors[] = 'Please give a short reference';
+            elseif (strlen($data['ref']) < 6)
+                $errors['ref'] = _('The short name must be at least six characters long');
+            elseif (strlen($data['ref']) > 16)
+                $errors['ref'] = _('The short name can be at most 16 characters long');
+            elseif (in_array(strtolower($data['ref']), $disallowed_refs))
+                $errors['ref'] = _('That short name is not allowed.');
+            elseif (preg_match('/[^a-z0-9-]/i', $data['ref']))
+                $errors['ref'] = _('The short name must only contain letters, numbers, or a hyphen.  Spaces are not allowed.');
+            elseif (!preg_match('/[a-z]/i', $data['ref']))
+                $errors['ref'] = _('The short name must contain at least one letter.');
+            $dupe = db_getOne('select id from petition where lower(ref) = ?', strtolower($data['ref']));
+            if ($dupe)
+                $errors['ref'] = _('That short name is already taken');
+
+            if (!$data['name'])
+                $errors[] = 'Please give the creator name';
+            if (!$data['address'])
+                $errors[] = 'Please give the creator address';
+
+            $deadline = datetime_parse_local_date($data['rawdeadline'], time(), 'en', 'GB');
+            if (!$data['rawdeadline'])
+                $errors[] = 'Please give a date';
+            elseif ($deadline && !$deadline['error'])
+                $data['deadline'] = $deadline['iso'];
+            else
+                $errors[] = 'Sorry, that date could not be parsed';
+
+            if (!$data['offline_signers'])
+                $errors[] = 'Please give the number of signatures';
+            elseif (!ctype_digit($data['offline_signers']))
+                $errors[] = 'Please give a figure for the number of signatures';
+
+            if (!$data['postcode'])
+                $errors[] = 'Please give the creator postcode';
+            elseif (!validate_postcode($data['postcode']))
+                $errors[] = 'Please give a valid postcode';
+
+            if (!$errors) {
+                db_query('lock table petition in share mode');
+                db_query("
+                    insert into petition (
+                        body_id, content, detail,
+                        deadline, rawdeadline, email,
+                        name, ref, offline_signers,
+                        organisation, address,
+                        postcode, telephone, category,
+                        creationtime, status,
+                        comments, address_type, org_url
+                    ) values (
+                        ?, ?, ?, ?,
+                        ?, ?,
+                        ?, ?, ?, 
+                        ?, ?,
+                        ?, ?, ?,
+                        ms_current_timestamp(), 'finished',
+                        '', '', ''
+                    )",
+                    $data['body'], $data['pet_content'], $data['detail'],
+                    $data['deadline'], $data['rawdeadline'], $data['email'],
+                    $data['name'], $data['ref'], $data['offline_signers'],
+                    $data['organisation'], $data['address'],
+                    $data['postcode'], $data['telephone'], $data['category']
+                );
+                db_commit();
+                header("Location: /admin/?page=pet&o=finished");
+                exit;
+            }
+        }
+
+        petition_admin_navigation($this);
+        include_once '../templates/admin/admin-offline.php';
+    }
+}
+
 class ADMIN_PAGE_PET_MAIN {
     function ADMIN_PAGE_PET_MAIN () {
         $this->id = "pet";
@@ -233,7 +349,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='a') $order = 'content';
         elseif ($sort=='d') $order = 'deadline desc';
         elseif ($sort=='e') $order = 'name';
-        elseif ($sort=='c') $order = 'petition.laststatuschange';
+        elseif ($sort=='c') $order = 'petition.laststatuschange desc';
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
 
@@ -1335,7 +1451,7 @@ function petition_admin_navigation($page, $array = array()) {
         if ($status == $k) print '<strong>' . $v . '</strong>';
         else print '<a href="?page=pet&amp;o=' . $k . '">' . $v . '</a>';
     }
-    print "<!-- <br><a href=''>Create offline petition</a> --></p>";
+    print "<br><a href='?page=offline'>Create offline petition</a></p>";
     print '</div>';
     if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') 
         print "<h2>Admin interface: $page->navname</h2>";
