@@ -148,43 +148,19 @@ class ADMIN_PAGE_PET_SEARCH {
         $this->navname = 'Search';
     }
 
-    function search_petitions($q, $search) {
-        $out = '';
-        while ($r = db_fetch_array($q)) {
-            $out .= "<tr><td></td><td>" . privacy($r['email']) . "</td><td>" . htmlspecialchars($r['name']) . "</td><td>$r[ref]</td>";
-            $out .= '<td>' . prettify($r['creationtime']) . '</td>';
-            $out .= '<td>';
-            if ($r['status'] == 'sentconfirm') {
-                $out .= '<form name="petition_admin_search" method="post" action="'.$this->self_link.'"><input type="hidden" name="search" value="'.htmlspecialchars($search).'">';
-                $out .= '<input type="hidden" name="confirm_petition_id" value="' . $r['id'] . '"><input type="submit" name="confirm" value="Confirm petition, move to \'draft\'">';
-                $out .= "</form>";
-            } else {
-                $out .= '<a href="?page=pet&amp;petition='.$r['ref'].'">admin</a>';
-            }
-            $out .= "</td></tr>";
-        }
-        return $out;
-    }
-
     function search_signers($q, $search) {
         $return = array('confirmed'=>'', 'unconfirmed'=>'');
         while ($r = db_fetch_array($q)) {
-            $out = '';
-            $out .= '<tr><td><input type="checkbox" name="update_signer[]" value="' . $r['id'] . '"></td>';
-            $out .= "<td>" . privacy($r['email']) . '</td><td>' . htmlspecialchars($r['name']) . "</td><td><a href='".OPTION_BASE_URL."/$r[ref]/'>$r[ref]</a></td>";
-            $out .= '<td>' . prettify($r['signtime']) . "</td></tr>\n";
             if ($r['emailsent'] == 'confirmed')
-                $return['confirmed'] .= $out;
+                $return['confirmed'][] = $r;
             elseif ($r['emailsent'] == 'sent')
-                $return['unconfirmed'] .= $out;
+                $return['unconfirmed'][] = $r;
         }
         return $return;
     }
 
     function display() {
         $search = strtolower(get_http_var('search'));
-        petition_admin_navigation($this, array('search'=>$search));
-        petition_admin_perform_actions();
         $search_pet = "select petition.id, petition.ref, petition.name, email,
                 status, date_trunc('second', creationtime) as creationtime
             from petition LEFT JOIN body ON body_id=body.id
@@ -198,48 +174,21 @@ class ADMIN_PAGE_PET_SEARCH {
         $search_sign .= cobrand_admin_site_restriction();
         $out = array();
         if ($search && validate_email($search)) {
-            $q = db_query($search_pet . "and lower(email) = ?", array($search));
-            $out['petitions'] = $this->search_petitions($q, $search);
+            $out['petitions'] = db_getAll($search_pet . "and lower(email) = ?", array($search));
             $q = db_query($search_sign . "and lower(signer.email) = ?", array($search));
             $out['signers'] = $this->search_signers($q, $search);
         } elseif ($search) {
-            $q = db_query($search_pet . "
+            $out['petitions'] = db_getAll($search_pet . "
                 and (petition.name ilike '%'||?||'%' or lower(email) like '%'||?||'%' or lower(petition.ref) = ?)
                 order by lower(email)", array($search, $search, $search));
-            $out['petitions'] = $this->search_petitions($q, $search);
             $q = db_query($search_sign . "
                 and (signer.name ilike '%'||?||'%' or lower(signer.email) ilike '%'||?||'%')
                 order by emailsent, lower(signer.email)", array($search, $search));
             $out['signers'] = $this->search_signers($q, $search);
         }
-        if (count($out)) {
-            if ($out['petitions']) {
-                echo '<h2>Petitions</h2>
-<table><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th><th>Actions</th></tr>',
-                    $out['petitions'], '</table>';
-            }
-            if ($out['signers']['confirmed']) {
-                echo '<h2>Signature removal</h2>
-<form name="petition_admin_signature_removal" method="post" action="', $this->self_link, '">
-<input type="hidden" name="search" value="', htmlspecialchars($search), '">
-<table><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
-                    $out['signers']['confirmed'], '</table>
-<input type="hidden" name="delete_all" value="1">
-<p><input type="submit" value="Remove all ticked"></p>
-</form>';
-            }
-            if ($out['signers']['unconfirmed']) {
-                echo '<h2>Signature confirmation</h2>
-<form name="petition_admin_signature_confirmation" method="post" action="', $this->self_link, '">
-<input type="hidden" name="search" value="', htmlspecialchars($search), '">
-<table><tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>',
-                    $out['signers']['unconfirmed'], '</table>
-<input type="hidden" name="confirm_all" value="1">
-<p><input type="submit" value="Confirm all ticked"></p>
-</form>';
-            }
-        }
-        else print '<p><em>No matches</em></p>';
+        petition_admin_navigation($this, array('search'=>$search));
+        petition_admin_perform_actions();
+        include_once '../templates/admin/admin-search.php';
     }
 }
 
