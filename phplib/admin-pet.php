@@ -148,7 +148,7 @@ class ADMIN_PAGE_PET_SEARCH {
         $this->navname = 'Search';
     }
 
-    function search_signers($q, $search) {
+    function search_signers($q) {
         $return = array('confirmed'=>array(), 'unconfirmed'=>array());
         while ($r = db_fetch_array($q)) {
             if ($r['emailsent'] == 'confirmed')
@@ -176,7 +176,7 @@ class ADMIN_PAGE_PET_SEARCH {
         if ($search && validate_email($search)) {
             $out['petitions'] = db_getAll($search_pet . "and lower(email) = ?", array($search));
             $q = db_query($search_sign . "and lower(signer.email) = ?", array($search));
-            $out['signers'] = $this->search_signers($q, $search);
+            $out['signers'] = $this->search_signers($q);
         } elseif ($search) {
             $out['petitions'] = db_getAll($search_pet . "
                 and (petition.name ilike '%'||?||'%' or lower(email) like '%'||?||'%' or lower(petition.ref) = ?)
@@ -184,7 +184,7 @@ class ADMIN_PAGE_PET_SEARCH {
             $q = db_query($search_sign . "
                 and (signer.name ilike '%'||?||'%' or lower(signer.email) ilike '%'||?||'%')
                 order by emailsent, lower(signer.email)", array($search, $search));
-            $out['signers'] = $this->search_signers($q, $search);
+            $out['signers'] = $this->search_signers($q);
         }
         petition_admin_navigation($this, array('search'=>$search));
         petition_admin_perform_actions();

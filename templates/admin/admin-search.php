@@ -1,7 +1,7 @@
 <?
 
 if (!count($out) || count($out['petitions']) || $out['signers']['confirmed'] || $out['signers']['unconfirmed']) {
-    if (isset($out['petitions'])) {
+    if ($out && $out['petitions']) {
 ?>
 
 <h3>Petitions</h3>
@@ -28,7 +28,7 @@ if (!count($out) || count($out['petitions']) || $out['signers']['confirmed'] || 
 </table>
 <?
     }
-    if (isset($out['signers']['confirmed'])) {
+    if ($out && $out['signers']['confirmed']) {
 ?>
 
 <h3>Signature removal</h3>
@@ -52,7 +52,7 @@ if (!count($out) || count($out['petitions']) || $out['signers']['confirmed'] || 
 </form>
 <?
     }
-    if (isset($out['signers']['unconfirmed'])) {
+    if ($out && $out['signers']['unconfirmed']) {
 ?>
 
 <h3>Signature confirmation</h3>
@@ -61,7 +61,7 @@ if (!count($out) || count($out['petitions']) || $out['signers']['confirmed'] || 
 <table>
 <tr><td></td><th>Email</th><th>Name</th><th>Petition</th><th>Creation time</th></tr>
 <?
-        foreach ($out['signers']['confirmed'] as $r) {
+        foreach ($out['signers']['unconfirmed'] as $r) {
 ?>
     <tr><td><input type="checkbox" name="update_signer[]" value="<?=$r['id']?>"></td>
         <td><?=privacy($r['email'])?></td><td><?=htmlspecialchars($r['name'])?></td><td><a href="<?=OPTION_BASE_URL."/$r[ref]/"?>"><?=$r['ref']?></a></td>
