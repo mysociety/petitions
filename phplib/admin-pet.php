@@ -149,7 +149,7 @@ class ADMIN_PAGE_PET_SEARCH {
     }
 
     function search_signers($q, $search) {
-        $return = array('confirmed'=>'', 'unconfirmed'=>'');
+        $return = array('confirmed'=>array(), 'unconfirmed'=>array());
         while ($r = db_fetch_array($q)) {
             if ($r['emailsent'] == 'confirmed')
                 $return['confirmed'][] = $r;
