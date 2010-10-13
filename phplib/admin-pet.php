@@ -88,32 +88,11 @@ EOF;
 
     function display() {
         global $pet_time;
-        if (get_http_var('from') && get_http_var('to')) {
-            $from = datetime_parse_local_date(get_http_var('from'), $pet_time, 'en', 'GB');
-            $to = datetime_parse_local_date(get_http_var('to'), $pet_time, 'en', 'GB');
-            if ($from && $to) {
-                $this->date_range($from, $to);
-            }
-        }
-
-        petition_admin_navigation($this);
-
-        $from = htmlspecialchars(get_http_var('from'));
-        $to = htmlspecialchars(get_http_var('to'));
-        echo <<<EOF
-<form method="post" action="$this->self_link">
-Date range statistics &ndash;
-<label for="date_from">From:</label> <input type="text" id="date_from" name="from" value="$from">
-<label for="date_to">To:</label> <input type="text" id="date_to" name="to" value="$to">
-<input type="submit" value="Lookup">
-</form>
-EOF;
+        $from = get_http_var('from');
+        $to = get_http_var('to');
         
         # Overall
         $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
-        print <<<EOF
-<p>Summary statistics last updated: $statsdate
-EOF;
 
         # Petitions
         $counts = array(
@@ -126,31 +105,24 @@ EOF;
             $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t' order by id desc limit 1");
         }
 
-        print <<<EOF
-<h2>Petitions</h2>
-<p>$counts[live] live, $counts[finished] finished, $counts[draft] draft, $counts[rejectedonce] rejected once, $counts[resubmitted] resubmitted, $counts[rejected] rejected again = <strong>$counts[all_confirmed]</strong> total with confirmed emails<br>
-With unconfirmed emails: $counts[unconfirmed] not sent, $counts[failedconfirm] failed send, $counts[sentconfirm] sent
-= <strong>$counts[all_unconfirmed]</strong> total with unconfirmed emails
-<p><img style="max-width:100%" src="pet-live-creation.png" alt="Graph of petition status by creation date">
-EOF;
-
         # Signatures
         $signatures_confirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed' order by id desc limit 1");
         $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent' order by id desc limit 1");
         $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique' order by id desc limit 1");
-        print <<<EOF
-<h2>Signatures</h2>
-<p>$signatures_confirmed confirmed signatures ($signers unique emails in past year), $signatures_unconfirmed unconfirmed
-<p><img style="max-width:100%" src="pet-live-signups.png" alt="Graph of signers across whole site">
-EOF;
 
         # Responses 
         $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
         $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
-        print <<<EOF
-<h2>Responses</h2>
-<p>$responses responses sent, to $unique_responses unique petitions
-EOF;
+    
+        petition_admin_navigation($this);
+        if ($from && $to) {
+            $parsed_from = datetime_parse_local_date($from, $pet_time, 'en', 'GB');
+            $parsed_to = datetime_parse_local_date($to, $pet_time, 'en', 'GB');
+            if ($parsed_from && $parsed_to) {
+                $this->date_range($parsed_from, $parsed_to);
+            }
+        }
+        include_once '../templates/admin/admin-stats.php';
 
         # Rejection reasons - TODO (probably don't try storing in stats table
         # as can do quickly enough in real time, and data doesn't really fit
@@ -269,100 +241,6 @@ class ADMIN_PAGE_PET_SEARCH {
         }
         else print '<p><em>No matches</em></p>';
     }
-}
-
-function petition_admin_perform_actions() {
-    $petition_id = null;
-    if (get_http_var('delete_all') || get_http_var('confirm_all')) {
-        $ids = get_http_var('update_signer');
-        $sigs_by_petition = array();
-        $clean_ids = array();
-        foreach ($ids as $signer_id) {
-            if (!$signer_id || !ctype_digit($signer_id)) continue;
-            $clean_ids[] = $signer_id;
-            $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
-            $sigs_by_petition[$petition_id][] = $signer_id;
-        }
-        $ids = $clean_ids;
-        if (count($ids)) {
-            if (get_http_var('delete_all')) {
-                db_query('UPDATE signer set showname = false where id in (' . join(',', $ids) . ')');
-                $change = '-';
-                $log = 'Admin hid signers ';
-                print '<p><em>Those signers have been removed.</em></p>';
-            } else {
-                db_query("UPDATE signer set emailsent = 'confirmed' where id in (" . join(',', $ids) . ')');
-                $change = '+';
-                $log = 'Admin confirmed signers ';
-                print '<p><em>Those signers have been confirmed.</em></p>';
-            }
-        }
-        $memcache = new Memcache;
-        $memcache->connect('localhost', 11211);
-        foreach ($sigs_by_petition as $petition_id => $sigs) {
-            db_query("update petition set cached_signers = cached_signers $change " . count($sigs) . ',
-                lastupdate = ms_current_timestamp() where id = ?', $petition_id);
-            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
-            $p = new Petition($petition_id);
-            $p->log_event($log . join(',', $sigs), http_auth_user());
-        }
-        db_commit();
-    }
-
-    if (get_http_var('confirm_petition_id')) {
-        $petition_id = get_http_var('confirm_petition_id');
-        if (ctype_digit($petition_id)) {
-            db_query("UPDATE petition set status = 'draft' where id = ?", $petition_id);
-            $p = new Petition($petition_id);
-            $p->log_event('Admin confirmed petition ' . $petition_id, http_auth_user());
-            db_commit();
-            print '<p><em>That petition has been confirmed.</em></p>';
-        }
-    }
-
-    # Category updates
-    if (isset($_POST['category']) && is_array($_POST['category'])) {
-        foreach ($_POST['category'] as $pid => $cat) {
-            db_query('update petition set category = ? where id = ?', $cat, $pid);
-        }
-        db_commit();
-    }
-
-    return $petition_id;
-}
-
-function petition_admin_navigation($page, $array = array()) {
-    $status = isset($array['status']) ? $array['status'] : '';
-    # $found = isset($array['found']) ? $array['found'] : 0;
-    $search = isset($array['search']) ? $array['search'] : '';
-    print '<div id="admin_nav">';
-    petition_admin_search_form($search);
-    print "<p>View petitions of status: ";
-    $statuses = array(
-        'draft' => 'Draft',
-        'live' => 'Live',
-        'finished' => 'Finished',
-        'rejected' => 'Rejected',
-    );
-    $c = 0;
-    foreach ($statuses as $k => $v) {
-        if ($c++) print ' / ';
-        if ($status == $k) print '<strong>' . $v . '</strong>';
-        else print '<a href="?page=pet&amp;o=' . $k . '">' . $v . '</a>';
-    }
-    print " </p>";
-    print '</div>';
-    if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') 
-        print "<h2>Admin interface: $page->navname</h2>";
-}
-
-function petition_admin_search_form($search='') { ?>
-<form name="petition_admin_search" method="get" action="./">
-<input type="hidden" name="page" value="petsearch">
-Search for user&rsquo;s name/email, or petition reference: <input type="text" name="search" value="<?=htmlspecialchars($search) ?>" size="30">
-<input type="submit" value="Search">
-</form>
-<?
 }
 
 class ADMIN_PAGE_PET_MAIN {
@@ -1427,6 +1305,100 @@ can be rejected properly.</p>
             $this->list_all_petitions();
         }
     }
+}
+
+function petition_admin_perform_actions() {
+    $petition_id = null;
+    if (get_http_var('delete_all') || get_http_var('confirm_all')) {
+        $ids = get_http_var('update_signer');
+        $sigs_by_petition = array();
+        $clean_ids = array();
+        foreach ($ids as $signer_id) {
+            if (!$signer_id || !ctype_digit($signer_id)) continue;
+            $clean_ids[] = $signer_id;
+            $petition_id = db_getOne("SELECT petition_id FROM signer WHERE id = $signer_id");
+            $sigs_by_petition[$petition_id][] = $signer_id;
+        }
+        $ids = $clean_ids;
+        if (count($ids)) {
+            if (get_http_var('delete_all')) {
+                db_query('UPDATE signer set showname = false where id in (' . join(',', $ids) . ')');
+                $change = '-';
+                $log = 'Admin hid signers ';
+                print '<p><em>Those signers have been removed.</em></p>';
+            } else {
+                db_query("UPDATE signer set emailsent = 'confirmed' where id in (" . join(',', $ids) . ')');
+                $change = '+';
+                $log = 'Admin confirmed signers ';
+                print '<p><em>Those signers have been confirmed.</em></p>';
+            }
+        }
+        $memcache = new Memcache;
+        $memcache->connect('localhost', 11211);
+        foreach ($sigs_by_petition as $petition_id => $sigs) {
+            db_query("update petition set cached_signers = cached_signers $change " . count($sigs) . ',
+                lastupdate = ms_current_timestamp() where id = ?', $petition_id);
+            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
+            $p = new Petition($petition_id);
+            $p->log_event($log . join(',', $sigs), http_auth_user());
+        }
+        db_commit();
+    }
+
+    if (get_http_var('confirm_petition_id')) {
+        $petition_id = get_http_var('confirm_petition_id');
+        if (ctype_digit($petition_id)) {
+            db_query("UPDATE petition set status = 'draft' where id = ?", $petition_id);
+            $p = new Petition($petition_id);
+            $p->log_event('Admin confirmed petition ' . $petition_id, http_auth_user());
+            db_commit();
+            print '<p><em>That petition has been confirmed.</em></p>';
+        }
+    }
+
+    # Category updates
+    if (isset($_POST['category']) && is_array($_POST['category'])) {
+        foreach ($_POST['category'] as $pid => $cat) {
+            db_query('update petition set category = ? where id = ?', $cat, $pid);
+        }
+        db_commit();
+    }
+
+    return $petition_id;
+}
+
+function petition_admin_navigation($page, $array = array()) {
+    $status = isset($array['status']) ? $array['status'] : '';
+    # $found = isset($array['found']) ? $array['found'] : 0;
+    $search = isset($array['search']) ? $array['search'] : '';
+    print '<div id="admin_nav">';
+    petition_admin_search_form($search);
+    print "<p>View petitions: ";
+    $statuses = array(
+        'draft' => 'Draft',
+        'live' => 'Live',
+        'finished' => 'Finished',
+        'rejected' => 'Rejected',
+    );
+    $c = 0;
+    foreach ($statuses as $k => $v) {
+        if ($c++) print ' / ';
+        if ($status == $k) print '<strong>' . $v . '</strong>';
+        else print '<a href="?page=pet&amp;o=' . $k . '">' . $v . '</a>';
+    }
+    print "<!-- <br><a href=''>Create offline petition</a> --></p>";
+    print '</div>';
+    if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') 
+        print "<h2>Admin interface: $page->navname</h2>";
+}
+
+function petition_admin_search_form($search='') { ?>
+<form name="petition_admin_search" method="get" action="./">
+<input type="hidden" name="page" value="petsearch">
+Search for user&rsquo;s name/email, or petition reference: <input type="text" name="search" value="<?=htmlspecialchars($search) ?>" size="30">
+<input type="submit" value="Search">
+</form>
+<?
 }
 
 function privacy($e) {
