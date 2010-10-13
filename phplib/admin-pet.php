@@ -160,6 +160,7 @@ class ADMIN_PAGE_PET_SEARCH {
     }
 
     function display() {
+        petition_admin_perform_actions();
         $search = strtolower(get_http_var('search'));
         $search_pet = "select petition.id, petition.ref, petition.name, email,
                 status, date_trunc('second', creationtime) as creationtime
@@ -187,7 +188,6 @@ class ADMIN_PAGE_PET_SEARCH {
             $out['signers'] = $this->search_signers($q);
         }
         petition_admin_navigation($this, array('search'=>$search));
-        petition_admin_perform_actions();
         include_once '../templates/admin/admin-search.php';
     }
 }
@@ -1375,7 +1375,7 @@ can be rejected properly.</p>
 function petition_admin_perform_actions() {
     $petition_id = null;
     if (get_http_var('delete_all') || get_http_var('confirm_all')) {
-        $ids = get_http_var('update_signer');
+        $ids = (array)get_http_var('update_signer');
         $sigs_by_petition = array();
         $clean_ids = array();
         foreach ($ids as $signer_id) {
