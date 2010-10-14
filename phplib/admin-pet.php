@@ -668,7 +668,7 @@ Deadline: ';
 
         if ($pdata['status'] != 'draft' && $pdata['status'] != 'resubmitted') {
             // Signers
-            print "<h3>Signers (".$pdata['signers'].")</h3>";
+            print "<h3 id='signers'>Signers (".$pdata['signers'].")</h3>";
             print '<form name="petition_admin_offline_signers" method="post" action="' . $this->self_link . '">
 <input type="hidden" name="offline_signers_change" value="1">
 <input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
@@ -676,6 +676,20 @@ Deadline: ';
             print '<input type="text" name="offline_signers" size=4 value="' . $pdata['offline_signers'] . '">';
             print ' <input type="submit" value="Update">';
             print '</form>';
+
+            $areas = cobrand_admin_areas_of_interest();
+            if ($areas && $pdata['signers']) {
+                print '<div style="float:right"> <table><tr><th>Council</th><th>Signatures</th></tr>';
+                $summary = db_getAll("select area_id,count(*) as c from signer_area, signer
+                    where signer_id=signer.id and showname='t' and petition_id=? and emailsent = 'confirmed'
+                    group by area_id", $pdata['id']);
+                foreach ($summary as $area) {
+                    if (!in_array($area['area_id'], array_keys($areas))) continue;
+                    print '<tr><td>' . $areas[$area['area_id']]['name'] . "</td><td>$area[c]</td></tr>\n";
+                }
+                print '</table></div>';
+            }
+
             $query = "SELECT signer.name as signname, signer.email as signemail,
                          date_trunc('second',signtime) AS signtime,
                          signer.id AS signid, emailsent
@@ -720,7 +734,7 @@ Deadline: ';
                 $cols = array('e'=>'Signer', 't'=>'Time');
                 foreach ($cols as $s => $col) {
                     print '<th>';
-                    if ($sort != $s) print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;s='.$s.'">';
+                    if ($sort != $s) print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;s='.$s.'#signers">';
                     print $col;
                     if ($sort != $s) print '</a>';
                     print '</th>';

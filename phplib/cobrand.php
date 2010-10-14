@@ -326,6 +326,16 @@ function cobrand_admin_allow_html_response() {
     return false;
 }
 
+function cobrand_admin_areas_of_interest() {
+    if (OPTION_SITE_NAME == 'sbdc')
+        return json_decode(file_get_contents('http://mapit.mysociety.org/areas/LBO,MTD,LGD,DIS'), true);
+    if (cobrand_site_group() != 'surreycc') return null;
+    $out = array(2242 => array('name'=>'Surrey'));
+    if (http_auth_user() == 'reigate-banstead')
+        $out[2453] = array('name'=>'Reigate and Banstead');
+    return $out;
+}
+
 # A bit of a yucky function, containing slightly varying guidelines
 # for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {
