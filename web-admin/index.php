@@ -53,7 +53,7 @@ function admin_header($title) {
 <head>
 <title><?=$title?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" type="text/css" href="/pet-admin.css">
+<link rel="stylesheet" type="text/css" href="pet-admin.css">
 </head>
 <body id="admin">
 <div id="header"></div>
