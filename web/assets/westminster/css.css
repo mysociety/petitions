@@ -1,0 +1,83 @@
+div#petition_actions {
+    border: none;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+/*
+form#signForm label {
+    width: 8em;
+}
+*/
+
+p.petition_view_tabs {
+    border-bottom: solid 3px #facf24;
+    background-image:url(/assets/westminster/westminster_blue.png);
+    background-position: bottom left;
+    background-repeat: repeat-x;
+}
+.petition_view_tabs span {
+    background-color: #0B1867;
+}
+
+#action_view a, #action_create a{
+    text-decoration: none;
+}
+
+#action_view a:hover, #action_create a:hover {
+    text-decoration: none;
+}
+
+h3 {
+  margin: 0.333em 0 ;
+}
+
+div#petition_actions {
+    margin-bottom: 1em;
+}
+
+p.petition_view_tabs {
+    margin-bottom: 1em;
+}
+
+
+#action_create a {
+    background-image: url('/assets/westminster/petition_button_create.png');
+}
+#action_view a {
+    background-image: url('/assets/westminster/petition_button_view.png');
+}
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    margin-top: 10px;
+    display: block;
+    text-align: center;
+    padding-top: 96px;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+    background-color: #ffffff;
+    color: #b80000;
+}
+
+a:hover {
+  color: #b80000; /* Waveney default */
+  background-color: transparent;
+}
+
+#action_create a img,  #action_view a img {
+    display: none;
+}
+/* RSS icon fix */
+#article-content p a img{
+    display: inline-block;
+}
