@@ -1,0 +1,40 @@
+#!/usr/bin/perl -w
+
+use strict;
+require 5.8.0;
+
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../commonlib/perllib";
+chdir $FindBin::Bin;
+use Data::Dumper;
+
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
+use mySociety::DBHandle qw(dbh select_all);
+use mySociety::MaPit;
+use mySociety::VotingArea;
+use Petitions;
+
+my $types = join('|', @$mySociety::VotingArea::council_parent_types);
+$types .= '|';
+$types .= join('|', @$mySociety::VotingArea::council_child_types);
+
+my $rows = select_all("select id,postcode from signer where postcode is not null and latitude is null");
+foreach my $signer (@$rows) {
+    my $mapit = mySociety::MaPit::call('postcode', $signer->{postcode});
+    
+    dbh()->do("update signer set latitude=?, longitude=? where id=?", {},
+        $mapit->{wgs84_lat}, $mapit->{wgs84_lon}, $signer->{id});
+    print "Updating $signer->{id} to $mapit->{wgs84_lat}, $mapit->{wgs84_lon}\n";
+    foreach my $area (values %{$mapit->{areas}}) {
+        next unless $area->{type} =~ /$types/;
+        dbh()->do("insert into signer_area (signer_id, area_id) values (?, ?)", {},
+            $signer->{id}, $area->{id});
+        print "  Associating signer $signer->{id} with $area->{id} ($area->{name})\n";
+    }
+    #dbh()->commit();
+}
+
