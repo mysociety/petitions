@@ -52,7 +52,7 @@ hr {
 }
 
 #header {
-    background-image: url("/assets/sbdc1/admin/admin_header.jpg");
+    background-image: url("http://sbdc1.petitions.mysociety.org/assets/sbdc1/admin/admin_header.jpg");
     background-position: center bottom;
     background-repeat: no-repeat;
     background-color: #000000;
@@ -61,5 +61,24 @@ hr {
 
 #content {
     padding: 0 1em;
+}
+
+#admin_nav {
+    float: right;
+    width: 25em;
+    border: solid 1px #ccccff;
+    padding: 1em 0 0 1em;
+    background-color: #eeeeff;
+}
+
+#admin_offline_petition {
+    clear: both;
+    float: left;
+    width: 48%;
+}
+
+#admin_offline_creator {
+    float: right;
+    width: 48%;
 }
 
