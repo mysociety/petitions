@@ -1,0 +1,65 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+a:hover {
+    color: #ff0000;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td, th {
+    font-size: 75%;
+}
+
+h1 {
+    font-size: 150%;
+}
+
+h2 {
+    font-size: 125%;
+}
+
+.v {
+    background-color: #cccccc;
+    color: #000000;
+}
+
+.l {
+    background-color: #ffcccc;
+    color: #000000;
+}
+
+.v.l {
+    background-color: #ff9999;
+}
+
+i,em {
+    color: #666666;
+    background-color: #cccccc;
+}
+
+hr {
+    width: 600px;
+    background-color: #cccccc;
+    border: 0px;
+    height: 1px;
+    color: #000000;
+}
+
+#header {
+    background-image: url("/assets/sbdc1/admin/admin_header.jpg");
+    background-position: center bottom;
+    background-repeat: no-repeat;
+    background-color: #000000;
+    height: 100px;
+}
+
+#content {
+    padding: 0 1em;
+}
+
