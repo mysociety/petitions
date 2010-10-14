@@ -269,3 +269,14 @@ div#success p {
 .noborder {
     border: none;
 }
+
+#admin_offline_petition {
+    clear: both;
+    float: left;
+    width: 48%;
+}
+
+#admin_offline_creator {
+    float: right;
+    width: 48%;
+}

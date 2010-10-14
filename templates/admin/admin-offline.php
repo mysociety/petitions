@@ -7,6 +7,8 @@
 </ul></div>
 <? } ?>
 
+<div id="admin_offline_petition">
+
 <h3>Petition details</h3>
 
 <p><label for="pet_content"><?
@@ -51,6 +53,10 @@
 <p><label for="rawdeadline">Date petition was received:</label>
 <input type="text" name="rawdeadline" id="rawdeadline" size="15" value="<?=htmlspecialchars($data['rawdeadline'])?>" aria-required="true" /></p>
 
+</div>
+
+<div id="admin_offline_creator">
+
 <h3>Petition creator details</h3>
 
 <p><label for="name">Name:</label> <input type="text" name="name" id="name" size="20" value="<?=htmlspecialchars($data['name'])?>" aria-required="true" /></p>
@@ -62,3 +68,6 @@
 <p><label for="email">Email:</label> <input type="text" name="email" id="email" size="20" value="<?=htmlspecialchars($data['email'])?>" aria-required="true" /> <small>(optional)</small></p>
 <p><input type="submit" value="Create"></p>
 </form>
+
+</div>
+

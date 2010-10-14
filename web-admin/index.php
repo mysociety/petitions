@@ -39,7 +39,7 @@ if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
     admin_page_display(str_replace("http://", "", OPTION_BASE_URL), $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
     ob_end_flush(); # There's an ob_start in admin.php
     $num = preg_replace('#44(....)#', '0\1 ', OPTION_SMS_ALERT_NUMBER_TOM);
-    echo '<p align="right"><em>Got any questions? Call ' . $num . '.</em></p>';
+    echo '<p style="clear:both" align="right"><em>Got any questions? Call ' . $num . '.</em></p>';
     page_footer();
 } else {
     admin_page_display(str_replace("http://", "", OPTION_BASE_URL), $pages, new ADMIN_PAGE_PET_SUMMARY);
