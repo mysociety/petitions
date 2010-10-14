@@ -1,0 +1,55 @@
+#!/usr/bin/perl -w
+#
+# This script annotates rows of the signer table with location and
+# administrative area information. Not done live for speed, not
+# done with a daemon because it's not worth it (or I'm not quick
+# enough at writing daemons, same result).
+
+use strict;
+require 5.8.0;
+
+use FindBin;
+use lib "$FindBin::Bin/../perllib";
+use lib "$FindBin::Bin/../commonlib/perllib";
+chdir $FindBin::Bin;
+
+use mySociety::Config;
+BEGIN {
+    mySociety::Config::set_file("$FindBin::Bin/../conf/general");
+}
+use mySociety::DBHandle qw(dbh select_all);
+use mySociety::MaPit;
+use mySociety::VotingArea;
+use Petitions; # To connect to the database
+
+my $debug = shift;
+
+# Only store councils/wards the signature is in
+my $types = join('|', @$mySociety::VotingArea::council_parent_types);
+$types .= '|';
+$types .= join('|', @$mySociety::VotingArea::council_child_types);
+
+my $rows = select_all("select id,postcode from signer where postcode is not null and latitude is null");
+foreach my $signer (@$rows) {
+    my $mapit = mySociety::MaPit::call('postcode', $signer->{postcode});
+    if ($mapit->{error}) {
+        print "Problem '$mapit->{error}' with postcode $signer->{postcode} for $signer->{id}\n"
+            if $debug;
+        dbh()->do("update signer set latitude=0, longitude=0 where id=?", {}, $signer->{id});
+        next;
+    }
+    
+    dbh()->do("update signer set latitude=?, longitude=? where id=?", {},
+        $mapit->{wgs84_lat}, $mapit->{wgs84_lon}, $signer->{id});
+    print "Updating $signer->{id} to $mapit->{wgs84_lat}, $mapit->{wgs84_lon}\n"
+        if $debug;
+    foreach my $area (values %{$mapit->{areas}}) {
+        next unless $area->{type} =~ /$types/;
+        dbh()->do("insert into signer_area (signer_id, area_id) values (?, ?)", {},
+            $signer->{id}, $area->{id});
+        print "  Associating signer $signer->{id} with $area->{id} ($area->{name})\n"
+            if $debug;
+    }
+    dbh()->commit();
+}
+

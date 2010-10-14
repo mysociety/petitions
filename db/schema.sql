@@ -184,6 +184,8 @@ create table signer (
     name text not null,
     address text not null,
     postcode text,
+    latitude float,
+    longitude float,
     overseas text,
 
     -- whether this signer is included in the petition or not
@@ -219,6 +221,13 @@ create index signer_petition_id_emailsent_showname on signer(petition_id, emails
 create index signer_emailsent_showname_idx on signer(emailsent, showname);
 create index signer_signtime_idx on signer(signtime);
 create index signer_email_idx on signer(lower(email)) where email != '';
+
+create table signer_area (
+    signer_id integer not null references signer(id) on delete cascade,
+    area_id integer not null
+);
+create unique index signer_area_signer_id_area_id_idx on signer_area(signer_id, area_id);
+create index signer_area_id_idx on signer_area(area_id);
 
 -- petition_is_valid_to_sign PETITION EMAIL
 -- Check whether the PETITION is valid for EMAIL to sign.
