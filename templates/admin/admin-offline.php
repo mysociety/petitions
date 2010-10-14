@@ -1,6 +1,10 @@
 <form action="<?=$this->self_link?>" method="post">
 <input type="hidden" name="offline_create" value="1">
 
+<p>Use this page to create an online copy of a paper
+petition, allowing them to be listed on your petition
+site along with online petitions.</p>
+
 <? if ($errors) { ?>
 <div id="errors"><ul>
 <li><?=join('</li> <li>', $errors)?></li>
