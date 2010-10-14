@@ -40,9 +40,8 @@ if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
     echo '<p style="clear:both" align="right"><em>Got any questions? Call ' . $num . '.</em></p>';
     page_footer();
 } else {
-    $site_name = OPTION_CONTACT_NAME;
-    admin_header("$site_name admin");
-    admin_page_display($site_name, $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
+    admin_header(OPTION_CONTACT_NAME . " admin");
+    admin_page_display(OPTION_CONTACT_NAME, $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
 }
 
 // Header at start of page
