@@ -186,8 +186,6 @@ input, textarea {
 }
 
 #admin_nav {
-    float: right;
-    width: 25em;
     border: solid 1px #cccccc;
     border-top: none;
     padding: 0.25em 0 0 0.5em;

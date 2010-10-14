@@ -270,6 +270,16 @@ div#success p {
     border: none;
 }
 
+/* Admin page objects */
+
+#admin_nav {
+    float: right;
+    width: 25em;
+    border: solid 1px #ccccff;
+    padding: 1em 0 0 1em;
+    background-color: #eeeeff;
+}
+
 #admin_offline_petition {
     clear: both;
     float: left;
@@ -280,3 +290,4 @@ div#success p {
     float: right;
     width: 48%;
 }
+

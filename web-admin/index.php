@@ -34,14 +34,30 @@ if (!OPTION_ADMIN_PUBLIC) {
 }
 
 if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
-    ob_start(); # As footer wants to output total length
     page_header('Admin', array('admin'=>1));
     admin_page_display(str_replace("http://", "", OPTION_BASE_URL), $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
-    ob_end_flush(); # There's an ob_start in admin.php
     $num = preg_replace('#44(....)#', '0\1 ', OPTION_SMS_ALERT_NUMBER_TOM);
     echo '<p style="clear:both" align="right"><em>Got any questions? Call ' . $num . '.</em></p>';
     page_footer();
 } else {
-    admin_page_display(str_replace("http://", "", OPTION_BASE_URL), $pages, new ADMIN_PAGE_PET_SUMMARY);
+    $site_name = OPTION_CONTACT_NAME;
+    admin_header("$site_name admin");
+    admin_page_display($site_name, $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
+}
+
+// Header at start of page
+function admin_header($title) {
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title><?=$title?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="/pet-admin.css">
+</head>
+<body id="admin">
+<div id="header"></div>
+<div id="content">
+<?
 }
 

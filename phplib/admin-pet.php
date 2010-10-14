@@ -1467,8 +1467,7 @@ function petition_admin_navigation($page, $array = array()) {
     }
     print "<br><a href='?page=offline'>Create offline petition</a></p>";
     print '</div>';
-    if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') 
-        print "<h2>Admin interface: $page->navname</h2>";
+    print "<h2>Admin interface: $page->navname</h2>";
 }
 
 function petition_admin_search_form($search='') { ?>
