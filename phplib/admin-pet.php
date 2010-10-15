@@ -704,7 +704,6 @@ Deadline: ';
                         }
                         continue;
                     }
-                    if (!array_key_exists($id, $areas)) continue;
                     $area_info = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id"), true);
                     if (in_array($area_info['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI'))) {
                         $other += $area['c'];
