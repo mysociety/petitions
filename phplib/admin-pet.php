@@ -689,7 +689,7 @@ Deadline: ';
                     where showname='t' and petition_id=? and emailsent = 'confirmed'
                     group by area_id", $pdata['id']);
                 $other = 0; $unknown = 0;
-                $out = array();
+                $parents = array(); $children = array();
                 foreach ($summary as $area) {
                     $id = $area['area_id'];
                     if (!$id) {
@@ -698,9 +698,9 @@ Deadline: ';
                     }
                     if (in_array($id, array_keys($areas))) {
                         if (array_key_exists('parent', $areas[$id])) {
-                            $out[$id]['children'][] = $area;
+                            $children[$areas[$id]['parent']][] = $area;
                         } else {
-                            $out[$id] = $area;
+                            $parents[$id] = $area;
                         }
                         continue;
                     }
@@ -711,10 +711,10 @@ Deadline: ';
                         continue;
                     }
                 }
-                foreach ($out as $area) {
-                    print '<tr><td>' . $areas[$area['area_id']]['name'] . "</td><td>$area[c]</td></tr>\n";
+                foreach ($parents as $id => $area) {
+                    print '<tr><td>' . $areas[$id]['name'] . "</td><td>$area[c]</td></tr>\n";
                     if (!array_key_exists('children', $area)) continue;
-                    foreach ($area['children'] as $child) {
+                    foreach ($children[$id] as $child) {
                         print '<tr><td>&nbsp;&nbsp;' . $areas[$child['area_id']]['name'] . "</td><td>$child[c]</td></tr>\n";
                     }
                 }
