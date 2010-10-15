@@ -616,10 +616,10 @@ Deadline: ';
         print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
         print '<li>Category: ' . htmlspecialchars($petition_obj->data['category']);
-        if ($pdata['offline_link'])
+        if ($pdata['offline_link']) {
             print '<li>Offline petition link: <a href="' . $pdata['offline_link'] . '">' . $pdata['offline_link'] . '</a></li>';
         }
-        if ($pdata['offline_location'])
+        if ($pdata['offline_location']) {
             print '<li>Offline petition location: ' . $pdata['offline_location'] . '</li>';
         }
         print '</ul>';
