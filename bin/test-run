@@ -350,12 +350,12 @@ sub do_main_test {
     $wth->browser_follow_link(text_regex => qr/admin/);
     $wth->browser_check_contents($petition_text);
     $wth->browser_check_contents(name_n(1489));
-    $wth->browser_check_contents("Signers \\(3\\)");
+    $wth->browser_check_contents("Signers \\(3 confirmed, 0 unconfirmed\\)");
     $wth->browser_submit_form(form_name => 'petition_admin_signature_removal',
         fields => { 'update_signer[]' => [17, 2] }) or die "Failed to submit admin remove signer form";
     $wth->browser_check_contents("Those signers have been removed");
     $wth->browser_check_no_contents(name_n(1489));
-    $wth->browser_check_contents("Signers \\(2\\)");
+    $wth->browser_check_contents("Signers \\(2 confirmed, 0 unconfirmed\\)");
 
     comment("Create unconfirmed signature, so can try confirming after finishing");
     $wth->browser_get($petition_uri);
