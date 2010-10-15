@@ -93,7 +93,7 @@ class Petition {
             $main_query_part .= 'body.name as body_name, body.ref as body_ref, ';
         }
         $main_query_part .= "'$pet_today' <= petition.deadline AS open,
-                               cached_signers as signers,
+                               cached_signers+coalesce(offline_signers,0) as signers,
                                email,
                                content, detail
                            FROM petition";
