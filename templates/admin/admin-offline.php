@@ -35,6 +35,9 @@ site along with online petitions.</p>
 <p><label for="detail">More details about the petition: <small>(optional)</small></label><br>
     <textarea id="detail" name="detail" cols="40" rows="7"><?=htmlspecialchars($data['detail'])?></textarea></p>
 
+<p><label for="rawdeadline">Date petition was received:</label>
+<input type="text" name="rawdeadline" id="rawdeadline" size="15" value="<?=htmlspecialchars($data['rawdeadline'])?>" aria-required="true" /></p>
+
 <p><label for="ref">Petition short name (6 to 16 letters):</label>
     <input type="text" name="ref" id="ref" size="16" value="<?=htmlspecialchars($data['ref'])?>" aria-required="true" />
 </p>
@@ -54,8 +57,13 @@ site along with online petitions.</p>
 
 <p>Number of signatures: <input type="text" name="offline_signers" size=4 value="<?=htmlspecialchars($data['offline_signers'])?>">
 
-<p><label for="rawdeadline">Date petition was received:</label>
-<input type="text" name="rawdeadline" id="rawdeadline" size="15" value="<?=htmlspecialchars($data['rawdeadline'])?>" aria-required="true" /></p>
+<p>Web page (e.g. scan of petition, or related details):
+<input type="text" name="offline_link" size=40 value="<?=htmlspecialchars($data['offline_link'])?>">
+<small>(optional)</small>
+
+<p>Physical location of paper petition (internal use only):
+<input type="text" name="offline_location" size=40 value="<?=htmlspecialchars($data['offline_location'])?>">
+<small>(optional)</small>
 
 </div>
 
@@ -70,7 +78,8 @@ site along with online petitions.</p>
 <p><label for="postcode">Postcode:</label> <input type="text" name="postcode" id="postcode" size="10" value="<?=htmlspecialchars($data['postcode'])?>" aria-required="true" /></p>
 <p><label for="telephone">Telephone number:</label> <input type="text" name="telephone" id="telephone" size="15" value="<?=htmlspecialchars($data['telephone'])?>" aria-required="true" /> <small>(optional)</small></p>
 <p><label for="email">Email:</label> <input type="text" name="email" id="email" size="20" value="<?=htmlspecialchars($data['email'])?>" aria-required="true" /> <small>(optional)</small></p>
-<p><input type="submit" value="Create"></p>
+<p>&nbsp;</p>
+<p align="right"><input type="submit" value="Create"></p>
 </form>
 
 </div>

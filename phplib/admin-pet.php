@@ -200,7 +200,7 @@ class ADMIN_PAGE_PET_OFFLINE {
 
     function display() {
         $data = array();
-        foreach (array( 'body', 'pet_content', 'detail', 'ref', 'category', 'offline_signers', 'rawdeadline', 'name', 'email', 'organisation', 'address', 'postcode', 'telephone' ) as $var) {
+        foreach (array( 'body', 'pet_content', 'detail', 'ref', 'category', 'offline_signers', 'rawdeadline', 'name', 'email', 'organisation', 'address', 'postcode', 'telephone', 'offline_link', 'offline_location' ) as $var) {
             $data[$var] = get_http_var($var);
         }
         $errors = array();
@@ -278,6 +278,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                         body_id, content, detail,
                         deadline, rawdeadline, email,
                         name, ref, offline_signers,
+                        offline_link, offline_location,
                         organisation, address,
                         postcode, telephone, category,
                         creationtime, status,
@@ -287,6 +288,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                         ?, ?,
                         ?, ?, ?, 
                         ?, ?,
+                        ?, ?,
                         ?, ?, ?,
                         ms_current_timestamp(), 'finished',
                         '', '', ''
@@ -294,6 +296,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                     $data['body'], $data['pet_content'], $data['detail'],
                     $data['deadline'], $data['rawdeadline'], $data['email'],
                     $data['name'], $data['ref'], $data['offline_signers'],
+                    $data['offline_link'], $data['offline_location'],
                     $data['organisation'], $data['address'],
                     $data['postcode'], $data['telephone'], $data['category']
                 );
@@ -613,6 +616,12 @@ Deadline: ';
         print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
         print '<li>Category: ' . htmlspecialchars($petition_obj->data['category']);
+        if ($pdata['offline_link'])
+            print '<li>Offline petition link: <a href="' . $pdata['offline_link'] . '">' . $pdata['offline_link'] . '</a></li>';
+        }
+        if ($pdata['offline_location'])
+            print '<li>Offline petition location: ' . $pdata['offline_location'] . '</li>';
+        }
         print '</ul>';
 
         if ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted') {
