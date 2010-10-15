@@ -670,7 +670,8 @@ Deadline: ';
 
         if ($pdata['status'] != 'draft' && $pdata['status'] != 'resubmitted') {
             // Signers
-            print "<h3 id='signers'>Signers (".$pdata['signers_confirmed'].'/'.$pdata['signers_sent'].")</h3>";
+            print "<h3 id='signers'>Signers (" . $pdata['signers_confirmed']
+                . ' confirmed, ' . $pdata['signers_sent'] . " unconfirmed)</h3>";
             print '<form name="petition_admin_offline_signers" method="post" action="' . $this->self_link . '">
 <input type="hidden" name="offline_signers_change" value="1">
 <input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
