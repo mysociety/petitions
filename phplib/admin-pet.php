@@ -644,9 +644,10 @@ Deadline: ';
 
         // Admin actions
         print '<h3>Administrator events and notes</h3>';
+        print '<p>Here you can review this petition&rsquo;s administration history, and add a note if needed.</p>';
         print '<form name="petition_admin_add_note" method="post" action="'
             . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id']
-            . '"><label for="add_note">Add note:</label> <input id="add_note" type="text" name="note" value="">
+            . '"><label for="add_note">Add note:</label> <input id="add_note" type="text" name="note" value="" size="50">
             <input type="submit" value="Add"></form>';
 
         $q = db_query('select * from petition_log 
@@ -675,9 +676,9 @@ Deadline: ';
             print '<form name="petition_admin_offline_signers" method="post" action="' . $this->self_link . '">
 <input type="hidden" name="offline_signers_change" value="1">
 <input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
-<p>If this petition had an offline version, give the number of offline signatures here: ';
+<p>Number of offline signatures: ';
             print '<input type="text" name="offline_signers" size=4 value="' . $pdata['offline_signers'] . '">';
-            print ' <input type="submit" value="Update">';
+            print ' <small>(optional)</small> <input type="submit" value="Update">';
             print '</form>';
 
             $areas = cobrand_admin_areas_of_interest();
