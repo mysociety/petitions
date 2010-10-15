@@ -690,7 +690,7 @@ Deadline: ';
                 foreach ($summary as $area) {
                     if (!$area['area_id']) {
                         $unknown = $area['c'];
-                        continue
+                        continue;
                     }
                     $area_info = json_decode(file_get_contents('http://mapit.mysociety.org/area/' . $area['area_id']), true);
                     if (!in_array($area['area_id'], array_keys($areas))) {
