@@ -683,9 +683,16 @@ Deadline: ';
                 $summary = db_getAll("select area_id,count(*) as c from signer_area, signer
                     where signer_id=signer.id and showname='t' and petition_id=? and emailsent = 'confirmed'
                     group by area_id", $pdata['id']);
+                $other = 0;
                 foreach ($summary as $area) {
-                    if (!in_array($area['area_id'], array_keys($areas))) continue;
+                    if (!in_array($area['area_id'], array_keys($areas))) {
+                        $other++;
+                        continue;
+                    }
                     print '<tr><td>' . $areas[$area['area_id']]['name'] . "</td><td>$area[c]</td></tr>\n";
+                }
+                if ($other) {
+                    print '<tr><td>Other</td><td>' . $other . '</td></tr>';
                 }
                 print '</table></div>';
             }
