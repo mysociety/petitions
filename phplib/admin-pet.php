@@ -542,7 +542,9 @@ petitions.</p>';
                 date_trunc('second', creationtime) AS creationtime,
                 (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
-                    emailsent in ('sent', 'confirmed')) AS signers
+                    emailsent = 'confirmed') AS signers_confirmed,
+                (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
+                    emailsent = 'sent') AS signers_sent
             FROM petition";
         if (OPTION_SITE_TYPE == 'multiple') {
             $sel_query_part .= ', body WHERE body_id = body.id AND';
@@ -668,7 +670,7 @@ Deadline: ';
 
         if ($pdata['status'] != 'draft' && $pdata['status'] != 'resubmitted') {
             // Signers
-            print "<h3 id='signers'>Signers (".$pdata['signers'].")</h3>";
+            print "<h3 id='signers'>Signers (".$pdata['signers_confirmed'].'/'.$pdata['signers_sent'].")</h3>";
             print '<form name="petition_admin_offline_signers" method="post" action="' . $this->self_link . '">
 <input type="hidden" name="offline_signers_change" value="1">
 <input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
@@ -678,15 +680,18 @@ Deadline: ';
             print '</form>';
 
             $areas = cobrand_admin_areas_of_interest();
-            if ($areas && $pdata['signers']) {
+            if ($areas && $pdata['signers_confirmed']) {
                 print '<div style="float:right"> <table><tr><th>Council</th><th>Signatures</th></tr>';
-                $summary = db_getAll("select area_id,count(*) as c from signer_area, signer
-                    where signer_id=signer.id and showname='t' and petition_id=? and emailsent = 'confirmed'
+                $summary = db_getAll("select area_id,count(*) as c
+                    from signer left join signer_area on signer.id=signer_id
+                    where showname='t' and petition_id=? and emailsent = 'confirmed'
                     group by area_id", $pdata['id']);
                 $other = 0;
                 foreach ($summary as $area) {
+                    $area_info = json_decode(file_get_contents('http://mapit.mysociety.org/area/' . $area['area_id']), true);
                     if (!in_array($area['area_id'], array_keys($areas))) {
-                        $other++;
+                        if (in_array($area_info['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI')))
+                            $other += $area['c'];
                         continue;
                     }
                     print '<tr><td>' . $areas[$area['area_id']]['name'] . "</td><td>$area[c]</td></tr>\n";
