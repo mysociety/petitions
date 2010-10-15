@@ -697,22 +697,23 @@ Deadline: ';
                         continue;
                     }
                     if (in_array($id, array_keys($areas))) {
-                        $out[$id] = $area;
+                        if (array_key_exists('parent', $areas[$id])) {
+                            $out[$id]['children'][] = $area;
+                        } else {
+                            $out[$id] = $area;
+                        }
                         continue;
                     }
-                    foreach ($areas as $i => $v) {
-                        if (in_array($area['area_id'], array_keys($areas[$i]['children']))) {
-                            $out[$i]['children'][] = $area;
-                            continue 2;
-                        }
-                    }
-                    if (in_array($area['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI')))
+                    if (!array_key_exists($id, $areas)) continue;
+                    $area_info = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id"), true);
+                    if (in_array($area_info['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI'))) {
                         $other += $area['c'];
                         continue;
                     }
                 }
                 foreach ($out as $area) {
                     print '<tr><td>' . $areas[$area['area_id']]['name'] . "</td><td>$area[c]</td></tr>\n";
+                    if (!array_key_exists('children', $area)) continue;
                     foreach ($area['children'] as $child) {
                         print '<tr><td>&nbsp;&nbsp;' . $areas[$child['area_id']]['name'] . "</td><td>$child[c]</td></tr>\n";
                     }

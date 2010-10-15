@@ -332,13 +332,10 @@ function cobrand_admin_areas_of_interest() {
     if (cobrand_site_group() != 'surreycc') return null;
 
     $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2242/covers?type=DIS'), true);
-    $out = array(
-        2242 => array(
-            'name' => 'Surrey County Council',
-            'type' => 'CTY',
-            'children' => $out,
-        ),
-    );
+    foreach ($out as $k => $v) {
+        $out[$k]['parent'] = 2242;
+    }
+    $out[2242] = array( 'name' => 'Surrey County Council' );
     return $out;
 }
 
