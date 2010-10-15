@@ -689,21 +689,36 @@ Deadline: ';
                     where showname='t' and petition_id=? and emailsent = 'confirmed'
                     group by area_id", $pdata['id']);
                 $other = 0; $unknown = 0;
+                $out = array();
                 foreach ($summary as $area) {
-                    if (!$area['area_id']) {
+                    $id = $area['area_id'];
+                    if (!$id) {
                         $unknown = $area['c'];
                         continue;
                     }
-                    $area_info = json_decode(file_get_contents('http://mapit.mysociety.org/area/' . $area['area_id']), true);
-                    if (!in_array($area['area_id'], array_keys($areas))) {
-                        if (in_array($area_info['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI')))
-                            $other += $area['c'];
+                    if (in_array($id, array_keys($areas))) {
+                        $out[$id] = $area;
                         continue;
                     }
-                    print '<tr><td>' . $areas[$area['area_id']]['name'] . "</td><td>$area[c]</td></tr>\n";
+                    foreach ($areas as $i => $v) {
+                        if (in_array($area['area_id'], array_keys($areas[$i]['children']))) {
+                            $out[$i]['children'][] = $area;
+                            continue 2;
+                        }
+                    }
+                    if (in_array($area['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI')))
+                        $other += $area['c'];
+                        continue;
+                    }
                 }
-                if ($other) print '<tr><td>Other</td><td>' . $other . '</td></tr>';
-                if ($unknown) print '<tr><td>Unknown</td><td>' . $unknown . '</td></tr>';
+                foreach ($out as $area) {
+                    print '<tr><td>' . $areas[$area['area_id']]['name'] . "</td><td>$area[c]</td></tr>\n";
+                    foreach ($area['children'] as $child) {
+                        print '<tr><td>&nbsp;&nbsp;' . $areas[$child['area_id']]['name'] . "</td><td>$child[c]</td></tr>\n";
+                    }
+                }
+                if ($other) print '<tr><td><i>Other</i></td><td>' . $other . '</td></tr>';
+                if ($unknown) print '<tr><td><i>Unknown</i></td><td>' . $unknown . '</td></tr>';
                 print '</table></div>';
             }
 

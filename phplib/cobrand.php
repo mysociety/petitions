@@ -332,9 +332,13 @@ function cobrand_admin_areas_of_interest() {
     if (cobrand_site_group() != 'surreycc') return null;
 
     $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2242/covers?type=DIS'), true);
-    $out[2242] = array('name'=>'Surrey County Council');
-    #if (http_auth_user() == 'reigate-banstead')
-    #    $out[2453] = array('name'=>'Reigate and Banstead');
+    $out = array(
+        2242 => array(
+            'name' => 'Surrey County Council',
+            'type' => 'CTY',
+            'children' => $out,
+        ),
+    );
     return $out;
 }
 
