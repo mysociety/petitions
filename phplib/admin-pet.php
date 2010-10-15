@@ -713,7 +713,7 @@ Deadline: ';
                 }
                 foreach ($parents as $id => $area) {
                     print '<tr><td>' . $areas[$id]['name'] . "</td><td>$area[c]</td></tr>\n";
-                    if (!array_key_exists('children', $area)) continue;
+                    if (!array_key_exists($id, $children)) continue;
                     foreach ($children[$id] as $child) {
                         print '<tr><td>&nbsp;&nbsp;' . $areas[$child['area_id']]['name'] . "</td><td>$child[c]</td></tr>\n";
                     }
