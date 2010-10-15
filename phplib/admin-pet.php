@@ -686,8 +686,12 @@ Deadline: ';
                     from signer left join signer_area on signer.id=signer_id
                     where showname='t' and petition_id=? and emailsent = 'confirmed'
                     group by area_id", $pdata['id']);
-                $other = 0;
+                $other = 0; $unknown = 0;
                 foreach ($summary as $area) {
+                    if (!$area['area_id']) {
+                        $unknown = $area['c'];
+                        continue
+                    }
                     $area_info = json_decode(file_get_contents('http://mapit.mysociety.org/area/' . $area['area_id']), true);
                     if (!in_array($area['area_id'], array_keys($areas))) {
                         if (in_array($area_info['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI')))
@@ -696,9 +700,8 @@ Deadline: ';
                     }
                     print '<tr><td>' . $areas[$area['area_id']]['name'] . "</td><td>$area[c]</td></tr>\n";
                 }
-                if ($other) {
-                    print '<tr><td>Other</td><td>' . $other . '</td></tr>';
-                }
+                if ($other) print '<tr><td>Other</td><td>' . $other . '</td></tr>';
+                if ($unknown) print '<tr><td>Unknown</td><td>' . $unknown . '</td></tr>';
                 print '</table></div>';
             }
 
