@@ -81,3 +81,5 @@ a:hover {
 #article-content p a img{
     display: inline-block;
 }
+#article-content input, #article-content textarea {
+  border: 1px solid #666666;
