@@ -545,8 +545,10 @@ sub signatories_box ($$) {
     }
 
     if (defined $p->{offline_signers}) {
-        $html .= '<li>' . $p->{offline_signers} . ' offline signature' .
-            ($p->{offline_signers}==1?'':'s') . '</li>';
+        my $signers = $p->{offline_signers};
+        $signers =~ s/(\d+?(?=(?>(?:\d{3})+)(?!\d))|\G\d{3}(?=\d))/$1,/g;
+        $html .= '<li>' . $signers . ' offline signature' .
+            ($signers==1?'':'s') . '</li>';
     }
 
     $html .= '</ul>';
