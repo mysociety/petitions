@@ -24,14 +24,6 @@ $pages = array(
     new ADMIN_PAGE_PET_OFFLINE,
     new ADMIN_PAGE_PET_STATS,
 );
-if (!OPTION_ADMIN_PUBLIC) {
-    array_push($pages,
-    null,
-    new ADMIN_PAGE_SERVERINFO,
-    new ADMIN_PAGE_CONFIGINFO,
-    new ADMIN_PAGE_PHPINFO
-    );
-}
 
 if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
     page_header('Admin', array('admin'=>1));
