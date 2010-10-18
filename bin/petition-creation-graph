@@ -56,6 +56,10 @@ grab_data "where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', '
 grab_data "where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live')" $SOURCEE
 grab_data "where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live', 'finished')" $SOURCEF
 
+if [ ! -s $SOURCEA ]; then
+    exit
+fi
+
 #        'unconfirmed'
 #        'failedconfirm',    -- confirmation email delivery failed
 #        'sentconfirm',      -- confirmation email sent
@@ -105,6 +109,6 @@ END
 #echo "gpscript $GPSCRIPT"
 
 export GDFONTPATH=/usr/share/fonts/truetype/ttf-bitstream-vera
-gnuplot < $GPSCRIPT > web-admin/pet-live-creation$EXTENSION
+gnuplot < $GPSCRIPT > web-admin/pet-live-creation$EXTENSION 2>/dev/null
 
 

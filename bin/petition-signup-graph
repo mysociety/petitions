@@ -39,6 +39,10 @@ echo "select
     order by date(signtime)
     ;" | psql --host $OPTION_PET_DB_HOST --port $OPTION_PET_DB_PORT -A -F " " $OPTION_PET_DB_NAME $OPTION_PET_DB_USER | egrep -v "date|rows" >$SOURCEO
 
+if [ ! -s $SOURCEO ]; then
+    exit
+fi
+
 cat >$GPSCRIPT <<END 
     unset border
     unset arrow
@@ -69,5 +73,5 @@ END
 #echo "gpscript $GPSCRIPT"
 
 export GDFONTPATH=/usr/share/fonts/truetype/ttf-bitstream-vera
-gnuplot < $GPSCRIPT > web-admin/pet-live-signups$EXTENSION
+gnuplot < $GPSCRIPT > web-admin/pet-live-signups$EXTENSION 2>/dev/null
 
