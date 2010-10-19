@@ -20,7 +20,8 @@ $faq = '../templates/' . $site_group . '/faq.html';
 if (file_exists($faq)) {
     include_once $faq;
 } else {
-    include_once '../templates/number10/faq.html';
+    # Default of a council one.
+    include_once '../templates/surreycc/faq.html';
 }
 
 page_footer('FAQ');
