@@ -592,8 +592,8 @@ recognisable action.</li>
 
 <p>
 The information in a petition must be submitted in good faith. In
-order for the petition service to comply with the law and with
-the Civil Service Code, you must not include: </p>
+order for the petition service to comply with the law,
+you must not include:</p>
 
 <ul>
 <li>Party political material.
@@ -652,9 +652,7 @@ sign the petition.</p>
 
 <h3>Common causes for rejection</h3>
 
-<p>Running the petition site, we see a lot of people having petitions
-rejected for a handful of very similar reasons. In order to help you
-avoid common problems, we've produced this list:</p>
+<p>In order to help you avoid common problems, we've produced this list:</p>
 
 <ul>
 <li>We don't accept petitions on individual legal cases such as
