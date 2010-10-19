@@ -327,8 +327,16 @@ function cobrand_admin_allow_html_response() {
 }
 
 function cobrand_admin_areas_of_interest() {
-    if (OPTION_SITE_NAME == 'sbdc')
+    if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
         return json_decode(file_get_contents('http://mapit.mysociety.org/areas/LBO,MTD,LGD,DIS,UTA,COI'), true);
+    }
+    if (OPTION_SITE_NAME == 'lichfielddc') {
+        return array(
+            2434 => array( 'name' => 'Lichfield District Council', 'parent' => 2240 ),
+            2240 => array( 'name' => 'Staffordshire County Council' ),
+        );
+    }
+
     if (cobrand_site_group() != 'surreycc') return null;
 
     $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2242/covers?type=DIS'), true);
