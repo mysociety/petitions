@@ -678,7 +678,7 @@ Deadline: ';
         }
         print "</table>";
 
-        if ($pdata['status'] != 'draft' && $pdata['status'] != 'resubmitted') {
+        if (in_array($pdata['status'], array('live', 'finished'))) {
             // Signers
             print "<h3 id='signers'>Signers (" . $pdata['signers_confirmed']
                 . ' confirmed, ' . $pdata['signers_sent'] . " unconfirmed)</h3>";
