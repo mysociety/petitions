@@ -53,6 +53,7 @@ function cobrand_creation_category_first() {
 
 function cobrand_creation_ask_for_address_type() {
     global $site_name;
+    if ($site_name == 'barrowbc') return false;
     if (cobrand_creation_within_area_only()) return true;
     if ($site_name == 'tandridge' || $site_name == 'surreyheath') return true;
     return false;
