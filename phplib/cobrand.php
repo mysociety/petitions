@@ -51,11 +51,11 @@ function cobrand_creation_category_first() {
     return false;
 }
 
-function cobrand_creation_ask_for_address_type() {
+function cobrand_creation_ask_for_address_type() { # by default: don't ask for address type unless it's within a specified area
     global $site_name;
-    if ($site_name == 'barrowbc') return false;
+    if ($site_name == 'barrowbc') return false; 
     if (cobrand_creation_within_area_only()) return true;
-    if ($site_name == 'tandridge' || $site_name == 'surreyheath') return true;
+    if ($site_name == 'tandridge' || $site_name == 'surreyheath' || $site_name == 'suffolkcoastal') return true;
     return false;
 }
 
