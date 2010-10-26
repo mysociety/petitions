@@ -24,14 +24,6 @@ p.petition_view_tabs {
     background-color: #e28834;
 }
 
-#action_view a, #action_create a{
-    text-decoration: none;
-}
-
-#action_view a:hover, #action_create a:hover {
-    text-decoration: none;
-}
-
 h3 {
   margin: 0.333em 0 ;
 }
