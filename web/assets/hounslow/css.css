@@ -1,3 +1,22 @@
+.mysoc-content{
+	padding: 2px 12px 24px 12px;
+}
+
+/* replaces Hounslow footer, problems with width */
+#mysoc-footer{
+	margin: 0 auto;
+	display:block;
+    font-size: 95%; 
+    text-align: center; 
+    padding: 20px ; 
+    margin: 0 0 10px; 
+    vertical-align: baseline; 
+    clear: both; 
+    color: #FFF; 
+    background: #7c2a83 url(footer-bg.gif) repeat-x left top;
+
+}
+
 p {
 	font-size: 100%;
 }
@@ -25,10 +44,10 @@ form#signForm label {
 */
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #e28834;
+    border-bottom: solid 2px #BC9DC1;
 }
 .petition_view_tabs span {
-    background-color: #e28834;
+    background-color: #BC9DC1;
 }
 
 h3 {
@@ -62,11 +81,9 @@ p.petition_view_tabs {
 #action_create a:hover, #action_view a:hover {
     background-position: center -300px;
     background-color: #ffffff;
-    color: #b80000;
 }
 
 a:hover {
-  color: #b80000; /* Waveney default */
   background-color: transparent;
 }
 
