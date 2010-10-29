@@ -1,3 +1,57 @@
+/* mysoc-nav for second-tier navigation below main Westminster nav */
+#mysoc-nav li a,
+h3 {
+	font-size: 1.333em;
+}
+#mysoc-nav {
+	padding-top:  0px;
+	background-color: transparent;
+	font-family: georgia, times, serif;
+}
+
+#mysoc-nav ul {
+	height: 2.2em;
+	overflow: hidden;
+	background: #fff url(wcc_files/images/nav-grey.gif) repeat-x bottom;
+	padding-left: 1px;
+}
+#mysoc-nav li {
+	display:  inline;
+	list-style: none;
+	float:  left;
+}
+
+#mysoc-nav li a {
+	padding-left: 9px;
+	padding-right: 9px;
+	text-decoration: none;
+	display: inline-block;
+	color: #222;
+	height: 1.333em;
+	padding-top: .2em;
+	padding-bottom: .1em;
+	border-right:  1px solid #a4a4a4;
+}
+#mysoc-nav li.right {
+	float: right;
+}
+#mysoc-nav li.right a {
+	padding-right: 13px;
+	border-left: 1px solid #a4a4a4;
+}
+#mysoc-nav li a:hover,
+#mysoc-nav li.selected a {
+	background: #f6d43b;
+	border-right: 1px solid #f6d43b;
+	border-left: 1px solid #f6d43b;
+	margin-left: -1px;
+}
+
+/* end of nav */
+
+
+
+
 div#petition_actions {
     border: none;
 }
@@ -18,10 +72,11 @@ form#signForm label {
 */
 
 p.petition_view_tabs {
-    border-bottom: solid 3px #facf24;
+    border-bottom: solid 2px #facf24;
     background-image:url(/assets/westminster/westminster_blue.png);
     background-position: bottom left;
     background-repeat: repeat-x;
+    line-height: 10px !important; /* override Westminster defs, to join tabs to line below */
 }
 .petition_view_tabs span {
     background-color: #0B1867;
