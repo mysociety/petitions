@@ -75,6 +75,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
     if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
     if ($site_name == 'barrowbc') return array('Cumbria', 2220);
+    if ($site_name == 'hounslow') return array('Hounslow', 2483);
     return '';
 }
 
