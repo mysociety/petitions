@@ -1372,7 +1372,8 @@ can be rejected properly.</p>
         db_connect();
 
         $status = get_http_var('o');
-        if (!$status || !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
+        if ($status && !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
+        if (!count($_POST) && count($_GET) == 1) $status = 'draft'; # Main page for this section, no queries
         petition_admin_navigation($this, array('status'=>$status));
 
         $petition_id = petition_admin_perform_actions();
