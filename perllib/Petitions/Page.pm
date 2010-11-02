@@ -548,7 +548,7 @@ sub signatories_box ($$) {
         my $signers = $p->{offline_signers};
         $signers =~ s/(\d+?(?=(?>(?:\d{3})+)(?!\d))|\G\d{3}(?=\d))/$1,/g;
         $html .= '<li>' . $signers . ' offline signature' .
-            ($signers==1?'':'s') . '</li>';
+            ($p->{offline_signers}==1?'':'s') . '</li>';
     }
 
     $html .= '</ul>';

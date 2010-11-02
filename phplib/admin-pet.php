@@ -301,7 +301,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                     $data['postcode'], $data['telephone'], $data['category']
                 );
                 db_commit();
-                header("Location: /admin/?page=pet&o=finished");
+                header('Location: ' . OPTION_ADMIN_URL . '?page=pet&o=finished');
                 exit;
             }
         }
