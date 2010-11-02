@@ -44,7 +44,9 @@ function admin_header($title) {
 <head>
 <title><?=$title?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="pet-admin-default-look.css">
 <link rel="stylesheet" type="text/css" href="pet-admin.css">
+<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
 </head>
 <body id="admin">
 <div id="header"></div>
