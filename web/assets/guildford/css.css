@@ -77,3 +77,11 @@ h1 {
     width: 20px;
 }
 
+#most_popular ul, #most_recent ul{
+	padding-left: 2em;
+	margin-left: 0;
+}
+#most_popular ul li, #most_recent ul li{
+	font-size: 1.3em;
+}
+
