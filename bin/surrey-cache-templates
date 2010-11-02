@@ -46,7 +46,9 @@ output('surreycc', $header, $footer);
 $header = get_page('http://www.surreyheath.gov.uk/general_header.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - /;
 $header =~ s/<\*\*page_title\*\*>/PARAM_TITLE/;
-$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css"></head>};
+$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css">
+<link rel="stylesheet" type="text/css" href="/assets/surreyheath/css.css">
+</head>};
 $footer = get_page('http://www.surreyheath.gov.uk/general_footer.asp');
 output('surreyheath', $header, $footer);
 
