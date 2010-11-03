@@ -28,11 +28,44 @@ p.petition_view_tabs {
 #footer_links {
     margin-left: 30px;
     float: left;
+    padding: 5px 0;
 }
 #footer_links a {
-    padding: 5px 3px;
+    padding: 0 3px;
 }
 #footer_links a:link, #footer_links a:visited {
     color: #333333;
 }
+
+/* Breadcrumb CSS from official site */
+#breadcrumb {
+    margin: 16px 0 10px 0;
+    font-size: 90%;
+}
+
+#breadcrumb li {
+    display: inline;
+    padding: 0 10px 0 18px;
+    background: transparent url(http://www.woking.gov.uk/res/frameworks/default/chrome/breadcrumb_separator.gif) 0 50% no-repeat;
+}
+
+#breadcrumb li.first {
+    padding-left: 0;
+    background: transparent;
+}
+
+#breadcrumb a:link,
+#breadcrumb a:visited {
+    color: #333;
+    text-decoration: none;
+}
+
+#breadcrumb a:hover,
+#breadcrumb a:focus,
+#breadcrumb a:active {
+    color: #000;
+    text-decoration: none;
+    background: #eee;
+}
+
 
