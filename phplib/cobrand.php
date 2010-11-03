@@ -719,6 +719,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_terms';
+    if ($site_name == 'woking')
+        return 'http://www.woking.gov.uk/council/about/petitions/termsandconditions';
     return null;
 }
 
