@@ -38,8 +38,8 @@ p.petition_view_tabs {
 }
 
 /* Breadcrumb CSS from official site */
-#breadcrumb {
-    margin: 16px 0 10px 0;
+#wbc_content ol#breadcrumb {
+    margin: 0;
     font-size: 90%;
 }
 
