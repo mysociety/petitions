@@ -739,6 +739,9 @@ var wms = new OpenLayers.Layer.OSM();
 var pois = new OpenLayers.Layer.Text("Signatures", {
     location: "?page=pet&petition_id=<?=$pdata['id']?>&locations=1"
 });
+pois.events.register('loadend', undefined, function(){
+    map.zoomToExtent(pois.getDataExtent());
+});
 map.addLayers([wms, pois]);
 var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
     new OpenLayers.Projection("EPSG:4326"), // transform from WGS84
@@ -1393,11 +1396,12 @@ can be rejected properly.</p>
             # Yucky to stop it outputting admin header/footers
             while (ob_get_level()) ob_end_clean();
             ob_start('ob_callback');
-            print "lat\tlon\ttitle\n";
-            $rows = db_getAll("select latitude, longitude, postcode from signer
-                where emailsent='confirmed' and showname='t' and petition_id=?", get_http_var('petition_id'));
+            print "lat\tlon\n";
+            $rows = db_getAll("select latitude, longitude from signer
+                where latitude!=0 and emailsent='confirmed' and showname='t'
+                and petition_id=?", get_http_var('petition_id'));
             foreach ($rows as $s) {
-                print "$s[latitude]\t$s[longitude]\t$s[postcode]\n";
+                print "$s[latitude]\t$s[longitude]\n";
             }
             exit;
         }
