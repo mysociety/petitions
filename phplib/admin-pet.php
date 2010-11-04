@@ -994,9 +994,7 @@ EOF;
                         laststatuschange = ms_current_timestamp(),
                         lastupdate = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
-            $memcache = new Memcache;
-            $memcache->connect('localhost', 11211);
-            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $id, time());
+            memcache_update($id);
             stats_change($p, 'cached_petitions_rejected', '+1');
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason", http_auth_user());
             $template = 'admin-rejected-again';
@@ -1087,8 +1085,11 @@ EOF;
                     $q_html_mail ? 'admin-html' : 'admin',
                     $q_message_subject, $email));
             }
+            db_query("UPDATE petition SET lastupdate=ms_current_timestamp()
+                where id=?", $p->id());
+            memcache_update($p->id());
             db_commit();
-            $this->respond_success();
+            print '<p><em>Your response has been recorded and will be sent out shortly.</em></p>';
         } else {
             if ($q_n > 0) {
                 if (sizeof($errors))
@@ -1139,10 +1140,6 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         }
     }
 
-    function respond_success() {
-        print '<p><em>Your response has been recorded and will be sent out shortly.</em></p>';
-    }
-
     function respond_generate($pp, $url, $input) {
         $descriptorspec = array(
             0 => array('pipe', 'r'),
@@ -1190,9 +1187,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         } else {
             db_query('update petition set deadline=?, lastupdate = ms_current_timestamp()
                 where id=?', $new_deadline['iso'], $petition_id);
-            $memcache = new Memcache;
-            $memcache->connect('localhost', 11211);
-            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
+            memcache_update($petition_id);
             $p->log_event("Admin altered deadline of petition from $current_deadline to $new_deadline[iso]", http_auth_user());
             db_commit();
             print '<p><em>Deadline updated</em></p>';
@@ -1220,9 +1215,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         } else {
             db_query('update petition set offline_signers=?, lastupdate = ms_current_timestamp()
                 where id=?', $new, $petition_id);
-            $memcache = new Memcache;
-            $memcache->connect('localhost', 11211);
-            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
+            memcache_update($petition_id);
             if ($new === null) $new = 'n/a';
             $p->log_event("Admin altered number of offline signatures from $old to $new", http_auth_user());
             db_commit();
@@ -1242,9 +1235,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 rejection_hidden_parts = 0,
                 laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
-            $memcache = new Memcache;
-            $memcache->connect('localhost', 11211);
-            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
+            memcache_update($petition_id);
             stats_change($p, 'cached_petitions_live', '+1');
             $p->log_event("Admin approved petition", http_auth_user());
         } else {
@@ -1353,9 +1344,7 @@ can be rejected properly.</p>
         if (get_http_var('submit') && !sizeof($errors)) {
             db_query("UPDATE petition SET $column=?, lastupdate=ms_current_timestamp()
                 where id=?", $criteria_new, $petition_id);
-            $memcache = new Memcache;
-            $memcache->connect('localhost', 11211);
-            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
+            memcache_update($petition_id);
             $p->log_event("Admin changed rejection criteria from $criteria to $criteria_new, reason '$reason'", http_auth_user());
             db_commit();
             print '<p><em>Petition criteria changed</em></p>';
@@ -1490,12 +1479,10 @@ function petition_admin_perform_actions() {
                 print '<p><em>Those signers have been confirmed.</em></p>';
             }
         }
-        $memcache = new Memcache;
-        $memcache->connect('localhost', 11211);
         foreach ($sigs_by_petition as $petition_id => $sigs) {
             db_query("update petition set cached_signers = cached_signers $change " . count($sigs) . ',
                 lastupdate = ms_current_timestamp() where id = ?', $petition_id);
-            $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition_id, time());
+            memcache_update($petition_id);
             $p = new Petition($petition_id);
             $p->log_event($log . join(',', $sigs), http_auth_user());
         }
@@ -1575,5 +1562,15 @@ function stats_change($p, $key, $a) {
         }
     }
     # db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected_$cat'");
+}
+
+$memcache = null;
+function memcache_update($id) {
+    global $memcache;
+    if (!$memcache) {
+        $memcache = new Memcache;
+        $memcache->connect('localhost', 11211);
+    }
+    $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $id, time());
 }
 
