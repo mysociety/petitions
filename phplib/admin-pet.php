@@ -1387,6 +1387,7 @@ can be rejected properly.</p>
     function add_note($petition_id, $note) {
         $p = new Petition($petition_id);
         $p->log_event($note, http_auth_user());
+        db_commit();
     }
 
     function display() {
