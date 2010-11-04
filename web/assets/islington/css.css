@@ -1,0 +1,86 @@
+.mysoc-content{
+	padding: 2px 12px 24px 12px;
+}
+
+p {
+	font-size: 100%;
+}
+h3 {
+	font-size: 120%;
+}
+
+div#petition_actions {
+    border: none;
+}
+
+#petition_actions ul, #petition_actions ul li {
+	list-style-type: none;
+	list-style-position: inside;
+	font-size: 1.2em;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+/*
+form#signForm label {
+    width: 8em;
+}
+*/
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #15742F;
+}
+.petition_view_tabs span {
+    background-color: #15742F;
+}
+
+h3 {
+  margin: 0.333em 0 ;
+}
+
+div#petition_actions {
+    margin-bottom: 1em;
+}
+
+p.petition_view_tabs {
+    margin-bottom: 1em;
+}
+
+
+#action_create, #action_view {
+	margin-left: 0px !important; /* override specific Islington setting */
+}
+#action_create a {
+    background-image: url('petition_button_create.png');
+}
+#action_view a {
+    background-image: url('petition_button_view.png');
+}
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    margin-top: 0px;
+    display: block;
+    text-align: center;
+    padding-top: 80px;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+    background-color: #ffffff;
+}
+
+a:hover {
+  background-color: transparent;
+}
+
+#action_create a img,  #action_view a img {
+    display: none;
+}
