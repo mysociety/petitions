@@ -1,81 +1,16 @@
-body {
-    background-color: #ffffff;
+div#errors {
+    margin: 0 auto 1em;
     color: #000000;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, Arial, sans-serif;
-    line-height: 1.4;
-    margin: 0;
-    padding: 0;
-}
-
-a:link {
-    color: #0000FF;
-}
-a:visited {
-    color: #000099;
-}
-a:focus, a:active, a:hover {
-    color: #CC0000;
-}
-
-table {
-    border-collapse: collapse;
-}
-
-td, th {
-    font-size: 75%;
+    background-color: #ffcccc; 
+    border: solid 2px #990000;
     padding: 4px;
 }
-
-h1, h2, h3, h4, h5, h6 {
-    font-family: Candara, "Trebuchet MS", Helvetica, Arial, sans-serif;
+div#errors ul {
+    margin: 0;
+    padding: 0 0 0 1.5em;
 }
-
-h1 {
-    font-size: 150%;
-}
-
-h2 {
-    font-size: 125%;
-}
-
-.v {
-    background-color: #cccccc;
-    color: #000000;
-}
-
-.l {
-    background-color: #ffcccc;
-    color: #000000;
-}
-
-.v.l {
-    background-color: #ff9999;
-}
-
-i,em {
-    color: #666666;
-    background-color: #cccccc;
-}
-
-hr {
-    width: 600px;
-    background-color: #cccccc;
-    border: 0px;
-    height: 1px;
-    color: #000000;
-}
-
-#header {
-    background-image: url("http://sbdc1.petitions.mysociety.org/assets/sbdc1/admin/admin_header.jpg");
-    background-position: center bottom;
-    background-repeat: no-repeat;
-    background-color: #000000;
-    height: 100px;
-    border-bottom: 1px solid #999999;
-}
-
-#content {
-    padding: 0 1em;
+div#errors > p {
+    margin-top: 0;
 }
 
 #admin_nav {
@@ -97,3 +32,18 @@ hr {
     width: 48%;
 }
 
+#signer_areas {
+    float: right;
+    margin-bottom: 1em;
+}
+
+#signer_map {
+    clear: right;
+    float: right;
+    width: 300px;
+    height: 300px;
+}
+
+div.olControlAttribution {
+    bottom: 0.5em;
+}

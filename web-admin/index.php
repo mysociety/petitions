@@ -12,6 +12,7 @@
 
 require_once "../conf/general";
 require_once "../phplib/admin-pet.php";
+require_once "../phplib/cobrand.php";
 require_once "../commonlib/phplib/template.php";
 require_once "../commonlib/phplib/admin-phpinfo.php";
 require_once "../commonlib/phplib/admin-serverinfo.php";
@@ -32,7 +33,7 @@ if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
     echo '<p style="clear:both" align="right"><em>Got any questions? Call ' . $num . '.</em></p>';
     page_footer();
 } else {
-    admin_header(OPTION_CONTACT_NAME . " admin");
+    admin_header(cobrand_admin_title());
     admin_page_display(OPTION_CONTACT_NAME, $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
 }
 
@@ -44,7 +45,9 @@ function admin_header($title) {
 <head>
 <title><?=$title?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="pet-admin-default-look.css">
 <link rel="stylesheet" type="text/css" href="pet-admin.css">
+<script src="http://www.openlayers.org/api/OpenLayers.js"></script>
 </head>
 <body id="admin">
 <div id="header"></div>

@@ -692,7 +692,7 @@ Deadline: ';
 
             $areas = cobrand_admin_areas_of_interest();
             if ($areas && $pdata['signers_confirmed']) {
-                print '<div style="float:right"> <table><tr><th>Council</th><th>Signatures</th></tr>';
+                print '<div id="signer_areas"> <table><tr><th>Council</th><th>Signatures</th></tr>';
                 $summary = db_getAll("select area_id,count(*) as c
                     from signer left join signer_area on signer.id=signer_id
                     where showname='t' and petition_id=? and emailsent = 'confirmed'
@@ -729,6 +729,27 @@ Deadline: ';
                 if ($other) print '<tr><td><i>Other</i></td><td>' . $other . '</td></tr>';
                 if ($unknown) print '<tr><td><i>Unknown</i></td><td>' . $unknown . '</td></tr>';
                 print '</table></div>';
+            }
+            if ($pdata['signers_confirmed'] && get_http_var('test_map')) {
+?>
+<div id="signer_map"></div>
+<script>
+var map = new OpenLayers.Map("signer_map");
+var wms = new OpenLayers.Layer.OSM();
+var pois = new OpenLayers.Layer.Text("Signatures", {
+    location: "?page=pet&petition_id=<?=$pdata['id']?>&locations=1"
+});
+pois.events.register('loadend', undefined, function(){
+    map.zoomToExtent(pois.getDataExtent());
+});
+map.addLayers([wms, pois]);
+var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
+    new OpenLayers.Projection("EPSG:4326"), // transform from WGS84
+    map.getProjectionObject() // to Spherical Mercator Projection
+);
+map.setCenter(lonLat, 5);
+</script>
+<?
             }
 
             $query = "SELECT signer.name as signname, signer.email as signemail,
@@ -1370,6 +1391,20 @@ can be rejected properly.</p>
 
     function display() {
         db_connect();
+
+        if (get_http_var('locations')) {
+            # Yucky to stop it outputting admin header/footers
+            while (ob_get_level()) ob_end_clean();
+            ob_start('ob_callback');
+            print "lat\tlon\n";
+            $rows = db_getAll("select latitude, longitude from signer
+                where latitude!=0 and emailsent='confirmed' and showname='t'
+                and petition_id=?", get_http_var('petition_id'));
+            foreach ($rows as $s) {
+                print "$s[latitude]\t$s[longitude]\n";
+            }
+            exit;
+        }
 
         $status = get_http_var('o');
         if ($status && !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';

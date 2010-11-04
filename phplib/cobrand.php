@@ -283,6 +283,16 @@ function cobrand_site_group() {
     return $site_group;
 }
 
+function cobrand_admin_title() {
+    global $site_group;
+    if ($site_group == 'surreycc') {
+        $sites = explode(',', OPTION_SITE_NAME);
+        if (in_array(http_auth_user(), $sites))
+            return ucfirst(http_auth_user()) . ' admin';
+    }
+    return OPTION_CONTACT_NAME . " admin";
+}
+
 function cobrand_admin_rejection_snippets() {
     global $site_group;
     $snippets = array(
@@ -709,6 +719,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_terms';
+    if ($site_name == 'woking')
+        return 'http://www.woking.gov.uk/council/about/petitions/termsandconditions';
     return null;
 }
 
