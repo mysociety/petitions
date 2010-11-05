@@ -55,7 +55,10 @@ function cobrand_creation_ask_for_address_type() { # by default: don't ask for a
     global $site_name;
     if ($site_name == 'barrowbc') return false; 
     if (cobrand_creation_within_area_only()) return true;
-    if ($site_name == 'tandridge' || $site_name == 'surreyheath' || $site_name == 'suffolkcoastal') return true;
+    if ($site_name == 'tandridge') return true;
+    if ($site_name == 'surreyheath') return true;
+    if ($site_name == 'suffolkcoastal') return true;
+    if ($site_name == 'newforest') return true;
     return false;
 }
 
