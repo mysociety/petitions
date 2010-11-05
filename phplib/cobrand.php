@@ -80,6 +80,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'barrowbc') return array('Cumbria', 2220);
     if ($site_name == 'hounslow') return array('Hounslow', 2483);
     if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
+    if ($site_name == 'westminster') return array('Westminster', 2504);
     return '';
 }
 
