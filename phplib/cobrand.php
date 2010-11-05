@@ -482,7 +482,7 @@ for purely frivolous purposes);</li>
 (for example, correspondence about a personal issue);</li>
 <li>Freedom of Information requests. This is not the right channel
 for FOI requests; information about the appropriate procedure can be
-found at <a href="<?=$foi_link?>"><?=$foi_text?></a>.</li>
+found at <a href="<?=$foi_link?>" target="_blank"><?=$foi_text?> <small>(new window)</small></a>.</li>
 </ul>
 
 <p>We will strive to ensure that petitions that do not meet our
