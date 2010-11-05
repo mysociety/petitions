@@ -839,7 +839,7 @@ map.setCenter(lonLat, 5);
         $from_body = $p->body_name();
 
         if ($status != 'draft' && $status != 'resubmitted') {
-            $p->log_event("Bad forwarding", http_auth_user());
+            $p->log_event("Bad forwarding");
             db_commit();
             print '<p><em>That petition appears to already have been dealt with.</em></p>';
             return;
@@ -853,7 +853,7 @@ map.setCenter(lonLat, 5);
 
         if (get_http_var('submit') && !sizeof($errors)) {
             $p->forward($to_body);
-            $p->log_event("Admin forwarded petition from $from_body to $to_body. Reason: $reason", http_auth_user());
+            $p->log_event("Admin forwarded petition from $from_body to $to_body. Reason: $reason");
             $vars = array(
                 'reason' => $reason,
                 'from_body' => $from_body,
@@ -981,7 +981,7 @@ EOF;
                         laststatuschange = ms_current_timestamp(),
                         lastupdate = ms_current_timestamp()
                     WHERE id=?", $categories, $reason, $hide, $id);
-            $p->log_event("Admin rejected petition for the first time. Categories: $cats_pretty. Reasons: $reason", http_auth_user());
+            $p->log_event("Admin rejected petition for the first time. Categories: $cats_pretty. Reasons: $reason");
             $template = 'admin-rejected-once';
             $circumstance = 'rejected-once';
         } elseif ($status == 'resubmitted') {
@@ -996,11 +996,11 @@ EOF;
                     WHERE id = ?", $categories, $reason, $hide, $id);
             memcache_update($id);
             stats_change($p, 'cached_petitions_rejected', '+1');
-            $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason", http_auth_user());
+            $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason");
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
         } else {
-            $p->log_event("Bad rejection", http_auth_user());
+            $p->log_event("Bad rejection");
             db_commit();
             print '<p><em>That petition appears to already have been dealt with.</em></p>';
             return;
@@ -1018,7 +1018,7 @@ EOF;
 
         $status = $p->status();
         if ($status != 'finished' && $status != 'live') {
-            $p->log_event("Bad response state", http_auth_user());
+            $p->log_event("Bad response state");
             db_commit();
             print '<p><em>You cannot respond to a petition unless it is live or closed</em></p>';
             return;
@@ -1066,7 +1066,7 @@ EOF;
         $email = str_replace("\r\n", "\n", $email);
 
         if ($q_submit && !sizeof($errors)) {
-            $p->log_event("Admin responded to petition", http_auth_user());
+            $p->log_event("Admin responded to petition");
 
             /* Got all the data we need. Just drop the announcement into the database
              * and let the send-messages script pass it to the signers. */
@@ -1188,7 +1188,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
             db_query('update petition set deadline=?, lastupdate = ms_current_timestamp()
                 where id=?', $new_deadline['iso'], $petition_id);
             memcache_update($petition_id);
-            $p->log_event("Admin altered deadline of petition from $current_deadline to $new_deadline[iso]", http_auth_user());
+            $p->log_event("Admin altered deadline of petition from $current_deadline to $new_deadline[iso]");
             db_commit();
             print '<p><em>Deadline updated</em></p>';
         }
@@ -1217,7 +1217,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 where id=?', $new, $petition_id);
             memcache_update($petition_id);
             if ($new === null) $new = 'n/a';
-            $p->log_event("Admin altered number of offline signatures from $old to $new", http_auth_user());
+            $p->log_event("Admin altered number of offline signatures from $old to $new");
             db_commit();
             print '<p><em>Number of offline signatures updated</em></p>';
         }
@@ -1237,9 +1237,9 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 WHERE id=?", $petition_id);
             memcache_update($petition_id);
             stats_change($p, 'cached_petitions_live', '+1');
-            $p->log_event("Admin approved petition", http_auth_user());
+            $p->log_event("Admin approved petition");
         } else {
-            $p->log_event("Bad approval", http_auth_user());
+            $p->log_event("Bad approval");
             db_commit();
             print '<p><em>That petition appears to have already been dealt with.</em></p>';
             return;
@@ -1273,7 +1273,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 db_query('delete from signer where petition_id=?', $p->id());
                 $message = 'That petition has been moved back into the draft state';
             }
-            $p->log_event("Admin $action petition with reason '$reason'", http_auth_user());
+            $p->log_event("Admin $action petition with reason '$reason'");
             db_query("update petition set status='$new_status', laststatuschange=ms_current_timestamp(),
                 lastupdate=ms_current_timestamp() where id=?", $p->id());
             stats_change($p, "cached_petitions_$status", '-1');
@@ -1319,7 +1319,7 @@ can be rejected properly.</p>
         $p = new Petition($petition_id);
         $status = $p->status();
         if ($status != 'rejected' && $status != 'rejectedonce') {
-            $p->log_event('Changing criteria of non-rejected petition', http_auth_user());
+            $p->log_event('Changing criteria of non-rejected petition');
             db_commit();
             err("Should only be able to change criteria of rejected petitions");
             return;
@@ -1345,7 +1345,7 @@ can be rejected properly.</p>
             db_query("UPDATE petition SET $column=?, lastupdate=ms_current_timestamp()
                 where id=?", $criteria_new, $petition_id);
             memcache_update($petition_id);
-            $p->log_event("Admin changed rejection criteria from $criteria to $criteria_new, reason '$reason'", http_auth_user());
+            $p->log_event("Admin changed rejection criteria from $criteria to $criteria_new, reason '$reason'");
             db_commit();
             print '<p><em>Petition criteria changed</em></p>';
         } else {
@@ -1375,7 +1375,7 @@ can be rejected properly.</p>
 
     function add_note($petition_id, $note) {
         $p = new Petition($petition_id);
-        $p->log_event($note, http_auth_user());
+        $p->log_event($note);
         db_commit();
     }
 
@@ -1484,7 +1484,7 @@ function petition_admin_perform_actions() {
                 lastupdate = ms_current_timestamp() where id = ?', $petition_id);
             memcache_update($petition_id);
             $p = new Petition($petition_id);
-            $p->log_event($log . join(',', $sigs), http_auth_user());
+            $p->log_event($log . join(',', $sigs));
         }
         db_commit();
     }
@@ -1494,7 +1494,7 @@ function petition_admin_perform_actions() {
         if (ctype_digit($petition_id)) {
             db_query("UPDATE petition set status = 'draft' where id = ?", $petition_id);
             $p = new Petition($petition_id);
-            $p->log_event('Admin confirmed petition ' . $petition_id, http_auth_user());
+            $p->log_event('Admin confirmed petition ' . $petition_id);
             db_commit();
             print '<p><em>That petition has been confirmed.</em></p>';
         }

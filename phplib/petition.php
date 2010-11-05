@@ -302,7 +302,8 @@ class Petition {
     }
 
     // Write history to log file 
-    function log_event($message, $editor) {
+    function log_event($message, $editor='') {
+        if (!$editor) $editor = http_auth_user();
         $q = db_query("insert into petition_log (petition_id, whenlogged, message, editor)
             values (?, ms_current_timestamp(), ?, ?)", array($this->id(), $message, $editor));
     }
