@@ -227,8 +227,8 @@ class ADMIN_PAGE_PET_OFFLINE {
 
             if (!$data['category'] || !array_key_exists($data['category'], cobrand_categories())) {
                 $errors['category'] = 'Please select a category';
-            } elseif (!cobrand_category_okay($data['category'])) {
-                $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
+            #} elseif (!cobrand_category_okay($data['category'])) {
+            #    $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
             }
 
             $disallowed_refs = array('contact', 'translate', 'posters', 'graphs', 'privacy', 'reject');
