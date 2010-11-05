@@ -55,7 +55,10 @@ function cobrand_creation_ask_for_address_type() { # by default: don't ask for a
     global $site_name;
     if ($site_name == 'barrowbc') return false; 
     if (cobrand_creation_within_area_only()) return true;
-    if ($site_name == 'tandridge' || $site_name == 'surreyheath' || $site_name == 'suffolkcoastal') return true;
+    if ($site_name == 'newforest') return true;
+    if ($site_name == 'surreyheath') return true;
+    if ($site_name == 'suffolkcoastal') return true;
+    if ($site_name == 'tandridge') return true;
     return false;
 }
 
@@ -66,16 +69,19 @@ function cobrand_creation_ask_for_address_type() { # by default: don't ask for a
 # any area in the site database.
 function cobrand_creation_within_area_only() {
     global $site_name;
-    if ($site_name == 'surreycc') return array('Surrey', null);
-    if ($site_name == 'reigate-banstead') return array('Surrey', null);
-    if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
-    if ($site_name == 'woking') return array('Woking', 2449);
-    if ($site_name == 'runnymede') return array('Runnymede', 2451);
-    if ($site_name == 'waverley') return array('Waverley', 2447);
-    if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
-    if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
+    if ($site_name == 'barnet') return array('Barnet', 2489);
     if ($site_name == 'barrowbc') return array('Cumbria', 2220);
+    if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
+    if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
     if ($site_name == 'hounslow') return array('Hounslow', 2483);
+    if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
+    if ($site_name == 'reigate-banstead') return array('Surrey', null);
+    if ($site_name == 'runnymede') return array('Runnymede', 2451);
+    if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
+    if ($site_name == 'surreycc') return array('Surrey', null);
+    if ($site_name == 'waverley') return array('Waverley', 2447);
+    if ($site_name == 'westminster') return array('Westminster', 2504);
+    if ($site_name == 'woking') return array('Woking', 2449);
     return '';
 }
 
