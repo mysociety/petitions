@@ -1,20 +1,5 @@
-.mysoc-content{
-	padding: 2px 12px 24px 12px;
-}
-
-/* replaces Hounslow footer, problems with width */
-#mysoc-footer{
-	margin: 0 auto;
-	display:block;
-    font-size: 95%; 
-    text-align: center; 
-    padding: 20px ; 
-    margin: 0 0 10px; 
-    vertical-align: baseline; 
-    clear: both; 
-    color: #FFF; 
-    background: #7c2a83 url(footer-bg.gif) repeat-x left top;
-
+#articletext{ /* preventing New Forest collapsing content width */
+	width:98%;
 }
 
 p {
