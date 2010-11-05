@@ -289,9 +289,16 @@ class Petition {
 
     # Used from cron to get relevant admin email for this petition
     function admin_email() {
-        if (OPTION_SITE_TYPE=='multiple')
-            return $this->body_ref() . '@' . OPTION_EMAIL_DOMAIN;
-        return OPTION_CONTACT_EMAIL;
+        if ($this->body_ref() == 'elmbridge') {
+            $local = 'petitions';
+            $domain = $this->body_ref() . '.gov.uk';
+        } elseif (OPTION_SITE_TYPE == 'multiple') {
+            $local = $this->body_ref();
+            $domain = OPTION_EMAIL_DOMAIN;
+        } else {
+            return OPTION_CONTACT_EMAIL;
+        }
+        return $local . '@' . $domain;
     }
 
     // Write history to log file 
