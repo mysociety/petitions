@@ -1530,7 +1530,7 @@ function petition_admin_navigation($page, $array = array()) {
         if ($status == $k) print '<strong>' . $v . '</strong>';
         else print '<a href="?page=pet&amp;o=' . $k . '">' . $v . '</a>';
     }
-    print "<br><a href='?page=offline'>Create offline petition</a></p>";
+    print "<br><a href='?page=offline'>Create offline petition</a> &middot; <a href='?page=stats'>Statistics</a></p>";
     print '</div>';
     $h_level = (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') ? 2 : 1;
     print "<h$h_level>Admin interface";
