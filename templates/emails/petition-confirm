@@ -1,7 +1,8 @@
 Subject: Confirm your new petition to <?=$values['petitioned']?> - '<?=$values['content']?>'
 
 Please click on the link below to confirm that you wish to
-display the petition at the bottom of this email in your name.
+display the petition shown at the bottom of this email, and
+that the petition is submitted in your name.
 
 <?=$values['url']?>
 
