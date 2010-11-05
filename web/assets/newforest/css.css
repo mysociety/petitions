@@ -11,6 +11,7 @@ h3 {
 
 div#petition_actions {
     border: none;
+    font-size: 120%;
 }
 
 div#most_recent {
@@ -56,10 +57,10 @@ p.petition_view_tabs {
 }
 #action_create a, #action_view a, 
 #action_create a:active, #action_view a:active  {
-    margin-top: 10px;
+    margin-top: 4px;
     display: block;
     text-align: center;
-    padding-top: 70px;
+    padding-top: 80px;
     background-position: center top;
     background-repeat: no-repeat;
 }
