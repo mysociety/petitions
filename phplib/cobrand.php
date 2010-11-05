@@ -350,6 +350,9 @@ function cobrand_admin_areas_of_interest() {
         );
     }
 
+    if (OPTION_SITE_NAME == 'hounslow')
+        return array( 2483 => array( 'name' => 'Hounslow Borough Council' ) );
+
     if (cobrand_site_group() != 'surreycc') return null;
 
     $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2242/covers?type=DIS'), true);
