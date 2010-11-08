@@ -193,6 +193,7 @@ ol#breadcrumbs li.hilight {
 
 .loudmessage {
     font-size: 150%;
+    line-height: 1.4;
 }
 
 #new_you label, #new_you span.label {

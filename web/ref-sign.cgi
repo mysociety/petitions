@@ -228,6 +228,8 @@ sub confirm_page ($$$$) {
                     $q->p({ -class => 'noprint loudmessage' }, "
                         It is now available on our site.");
             }
+            $html .= $q->p({ -class => 'noprint loudmessage' },
+                $q->a({-href => '/'}, 'Petitions home'));
             $html .= Petitions::Page::footer($q, 'Confirm_Petition');
         } else {
             # Redirect so that the token isn't left in the browser. But use

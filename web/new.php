@@ -776,6 +776,7 @@ function petition_create($data) {
 ?>
     <p class="noprint loudmessage">We have resubmitted your petition for approval. 
     You'll be notified shortly with the results.</p>
+    <p class="noprint loudmessage"><a href="/">Petitions home</a>
 <?
     } else {
         if (is_null(db_getOne('select id from petition where ref = ?', $data['ref']))) {
