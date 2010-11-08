@@ -80,8 +80,15 @@ function pet_send_email_template($to, $template_name, $values, $headers = array(
         
     $values['signature'] = _("-- the ePetitions team");
 
+    $site_name = null;
+    if (array_key_exists('body_ref', $values)) {
+        $site_name = $values['body_ref'];
+    }
+
     global $site_group;
-    if (file_exists("../templates/emails/$site_group/$template_name")) {
+    if ($site_name && file_exists("../templates/emails/$site_name/$template_name")) {
+        $template = file_get_contents("../templates/emails/$site_name/$template_name");
+    } elseif (file_exists("../templates/emails/$site_group/$template_name")) {
         $template = file_get_contents("../templates/emails/$site_group/$template_name");
     } else {
         $template = file_get_contents("../templates/emails/$template_name");

@@ -1,0 +1,26 @@
+Subject: Confirm your new petition to <?=$values['petitioned']?> - '<?=$values['content']?>'
+
+Please click on the link below to confirm that you wish to
+display the petition shown at the bottom of this email, and
+that the petition is submitted in your name.
+
+<?=$values['url']?>
+
+Your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to
+<?=$values['content']?>
+
+<?=$values['detail']?>
+
+
+Thank you for submitting your petition.
+
+Executive and Member Services Division
+Elmbridge Borough Council
+High Street, Civic Centre, Esher
+Surrey, KT10 9SD
+http://www.elmbridge.gov.uk
+01372 474173
+
+[ This email has been automatically sent by the petitions system ]

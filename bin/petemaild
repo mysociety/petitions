@@ -1688,7 +1688,9 @@ sub get_template($$) {
     my ($template, $p) = @_;
     my $site_name = mySociety::Config::get('SITE_NAME');
     my $e;
-    if (-e "$FindBin::Bin/../templates/emails/$site_name/$template") {
+    if ($p->{body_ref} && -e "$FindBin::Bin/../templates/emails/$p->{body_ref}/$template") {
+        $e = File::Slurp::read_file("$FindBin::Bin/../templates/emails/$p->{body_ref}/$template");
+    } elsif (-e "$FindBin::Bin/../templates/emails/$site_name/$template") {
         $e = File::Slurp::read_file("$FindBin::Bin/../templates/emails/$site_name/$template");
     } else {
         $e = File::Slurp::read_file("$FindBin::Bin/../templates/emails/$template");
