@@ -572,6 +572,9 @@ petitions.</p>';
         if ($pdata['address_type']) {
             print '<li>Address type: ' . $pdata['address_type'];
         }
+        if ($pdata['comments']) {
+            print '<li>Creator private comments: ' . $pdata['comments'] . '</li>';
+        }
         print '<li>Organisation: ';
         print $pdata['organisation'] ? htmlspecialchars($pdata['organisation']) : 'None given';
         if ($pdata['org_url'])
