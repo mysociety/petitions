@@ -22,6 +22,8 @@ read_conf conf/general
 
 if [ $OPTION_PET_DB_NAME = 'pet-surrey' ]; then
     START_DATE=2010-03-01
+elif [ $OPTION_PET_DB_NAME = 'pet-lichfield' ]; then
+    START_DATE=2010-07-01
 elif [ $OPTION_PET_DB_NAME = 'pet-sbdc' ]; then
     START_DATE=2010-02-01
 else
