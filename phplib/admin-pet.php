@@ -169,7 +169,7 @@ class ADMIN_PAGE_PET_SEARCH {
         $search_pet = "select petition.id, petition.ref, petition.name, email,
                 status, date_trunc('second', creationtime) as creationtime
             from petition LEFT JOIN body ON body_id=body.id
-            where status in ('sentconfirm', 'draft', 'live', 'resubmitted', 'finished') ";
+            where status not in ('unconfirmed', 'failedconfirm') ";
         $search_sign = "select signer.id, petition.ref, signer.name, signer.email, emailsent,
                 date_trunc('second', signtime) as signtime
             from signer, petition LEFT JOIN body ON body_id=body.id
