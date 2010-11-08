@@ -30,13 +30,11 @@ MAILTO=cron-!!(*= $site *)!!@mysociety.org
 
 !!(* } *)!!
 
-!!(* if ($hostname ne "steak" && $hostname ne 'balti') { *)!!
+!!(* if ($hostname ne "steak") { *)!!
 
 # On every web host machine, as makes files
-!!(* if ($vhost ne 'petitions.lichfielddc.gov.uk') { *)!!
 45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/petitions/bin/petition-signup-graph
 45 2 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/petitions/bin/petition-creation-graph
-!!(* } *)!!
 
 !!(* } *)!!
 
