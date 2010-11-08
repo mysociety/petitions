@@ -730,6 +730,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.spelthorne.gov.uk/petitions_terms';
     if ($site_name == 'woking')
         return 'http://www.woking.gov.uk/council/about/petitions/termsandconditions';
+    if ($site_name == 'hounslow')
+        return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
     return null;
 }
 
