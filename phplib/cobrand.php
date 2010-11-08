@@ -190,7 +190,7 @@ petition in this category</a>.";
         }
         if ($area) {
             # $area is set if we're being called as a result of the form below
-            if (in_array($area, array('tandridge', 'reigate-banstead')))
+            if (in_array($area, array('tandridge', 'reigate-banstead', 'woking')))
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
             if ($area == 'elmbridge')
                 return 'http://www.elmbridge.gov.uk/Council/information/petition.htm';
@@ -208,8 +208,6 @@ petition in this category</a>.";
                 return 'http://www.surreyheath.gov.uk/council/epetitions/';
             if ($area == 'waverley')
                 return 'http://www.waverley.gov.uk/site/scripts/documents_info.php?documentID=955';
-            if ($area == 'woking')
-                return 'http://www.woking.gov.uk/council/about/epetitions';
         } else {
             return '
             <input type="hidden" name="category" value="' . $category_id . '"> 
