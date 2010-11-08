@@ -107,6 +107,7 @@ EOF;
         );
         foreach (array_keys($counts) as $t) {
             $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t$multiple' order by id desc limit 1");
+            if (!$counts[$t]) $counts[$t] = 0;
         }
 
         # Signatures
