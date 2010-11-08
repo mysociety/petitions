@@ -24,7 +24,7 @@ my $date = strftime("%Y-%m-%d %H:%M:%S", @time);
 insert_multi("'signatures_'||emailsent", "FROM signer WHERE showname='t' GROUP BY emailsent");
 insert_multi("'signatures_'||emailsent||'_'||body.ref", "FROM signer, petition, body WHERE petition_id=petition.id AND body_id=body.id AND showname='t' GROUP BY emailsent, body.ref");
 insert('signatures_confirmed_unique', "SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed' AND signtime > '$date'");
-insert_multi("'signatures_confirmed_unique_'||body.ref", "COUNT(DISTINCT email) FROM signer, petition, body WHERE petition_id=petition.id AND body_id=body.id AND showname='t' AND emailsent='confirmed' AND signtime>'$date' GROUP BY body.ref");
+insert_multi("'signatures_confirmed_unique_'||body.ref", "COUNT(DISTINCT signer.email) FROM signer, petition, body WHERE petition_id=petition.id AND body_id=body.id AND showname='t' AND emailsent='confirmed' AND signtime>'$date' GROUP BY body.ref");
 dbh()->commit();
 
 # Petition counts
