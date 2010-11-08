@@ -91,6 +91,10 @@ EOF;
         $from = get_http_var('from');
         $to = get_http_var('to');
         
+        $multiple = '';
+        if ($site = cobrand_admin_is_site_user())
+            $multiple = "_$site";
+
         # Overall
         $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
 
@@ -102,17 +106,17 @@ EOF;
             'all_confirmed'=>0, 'all_unconfirmed'=>0
         );
         foreach (array_keys($counts) as $t) {
-            $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t' order by id desc limit 1");
+            $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t$multiple' order by id desc limit 1");
         }
 
         # Signatures
-        $signatures_confirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed' order by id desc limit 1");
-        $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent' order by id desc limit 1");
-        $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique' order by id desc limit 1");
+        $signatures_confirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed$multiple' order by id desc limit 1");
+        $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent$multiple' order by id desc limit 1");
+        $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique$multiple' order by id desc limit 1");
 
         # Responses 
-        $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
-        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
+        $responses = db_getOne("select count(*) from message where circumstance = 'government-response$multiple'");
+        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response$multiple'");
     
         petition_admin_navigation($this);
         if ($from && $to) {

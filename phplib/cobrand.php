@@ -287,12 +287,18 @@ function cobrand_site_group() {
     return $site_group;
 }
 
+function cobrand_admin_is_site_user() {
+    $sites = explode(',', OPTION_SITE_NAME);
+    if (in_array(http_auth_user(), $sites))
+        return http_auth_user();
+    return false;
+}
+
 function cobrand_admin_title() {
     global $site_group;
     if ($site_group == 'surreycc') {
-        $sites = explode(',', OPTION_SITE_NAME);
-        if (in_array(http_auth_user(), $sites))
-            return ucfirst(http_auth_user()) . ' admin';
+        if ($site = cobrand_admin_is_site_user())
+            return ucfirst($site) . ' admin';
     }
     return OPTION_CONTACT_NAME . " admin";
 }
@@ -331,9 +337,8 @@ function cobrand_admin_site_restriction() {
     global $site_group;
     if ($site_group != 'surreycc') return '';
 
-    $sites = explode(',', OPTION_SITE_NAME);
-    if (in_array(http_auth_user(), $sites))
-        return " AND body.ref='" . http_auth_user() . "' ";
+    if ($site = cobrand_admin_is_site_user())
+        return " AND body.ref='$site' ";
     return '';
 }
 
