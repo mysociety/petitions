@@ -1473,8 +1473,9 @@ class ADMIN_PAGE_PET_MAP {
     }
 
     function display() {
-        $ref = get_http_var('ref');
+        $ref = htmlspecialchars(get_http_var('ref'));
 ?>
+<h2>Petition <?=$ref?> signer map</h2>
 <div id="signer_map_large"></div>
 <script>
 var map = new OpenLayers.Map("signer_map_large");
