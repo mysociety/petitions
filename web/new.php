@@ -147,8 +147,11 @@ function petition_submitted_category($data) {
 function petition_submitted_main($data) {
     global $pet_time;
     if (!array_key_exists('rawdeadline', $data)) $data['rawdeadline'] = '';
-    if (preg_match('#^\s*\d+\s*$#', $data['rawdeadline'])) $data['rawdeadline'] .= ' months';
-    $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
+    $rawdeadline = $data['rawdeadline'];
+    if (preg_match('#^\s*\d+\s*$#', $rawdeadline)) {
+        $rawdeadline = $rawdeadline . ' months';
+    }
+    $data['deadline_details'] = datetime_parse_local_date($rawdeadline, $pet_time, 'en', 'GB');
     $data['deadline'] = $data['deadline_details']['iso'];
     if (OPTION_SITE_TYPE == 'one') {
         $data['body'] = null;
@@ -735,7 +738,10 @@ function petition_create($data) {
 
     /* Recalculate deadline, as email confirmation might have been on a
      * different day. */
-    $data['deadline_details'] = datetime_parse_local_date($data['rawdeadline'], $pet_time, 'en', 'GB');
+    $rawdeadline = $data['rawdeadline'];
+    if (preg_match('#^\s*\d+\s*$#', $rawdeadline))
+        $rawdeadline = $rawdeadline . ' months';
+    $data['deadline_details'] = datetime_parse_local_date($rawdeadline, $pet_time, 'en', 'GB');
     $data['deadline'] = $data['deadline_details']['iso'];
 
     # One of postcode and overseas must be null, but normally passed around as empty strings
