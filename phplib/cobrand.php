@@ -81,6 +81,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'surreycc') return array('Surrey', null);
     if ($site_name == 'waverley') return array('Waverley', 2447);
     if ($site_name == 'westminster') return array('Westminster', 2504);
+    if ($site_name == 'wellingborough') return array('Wellingborough', 2395);
     if ($site_name == 'woking') return array('Woking', 2449);
     return '';
 }
