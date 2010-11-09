@@ -759,6 +759,7 @@ var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
 );
 map.setCenter(lonLat, 5);
 </script>
+<p style="float:right;clear:right;"><a href="?page=map&amp;ref=<?=$pdata['ref']?>">Larger version</a></p>
 <?
             }
 
