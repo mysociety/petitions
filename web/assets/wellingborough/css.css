@@ -1,0 +1,94 @@
+.mysoc-content{
+	padding: 2px 12px 24px 12px;
+}
+
+/* replaces Hounslow footer, problems with width */
+#mysoc-footer{
+	margin: 0 auto;
+	display:block;
+    font-size: 95%; 
+    text-align: center; 
+    padding: 20px ; 
+    margin: 0 0 10px; 
+    vertical-align: baseline; 
+    clear: both; 
+    color: #FFF; 
+    background: #7c2a83 url(footer-bg.gif) repeat-x left top;
+
+}
+
+p {
+	font-size: 100%;
+}
+h3 {
+	font-size: 120%;
+}
+
+div#petition_actions {
+    border: none;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+/*
+form#signForm label {
+    width: 8em;
+}
+*/
+
+#content.withWidth p.petition_view_tabs,  p.petition_view_tabs {  /* content.withWidth from Wellingborough */
+    border-bottom: solid 2px #4F565B;
+	padding: 0px 0px 5px 0px;
+}
+.petition_view_tabs span {
+    background-color: #4F565B;
+}
+
+h3 {
+  margin: 0.333em 0 ;
+}
+
+div#petition_actions {
+    margin-bottom: 1em;
+}
+
+p.petition_view_tabs {
+    margin-bottom: 1em;
+}
+
+
+#action_create a {
+    background-image: url('petition_button_create.png');
+}
+#action_view a {
+    background-image: url('petition_button_view.png');
+}
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    margin-top: 0px;
+    display: block;
+    text-align: center;
+    padding-top: 70px;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+    background-color: #ffffff;
+}
+
+a:hover {
+  background-color: transparent;
+}
+
+#action_create a img,  #action_view a img {
+    display: none;
+}
+
