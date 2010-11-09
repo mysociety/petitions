@@ -747,7 +747,7 @@ Deadline: ';
 var map = new OpenLayers.Map("signer_map");
 var wms = new OpenLayers.Layer.OSM();
 var pois = new OpenLayers.Layer.Text("Signatures", {
-    location: "?page=pet&petition_id=<?=$pdata['id']?>&locations=1"
+    location: "?page=pet&petition=<?=$pdata['ref']?>&locations=1"
 });
 pois.events.register('loadend', undefined, function(){
     map.zoomToExtent(pois.getDataExtent());
@@ -1401,7 +1401,7 @@ can be rejected properly.</p>
             print "lat\tlon\n";
             $rows = db_getAll("select latitude, longitude from signer
                 where latitude!=0 and emailsent='confirmed' and showname='t'
-                and petition_id=?", get_http_var('petition_id'));
+                and petition_id=(select id from petition where ref=?)", get_http_var('petition'));
             foreach ($rows as $s) {
                 print "$s[latitude]\t$s[longitude]\n";
             }
@@ -1462,6 +1462,37 @@ can be rejected properly.</p>
         } else {
             $this->list_all_petitions();
         }
+    }
+}
+
+class ADMIN_PAGE_PET_MAP {
+    function ADMIN_PAGE_PET_MAP () {
+        $this->id = "map";
+        $this->noindex = true;
+        $this->navname = "Petition signer map";
+    }
+
+    function display() {
+        $ref = get_http_var('ref');
+?>
+<div id="signer_map_large"></div>
+<script>
+var map = new OpenLayers.Map("signer_map_large");
+var wms = new OpenLayers.Layer.OSM();
+var pois = new OpenLayers.Layer.Text("Signatures", {
+    location: "?page=pet&petition=<?=$ref?>&locations=1"
+});
+pois.events.register('loadend', undefined, function(){
+    map.zoomToExtent(pois.getDataExtent());
+});
+map.addLayers([wms, pois]);
+var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
+    new OpenLayers.Projection("EPSG:4326"), // transform from WGS84
+    map.getProjectionObject() // to Spherical Mercator Projection
+);
+map.setCenter(lonLat, 5);
+</script>
+<?
     }
 }
 

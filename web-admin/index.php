@@ -24,6 +24,7 @@ $pages = array(
     new ADMIN_PAGE_PET_SEARCH,
     new ADMIN_PAGE_PET_OFFLINE,
     new ADMIN_PAGE_PET_STATS,
+    new ADMIN_PAGE_PET_MAP,
 );
 
 if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
