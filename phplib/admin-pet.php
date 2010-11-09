@@ -111,9 +111,13 @@ EOF;
         }
 
         # Signatures
-        $signatures_confirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed$multiple' order by id desc limit 1");
-        $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent$multiple' order by id desc limit 1");
-        $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique$multiple' order by id desc limit 1");
+        $signatures = array(
+            'confirmed' => 0, 'sent' => 0, 'confirmed_unique' => 0
+        );
+        foreach (array_keys($signatures) as $t) {
+            $signatures[$t] = db_getOne("SELECT value FROM stats WHERE key = 'signatures_$t$multiple' order by id desc limit 1");
+            if (!$signatures[$t]) $signatures[$t] = 0;
+        }
 
         # Responses 
         $responses = db_getOne("select count(*) from message where circumstance = 'government-response$multiple'");

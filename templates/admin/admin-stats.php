@@ -22,8 +22,8 @@ With unconfirmed emails: <?=$counts['unconfirmed']?> not sent,
 
 <h2>Signatures</h2>
 
-<p><?=$signatures_confirmed?> confirmed signatures (<?=$signers?> unique emails
-in past year), <?=$signatures_unconfirmed?> unconfirmed
+<p><?=$signatures['confirmed']?> confirmed signatures (<?=$signatures['confirmed_unique']?> unique emails
+in past year), <?=$signatures['sent']?> unconfirmed
 
 <p><img style="max-width:100%" src="pet-live-signups<?=$multiple?>.png" alt="Graph of signers across whole site">
 

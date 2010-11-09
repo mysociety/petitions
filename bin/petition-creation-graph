@@ -55,7 +55,7 @@ function grab_data_multi {
         date(creationtime), count(*)
         from petition, body
             where body_id = body.id
-            and body.ref = $1
+            and body.ref = '$1'
             and $2
         group by date(creationtime)
         order by date(creationtime)
@@ -65,14 +65,14 @@ function grab_data_multi {
 function make_graph {
     # rather nastily, work out the cumulative heights in reverse, so can plot impulses on top of each other
     if [ -n "$1" ]; then
-        grab_data_multi $1 "" $SOURCEA
+        grab_data_multi $1 "true" $SOURCEA
         grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')" $SOURCEB
         grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted')" $SOURCEC
         grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected')" $SOURCED
         grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live')" $SOURCEE
         grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live', 'finished')" $SOURCEF
     else
-        grab_data "" $SOURCEA
+        grab_data "true" $SOURCEA
         grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')" $SOURCEB
         grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted')" $SOURCEC
         grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected')" $SOURCED
