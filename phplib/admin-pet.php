@@ -227,8 +227,6 @@ class ADMIN_PAGE_PET_OFFLINE {
             if (!$data['pet_content'])
                 $errors[] = 'Please give the main sentence of the petition';
             $ddd = preg_replace('#\s#', '', $data['detail']);
-            if (strlen($ddd) > 1000)
-                $errors['detail'] = _('Please make the more details shorter (at most 1000 characters).');
 
             if (!$data['category'] || !array_key_exists($data['category'], cobrand_categories())) {
                 $errors['category'] = 'Please select a category';
