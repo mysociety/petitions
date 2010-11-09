@@ -91,6 +91,10 @@ EOF;
         $from = get_http_var('from');
         $to = get_http_var('to');
         
+        $multiple = '';
+        if ($site = cobrand_admin_is_site_user())
+            $multiple = "_$site";
+
         # Overall
         $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
 
@@ -102,17 +106,22 @@ EOF;
             'all_confirmed'=>0, 'all_unconfirmed'=>0
         );
         foreach (array_keys($counts) as $t) {
-            $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t' order by id desc limit 1");
+            $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t$multiple' order by id desc limit 1");
+            if (!$counts[$t]) $counts[$t] = 0;
         }
 
         # Signatures
-        $signatures_confirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed' order by id desc limit 1");
-        $signatures_unconfirmed = db_getOne("SELECT value FROM stats WHERE key = 'signatures_sent' order by id desc limit 1");
-        $signers = db_getOne("SELECT value FROM stats WHERE key = 'signatures_confirmed_unique' order by id desc limit 1");
+        $signatures = array(
+            'confirmed' => 0, 'sent' => 0, 'confirmed_unique' => 0
+        );
+        foreach (array_keys($signatures) as $t) {
+            $signatures[$t] = db_getOne("SELECT value FROM stats WHERE key = 'signatures_$t$multiple' order by id desc limit 1");
+            if (!$signatures[$t]) $signatures[$t] = 0;
+        }
 
         # Responses 
-        $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
-        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
+        $responses = db_getOne("select count(*) from message where circumstance = 'government-response$multiple'");
+        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response$multiple'");
     
         petition_admin_navigation($this);
         if ($from && $to) {
@@ -165,7 +174,7 @@ class ADMIN_PAGE_PET_SEARCH {
         $search_pet = "select petition.id, petition.ref, petition.name, email,
                 status, date_trunc('second', creationtime) as creationtime
             from petition LEFT JOIN body ON body_id=body.id
-            where status in ('sentconfirm', 'draft', 'live', 'resubmitted', 'finished') ";
+            where status not in ('unconfirmed', 'failedconfirm') ";
         $search_sign = "select signer.id, petition.ref, signer.name, signer.email, emailsent,
                 date_trunc('second', signtime) as signtime
             from signer, petition LEFT JOIN body ON body_id=body.id
@@ -222,8 +231,6 @@ class ADMIN_PAGE_PET_OFFLINE {
             if (!$data['pet_content'])
                 $errors[] = 'Please give the main sentence of the petition';
             $ddd = preg_replace('#\s#', '', $data['detail']);
-            if (strlen($ddd) > 1000)
-                $errors['detail'] = _('Please make the more details shorter (at most 1000 characters).');
 
             if (!$data['category'] || !array_key_exists($data['category'], cobrand_categories())) {
                 $errors['category'] = 'Please select a category';

@@ -18,14 +18,14 @@ With unconfirmed emails: <?=$counts['unconfirmed']?> not sent,
 <?=$counts['failedconfirm']?> failed send, <?=$counts['sentconfirm']?> sent =
 <strong><?=$counts['all_unconfirmed']?></strong> total with unconfirmed emails
 
-<p><img style="max-width:100%" src="pet-live-creation.png" alt="Graph of petition status by creation date">
+<p><img style="max-width:100%" src="pet-live-creation<?=$multiple?>.png" alt="Graph of petition status by creation date">
 
 <h2>Signatures</h2>
 
-<p><?=$signatures_confirmed?> confirmed signatures (<?=$signers?> unique emails
-in past year), <?=$signatures_unconfirmed?> unconfirmed
+<p><?=$signatures['confirmed']?> confirmed signatures (<?=$signatures['confirmed_unique']?> unique emails
+in past year), <?=$signatures['sent']?> unconfirmed
 
-<p><img style="max-width:100%" src="pet-live-signups.png" alt="Graph of signers across whole site">
+<p><img style="max-width:100%" src="pet-live-signups<?=$multiple?>.png" alt="Graph of signers across whole site">
 
 <h2>Responses</h2>
 

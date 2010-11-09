@@ -190,7 +190,7 @@ petition in this category</a>.";
         }
         if ($area) {
             # $area is set if we're being called as a result of the form below
-            if (in_array($area, array('tandridge', 'reigate-banstead')))
+            if (in_array($area, array('tandridge', 'reigate-banstead', 'woking', 'spelthorne')))
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
             if ($area == 'elmbridge')
                 return 'http://www.elmbridge.gov.uk/Council/information/petition.htm';
@@ -200,16 +200,12 @@ petition in this category</a>.";
                 return 'http://www.surreycc.gov.uk/SCCWebsite/SCCWSPages.nsf/LookupWebPagesByUNID_RTF_INT/A4F9AD1334EF7EB480257744005476BA?opendocument';
             if ($area == 'molevalley')
                 return 'http://www.molevalley.gov.uk/index.cfm?articleid=9694';
-            if ($area == 'spelthorne')
-                return 'http://www.spelthorne.gov.uk/epetitions.htm';
             if ($area == 'runnymede')
                 return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.bbcf55f3a4a758ceb14229a7af8ca028/';
             if ($area == 'surreyheath')
                 return 'http://www.surreyheath.gov.uk/council/epetitions/';
             if ($area == 'waverley')
                 return 'http://www.waverley.gov.uk/site/scripts/documents_info.php?documentID=955';
-            if ($area == 'woking')
-                return 'http://www.woking.gov.uk/council/about/epetitions';
         } else {
             return '
             <input type="hidden" name="category" value="' . $category_id . '"> 
@@ -289,12 +285,18 @@ function cobrand_site_group() {
     return $site_group;
 }
 
+function cobrand_admin_is_site_user() {
+    $sites = explode(',', OPTION_SITE_NAME);
+    if (in_array(http_auth_user(), $sites))
+        return http_auth_user();
+    return false;
+}
+
 function cobrand_admin_title() {
     global $site_group;
     if ($site_group == 'surreycc') {
-        $sites = explode(',', OPTION_SITE_NAME);
-        if (in_array(http_auth_user(), $sites))
-            return ucfirst(http_auth_user()) . ' admin';
+        if ($site = cobrand_admin_is_site_user())
+            return ucfirst($site) . ' admin';
     }
     return OPTION_CONTACT_NAME . " admin";
 }
@@ -333,9 +335,8 @@ function cobrand_admin_site_restriction() {
     global $site_group;
     if ($site_group != 'surreycc') return '';
 
-    $sites = explode(',', OPTION_SITE_NAME);
-    if (in_array(http_auth_user(), $sites))
-        return " AND body.ref='" . http_auth_user() . "' ";
+    if ($site = cobrand_admin_is_site_user())
+        return " AND body.ref='$site' ";
     return '';
 }
 
@@ -730,6 +731,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.spelthorne.gov.uk/petitions_terms';
     if ($site_name == 'woking')
         return 'http://www.woking.gov.uk/council/about/petitions/termsandconditions';
+    if ($site_name == 'hounslow')
+        return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
     return null;
 }
 
