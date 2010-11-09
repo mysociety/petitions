@@ -601,7 +601,7 @@ petitions.</p>';
             $cats_pretty = prettify_categories($category, false);
             print '<ul><li><form method="post" action="' . $this->self_link
                 . '"><input type="hidden" name="petition_id" value="' . $pdata['id']
-                . '"><input type="hidden" name="change_criteria" value="1">For being in the following categories: '
+                . '"><input type="hidden" name="change_rejection_criteria" value="1">For being in the following categories: '
                 . $cats_pretty . ' &mdash; <input type="submit" value="Change"></form>';
             print '<li>Extra reason provided by admin: ' . $reason . '</li></ul>';
         }
@@ -747,7 +747,7 @@ Deadline: ';
 var map = new OpenLayers.Map("signer_map");
 var wms = new OpenLayers.Layer.OSM();
 var pois = new OpenLayers.Layer.Text("Signatures", {
-    location: "?page=pet&petition_id=<?=$pdata['id']?>&locations=1"
+    location: "?page=pet&petition=<?=$pdata['ref']?>&locations=1"
 });
 pois.events.register('loadend', undefined, function(){
     map.zoomToExtent(pois.getDataExtent());
@@ -1325,7 +1325,7 @@ can be rejected properly.</p>
         }
     }
 
-    function change_criteria($petition_id) {
+    function change_rejection_criteria($petition_id) {
         $p = new Petition($petition_id);
         $status = $p->status();
         if ($status != 'rejected' && $status != 'rejectedonce') {
@@ -1352,10 +1352,12 @@ can be rejected properly.</p>
         if (!$criteria_new) $errors[] = 'Please give some rejection categories';
 
         if (get_http_var('submit') && !sizeof($errors)) {
+            $criteria_pretty = prettify_categories($criteria, false);
+            $criteria_new_pretty = prettify_categories($criteria_new, false);
             db_query("UPDATE petition SET $column=?, lastupdate=ms_current_timestamp()
                 where id=?", $criteria_new, $petition_id);
             memcache_update($petition_id);
-            $p->log_event("Admin changed rejection criteria from $criteria to $criteria_new, reason '$reason'");
+            $p->log_event("Admin changed rejection criteria from [$criteria_pretty] to [$criteria_new_pretty], reason '$reason'");
             db_commit();
             print '<p><em>Petition criteria changed</em></p>';
         } else {
@@ -1365,7 +1367,7 @@ can be rejected properly.</p>
 ?>
 <form method="post" name="admin_change_rejection_criteria" action="<?=$this->self_link?>">
 <input type="hidden" name="submit" value="1">
-<input type="hidden" name="change_criteria" value="1">
+<input type="hidden" name="change_rejection_criteria" value="1">
 <input type="hidden" name="petition_id" value="<?=$petition_id ?>">
 <p>Category or categories for rejection: <small>
 <?
@@ -1399,7 +1401,7 @@ can be rejected properly.</p>
             print "lat\tlon\n";
             $rows = db_getAll("select latitude, longitude from signer
                 where latitude!=0 and emailsent='confirmed' and showname='t'
-                and petition_id=?", get_http_var('petition_id'));
+                and petition_id=(select id from petition where ref=?)", get_http_var('petition'));
             foreach ($rows as $s) {
                 print "$s[latitude]\t$s[longitude]\n";
             }
@@ -1442,8 +1444,8 @@ can be rejected properly.</p>
         } elseif (get_http_var('forward')) {
             $this->forward($petition_id);
             $petition_id = null; $petition = null;
-        } elseif (get_http_var('change_criteria')) {
-            $this->change_criteria($petition_id);
+        } elseif (get_http_var('change_rejection_criteria')) {
+            $this->change_rejection_criteria($petition_id);
         } elseif (get_http_var('note')) {
             $this->add_note($petition_id, get_http_var('note'));
         }
@@ -1460,6 +1462,38 @@ can be rejected properly.</p>
         } else {
             $this->list_all_petitions();
         }
+    }
+}
+
+class ADMIN_PAGE_PET_MAP {
+    function ADMIN_PAGE_PET_MAP () {
+        $this->id = "map";
+        $this->noindex = true;
+        $this->navname = "Petition signer map";
+    }
+
+    function display() {
+        $ref = htmlspecialchars(get_http_var('ref'));
+?>
+<h2>Petition <?=$ref?> signer map</h2>
+<div id="signer_map_large"></div>
+<script>
+var map = new OpenLayers.Map("signer_map_large");
+var wms = new OpenLayers.Layer.OSM();
+var pois = new OpenLayers.Layer.Text("Signatures", {
+    location: "?page=pet&petition=<?=$ref?>&locations=1"
+});
+pois.events.register('loadend', undefined, function(){
+    map.zoomToExtent(pois.getDataExtent());
+});
+map.addLayers([wms, pois]);
+var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
+    new OpenLayers.Projection("EPSG:4326"), // transform from WGS84
+    map.getProjectionObject() // to Spherical Mercator Projection
+);
+map.setCenter(lonLat, 5);
+</script>
+<?
     }
 }
 

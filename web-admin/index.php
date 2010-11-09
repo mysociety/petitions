@@ -24,6 +24,7 @@ $pages = array(
     new ADMIN_PAGE_PET_SEARCH,
     new ADMIN_PAGE_PET_OFFLINE,
     new ADMIN_PAGE_PET_STATS,
+    new ADMIN_PAGE_PET_MAP,
 );
 
 if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
@@ -47,7 +48,7 @@ function admin_header($title) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="pet-admin-default-look.css">
 <link rel="stylesheet" type="text/css" href="pet-admin.css">
-<script src="OpenLayers.js"></script>
+<script src="/jslib/openlayers/OpenLayers.js"></script>
 </head>
 <body id="admin">
 <div id="header"></div>
