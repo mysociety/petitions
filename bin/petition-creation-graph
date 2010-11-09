@@ -40,45 +40,51 @@ SOURCEE=/tmp/pet-creation-rate-graph-data-$RANDOM$RANDOM
 SOURCEF=/tmp/pet-creation-rate-graph-data-$RANDOM$RANDOM
 GPSCRIPT=/tmp/pet-creation-rate-graph-script-$RANDOM$RANDOM
 
-#    where status in ('draft') 
-
 function grab_data {
     echo "select 
         date(creationtime), count(*)
         from petition 
-        $1
+        where $1
         group by date(creationtime)
         order by date(creationtime)
         ;" | psql --host $OPTION_PET_DB_HOST --port $OPTION_PET_DB_PORT -A -F " " $OPTION_PET_DB_NAME $OPTION_PET_DB_USER | egrep -v "date|rows" >$2
 }
 
-# rather nastily, work out the cumulative heights in reverse, so can plot impulses on top of each other
-grab_data "" $SOURCEA
-grab_data "where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')" $SOURCEB
-grab_data "where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted')" $SOURCEC
-grab_data "where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected')" $SOURCED
-grab_data "where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live')" $SOURCEE
-grab_data "where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live', 'finished')" $SOURCEF
+function grab_data_multi {
+    echo "select 
+        date(creationtime), count(*)
+        from petition, body
+            where body_id = body.id
+            and body.ref = $1
+            and $2
+        group by date(creationtime)
+        order by date(creationtime)
+        ;" | psql --host $OPTION_PET_DB_HOST --port $OPTION_PET_DB_PORT -A -F " " $OPTION_PET_DB_NAME $OPTION_PET_DB_USER | egrep -v "date|rows" >$3
+}
 
-if [ ! -s $SOURCEA ]; then
-    exit
-fi
+function make_graph {
+    # rather nastily, work out the cumulative heights in reverse, so can plot impulses on top of each other
+    if [ -n "$1" ]; then
+        grab_data_multi $1 "" $SOURCEA
+        grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')" $SOURCEB
+        grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted')" $SOURCEC
+        grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected')" $SOURCED
+        grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live')" $SOURCEE
+        grab_data_multi $1 "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live', 'finished')" $SOURCEF
+    else
+        grab_data "" $SOURCEA
+        grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')" $SOURCEB
+        grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted')" $SOURCEC
+        grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected')" $SOURCED
+        grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live')" $SOURCEE
+        grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live', 'finished')" $SOURCEF
+    fi
 
-#        'unconfirmed'
-#        'failedconfirm',    -- confirmation email delivery failed
-#        'sentconfirm',      -- confirmation email sent
+    if [ ! -s $SOURCEA ]; then
+        exit
+    fi
 
-#        'draft'
-#        'resubmitted',      -- resubmitted
-
-#        'rejectedonce',     -- rejected once
-#        'rejected',         -- rejected finally, or timed out
-
-#        'live'
-
-#        'finished'          -- deadline passed
-
-cat >$GPSCRIPT <<END 
+    cat >$GPSCRIPT <<END 
     unset border
     unset arrow
     set key left
@@ -110,9 +116,18 @@ cat >$GPSCRIPT <<END
          "$SOURCEE" using 1:2 with impulses lt 7 lw 15 title "finished",\
     "< awk 'BEGIN { n = 0 } { n += \$2; print \$1, \$2, n; }' $SOURCEA" using 1:3 axes x1y2 with lines lt 2 title "cumulative total number of petitions"
 END
-#echo "gpscript $GPSCRIPT"
+    #echo "gpscript $GPSCRIPT"
 
-export GDFONTPATH=/usr/share/fonts/truetype/ttf-bitstream-vera
-gnuplot < $GPSCRIPT > web-admin/pet-live-creation$EXTENSION 2>/dev/null
+    export GDFONTPATH=/usr/share/fonts/truetype/ttf-bitstream-vera
+    gnuplot < $GPSCRIPT > web-admin/pet-live-creation$2$EXTENSION 2>/dev/null
+}
 
+make_graph "" ""
+if [ $OPTION_SITE_TYPE = 'multiple' ]; then
+    IFS=","
+    set -- $OPTION_SITE_NAME
+    for SITE in $OPTION_SITE_NAME; do
+        make_graph $SITE _$SITE
+    done
+fi
 

@@ -36,13 +36,26 @@ SOURCEO=/tmp/pet-signup-rate-graph-data-$RANDOM$RANDOM
 GPSCRIPT=/tmp/pet-signup-rate-graph-script-$RANDOM$RANDOM
 
 function make_graph {
-    echo "select 
+    if [ -n "$1" ]; then
+        echo "select 
+    date(signtime), count(*)
+    from signer, petition, body
+    where emailsent in ('confirmed') 
+        and petition_id = petition.id
+        and body_id = body.id
+        and body.ref = '$1'
+    group by date(signtime)
+    order by date(signtime)
+    ;" | psql --host $OPTION_PET_DB_HOST --port $OPTION_PET_DB_PORT -A -F " " $OPTION_PET_DB_NAME $OPTION_PET_DB_USER | egrep -v "date|rows" >$SOURCEO
+    else
+        echo "select 
     date(signtime), count(*)
     from signer 
     where emailsent in ('confirmed') 
     group by date(signtime)
     order by date(signtime)
     ;" | psql --host $OPTION_PET_DB_HOST --port $OPTION_PET_DB_PORT -A -F " " $OPTION_PET_DB_NAME $OPTION_PET_DB_USER | egrep -v "date|rows" >$SOURCEO
+    fi
 
     if [ ! -s $SOURCEO ]; then
         exit
@@ -78,16 +91,15 @@ END
     #echo "gpscript $GPSCRIPT"
 
     export GDFONTPATH=/usr/share/fonts/truetype/ttf-bitstream-vera
-    gnuplot < $GPSCRIPT > web-admin/pet-live-signups$1$EXTENSION 2>/dev/null
+    gnuplot < $GPSCRIPT > web-admin/pet-live-signups$2$EXTENSION 2>/dev/null
 }
 
-make_graph
+make_graph "" ""
 if [ $OPTION_SITE_TYPE = 'multiple' ]; then
-    make_graph ""
     IFS=","
     set -- $OPTION_SITE_NAME
     for SITE in $OPTION_SITE_NAME; do
-        make_graph _$SITE
+        make_graph $SITE _$SITE
     done
 fi
 

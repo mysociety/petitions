@@ -10,5 +10,5 @@ _Inline
 /conf/general.deployed
 /conf/httpd.conf.deployed
 /conf/httpd.conf
-/web-admin/pet-live-signups.png
-/web-admin/pet-live-creation.png
+/web-admin/pet-live-signups*
+/web-admin/pet-live-creation*
