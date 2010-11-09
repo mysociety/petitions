@@ -190,7 +190,7 @@ petition in this category</a>.";
         }
         if ($area) {
             # $area is set if we're being called as a result of the form below
-            if (in_array($area, array('tandridge', 'reigate-banstead', 'woking')))
+            if (in_array($area, array('tandridge', 'reigate-banstead', 'woking', 'spelthorne')))
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
             if ($area == 'elmbridge')
                 return 'http://www.elmbridge.gov.uk/Council/information/petition.htm';
@@ -200,8 +200,6 @@ petition in this category</a>.";
                 return 'http://www.surreycc.gov.uk/SCCWebsite/SCCWSPages.nsf/LookupWebPagesByUNID_RTF_INT/A4F9AD1334EF7EB480257744005476BA?opendocument';
             if ($area == 'molevalley')
                 return 'http://www.molevalley.gov.uk/index.cfm?articleid=9694';
-            if ($area == 'spelthorne')
-                return 'http://www.spelthorne.gov.uk/epetitions.htm';
             if ($area == 'runnymede')
                 return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.bbcf55f3a4a758ceb14229a7af8ca028/';
             if ($area == 'surreyheath')
