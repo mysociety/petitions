@@ -1389,7 +1389,7 @@ ul.result-list {
 }
 #article-content {
 	max-width: 942px;
-	width: 100%;
+/*	width: 100%; */
 	padding-bottom: 0;
 	margin-right: 0;
 /* 	margin-bottom: 10px; */
