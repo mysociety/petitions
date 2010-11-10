@@ -1282,6 +1282,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 $action = 'redrafted';
                 $new_status ='draft';
                 db_query('delete from signer where petition_id=?', $p->id());
+                db_query('update petition set cached_signers=1 where id=?', $p->id());
                 $message = 'That petition has been moved back into the draft state';
             }
             $p->log_event("Admin $action petition with reason '$reason'");
