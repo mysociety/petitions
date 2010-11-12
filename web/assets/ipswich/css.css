@@ -1,0 +1,94 @@
+.mysoc-content{
+	padding: 2px 12px 24px 12px;
+}
+
+p {
+	font-size: 100%;
+}
+h3 {
+	font-size: 120%;
+}
+
+div#petition_actions {
+    border: none;
+}
+
+#petition_actions ul, #petition_actions ul li {
+	display: block;
+	list-style-type: none;
+	list-style-position: inside;
+}
+
+#content .byEditor ul li#action_view,
+#content .byEditor ul li#action_create{
+	line-height: 0,8em;
+	font-size: 0.8em;
+	margin: 0;
+	padding: 0;
+	background: none;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+/*
+form#signForm label {
+    width: 8em;
+}
+*/
+
+div#docContent p.petition_view_tabs {
+    border-bottom: solid 2px #7A003B;
+    margin-bottom:16px;
+    padding-bottom: 8px;
+    line-height: 1em;
+}
+.petition_view_tabs span {
+    background-color: #7A003B;
+}
+
+h3 {
+  margin: 0.333em 0 ;
+}
+
+div#petition_actions {
+    margin-bottom: 1em;
+}
+
+p.petition_view_tabs {
+    margin-bottom: 1em;
+}
+
+#action_create a {
+    background-image: url('petition_button_create.png');
+}
+#action_view a {
+    background-image: url('petition_button_view.png');
+}
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    margin-top: 0px;
+    display: block;
+    text-align: center;
+    padding-top: 74px;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+    background-color: #ffffff;
+}
+
+a:hover {
+  background-color: transparent;
+}
+
+#action_create a img,  #action_view a img {
+    display: none;
+}
