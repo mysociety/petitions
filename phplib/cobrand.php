@@ -162,7 +162,8 @@ function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
     if ($site_group != 'surreycc') return true;
     $county_only = array(4, 6, 7, 10, 12, 13, 16);
-    if ($site_name == 'tandridge' || $site_name == 'reigate-banstead') $county_only[] = 11; # Planning not okay in Tandridge
+    if ($site_name == 'tandridge' || $site_name == 'reigate-banstead' || $site_name == 'elmbridge')
+        $county_only[] = 11; # Planning not okay
     if ($site_name != 'surreycc' && in_array($category_id, $county_only))
         return false;
     $district_only = array(1, 2, 3, 5, 8, 9, 15);
@@ -186,6 +187,12 @@ applications</a> section.";
 application. For further information on the Council's procedures and how you
 can express your views, see the
 <a href='http://www.reigate-banstead.gov.uk/planning/'>planning
+applications</a> section.";
+            } elseif ($site_name == 'elmbridge' && $category_id == 11) { # Planning
+                return "You cannot create a petition about a planning
+application. For further information on the Council's procedures and how you
+can express your views, see the
+<a href='http://www.elmbridge.gov.uk/planning/online.htm'>planning
 applications</a> section.";
             } else {
                 $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
