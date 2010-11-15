@@ -7,6 +7,8 @@
 //
 // $Id: page.php,v 1.48 2010-04-23 17:15:56 matthew Exp $
 
+include_once '../phplib/cobrand.php';
+
 # Work out which site we're on
 $site_name = null;
 $site_group = null;
