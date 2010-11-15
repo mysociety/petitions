@@ -2,6 +2,7 @@ body {
     background-color: #ffffff;
     color: #000000;
     font-family: arial, helvetica, sans-serif;
+    font-size: 75%;
     line-height: 1.4;
     margin: 0;
     padding: 0;
@@ -13,7 +14,9 @@ a:link {
     text-decoration: none;
 }
 a:visited {
-    color: #333333;
+    color: #75D48F;
+    font-weight: bold;
+    text-decoration: none;
 }
 a:focus, a:active, a:hover {
     text-decoration: underline;
@@ -24,7 +27,6 @@ table {
 }
 
 td, th {
-    font-size: 75%;
     padding: 4px;
 }
 
