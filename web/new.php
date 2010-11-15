@@ -308,7 +308,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     errorlist($errors);
 ?>
 
-<p>Please note that you must <?=cobrand_creator_must_be()?> to create a petition.</p>
+<p>Please fill in all the fields below. Please note that you must <?=cobrand_creator_must_be()?> to create a petition.</p>
 
 <p><?
     echo '<strong><label for="pet_content">' . $petition_prefix;
@@ -384,7 +384,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
     errorlist($errors);
 ?>
 <div id="new_you">
-<p>Please note that you must <?=cobrand_creator_must_be() ?> to create a petition.</p><?
+<p>Please fill in the fields below. Please note that you must <?=cobrand_creator_must_be() ?> to create a petition.</p><?
 
     $fields = array(
             'name'  =>          _('Your name'),
