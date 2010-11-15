@@ -1,0 +1,33 @@
+Subject: Your chance to revise your petition has expired
+
+Hello,
+
+This is an automatic email to let you know that the petition
+you submitted recently has now been published on the rejected
+petitions page, <<?=$values['rejected_url']?>>.
+This is because you chose not to edit and resubmit your petition
+in the time since we asked you to change your original submission.
+
+As a reminder, your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+As we wrote before, your petition was classed as being in the
+following categories:
+<?=$values['rejection_categories']?>
+<?=$values['rejection_reason']?>
+
+For transparency, the parts of your petition that can be published
+legally can be seen at <?=$values['url']?>
+
+
+Executive and Member Services Division  
+Elmbridge Borough Council  
+High Street, Civic Centre, Esher  
+Surrey, KT10 9SD  
+http://www.elmbridge.gov.uk  
+01372 474173
+

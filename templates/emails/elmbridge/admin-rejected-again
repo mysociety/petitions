@@ -1,0 +1,28 @@
+Subject: Your petition has been rejected again
+
+Dear Sir/Madam,
+
+We are sorry to inform you that your petition has been rejected again.
+
+In accordance with the Council's Petitions Scheme your petition
+was classed as being in the following categories:
+<?=$values['rejection_categories']?>
+<?=$values['rejection_reason']?>
+
+Your petition will now appear in the list of rejected petitions.
+
+Your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+
+Executive and Member Services Division  
+Elmbridge Borough Council  
+High Street, Civic Centre, Esher  
+Surrey, KT10 9SD  
+http://www.elmbridge.gov.uk  
+01372 474173
+ 

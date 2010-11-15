@@ -1,0 +1,35 @@
+Subject: Your petition has been rejected
+
+Dear Sir/Madam,
+
+I refer to your recently submitted petition but regret to inform
+you that your petition has been rejected.
+
+In accordance with the Council's Petitions Scheme your petition
+was classed as being in the following categories:
+<?=$values['rejection_categories']?>
+<?=$values['rejection_reason']?>
+
+If you wish to edit and resubmit your petition, please follow
+the following link:
+<?=$values['url']?>
+
+In accordance with the Petitions Scheme, you have 10 working days
+in which to do this, after which your petition will appear in the
+list of rejected petitions.
+
+Your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+
+Executive and Member Services Division  
+Elmbridge Borough Council  
+High Street, Civic Centre, Esher  
+Surrey, KT10 9SD  
+http://www.elmbridge.gov.uk  
+01372 474173
+ 
