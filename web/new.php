@@ -330,7 +330,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 </p>
 <p><label for="detail">More details about your petition (do not use block capitals &ndash; 1000 characters maximum):</label><br />
     <?
-    textarea('detail', $data['detail'], 40, 7, false, $errors);
+    textarea('detail', $data['detail'], 70, 7, false, $errors);
     ?>
 </p>
 <p><label for="rawdeadline">For how long would you like your petition to accept signatures?</label>
@@ -554,11 +554,11 @@ function step_main_error_check($data) {
     $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $pet_today_arr[1] + $deadline_limits['months'], $pet_today_arr[2], $pet_today_arr[0] + $deadline_limits['years']));
     if (!$data['rawdeadline'] || !$data['deadline'])
         $errors['rawdeadline'] = _('Please enter a duration');
-    if ($data['deadline'] < $pet_today)
-        $errors['rawdeadline'] = _('The duration must be positive');
-    if ($data['deadline_details']['error'])
+    elseif ($data['deadline_details']['error'])
         $errors['rawdeadline'] = _("Sorry, we did not recognise that duration. Please try again");
-    if ($deadline_limit < $data['deadline']) {
+    elseif ($data['deadline'] < $pet_today)
+        $errors['rawdeadline'] = _('The duration must be positive');
+    elseif ($deadline_limit < $data['deadline']) {
         if ($deadline_limits['years'] && $deadline_limits['months']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year, %d months.'), $deadline_limits['years'], $deadline_limits['months']);
         } elseif ($deadline_limits['years']) {
