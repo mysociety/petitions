@@ -145,7 +145,7 @@ sub signup_page ($$) {
                 my $heading = Petitions::Cobrand::signing_check_heading();
                 $html .=
                     $q->h2({-class => 'page_title_border'}, $heading)
-                    . ($heading eq 'Now check your email!' ? '' : $q->p($q->strong('Now check your email!'))),
+                    . ($heading eq 'Now check your email!' ? '' : $q->p($q->strong('Now check your email!')))
                     . $q->p({-class => 'noprint loudmessage'},
                         "Thank you. We have sent you an email. To add your signature to the petition, you need to click the link in this email."
                     );
