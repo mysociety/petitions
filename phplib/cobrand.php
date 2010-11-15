@@ -247,9 +247,9 @@ petition in this category</a>.";
 }
 
 function cobrand_categories() {
-    global $site_group;
+    global $site_name, $site_group;
     if ($site_group == 'surreycc') {
-        return array(
+        $cats = array(
             1 => 'Building Regulations',
             2 => 'Community safety',
             3 => 'Council Tax Collection',
@@ -266,8 +266,13 @@ function cobrand_categories() {
             14 => 'Trading Standards', # Both?
             15 => 'Waste Collection',
             16 => 'Waste Disposal',
-            99 => 'Other', # Both
         );
+        if ($site_name == 'elmbridge') {
+            $cats[17] = 'Parking';
+            asort($cats);
+        }
+        $cats[99] = 'Other'; # Both
+        return $cats;
     }
 
     global $global_petition_categories;
