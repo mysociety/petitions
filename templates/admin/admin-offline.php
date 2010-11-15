@@ -36,7 +36,13 @@ site along with online petitions.</p>
     <textarea id="detail" name="detail" cols="40" rows="7"><?=htmlspecialchars($data['detail'])?></textarea></p>
 
 <p><label for="rawdeadline">Date petition was received:</label>
-<input type="text" name="rawdeadline" id="rawdeadline" size="15" value="<?=htmlspecialchars($data['rawdeadline'])?>" aria-required="true" /></p>
+<input type="text" name="rawdeadline" id="rawdeadline" size="15" value="<?=htmlspecialchars($data['rawdeadline'])?>" aria-required="true" />
+<?
+if (array_key_exists('deadline', $data)) {
+    print ' <small>(matched to ' . prettify($data['deadline']) . ')</small>';
+}
+?>
+</p>
 
 <p><label for="ref">Petition short name (6 to 16 letters):</label>
     <input type="text" name="ref" id="ref" size="16" value="<?=htmlspecialchars($data['ref'])?>" aria-required="true" />
