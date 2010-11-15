@@ -5,8 +5,11 @@
 p {
 	font-size: 100%;
 }
+
 h3 {
-	font-size: 120%;
+	font-size: 1.2em !important; /* important to override Islington !important */
+    border-bottom: solid 1px #cccccc;
+    margin-bottom: 20px;
 }
 
 div#petition_actions {
