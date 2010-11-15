@@ -17,9 +17,8 @@ if ($url = cobrand_terms_elsewhere()) {
 }
 
 page_header('E-petitions Terms and Conditions');
+cobrand_extra_heading('Terms and Conditions');
 ?>
-
-<h2 class="page_title_border">Terms and Conditions</h2>
 
 <p>The purpose of the
 e-petition service is to enable as many people as possible to make
