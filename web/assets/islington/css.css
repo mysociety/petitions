@@ -2,6 +2,10 @@
     padding: 2px 12px 24px 12px;
 }
 
+table {
+    margin-bottom: 10px;
+}
+
 td, th {
     padding: 4px;
 }
