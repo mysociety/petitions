@@ -303,6 +303,9 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     foreach (array('pet_content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
+    if ($site_name == 'elmbridge' && !$data['rawdeadline'])
+        $data['rawdeadline'] = '90 days';
+
     startform();
     print cobrand_create_heading('New petition &#8211; Part ' . $step . ' of ' . petition_form_steps() . ' &#8211; Your petition');
     errorlist($errors);
