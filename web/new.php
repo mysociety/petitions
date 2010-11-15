@@ -821,20 +821,22 @@ function petition_create($data) {
         }
 
         global $page_title;
-        $page_title = _('Now check your email');
+        $page_title = cobrand_creation_check_heading();
+        echo '<p class="noprint loudmessage">';
+        if ($page_title != 'Now check your email') {
+            echo '<strong>Now check your email.</strong> ';
+        }
+        echo 'We have sent you an email to confirm that we have received your petition details.';
         if (OPTION_SITE_APPROVAL) {
 ?>
-    <p class="noprint loudmessage">We have sent you an email to confirm
-    that we have received your petition details. In order for us to approve
+    In order for us to approve
     your petition, we need you to open this email and click on an activation
     link, which will send your petition details to our team for approval.</p>
 <?
         } else {
 ?>
-    <p class="noprint loudmessage">We have sent you an email to confirm
-    that we have received your petition details. In order for us to show
-    your petition, we need you to open this email and click on the activation
-    link in it.</p>
+    In order for us to show your petition, we need you to open this email and
+    click on the activation link in it.</p>
 <?
         }
     }

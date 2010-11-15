@@ -110,6 +110,13 @@ function cobrand_creator_must_be() {
     }
 }
 
+function cobrand_creation_check_heading() {
+    global $site_name;
+    if ($site_name == 'islington')
+        return 'Petition Submitted';
+    return 'Now check your email';
+}
+
 function cobrand_error_div_start() {
     global $site_name;
     if ($site_name == 'surreycc') {

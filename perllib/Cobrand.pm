@@ -20,4 +20,10 @@ sub main_heading($) {
     return "<h3>$text</h3>";
 }
 
+sub signing_check_heading() {
+    my $site_name = Petitions::Page::site_name();
+    return 'You Have Signed the Petition' if $site_name eq 'islington';
+    return 'Now check your email!';
+}
+
 1;
