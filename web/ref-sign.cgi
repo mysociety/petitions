@@ -30,6 +30,7 @@ use mySociety::EmailUtil;
 use Petitions;
 use Petitions::Page;
 use Petitions::RPC;
+use Petitions::Cobrand;
 
 sub i_check_email ($) {
     my $email = shift;
