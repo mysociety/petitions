@@ -1,20 +1,22 @@
 body {
     background-color: #ffffff;
     color: #000000;
-    font-family: "Lucida Grande", "Lucida Sans Unicode", "Lucida Sans", Tahoma, Arial, sans-serif;
+    font-family: arial, helvetica, sans-serif;
     line-height: 1.4;
     margin: 0;
     padding: 0;
 }
 
 a:link {
-    color: #0000FF;
+    color: #15742F;
+    font-weight: bold;
+    text-decoration: none;
 }
 a:visited {
-    color: #000099;
+    color: #333333;
 }
 a:focus, a:active, a:hover {
-    color: #CC0000;
+    text-decoration: underline;
 }
 
 table {
@@ -26,16 +28,14 @@ td, th {
     padding: 4px;
 }
 
-h1, h2, h3, h4, h5, h6 {
-    font-family: Candara, "Trebuchet MS", Helvetica, Arial, sans-serif;
-}
-
 h1 {
     font-size: 150%;
+    border-bottom: 1px solid #cccccc;
 }
 
 h2 {
     font-size: 125%;
+    border-bottom: 1px solid #cccccc;
 }
 
 #header {
@@ -50,4 +50,11 @@ h2 {
 #content {
     padding: 0 1em 1em;
 }
+
+#admin_nav {
+    border: solid 1px #ccffcc;
+    padding: 1em 0 0 1em;
+    background-color: #eeffee;
+}
+
 

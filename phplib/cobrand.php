@@ -308,6 +308,11 @@ function cobrand_admin_title() {
     return OPTION_CONTACT_NAME . " admin";
 }
 
+function cobrand_admin_style() {
+    global $site_name;
+    if ($site_name == 'islington') return 'pet-admin-islington.css';
+}
+
 function cobrand_admin_rejection_snippets() {
     global $site_group;
     $snippets = array(

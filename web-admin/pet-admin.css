@@ -54,3 +54,31 @@ div#errors > p {
 div.olControlAttribution {
     bottom: 0.5em;
 }
+
+.v {
+    background-color: #cccccc;
+    color: #000000;
+}
+
+.l {
+    background-color: #ffcccc;
+    color: #000000;
+}
+
+.v.l {
+    background-color: #ff9999;
+}
+
+i,em {
+    color: #666666;
+    background-color: #cccccc;
+}
+
+hr {
+    width: 600px;
+    background-color: #cccccc;
+    border: 0px;
+    height: 1px;
+    color: #000000;
+}
+

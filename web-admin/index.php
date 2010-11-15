@@ -40,14 +40,16 @@ if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
 
 // Header at start of page
 function admin_header($title) {
+    $style = 'pet-admin-default-look.css';
+    if ($s = cobrand_admin_style()) $style = $s;
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
 <title><?=$title?></title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" type="text/css" href="pet-admin-default-look.css">
 <link rel="stylesheet" type="text/css" href="pet-admin.css">
+<link rel="stylesheet" type="text/css" href="<?=$style?>">
 <script src="/jslib/openlayers/OpenLayers.js"></script>
 </head>
 <body id="admin">
