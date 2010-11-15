@@ -14,7 +14,7 @@ a:link {
     text-decoration: none;
 }
 a:visited {
-    color: #75D48F;
+    color: #45A45F;
     font-weight: bold;
     text-decoration: none;
 }
@@ -53,9 +53,9 @@ h2 {
 }
 
 #admin_nav {
-    border: solid 1px #ccffcc;
+    border: solid 1px #08700f;
     padding: 1em 0 0 1em;
-    background-color: #eeffee;
+    background-color: #c7de11;
 }
 
 
