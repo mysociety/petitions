@@ -1,15 +1,18 @@
 .mysoc-content{
-	padding: 2px 12px 24px 12px;
+    padding: 2px 12px 24px 12px;
 }
 
 p {
-	font-size: 100%;
+    font-size: 100%;
 }
 
 h3 {
-	font-size: 1.2em !important; /* important to override Islington !important */
+    font-size: 1.2em !important; /* !important to override Islington !important */
     border-bottom: solid 1px #cccccc;
-    margin-bottom: 20px;
+    margin: 0.333em 0 20px !important /* Needed to override */;
+}
+div#page-column-two div * h3 {
+    font-size: 1.2em !important; /* !important to override Islington !important */
 }
 
 div#petition_actions {
@@ -17,9 +20,9 @@ div#petition_actions {
 }
 
 #petition_actions ul, #petition_actions ul li {
-	list-style-type: none;
-	list-style-position: inside;
-	font-size: 1.2em;
+    list-style-type: none;
+    list-style-position: inside;
+    font-size: 1.2em;
 }
 
 div#most_recent {
@@ -44,10 +47,6 @@ p.petition_view_tabs {
     background-color: #15742F;
 }
 
-h3 {
-  margin: 0.333em 0 ;
-}
-
 div#petition_actions {
     margin-bottom: 1em;
 }
@@ -58,7 +57,7 @@ p.petition_view_tabs {
 
 
 #action_create, #action_view {
-	margin-left: 0px !important; /* override specific Islington setting */
+    margin-left: 0px !important; /* override specific Islington setting */
 }
 #action_create a {
     background-image: url('petition_button_create.png');

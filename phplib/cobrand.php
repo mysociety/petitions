@@ -8,6 +8,13 @@
  * 
  */
 
+function cobrand_page_title($title) {
+    global $site_name;
+    if ($site_name != 'islington')
+        return $title;
+    return str_replace('petition', 'Petition', $title);
+}
+
 # The help sentence printed under the main content of a petition's input box.
 function cobrand_creation_sentence_help() {
     global $site_group, $site_name;

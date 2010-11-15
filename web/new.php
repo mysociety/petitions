@@ -16,7 +16,7 @@ require_once '../phplib/cobrand.php';
 require_once '../commonlib/phplib/datetime.php';
 require_once '../commonlib/phplib/mapit.php';
 
-$page_title = 'Create a new petition';
+$page_title = 'Create a petition';
 ob_start();
 
 if (cobrand_creation_category_first())

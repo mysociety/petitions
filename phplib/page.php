@@ -62,6 +62,8 @@ function page_header($title, $params = array()) {
         }
     }
 
+    $title = cobrand_page_title($title);
+
     // Display header
     global $site_name;
     if (OPTION_CREATION_DISABLED && file_exists('../templates/' . $site_name . '/head-nocreation.html')) {
