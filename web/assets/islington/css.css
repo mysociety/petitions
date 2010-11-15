@@ -1,5 +1,9 @@
-.mysoc-content{
+.mysoc-content {
     padding: 2px 12px 24px 12px;
+}
+
+td, th {
+    padding: 4px;
 }
 
 p {
