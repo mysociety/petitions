@@ -21,7 +21,7 @@ use mySociety::DBHandle qw(dbh select_all);
 use mySociety::Memcached;
 mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
 use mySociety::Random qw(random_bytes);
-use Cobrand;
+use Petitions::Cobrand;
 
 my $secret;
 
@@ -380,7 +380,7 @@ sub detail ($) {
     $detail =~ s/\r//g;
     $detail =~ s/\n\n+/<\/p> <p>/g;
     if ($detail) {
-        my $head = Cobrand::main_heading('More details from petition creator');
+        my $head = Petitions::Cobrand::main_heading('More details from petition creator');
         $detail = <<EOF;
 <div id="more_detail"><a name="detail"></a>
 $head

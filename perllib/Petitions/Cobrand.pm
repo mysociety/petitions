@@ -1,13 +1,13 @@
 #!/usr/bin/perl
 #
-# Cobrand.pm:
+# Petitions/Cobrand.pm:
 # Petition cobrand utilities.
 #
 # Copyright (c) 2010 UK Citizens Online Democracy. All rights reserved.
 # Email: matthew@mysociety.org; WWW: http://www.mysociety.org/
 #
 
-package Cobrand;
+package Petitions::Cobrand;
 
 use strict;
 use Petitions::Page;

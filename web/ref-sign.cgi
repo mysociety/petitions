@@ -141,7 +141,7 @@ sub signup_page ($$) {
                             postcode => $qp_postcode,
                             overseas => $qp_overseas
                         })) {
-                my $heading = Cobrand::signing_check_heading();
+                my $heading = Petitions::Cobrand::signing_check_heading();
                 $html .=
                     $q->h2({-class => 'page_title_border'}, $heading)
                     . ($heading eq 'Now check your email!' ? '' : $q->p($q->strong('Now check your email!'))),
