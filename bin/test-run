@@ -559,7 +559,7 @@ sub do_rejection_test {
         organisation => "Crazy Pressure Group",
         address => "Removal From Office Rd.",
         postcode => "SW1A 2AB",
-        telephone => "09876 5432",
+        telephone => "01876 543210",
         email => email_n(44),
         email2 => email_n(44)
     });
@@ -672,7 +672,7 @@ sub do_timeout_test {
         organisation => "Stiff Little Fingers",
         address => "Uncle John's house",
         postcode => "WC2H 7LA",
-        telephone => "02143 6587",
+        telephone => "020 43658790",
         email => email_n(55),
         email2 => email_n(55)
     });
@@ -786,7 +786,7 @@ sub do_resubmit_test {
                 organisation => "Optimists Etc.",
                 address => "Eternity Lane",
                 postcode => "EH1 2NG",
-                telephone => "00000 000",
+                telephone => "01234 567890",
                 email => email_n(504),
                 email2 => email_n(504)
                 }, button => 'tosteppreview') or die "Failed to submit step 2";
