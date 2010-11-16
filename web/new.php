@@ -588,7 +588,15 @@ function step_you_error_check($data) {
         $errors['email2'] = 'Please make sure your email addresses match';
     if ($data['postcode'] && !validate_postcode($data['postcode']))
         $errors['postcode'] = _('Please enter a valid postcode');
-    if (!preg_match('#\d#', $data['telephone']))
+
+    $tel = preg_replace('#[^0-9]#', '', $data['telephone']);
+    $tel = preg_replace('#^44#', '0', $tel);
+    $tel = str_replace('+44', '0', $tel);
+    if (!preg_match('#[1-9]#', $data['telephone']))
+        $errors['telephone'] = 'Please enter a telephone number';
+    elseif (strlen($data['telephone']) < 10)
+        $errors['telephone'] = 'That seems a bit short - please specify your full telephone number';
+    elseif (!preg_match('#01[2-9][^1]\d{6,7}|01[2-69]1\d{7}|011[3-8]\d{7}|02[03489]\d{8}|07[04-9]\d{8}|00#', $tel))
         $errors['telephone'] = 'Please enter a valid telephone number';
 
     if (!$data['postcode'] && !$data['overseas']) {
