@@ -231,7 +231,6 @@ body {
 #masthead,
 #home-nav,
 #find-it,
-#postcode,
 #show-me,
 #news,
 #whats-on,
@@ -269,7 +268,6 @@ body {
 
 /* left floating panels */
 #find-it,
-#postcode,
 #show-me,
 #news,
 #whats-on,
@@ -301,7 +299,6 @@ body {
 /* Purple background */
 #site-options span.customise a:hover,
 #masthead-banner,
-#postcode,
 #news-content,
 #whats-on-details,
 .title,
@@ -822,16 +819,6 @@ body {
 #find-it .google-map {
 	width: 616px;
 	height: 458px;
-}
-
-#postcode {
-	width: 204px;
-	height: 246px;
-}
-
-#postcode h2 {
-	padding-right: 10px;
-	color: #fff;
 }
 
 #find-it input.text-input {
