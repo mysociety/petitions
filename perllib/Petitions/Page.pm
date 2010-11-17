@@ -121,6 +121,7 @@ sub header ($$%) {
         return "";
     }
     my $ent_url = ent($q->url());
+    (my $ent_url_no_http = $ent_url) =~ s{http://}{};
     my $ent_title = ent($title);
     my $creator = $params{creator} || '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
     my $description = $params{description} || 'Petitions to the Prime Minister, 10 Downing Street';
@@ -143,6 +144,7 @@ sub header ($$%) {
     $out =~ s/PARAM_EXTRA/$extra/;
     $out =~ s/PARAM_SUBJECTS/$subjects/;
     $out =~ s/PARAM_DC_IDENTIFIER/$ent_url/;
+    $out =~ s/PARAM_DOMAIN_PATH/$ent_url_no_http/;
     $out =~ s/PARAM_TITLE/$ent_title/g;
     $out =~ s/PARAM_H1/$ent_title/g;
     $out =~ s/PARAM_DEV_WARNING/$devwarning/;

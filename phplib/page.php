@@ -91,6 +91,7 @@ function page_header($title, $params = array()) {
     $contents = str_replace('PARAM_DESCRIPTION', $desc, $contents);
     $contents = str_replace('PARAM_EXTRA', $extra, $contents);
     $contents = str_replace("PARAM_DC_IDENTIFIER", 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], $contents);
+    $contents = str_replace("PARAM_DOMAIN_PATH", $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'], $contents);
     $contents = str_replace("PARAM_TITLE", $title, $contents);
     $contents = str_replace("PARAM_H1", isset($params['h1']) ? $params['h1'] : $title, $contents);
     $contents = str_replace("PARAM_DEV_WARNING", $devwarning, $contents);
