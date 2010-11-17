@@ -1,0 +1,21 @@
+Subject: Your petition to <?=$values['petitioned']?> has been accepted
+
+Your petition has been accepted, and is now available on the website
+for people to sign at the following address:
+
+<?=$values['url']?>
+
+Your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to
+<?=$values['content']?>
+
+<?=$values['detail']?>
+
+
+Thanks for submitting your petition.
+
+If you have any queries regarding this email, the petition or the Council’s
+Petition Scheme in general please contact the Petition Administrators on:
+Email: petition@westminster.gov.uk or 
+Telephone: 020 7641 3160/2341

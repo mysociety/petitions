@@ -1,0 +1,24 @@
+Subject: Your petition has been forwarded
+
+Hello,
+
+This email is just to let you know that your petition has been forwarded by
+<?=$values['from_body']?> to the team at <?=$values['petitioned']?>, for the
+following reason:
+
+<?=$values['reason']?>
+
+Your petition now reads:
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+Thanks for submitting your petition.
+
+If you have any queries regarding this email, the petition or the Council’s
+Petition Scheme in general please contact the Petition Administrators on:
+Email: petition@westminster.gov.uk or 
+Telephone: 020 7641 3160/2341
+

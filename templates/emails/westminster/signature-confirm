@@ -1,0 +1,20 @@
+Subject: Signing up to ask <?=$values['petitioned']?> to <?=$values['content_truncated']?>
+
+<?=$values['user_name']?>,
+
+Please click on the link below to confirm your signature on the
+petition at the bottom of this email.
+
+<?=$values['url']?>
+
+The petition was created by <?=$values['creator_name']?> and reads:
+
+'<?=$values['sentence']?>'
+
+If you have any queries regarding this email, the petition or the Council’s
+Petition Scheme in general please contact the Petition Administrators on:
+Email: petition@westminster.gov.uk or 
+Telephone: 020 7641 3160/2341
+
+[ Please do not reply to this email, it will not confirm your signature.
+  This email has been automatically sent by the petitions system. ]

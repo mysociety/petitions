@@ -1,0 +1,25 @@
+Subject: Your petition has been rejected again
+
+Hi,
+
+We are sorry to inform you that your petition has been rejected again.
+
+Your petition was classed as being in the following categories:
+<?=$values['rejection_categories']?>
+<?=$values['rejection_reason']?>
+
+Your petition will now appear in the list of rejected petitions.
+
+Your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+
+If you have any queries regarding this email, the petition or the Council’s
+Petition Scheme in general please contact the Petition Administrators on:
+Email: petition@westminster.gov.uk or 
+Telephone: 020 7641 3160/2341
+

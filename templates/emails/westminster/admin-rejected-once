@@ -1,0 +1,30 @@
+Subject: Your petition has been rejected
+
+Hi,
+
+We are sorry to inform you that your petition has been rejected.
+
+Your petition was classed as being in the following categories:
+<?=$values['rejection_categories']?>
+<?=$values['rejection_reason']?>
+
+If you wish to edit and resubmit your petition, please follow
+the following link:
+<?=$values['url']?>
+
+You have five working days in which to do this, after which your
+petition will appear in the list of rejected petitions.
+
+Your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+
+If you have any queries regarding this email, the petition or the Council’s
+Petition Scheme in general please contact the Petition Administrators on:
+Email: petition@westminster.gov.uk or 
+Telephone: 020 7641 3160/2341
+

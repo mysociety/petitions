@@ -1,0 +1,24 @@
+Subject: Please Action - New Petition Submitted for Review
+
+Petition reference: <?=$values['ref']?>
+
+Submitted: <?=$values['creationtime']?>
+
+<?=$values['creator_name']?>
+
+<?=$values['creator_email']?>
+
+<?=$values['address']?>
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+The petition's details read:
+<?=$values['detail']?>
+
+<?=$values['comments_blurb']?>
+
+<?=$values['url']?>
+
+<?=$values['signature']?>
+

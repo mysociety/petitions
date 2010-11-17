@@ -1,0 +1,24 @@
+Subject: Confirm your new petition to <?=$values['petitioned']?> - '<?=$values['content']?>'
+
+Please click on the link below to confirm that you have
+created the petition shown at the bottom of this email, and
+that the petition is submitted in your name.
+
+<?=$values['url']?>
+
+Your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to
+<?=$values['content']?>
+
+<?=$values['detail']?>
+
+
+Thank you for submitting your petition.
+
+If you have any queries regarding this email, the petition or the Council’s
+Petition Scheme in general please contact the Petition Administrators on:
+Email: petition@westminster.gov.uk or 
+Telephone: 020 7641 3160/2341
+
+[ This email has been automatically sent by the petitions system ]
