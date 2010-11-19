@@ -94,7 +94,7 @@ function _find_timed_out_rejected_petitions($timeout, $body_ref='') {
     verbose("finding timed out rejected petitions");
     /* Do a query before locking the table. */
     if (!db_getOne("
-                select id from petition
+                select petition.id from petition
                     LEFT JOIN body ON body_id=body.id
                 $query for update of petition")) {
         verbose("... no timed out rejected petitions");
