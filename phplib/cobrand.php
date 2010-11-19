@@ -328,7 +328,7 @@ function cobrand_admin_is_site_user() {
 
 function cobrand_admin_title() {
     global $site_group;
-    if ($site_group == 'surreycc') {
+    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
         if ($site = cobrand_admin_is_site_user())
             return ucfirst($site) . ' admin';
     }
@@ -372,7 +372,7 @@ function cobrand_admin_rejection_categories() {
 
 function cobrand_admin_site_restriction() {
     global $site_group;
-    if ($site_group != 'surreycc') return '';
+    if ($site_group != 'surreycc' && $site_group != 'nottinghamshire') return '';
 
     if ($site = cobrand_admin_is_site_user())
         return " AND body.ref='$site' ";
