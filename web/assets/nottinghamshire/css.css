@@ -1,3 +1,13 @@
+#mysociety {
+    float: right;
+    width: 75%;
+}
+
+h3 {
+    margin-top: 1em;
+    margin-left: 0;
+}
+
 div#petition_actions {
     border: none;
 }
