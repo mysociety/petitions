@@ -18,6 +18,7 @@ chdir(dirname($_SERVER['SCRIPT_FILENAME']));
 require_once "../phplib/petcli.php";
 require_once '../phplib/fns.php';
 require_once '../phplib/petition.php';
+require_once '../phplib/cobrand.php';
 require_once '../commonlib/phplib/db.php';
 require_once '../commonlib/phplib/utility.php';
 
@@ -83,18 +84,19 @@ function find_newly_finished_petitions() {
     verbose("finished newly finished petitions");
 }
 
-function find_timed_out_rejected_petitions() {
+function _find_timed_out_rejected_petitions($timeout, $body_ref='') {
     global $pet_timestamp, $memcache;
 
-    // 29 days is 4 weeks, plus a day to allow a margin for the creator
+    $query = " where '$pet_timestamp' > laststatuschange + interval '$timeout' and status = 'rejectedonce' ";
+    if ($body_ref)
+        $query .= " and body.ref = '$body_ref' ";
 
     verbose("finding timed out rejected petitions");
     /* Do a query before locking the table. */
     if (!db_getOne("
                 select id from petition
-                where '$pet_timestamp' > laststatuschange + interval '29 days'
-                    and status = 'rejectedonce'
-                for update")) {
+                    LEFT JOIN body ON body_id=body.id
+                $query for update of petition")) {
         verbose("... no timed out rejected petitions");
         return;
     }
@@ -102,9 +104,7 @@ function find_timed_out_rejected_petitions() {
     $q = db_query("
                 select petition.*, body.ref AS body_ref from petition
                     LEFT JOIN body ON body_id=body.id
-                where '$pet_timestamp' > laststatuschange + interval '29 days'
-                    and status = 'rejectedonce'
-                for update of petition");
+                $query for update of petition");
     while ($petition = db_fetch_array($q)) {
         verbose("petition #${petition['id']} (${petition['ref']}) has timed out from rejectedonce to rejected");
         db_query("update petition set status='rejected',  
@@ -118,6 +118,19 @@ function find_timed_out_rejected_petitions() {
     }
     db_commit();
     verbose("finished timed out rejected petitions");
+}
+
+function find_timed_out_rejected_petitions() {
+    $timeout = cobrand_rejected_petition_timeout();
+    if (is_array($timeout)) {
+        _find_timed_out_rejected_petitions($timeout['other']);
+        foreach ($timeout as $body_ref => $t) {
+            if ($body_ref == 'other') continue;
+            _find_timed_out_rejected_petitions($t, $body_ref);
+        }
+    } else {
+        _find_timed_out_rejected_petitions($timeout);
+    }
 }
 
 // Main code

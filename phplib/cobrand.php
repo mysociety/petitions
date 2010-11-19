@@ -803,3 +803,13 @@ function cobrand_allowed_responses() {
         return 2;
     return 8;
 }
+
+# Returns number of days you have to resubmit a rejected petition,
+# if different from normal. Runs from cron.
+function cobrand_rejected_petition_timeout() {
+    global $site_group; # No $site_name available
+    if ($site_group == 'westminster') return '8 days';
+    if ($site_group == 'surreycc') return array('elmbridge' => '15 days', 'other' => '29 days');
+    // 29 days is 4 weeks, plus a day to allow a margin for the creator
+    return '29 days';
+}
