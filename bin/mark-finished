@@ -117,7 +117,7 @@ function _find_timed_out_rejected_petitions($timeout, $body_ref='') {
             where id=?", $petition['id']);
         $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition['id'], time());
         stats_change($petition['body_ref'], $petition['category'], 'cached_petitions_rejected', '+1');
-        pet_send_message(intval($petition['id']), MSG_ADMIN, MSG_CREATOR, 'rejected-timeout', 'admin-rejected-timeout');
+        pet_send_message($petition['id'], MSG_ADMIN, MSG_CREATOR, 'rejected-timeout', 'admin-rejected-timeout');
     }
     db_commit();
     verbose("finished timed out rejected petitions");

@@ -23,7 +23,7 @@ define('MSG_ALL', MSG_ADMIN | MSG_CREATOR | MSG_SIGNERS);
  * MSG_ADMIN or MSG_CREATOR; CIRCUMSTANCE indicates the reason for its
  * sending. */
 function pet_send_message($petition_id, $sender, $recips, $circumstance, $template, $vars = null) {
-    if(!is_int($petition_id))
+    if(!ctype_digit($petition_id))
         err("ID must be integer in pet_send_message");
 
     if ($sender != MSG_ADMIN && $sender != MSG_CREATOR)
