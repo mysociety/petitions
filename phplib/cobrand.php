@@ -52,7 +52,7 @@ function cobrand_creation_example_ref() {
 }
 function cobrand_creation_category_first() {
     global $site_group;
-    if ($site_group == 'surreycc') {
+    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
         return true;
     }
     return false;
@@ -92,6 +92,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'westminster') return array('Westminster', 2504);
     if ($site_name == 'wellingborough') return array('Wellingborough', 2395);
     if ($site_name == 'woking') return array('Woking', 2449);
+    if ($site_name == 'nottinghamshire') return array('Nottinghamshire', 2236);
     return '';
 }
 
@@ -248,7 +249,7 @@ petition in this category</a>.";
 
 function cobrand_categories() {
     global $site_name, $site_group;
-    if ($site_group == 'surreycc') {
+    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
         $cats = array(
             1 => 'Building Regulations',
             2 => 'Community safety',
