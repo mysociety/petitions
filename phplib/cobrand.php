@@ -271,6 +271,13 @@ function cobrand_categories() {
             $cats[17] = 'Parking';
             asort($cats);
         }
+        if ($site_name == 'runnymede') {
+            $cats[18] = 'Recycling service';
+            $cats[19] = 'Refuse service';
+            unset($cats[15]);
+            unset($cats[16]);
+            asort($cats);
+        }
         $cats[99] = 'Other'; # Both
         return $cats;
     }
