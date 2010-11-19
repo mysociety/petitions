@@ -311,6 +311,14 @@ function cobrand_site_group() {
     return $site_group;
 }
 
+# Runs from cron, so examine site_group or petition body.
+function cobrand_admin_email_finished($body) {
+    global $site_group;
+    if ($site_group == 'hounslow') return true;
+    if ($body == 'elmbridge') return true;
+    return false;
+}
+
 function cobrand_admin_is_site_user() {
     $sites = explode(',', OPTION_SITE_NAME);
     if (in_array(http_auth_user(), $sites))

@@ -89,6 +89,7 @@ function send_pending_messages() {
         $petition = new Petition(intval($msg['petition_id']));
         $data = $petition->data;
         $data['url'] = OPTION_ADMIN_URL . '?page=pet&petition=' . $data['ref'];
+        $data['petition_url'] = $petition->url_main();
         $data['comments_blurb'] = '';
         if ($data['comments'])
                 $data['comments_blurb'] = "The creator added the following comments for you:\n" . $data['comments'] . "\n\n-----\n\n";

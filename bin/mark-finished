@@ -79,6 +79,9 @@ function find_newly_finished_petitions() {
         $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition['id'], time());
         stats_change($petition['body_ref'], $petition['category'], 'cached_petitions_finished', '+1');
         stats_change($petition['body_ref'], $petition['category'], 'cached_petitions_live', '-1');
+        if (cobrand_admin_email_finished($petition['body_ref'])) {
+            pet_send_message($petition['id'], MSG_ADMIN, MSG_ADMIN, 'finished', 'admin-finished-petition');
+        }
     }
     db_commit();
     verbose("finished newly finished petitions");

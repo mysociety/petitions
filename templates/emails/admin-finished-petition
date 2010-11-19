@@ -1,0 +1,20 @@
+Subject: Petition '<?=$values['ref']?>' finished
+
+Hi,
+
+The following petition has just closed to new signatures.
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+Created by: <?=$values['creator_name']?>
+
+The petition's details read:
+<?=$values['detail']?>
+
+Public URL: <?=$values['petition_url']?>
+
+Admin URL: <?=$values['url']?>
+
+<?=$values['signature']?>
+
