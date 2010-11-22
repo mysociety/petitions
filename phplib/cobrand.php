@@ -322,8 +322,12 @@ function cobrand_admin_email_finished($body) {
 
 function cobrand_admin_is_site_user() {
     $sites = explode(',', OPTION_SITE_NAME);
-    if (in_array(http_auth_user(), $sites))
-        return http_auth_user();
+    $user = http_auth_user();
+    if (preg_match('#@([^.]*\.#', $user, $m))
+        $user = $m[1];
+    if (in_array($user, $sites))
+        return $user;
+    if 
     return false;
 }
 
