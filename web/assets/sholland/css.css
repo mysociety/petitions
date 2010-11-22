@@ -1,0 +1,103 @@
+#ms-content {
+	margin: 0;
+	padding: 10px 0 0 0;
+}
+#ms-content p, #ms-content li {
+	font-size: 80%; /* sholland website divs generally 80% */
+}
+#ms-content h3 {
+	font-size: 120%;
+     margin: 0.333em 0 ;
+}
+
+
+div#petition_actions {
+    border: none;
+    margin-bottom: 1em;
+}
+
+#petition_actions ul, #petition_actions ul li {
+	display: block;
+	list-style-type: none;
+	list-style-position: inside;
+}
+
+ul li#action_view,
+ul li#action_create {
+	line-height: 1em;
+	font-size: 0.8em;
+	margin: 0;
+	padding: 0;
+	background: none;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+/*
+form#signForm label {
+    width: 8em;
+}
+*/
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #85C440;
+    margin-bottom:16px;
+    padding-bottom: 8px;
+    line-height: 1em;
+}
+.petition_view_tabs span {
+    background-color: #85C440;
+}
+
+/* Front page icons */
+
+#action_create a {
+    background-image: url('petition_button_create.png');
+}
+#action_view a {
+    background-image: url('petition_button_view.png');
+}
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    margin-top: 0px;
+    display: block;
+    text-align: center;
+    padding-top: 80px;
+    background-position: center top;
+    background-repeat: no-repeat;
+    font-size: 80%;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+}
+
+
+#action_create a img,  #action_view a img {
+    display: none;
+}
+
+/* Forms override */
+
+#content label, #content span.label {
+    display: inline;
+    float: none;
+    margin-left: 0;
+}
+/* Yuck, re-de-override */
+#content #new_you label, #content #new_you span.label {
+    display: block;
+    float: left;
+}
+
+#content select, #content textarea {
+    float: none;
+    margin-left: 0;
+    width: auto;
+}
