@@ -95,8 +95,14 @@ a:hover {
     float: none;
     margin-left: 0;
 }
+/* Yuck, re-de-override */
+#content #new_you label, #content #new_you span.label {
+    display: block;
+    float: left;
+}
 
 #content select, #content textarea {
     float: none;
     margin-left: 0;
+    width: auto;
 }
