@@ -38,11 +38,9 @@ div#front_how {
     width: 45%;
 }
 
-/*
 form#signForm label {
     width: 8em;
 }
-*/
 
 div#docContent p.petition_view_tabs {
     border-bottom: solid 2px #7A003B;
@@ -99,6 +97,10 @@ a:hover {
 #content #new_you label, #content #new_you span.label {
     display: block;
     float: left;
+}
+#content #new_you label.long, #content #new_you label.radio {
+    display: inline;
+    float: none;
 }
 
 #content select, #content textarea {
