@@ -1119,7 +1119,8 @@ EOF;
             }
 ?>
 <p style="font-size: 150%">You are responding to the petition '<?=$p->ref() ?>'.
-This response will be sent to <strong>all signers</strong>, not just the creator.
+This response will be sent to <strong>all signers</strong>, not just the creator,
+and <strong>will be displayed on the website</strong>.
 To email the creator, you can directly email <a href="mailto:<?=privacy($p->creator_email())?>"><?=privacy($p->creator_email())?></a>.</p>
 
 <?          if (cobrand_admin_allow_html_response()) { ?>
