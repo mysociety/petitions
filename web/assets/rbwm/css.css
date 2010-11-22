@@ -1,8 +1,3 @@
-/* RBWM */
-.xxxrbwm-content{
-	width: 75%; /* extended from RBWM default because there's no right-column being used here */
-}
-
 p {
 	font-size: 100%;
 }
