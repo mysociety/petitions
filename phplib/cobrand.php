@@ -327,7 +327,6 @@ function cobrand_admin_is_site_user() {
         $user = $m[1];
     if (in_array($user, $sites))
         return $user;
-    if 
     return false;
 }
 
