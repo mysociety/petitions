@@ -273,8 +273,8 @@ function cobrand_categories() {
             asort($cats);
         }
         if ($site_name == 'runnymede') {
-            $cats[18] = 'Recycling service';
-            $cats[19] = 'Refuse service';
+            $cats[18] = 'Recycling Service';
+            $cats[19] = 'Refuse Service';
             unset($cats[15]);
             unset($cats[16]);
             asort($cats);
@@ -776,6 +776,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.woking.gov.uk/council/about/petitions/termsandconditions';
     if ($site_name == 'hounslow')
         return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
+    if ($site_name == 'runnymede')
+        return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/';
     return null;
 }
 
