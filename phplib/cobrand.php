@@ -86,6 +86,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
     if ($site_name == 'reigate-banstead') return array('Surrey', null);
     if ($site_name == 'runnymede') return array('Runnymede', 2451);
+    if ($site_name == 'rbwm') return array('the Royal Borough of Windsor and Maidenhead', 2622);
     if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
     if ($site_name == 'surreycc') return array('Surrey', null);
     if ($site_name == 'waverley') return array('Waverley', 2447);
