@@ -2,9 +2,7 @@
 	margin: 0;
 	padding: 10px 0 0 0;
 }
-#ms-content p, #ms-content li {
-	font-size: 80%; /* sholland website divs generally 80% */
-}
+
 #ms-content li {
 	list-style-type: disc;
 	list-style-position: outside;
