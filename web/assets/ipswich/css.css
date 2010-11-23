@@ -43,13 +43,13 @@ form#signForm label {
 }
 
 div#docContent p.petition_view_tabs {
-    border-bottom: solid 2px #7A003B;
+    border-bottom: solid 2px #4A217E;
     margin-bottom:16px;
     padding-bottom: 8px;
     line-height: 1em;
 }
 .petition_view_tabs span {
-    background-color: #7A003B;
+    background-color: #4A217E;
 }
 
 h3 {
@@ -69,7 +69,7 @@ h3 {
     margin-top: 0px;
     display: block;
     text-align: center;
-    padding-top: 74px;
+    padding-top: 80px;
     background-position: center top;
     background-repeat: no-repeat;
 }
