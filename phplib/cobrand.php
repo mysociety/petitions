@@ -19,7 +19,7 @@ function cobrand_page_title($title) {
 function cobrand_creation_sentence_help() {
     global $site_group, $site_name;
     $out = '(Please write a sentence';
-    if ($site_group != 'surreycc') {
+    if ($site_group != 'surreycc' && $site_group != 'westminster') {
         $out .= ', preferably starting with a verb,';
     }
     $out .= ' that describes what action you would like ';
@@ -38,10 +38,19 @@ function cobrand_creation_address_help() {
     }
 }
 
+function cobrand_creation_email_request() {
+    global $site_name;
+    if ($site_name == 'westminster')
+        return 'We need your contact details so we can get in touch with you.
+        Your details other than your name will not be published.';
+}
+
 function cobrand_creation_deadline_limit() {
     global $site_name;
     if ($site_name == 'tandridge' || $site_name == 'surreycc')
         return array('years' => 0, 'months' => 6);
+    if ($site_name == 'westminster')
+        return array('years' => 0, 'months' => 3);
     return array('years' => 1, 'months' => 0);
 }
 

@@ -450,10 +450,14 @@ the Armed Forces without a postcode, please select from this list:</label>
             else if ($name == 'telephone')
                 $size = 15;
             $after = '';
-            if ($name == 'email2')
+            if ($name == 'email2') {
                 $after = '<br />(We need your email so we can get in touch with you e.g. when your petition finishes)';
-            elseif ($name == 'name')
+                if ($over = cobrand_creation_email_request()) {
+                    $after = "<br />($over)";
+                }
+            } elseif ($name == 'name') {
                 $after = '(please use a full name e.g. Mr John Smith)';
+            }
             textfield($name, $data[$name], $size, $errors, $after);
         }
         if (array_key_exists($name, $errors))
