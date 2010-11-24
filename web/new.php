@@ -719,7 +719,8 @@ do not wish to be public, please include them here:</label></p>
 
 <p align="right">
 <?
-    submit_button('tocreate', 'Create');
+    if (cobrand_creation_top_submit_button())
+        submit_button('tocreate', 'Create');
 ?>
 </p>
 

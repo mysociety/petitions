@@ -121,6 +121,12 @@ function cobrand_creation_check_heading() {
     return 'Now check your email';
 }
 
+function cobrand_creation_top_submit_button() {
+    global $site_name;
+    if ($site_name == 'westminster') return false;
+    return true;
+}
+
 function cobrand_error_div_start() {
     global $site_name;
     if ($site_name == 'surreycc') {
@@ -484,12 +490,15 @@ function cobrand_petition_guidelines() {
 <p><a href="/terms">Full terms and conditions</a></p>
 
 <?
-    } elseif ($site_group == 'surreycc') {
+    } elseif ($site_group == 'surreycc' || $site_group == 'westminster') {
         $foi_link = 'http://www.ico.gov.uk/';
         $foi_text = $foi_link;
         if ($site_name == 'reigate-banstead') {
             $foi_link = 'http://www.reigate-banstead.gov.uk/council_and_democracy/about_the_council/access_to_information/freedom_of_information_act_2000/';
             $foi_text = 'Freedom Of Information Act 2000';
+        } elseif ($site_group == 'westminster') {
+            $foi_link = 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/dataprotectionandfreedomofinformation/foi/';
+            $foi_text = 'our Freedom of Information section';
         }
 ?>
 
@@ -764,6 +773,12 @@ function cobrand_rss_explanation_link() {
     return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
 }
 
+function cobrand_terms_text() {
+    global $site_name;
+    if ($site_name == 'westminster') return 'Petitions Scheme';
+    return 'terms and conditions';
+}
+
 # If a body hosts their own T&Cs page, this function returns its location
 function cobrand_terms_elsewhere() {
     global $site_name;
@@ -781,6 +796,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
     if ($site_name == 'runnymede')
         return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/';
+    if ($site_name == 'westminster')
+        return 'http://westminster.gov.uk/services/councilgovernmentanddemocracy/petitions/';
     return null;
 }
 

@@ -194,7 +194,7 @@ by the time it closes, you will be sent a response from
 </p>
 
 <p>All petitions that are submitted to this website will be accepted, as long as
-they are in accordance with our <a href="/terms">terms and conditions</a>.
+they are in accordance with our <a href="/terms"><?=cobrand_terms_text()?></a>.
 The aim is to enable as many people as possible to make their views known.
 </p>
 

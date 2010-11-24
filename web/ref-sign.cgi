@@ -222,10 +222,14 @@ sub confirm_page ($$$$) {
                     . $q->p({ -class => 'noprint loudmessage' },
                         "Thank you for creating your petition.");
             if (mySociety::Config::get('SITE_APPROVAL')) {
+                my $approval = 'approval';
+                if (my $a = Petitions::Cobrand::approval_word()) {
+                    $approval = $a;
+                }
                 $html .=
                     $q->p({ -class => 'noprint loudmessage' }, "
                         It has been entered on our system and will now go to
-                        $message for approval.");
+                        $message for $approval.");
             } else {
                 $html .=
                     $q->p({ -class => 'noprint loudmessage' }, "

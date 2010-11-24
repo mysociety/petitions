@@ -26,4 +26,9 @@ sub signing_check_heading() {
     return 'Now check your email!';
 }
 
+sub approval_word() {
+    my $site_name = Petitions::Page::site_name();
+    return 'acceptance' if $site_name eq 'westminster';
+}
+
 1;
