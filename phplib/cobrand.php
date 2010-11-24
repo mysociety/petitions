@@ -84,6 +84,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
     if ($site_name == 'hounslow') return array('Hounslow', 2483);
     if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
+    if ($site_name == 'melton') return array('Melton', 2374);
     if ($site_name == 'reigate-banstead') return array('Surrey', null);
     if ($site_name == 'runnymede') return array('Runnymede', 2451);
     if ($site_name == 'rbwm') return array('the Royal Borough of Windsor and Maidenhead', 2622);
