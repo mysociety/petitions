@@ -396,6 +396,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
             'postcode' =>       _('UK postcode'),
             'overseas' =>       cobrand_overseas_dropdown(),
     );
+        
     if (cobrand_creation_ask_for_address_type()) {
         $fields['address_type'] = true;
     }
@@ -407,6 +408,9 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
     }
 
     foreach ($fields as $name => $desc) {
+        if ($name == 'address' && ! cobrand_creation_ask_for_address() )
+          continue; # skip loop: missing address label as well as textarea input
+          
         if (is_string($desc))
             printf('<p><label for="%s">%s:</label> ', $name, htmlspecialchars($desc));
 
@@ -641,10 +645,12 @@ function step_you_error_check($data) {
 
     $vars = array(
         'name' => 'name',
-        'address' => 'postal address',
         'telephone' => 'phone number',
         'email' => 'email address',
     );
+    if (cobrand_creation_ask_for_address()) {
+      $vars['address'] = 'postal address';
+    }
     foreach ($vars as $var => $p_var) {
             if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
     }
@@ -684,11 +690,14 @@ longer be valid.
 <ul><li>Name: <strong><?=$data['name'] ?></strong></li>
 <li>Email: <strong><?=$data['email'] ?></strong></li>
 <li>Organisation: <strong><?=$data['organisation'] ?></strong></li>
-<li>Address: <strong><?=$data['address'] ?></strong></li>
+<? if (cobrand_creation_ask_for_address()){
+      echo '<li>Address: <strong>' . $data['address'] . '</strong></li>';
+    } 
+?>
 <? if ($data['postcode']) { ?>
-<li>Postcode: <strong><?=$data['postcode'] ?></strong></li>
+    <li>Postcode: <strong><?=$data['postcode'] ?></strong></li>
 <? } elseif ($data['overseas']) { ?>
-<li><strong><?=$data['overseas'] ?></strong></li>
+    <li><strong><?=$data['overseas'] ?></strong></li>
 <?
     }
     if (cobrand_creation_ask_for_address_type()) {
