@@ -86,16 +86,20 @@ function cobrand_creation_ask_for_address_type() { # by default: don't ask for a
 # any area in the site database.
 function cobrand_creation_within_area_only() {
     global $site_name;
+    if ($site_name == 'ashfield') return array('Ashfield', 2413);
     if ($site_name == 'barnet') return array('Barnet', 2489);
     if ($site_name == 'barrowbc') return array('Cumbria', 2220);
+    if ($site_name == 'bassetlaw') return array('Bassetlaw', 2410);
     if ($site_name == 'east-northamptonshire') return array('East Northamptonshire', 2393);
     if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
     if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
     if ($site_name == 'hounslow') return array('Hounslow', 2483);
     if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
+    if ($site_name == 'mansfield') return array('Mansfield', 2416);
     if ($site_name == 'melton') return array('Melton', 2374);
     if ($site_name == 'reigate-banstead') return array('Surrey', null);
     if ($site_name == 'runnymede') return array('Runnymede', 2451);
+    if ($site_name == 'rushcliffe') return array('Rushcliffe', 2411);
     if ($site_name == 'rbwm') return array('the Royal Borough of Windsor and Maidenhead', 2622);
     if ($site_name == 'sholland') return array('South Holland', 2381);
     if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
