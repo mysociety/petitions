@@ -148,6 +148,17 @@ function cobrand_creation_ask_for_address() {
   return true;
 }
 
+function cobrand_creation_comments_label(){
+  global $site_name;
+  if ($site_name == 'westminster'){
+    return "If you have any information about your petition you would like us
+     to know that you do not wish to be public, please include them here:"; # them [sic]
+  }
+  return "If you have any special requests concerning your
+  petition, or information about your petition you would like us 
+  to know that you do not wish to be public, please include them here:";
+}
+
 function cobrand_error_div_start() {
     global $site_name;
     if ($site_name == 'surreycc') {
@@ -494,6 +505,7 @@ function cobrand_admin_areas_of_interest() {
     $out[2242] = array( 'name' => 'Surrey County Council' );
     return $out;
 }
+
 
 # A bit of a yucky function, containing slightly varying guidelines
 # for displaying at last stage of petition creation process.

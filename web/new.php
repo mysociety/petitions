@@ -645,11 +645,12 @@ function step_you_error_check($data) {
 
     $vars = array(
         'name' => 'name',
+        'address' => 'postal address',
         'telephone' => 'phone number',
         'email' => 'email address',
     );
-    if (cobrand_creation_ask_for_address()) {
-      $vars['address'] = 'postal address';
+    if (! cobrand_creation_ask_for_address()) {
+      $data['address'] = ' '; # explicitly not null 
     }
     foreach ($vars as $var => $p_var) {
             if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
@@ -720,9 +721,9 @@ of this page in your name, and that you agree to the terms and conditions below.
     if (OPTION_SITE_APPROVAL) {
 ?>
 </p>
-<p><label for="comments">If you have any special requests concerning your
-petition, or information about your petition you would like us to know that you
-do not wish to be public, please include them here:</label></p>
+<p><label for="comments">
+  <? echo cobrand_creation_comments_label(); ?>
+  </label></p>
 <p>
 <?
         textarea('comments', $data['comments'], 40, 7, false, $errors);
