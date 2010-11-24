@@ -716,8 +716,8 @@ Deadline: ';
                         continue;
                     }
                     if (in_array($id, array_keys($areas))) {
-                        if (array_key_exists('parent', $areas[$id])) {
-                            $children[$areas[$id]['parent']][] = $area;
+                        if (array_key_exists('parent_area', $areas[$id])) {
+                            $children[$areas[$id]['parent_area']][] = $area;
                         } else {
                             $parents[$id] = $area;
                         }

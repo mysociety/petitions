@@ -407,25 +407,34 @@ function cobrand_admin_allow_html_response() {
     return false;
 }
 
+# Admin, so only site_group available
 function cobrand_admin_areas_of_interest() {
-    if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
+    $site_group = cobrand_site_group();
+
+    if ($site_group == 'sbdc' || $site_group == 'sbdc1') {
         return json_decode(file_get_contents('http://mapit.mysociety.org/areas/LBO,MTD,LGD,DIS,UTA,COI'), true);
     }
-    if (OPTION_SITE_NAME == 'lichfielddc') {
+    if ($site_group == 'lichfielddc') {
         return array(
-            2434 => array( 'name' => 'Lichfield District Council', 'parent' => 2240 ),
+            2434 => array( 'name' => 'Lichfield District Council', 'parent_area' => 2240 ),
             2240 => array( 'name' => 'Staffordshire County Council' ),
         );
     }
 
-    if (OPTION_SITE_NAME == 'hounslow')
+    if ($site_group == 'hounslow')
         return array( 2483 => array( 'name' => 'Hounslow Borough Council' ) );
 
-    if (cobrand_site_group() != 'surreycc') return null;
+    if ($site_group == 'islington') {
+        $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2507/children'), true);
+        $out[2507] = array( 'name' => 'Islington Borough Council' );
+        return $out;
+    }
+
+    if ($site_group != 'surreycc') return null;
 
     $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2242/covers?type=DIS'), true);
     foreach ($out as $k => $v) {
-        $out[$k]['parent'] = 2242;
+        $out[$k]['parent_area'] = 2242;
     }
     $out[2242] = array( 'name' => 'Surrey County Council' );
     return $out;
