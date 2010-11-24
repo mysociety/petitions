@@ -313,14 +313,18 @@ sub sign_box ($$) {
         $must = 'You must be a British citizen or resident to sign the petition. ';
     }
 
-    my $overseas = [ '-- Select --' ];
-    if (site_group() eq 'surreycc') {
+    my $overseas = [];
+    if (site_group() eq 'westminster') {
+        # No drop-down
+    } elsif (site_group() eq 'surreycc') {
         push @$overseas, (
+            '-- Select --',
             'Armed Forces',
             'Non UK address',
         );
     } else {
         push @$overseas, (
+            '-- Select --',
             'Expatriate',
             'Armed Forces',
             'Anguilla',
@@ -342,11 +346,14 @@ sub sign_box ($$) {
             'Turks and Caicos Islands',
         );
     }
-    my $expat = $q->p( '<label class="wide" for="overseas">Or, if you\'re an
+    my $expat = '';
+    if (@$overseas) {
+        $expat = $q->p( '<label class="wide" for="overseas">Or, if you\'re an
         expatriate, you\'re in an overseas territory, a Crown dependency or in
 the Armed Forces without a postcode, please select from this list:</label>', 
-        $q->popup_menu(-name=>'overseas', -id=>'overseas', -style=>'width:100%', -values=> $overseas)
-    );
+            $q->popup_menu(-name=>'overseas', -id=>'overseas', -style=>'width:100%', -values=> $overseas)
+        );
+    }
 
     my $postcode_label = 'UK postcode:';
     $postcode_label = 'Your postcode:' if mySociety::Config::get('SITE_NAME') ne 'number10';
