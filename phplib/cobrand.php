@@ -86,7 +86,7 @@ function cobrand_creation_ask_for_address_type() { # by default: don't ask for a
 # any area in the site database.
 function cobrand_creation_within_area_only() {
     global $site_name;
-    if ($site_name == 'ashfield') return array('Ashfield', 2413);
+    if ($site_name == 'ashfield-dc') return array('Ashfield', 2413);
     if ($site_name == 'barnet') return array('Barnet', 2489);
     if ($site_name == 'barrowbc') return array('Cumbria', 2220);
     if ($site_name == 'bassetlaw') return array('Bassetlaw', 2410);
@@ -261,6 +261,49 @@ petition in this category</a>.";
             <option value="tandridge">Tandridge District Council</option> 
             <option value="waverley">Waverley Borough Council</option> 
             <option value="woking">Woking Borough Council</option> 
+            </select> 
+            <input type="submit" name="toothercouncil" value="Go" class="button">
+            '; 
+        }
+    }
+    
+    if ($site_group == 'nottinghamshire') {
+        if ($site_name != 'nottinghamshire') {
+           # check for specific council+category exceptions?
+           $url = 'http://petitions.nottinghamshire.gov.uk/new?tostepmain=1&category=' . $category_id;
+           return "You are petitioning about something which isn't the
+responsibility of your district council, but instead of Nottinghamshire County Council.
+<a href='$url'>Go to Nottinghamshire County Council's petition website to create a
+petition in this category</a>."; 
+        }
+        if ($area) {
+            # $area is set if we're being called as a result of the form below
+            # currently handling all mySociety-hosted Notts district councils the same:
+            if (in_array($area, array('ashfield-dc', 'bassetlaw', 'mansfield', 'rushcliffe')))
+                return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            if ($area == 'broxtowe')
+                return 'http://www.broxtowe.gov.uk/'; # no petitions page found
+            if ($area == 'gedling')
+                return 'http://www.gedling.gov.uk/'; # no petitions page found
+            if ($area == 'newark-sherwooddc')
+                return 'http://www.newark-sherwooddc.gov.uk/'; # no petitions page found
+            if ($area == 'nottingham')
+                return 'http://www.nottinghamcity.gov.uk/index.aspx?articleid=12595'; # e-petitions page
+        } else {
+            return '
+            <input type="hidden" name="category" value="' . $category_id . '"> 
+            You are petitioning about something which isn\'t the responsibility of Nottinghamshire Council Council,
+            but instead of your district council. <label for="council_pick">Please
+            pick your district council in order to be taken to their petition site:</label>
+            <select name="council" id="council_pick">
+            <option value="ashfield-dc">Ashfield Borough Council</option>
+            <option value="bassetlaw">Bassetlaw District Council</option>
+            <option value="broxtowe">Broxtowe Borough Council</option>
+            <option value="gedling">Gedling Borough Council</option>
+            <option value="mansfield">Mansfield District Council</option>
+            <option value="nottingham">Nottingham City Council</option>
+            <option value="newark-sherwooddc">Newark and Sherwood District Council</option>
+            <option value="rushcliffe">Rushcliffe Borough Council</option>
             </select> 
             <input type="submit" name="toothercouncil" value="Go" class="button">
             '; 
