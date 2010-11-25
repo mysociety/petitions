@@ -157,14 +157,14 @@ function cobrand_creation_phone_number_optional() {
 }
 
 function cobrand_creation_comments_label(){
-  global $site_name;
-  if ($site_name == 'westminster'){
-    return "If you have any information about your petition you would like us
-     to know that you do not wish to be public, please include them here:"; # them [sic]
-  }
-  return "If you have any special requests concerning your
-  petition, or information about your petition you would like us 
-  to know that you do not wish to be public, please include them here:";
+    global $site_name;
+    if ($site_name == 'westminster'){
+      return "If you have any information about your petition you would like us
+         to know that you do not wish to be public, please include them here:"; # them [sic]
+    }
+    return "If you have any special requests concerning your
+        petition, or information about your petition you would like us 
+        to know that you do not wish to be public, please include them here:";
 }
 
 function cobrand_error_div_start() {

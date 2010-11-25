@@ -728,9 +728,11 @@ of this page in your name, and that you agree to the terms and conditions below.
     if (OPTION_SITE_APPROVAL) {
 ?>
 </p>
-<p><label for="comments">
-  <? echo cobrand_creation_comments_label(); ?>
-  </label></p>
+<p>
+    <label for="comments">
+        <? echo cobrand_creation_comments_label(); ?>
+    </label>
+</p>
 <p>
 <?
         textarea('comments', $data['comments'], 40, 7, false, $errors);
