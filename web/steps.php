@@ -15,8 +15,9 @@ if ($url = cobrand_steps_elsewhere()) {
     exit;
 }
 
-$page_title = _('Create a new petition');
+$page_title = _('Step-by-step guide to making petitions');
 page_header($page_title, array());
+cobrand_extra_heading($page_title);
 petition_form_intro();
 page_footer('Step-by-step_guide');
 
@@ -24,9 +25,8 @@ function petition_form_intro() {
     global $site_name;
     $n = 1;
 ?>
-<h2 class="page_title_border">Step-by-step guide to making petitions</h2>
 
-<h3>Step <?=$n++?>: Create your petition</h3>
+<h2>Step <?=$n++?>: Create your petition</h2>
 
 <p>You will be asked to give your name, organisation (if you represent one),
 address and email address, and the title and text of your petition. You will also be
@@ -37,7 +37,7 @@ your petition if you wish.</p>
 <p>You will be able to specify a start and finish date for your petition, and we
 can host your petition for up to 12 months.</p>
 
-<h3>Step <?=$n++?>: Submit your petition</h3>
+<h2>Step <?=$n++?>: Submit your petition</h2>
 
 <p>Once you have submitted your petition, you will receive an email asking
 you to click a link to confirm. Your proposed petition will then
@@ -55,7 +55,7 @@ appear on the site.</p>
     if (OPTION_SITE_APPROVAL) {
 ?>
 
-<h3>Step <?=$n++?>: Petition approval</h3>
+<h2>Step <?=$n++?>: Petition approval</h2>
 
 <p>Officials <?=OPTION_SITE_NAME=='number10'?'at Downing Street':''?> will check your petition to make sure that it meets
 the basic requirements set out in our <a href="/terms">terms and conditions</a><?=OPTION_SITE_NAME=='number10'?' and the Civil Service code':''?>.</p>
@@ -79,7 +79,7 @@ acknowledged on this website.</p>
     }
 ?>
 
-<h3>Step <?=$n++?>: Petition live</h3>
+<h2>Step <?=$n++?>: Petition live</h2>
 
 <p>Once your petition is live, you will be able to publicise the URL
 you chose when you created your petition, and anyone will be able to
@@ -96,7 +96,7 @@ the petition.</p>
 <p>Your petition will show the total number of signatures received. It will also
 display the names of signatories, unless they have opted not to be shown.</p>
 
-<h3>Step <?=$n++?>: Petition close</h3>
+<h2>Step <?=$n++?>: Petition close</h2>
 
 <?
     if (OPTION_SITE_NAME == 'number10') {

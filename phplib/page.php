@@ -188,10 +188,10 @@ function rss_header($title, $description, $params) {
     header('Cache-Control: max-age=3600');
     print '<?xml version="1.0" encoding="UTF-8"?>';
     if (OPTION_SITE_NAME == 'number10') {
-        $site_title = 'Number 10 E-Petitions';
+        $site_title = 'Number 10 E-petitions';
         print '<?xml-stylesheet type="text/css" href="http://www.number10.gov.uk/rss/rss.css"?>';
     } else {
-        $site_title = 'E-Petitions';
+        $site_title = 'E-petitions';
     }
 ?>
 

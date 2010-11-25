@@ -1,6 +1,6 @@
 <?
-// all.php:
-// List all petitions.
+// list.php:
+// View all petitions.
 //
 // Copyright (c) 2005 UK Citizens Online Democracy. All rights reserved.
 // Email: francis@mysociety.org. WWW: http://www.mysociety.org
@@ -120,7 +120,7 @@ else {
             'rss'=> array(
                     $heading => url_new("/rss/list/$q_type", true, 'offset', null, 'type', null)
              ),
-             'h1' => 'List petitions',
+             'h1' => 'View petitions',
     ));
 }
 
@@ -141,7 +141,7 @@ if (!$rss) {
 
     pet_search_form(array('float'=>true));
     if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') print '<h2>View petitions</h2>';
-    cobrand_extra_heading('List petitions');
+    cobrand_extra_heading('View petitions');
 
     if ($q_cat) {
         print '<h3>You are viewing petitions in the "' . cobrand_category($q_cat) . '" category</h3>';
@@ -269,9 +269,9 @@ else {
 }
 
 function list_front() {
-    page_header('List petitions');
+    page_header('View petitions');
 ?>
-<h2 class="page_title_border">List petitions...</h2>
+<h2 class="page_title_border">View petitions...</h2>
 <ul style="font-size:150%;">
 <li><a href="/list/open?sort=deadline">By deadline</a></li>
 <li><a href="/list/open?sort=signers">By size</a></li>

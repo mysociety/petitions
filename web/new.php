@@ -215,11 +215,12 @@ function textarea($name, $val, $cols, $rows, $required, $errors) {
 }
 
 function textfield($name, $val, $size, $errors, $after = '') {
-    printf('<input type="text" name="%s" id="%s" size="%d" value="%s"%s%s />',
+    printf('<input type="text" name="%s" id="%s" size="%d" value="%s"%s%s%s />',
             htmlspecialchars($name), htmlspecialchars($name),
             $size,
             htmlspecialchars(is_null($val) ? '' : $val),
             $name=='organisation' ? '' : ' aria-required="true"',
+            $name=='email2' ? ' autocomplete="off"' : '',
             array_key_exists($name, $errors) ? ' class="error"' : '');
     if ($after)
         print ' <small>' . $after . '</small>';
@@ -467,7 +468,7 @@ the Armed Forces without a postcode, please select from this list:</label>
         if (array_key_exists($name, $errors))
             print '<br /><span class="errortext">'. $errors[$name] . '</span>';
 
-        if ($name == 'org_url' || $name == 'organisation')
+        if ($name == 'org_url' || $name == 'organisation' || ($name == 'telephone' && cobrand_creation_phone_number_optional()))
             print " <small>(optional)</small>";
 
         if (is_string($desc))
@@ -600,7 +601,7 @@ function step_you_error_check($data) {
     $tel = preg_replace('#[^0-9]#', '', $data['telephone']);
     $tel = preg_replace('#^44#', '0', $tel);
     $tel = str_replace('+44', '0', $tel);
-    if (!preg_match('#[1-9]#', $data['telephone']))
+    if (!cobrand_creation_phone_number_optional() && !preg_match('#[1-9]#', $data['telephone']))
         $errors['telephone'] = 'Please enter a telephone number';
     elseif (strlen($data['telephone']) < 10)
         $errors['telephone'] = 'That seems a bit short - please specify your full telephone number';
@@ -645,12 +646,16 @@ function step_you_error_check($data) {
 
     $vars = array(
         'name' => 'name',
-        'address' => 'postal address',
-        'telephone' => 'phone number',
         'email' => 'email address',
     );
-    if (! cobrand_creation_ask_for_address()) {
-      $data['address'] = ' '; # explicitly not null 
+    if (!cobrand_creation_phone_number_optional()) {
+        $vars['telephone'] = 'phone number';
+    }
+    if (cobrand_creation_ask_for_address()) {
+        $vars['address'] = 'postal address';
+    } else {
+        # Set it to blank string as no form field printed at all.
+        $data['address'] = '';
     }
     foreach ($vars as $var => $p_var) {
             if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
@@ -705,7 +710,7 @@ longer be valid.
         echo '<li>Address type: <strong>' . ucfirst($data['address_type']) . '</strong></li>';
     }
 ?>
-<li>Telephone: <strong><?=$data['telephone'] ?></strong></li>
+<li>Telephone: <strong><?=($data['telephone'] ? $data['telephone'] : 'None provided') ?></strong></li>
 </ul>
 
 <p align="right">

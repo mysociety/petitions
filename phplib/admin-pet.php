@@ -154,6 +154,7 @@ EOF;
 class ADMIN_PAGE_PET_SEARCH {
     function ADMIN_PAGE_PET_SEARCH() {
         $this->id = 'petsearch';
+        $this->noindex = true;
         $this->navname = 'Search';
     }
 
@@ -931,6 +932,7 @@ function rejection_text(obj) {
 <br><textarea name="reject_reason" id="reject_reason" rows="10" cols="50"></textarea></p>
 
 </td><td width="50%">
+<p>Select a line below to copy that text to the rejection reason box:</p>
 <ul>
 
 <?

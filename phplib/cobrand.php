@@ -141,11 +141,19 @@ function cobrand_creation_top_submit_button() {
 }
 
 function cobrand_creation_ask_for_address() {
-  global $site_name;
-  if ($site_name == 'westminster'){
+    global $site_name;
+    if ($site_name == 'westminster') {
+        return false;
+    }
+    return true;
+}
+
+function cobrand_creation_phone_number_optional() {
+    global $site_name;
+    if ($site_name == 'islington') {
+        return true;
+    }
     return false;
-  }
-  return true;
 }
 
 function cobrand_creation_comments_label(){
@@ -575,15 +583,17 @@ function cobrand_petition_guidelines() {
 <p><a href="/terms">Full terms and conditions</a></p>
 
 <?
-    } elseif ($site_group == 'surreycc' || $site_group == 'westminster') {
+    } elseif ($site_group == 'surreycc' || $site_name == 'westminster' || $site_name == 'suffolkcoastal') {
         $foi_link = 'http://www.ico.gov.uk/';
         $foi_text = $foi_link;
         if ($site_name == 'reigate-banstead') {
             $foi_link = 'http://www.reigate-banstead.gov.uk/council_and_democracy/about_the_council/access_to_information/freedom_of_information_act_2000/';
             $foi_text = 'Freedom Of Information Act 2000';
-        } elseif ($site_group == 'westminster') {
+        } elseif ($site_name == 'westminster') {
             $foi_link = 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/dataprotectionandfreedomofinformation/foi/';
             $foi_text = 'our Freedom of Information section';
+        } elseif ($site_name == 'suffolkcoastal') {
+            $foi_text = 'the Information Commissioner&rsquo;s website';
         }
 ?>
 
@@ -899,7 +909,7 @@ function cobrand_steps_elsewhere() {
 
 function cobrand_main_heading($text) {
     global $site_name;
-    if ($site_name == 'surreycc')
+    if ($site_name == 'surreycc' || $site_name == 'suffolkcoastal')
         return "<h2>$text</h2>";
     elseif ($site_name == 'number10')
         return "<h3 class='page_title_border'>$text</h3>";
@@ -919,7 +929,7 @@ function cobrand_create_heading($text) {
 # main heading that one council asked for.
 function cobrand_extra_heading($text) {
     global $site_name;
-    if ($site_name == 'tandridge' || $site_name == 'molevalley' || $site_name == 'lichfielddc')
+    if ($site_name == 'tandridge' || $site_name == 'molevalley' || $site_name == 'lichfielddc' || $site_name == 'number10')
         print "<h1>$text</h1>";
 }
 

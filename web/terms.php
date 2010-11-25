@@ -16,8 +16,8 @@ if ($url = cobrand_terms_elsewhere()) {
     exit;
 }
 
-page_header('E-petitions Terms and Conditions');
-cobrand_extra_heading('Terms and Conditions');
+page_header('E-petitions terms and conditions');
+cobrand_extra_heading('Terms and conditions');
 ?>
 
 <p>The purpose of the
