@@ -380,7 +380,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         . $q->p( '<label for="email">Your email:</label>',
                 $q->textfield(-name => 'email', -size => 20, -id => 'email', -aria_required => 'true'))
         . $q->p( '<label for="email2">Confirm email:</label>',
-                $q->textfield(-name => 'email2', -size => 20, -id => 'email2', -aria_required => 'true'))
+                $q->textfield(-name => 'email2', -size => 20, -id => 'email2', -aria_required => 'true', -autocomplete => 'off'))
         . $q->p($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
         )
         . $q->div({-id => 'signFormRight' },

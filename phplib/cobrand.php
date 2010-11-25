@@ -141,11 +141,19 @@ function cobrand_creation_top_submit_button() {
 }
 
 function cobrand_creation_ask_for_address() {
-  global $site_name;
-  if ($site_name == 'westminster'){
+    global $site_name;
+    if ($site_name == 'westminster') {
+        return false;
+    }
+    return true;
+}
+
+function cobrand_creation_phone_number_optional() {
+    global $site_name;
+    if ($site_name == 'islington') {
+        return true;
+    }
     return false;
-  }
-  return true;
 }
 
 function cobrand_creation_comments_label(){
