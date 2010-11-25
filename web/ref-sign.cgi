@@ -106,16 +106,16 @@ sub signup_page ($$) {
     $errors{postcode} = 'You can\'t both put a postcode and pick an option from the drop-down.'
         if (defined($qp_postcode) && defined($qp_overseas));
 
-    #if (mySociety::Config::get('SITE_TYPE') eq 'multiple' && $qp_postcode && $p->{body_area_id}) {
-    #    try {
-    #        my $areas = mySociety::MaPit::get_voting_areas($qp_postcode);
-    #        unless (grep { $p->{body_area_id} == $_ } values %$areas) {
-    #            $errors{postcode} = 'You can only sign a petition for the council where you live.'
-    #        }
-    #    } catch RABX::Error with {
-    #        $errors{postcode} = 'Sorry, that postcode was not recognised.';
-    #    };
-    #}
+    if ($qp_postcode && (my $area_id = Petitions::Cobrand::within_area_only())) {
+        my $mapit = mySociety::MaPit::call('postcode', $qp_postcode);
+        if ($mapit->{error}) {
+            $errors{postcode} = 'Sorry, that postcode was not recognised.';
+        } else {
+            unless (grep { $area_id == $_ } keys %{$mapit->{areas}}) {
+                $errors{postcode} = 'You must live, work or study within the council to sign a petition.'
+            }
+        }
+    }
 
     my $title = 'Signature addition';
     my $contents = '';
