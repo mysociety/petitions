@@ -20,6 +20,16 @@ sub main_heading($) {
     return "<h3>$text</h3>";
 }
 
+# Currently used on check your email signing page to supply
+# a heading for those templates that don't have one by default.
+sub extra_heading($) {
+    my $text = shift;
+    my $site_name = Petitions::Page::site_name();
+    return "<h2>$text</h2>"
+        if $site_name =~ /tandridge|molevalley|lichfielddc|number10|spelthorne|reigate-banstead|nottinghamshire/;
+    return '';
+}
+
 sub signing_check_heading() {
     my $site_name = Petitions::Page::site_name();
     return 'You Have Signed the Petition' if $site_name eq 'islington';

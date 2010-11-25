@@ -66,9 +66,6 @@ sub signup_page ($$) {
         return;
     }
     
-    my $html =
-        Petitions::Page::header($q, 'Signature addition');
-
     my $qp_name = $q->param('name');
     my ($qp_email, $qp_email2);
     if ($q->param('e-mail')) {
@@ -120,6 +117,8 @@ sub signup_page ($$) {
     #    };
     #}
 
+    my $title = 'Signature addition';
+    my $contents = '';
     if (!keys(%errors)) {
         # Success. Add the signature, assuming that we can.
         # XXX ref-index will have checked that the petition is valid to sign
@@ -127,9 +126,9 @@ sub signup_page ($$) {
         # re-check here. But mustn't use the database, obviously.
         my $s = 'ok';
         if ($s eq 'finished') {
-            $html .= $q->p('Sorry, but that petition has finished, so you cannot sign it.');
+            $contents = $q->p('Sorry, but that petition has finished, so you cannot sign it.');
         } elsif ($s eq 'none') {
-            $html .= $q->p("We couldn't find that petition.");
+            $contents = $q->p("We couldn't find that petition.");
         } else {
             # Either OK or already signed. We must not give away the fact that
             # any particular person has already signed a petition, so act the
@@ -142,17 +141,17 @@ sub signup_page ($$) {
                             postcode => $qp_postcode,
                             overseas => $qp_overseas
                         })) {
-                my $heading = Petitions::Cobrand::signing_check_heading();
-                $html .=
-                    $q->h2({-class => 'page_title_border'}, $heading)
-                    . ($heading eq 'Now check your email!' ? '' : $q->p($q->strong('Now check your email!')))
+                $title = Petitions::Cobrand::signing_check_heading();
+                $contents .= Petitions::Cobrand::extra_heading($title);
+                $contents .=
+                    ($title eq 'Now check your email!' ? '' : $q->p($q->strong('Now check your email!')))
                     . $q->p({-class => 'noprint loudmessage'},
                         "Thank you. We have sent you an email. To add your signature to the petition, you need to click the link in this email."
                     );
-                $html .= $q->p({-class => 'noprint loudmessage'},
+                $contents .= $q->p({-class => 'noprint loudmessage'},
                         "For more news about the Prime Minister's work and agenda, and other information including speeches, web chats, history and a virtual tour of No.10, visit the ", $q->a({-href => 'http://www.number10.gov.uk/'}, 'main Downing Street homepage'))
                     if mySociety::Config::get('SITE_NAME') eq 'number10';
-                $html .=
+                $contents .=
                     $q->p({-class => 'noprint loudmessage'},
                     q(If you don't receive the email and you use web-based
                     email or have "junk mail" filters, please check
@@ -167,7 +166,9 @@ sub signup_page ($$) {
                 print STDERR "no RPC response signing $p->{ref}\n";
             }
         }
-    } 
+    }
+    my $html = Petitions::Page::header($q, $title);
+    $html .= $contents;
     
     if (keys(%errors)) {
         my $div_attr = { -id => 'errors' };
