@@ -306,7 +306,9 @@ sub sign_box ($$) {
     delete($safe_p->{salt});
 
     my $must;
-    if ($p->{body_area_id} || ($p->{body_name} && $p->{body_name} =~ /council/i) || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
+    if (my @area = Petitions::Cobrand::within_area_only()) {
+        $must = "You must live, work or study within $area[0] to sign a petition. ";
+    } elsif ($p->{body_area_id} || ($p->{body_name} && $p->{body_name} =~ /council/i) || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
         $must = '';
         #$must = 'You need to live, work or study within the council area to sign the petition. ';
     } else {
