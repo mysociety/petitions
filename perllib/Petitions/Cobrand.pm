@@ -44,6 +44,8 @@ sub approval_word() {
 sub within_area_only() {
     my $site_name = Petitions::Page::site_name();
     return 2507 if $site_name eq 'islington';
+    return 2504 if $site_name eq 'westminster';
+    #return 2450 if $site_name eq 'surreyheath';
 }
 
 1;
