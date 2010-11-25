@@ -601,7 +601,9 @@ function step_you_error_check($data) {
     $tel = preg_replace('#[^0-9]#', '', $data['telephone']);
     $tel = preg_replace('#^44#', '0', $tel);
     $tel = str_replace('+44', '0', $tel);
-    if (!cobrand_creation_phone_number_optional() && !preg_match('#[1-9]#', $data['telephone']))
+    if (cobrand_creation_phone_number_optional() && !$data['telephone']) {
+        # Optional, so doesn't matter if blank
+    } elseif (!preg_match('#[1-9]#', $data['telephone']))
         $errors['telephone'] = 'Please enter a telephone number';
     elseif (strlen($data['telephone']) < 10)
         $errors['telephone'] = 'That seems a bit short - please specify your full telephone number';
