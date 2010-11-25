@@ -208,17 +208,28 @@ function cobrand_overseas_dropdown() {
     );
 }
 
+# note: numbers here are category numbers, defined in cobrand_categories()
+#       Duplicated in anticipation of different councils splitting these responsibilities differently.
 function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
-    if ($site_group != 'surreycc') return true;
-    $county_only = array(4, 6, 7, 10, 12, 13, 16);
-    if ($site_name == 'tandridge' || $site_name == 'reigate-banstead' || $site_name == 'elmbridge')
-        $county_only[] = 11; # Planning not okay
-    if ($site_name != 'surreycc' && in_array($category_id, $county_only))
-        return false;
-    $district_only = array(1, 2, 3, 5, 8, 9, 15);
-    if ($site_name == 'surreycc' && in_array($category_id, $district_only))
-        return false;
+    if ($site_group == 'surreycc'){
+        $county_only = array(4, 6, 7, 10, 12, 13, 16);
+        if ($site_name == 'tandridge' || $site_name == 'reigate-banstead' || $site_name == 'elmbridge')
+            $county_only[] = 11; # Planning not okay
+        if ($site_name != 'surreycc' && in_array($category_id, $county_only))
+            return false;
+        $district_only = array(1, 2, 3, 5, 8, 9, 15);
+        if ($site_name == 'surreycc' && in_array($category_id, $district_only))
+            return false;
+    }
+    if ($site_group == 'nottinghamshire'){
+        $county_only = array(4, 6, 7, 10, 12, 13, 16);
+        if ($site_name != 'nottinghamshire' && in_array($category_id, $county_only))
+            return false;
+        $district_only = array(1, 2, 3, 5, 8, 9, 15);
+        if ($site_name == 'nottinghamshire' && in_array($category_id, $district_only))
+            return false;
+    }
     return true;
 }
 
