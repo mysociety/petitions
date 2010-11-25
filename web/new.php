@@ -410,7 +410,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
 
     foreach ($fields as $name => $desc) {
         if ($name == 'address' && ! cobrand_creation_ask_for_address() )
-          continue; # skip loop: missing address label as well as textarea input
+          continue; # skip loop: thereby suppressing address label as well as textarea input
           
         if (is_string($desc))
             printf('<p><label for="%s">%s:</label> ', $name, htmlspecialchars($desc));
