@@ -3,7 +3,13 @@
 	position:relative;
 	display: block;
 }
-
+#ms-content-wrapper{ /* absolute position wrapper allows clear to be used without clearing below Mansfield's margins */
+   float:left;
+	width:100%;
+}
+.ms-clearer{ /* disallow content-wrapper contents to overhang */ 
+	clear:both;
+}
 div#petition_actions {
     border: none;
 }
