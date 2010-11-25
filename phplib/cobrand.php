@@ -142,9 +142,9 @@ function cobrand_creation_top_submit_button() {
 
 function cobrand_creation_ask_for_address() {
     global $site_name;
-    if ($site_name == 'westminster') {
-        return false;
-    }
+    #if ($site_name == 'westminster') {
+    #    return false;
+    #}
     return true;
 }
 
