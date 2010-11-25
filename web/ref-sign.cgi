@@ -25,7 +25,7 @@ use mySociety::DBHandle qw(dbh);
 use mySociety::Web qw(ent);
 use mySociety::PostcodeUtil;
 use mySociety::EmailUtil;
-#use mySociety::MaPit;
+use mySociety::MaPit;
 
 use Petitions;
 use Petitions::Page;
