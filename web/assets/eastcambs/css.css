@@ -1,4 +1,13 @@
 
+#ms-petition-list-rss{
+    text-align:right;
+    width: 100%;
+}
+#ms-petition-list-rss img{
+    vertical-align: baseline;
+    margin:0;
+}
+
 div#petition_actions {
     border: none;
 }
@@ -13,11 +22,15 @@ div#front_how {
 }
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #64A91A;
+    border-bottom: solid 1px #9B9980;
+	line-height:1em;
+	padding-bottom:8px;
 }
 
 .petition_view_tabs span {
-    background-color: #64A91A;
+    background-color: #DDDDD4;
+    border: 1px solid #9B9980;
+	color: #183449;
 }
 
 #action_view a, #action_create a{
