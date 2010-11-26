@@ -77,7 +77,7 @@ sub signup_page ($$) {
     }
     $qp_email = i_check_email($qp_email);
     $qp_email2 = i_check_email($qp_email2);
-    my $qp_address = $q->param('address');
+    my $qp_address = $q->param('address') || '';
     my $qp_postcode = $q->param('postcode');
     $qp_postcode =~ s/[^a-z0-9]//ig;
     $qp_postcode = undef unless mySociety::PostcodeUtil::is_valid_postcode($qp_postcode);
@@ -100,7 +100,8 @@ sub signup_page ($$) {
             if ($local1 ne $local2 || lc($domain1) ne lc($domain2));
     }
     $errors{address} = 'Please enter your address'
-        if (!$qp_address);
+        if (!$qp_address && Petitions::Cobrand::ask_for_address());
+
     $errors{postcode} = 'Please enter a valid postcode, or choose from the drop-down'
         if !$qp_postcode && !$qp_overseas;
     $errors{postcode} = 'You can\'t both put a postcode and pick an option from the drop-down.'

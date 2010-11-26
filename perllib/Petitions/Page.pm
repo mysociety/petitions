@@ -325,6 +325,13 @@ the Armed Forces without a postcode, please select from this list:</label>',
         );
     }
 
+    my $address = '';
+    if (Petitions::Cobrand::ask_for_address()) {
+        $address = $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
+            $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:95%', -aria_required => 'true')
+        );
+    }
+
     my $postcode_label = 'UK postcode:';
     $postcode_label = 'Your postcode:' if mySociety::Config::get('SITE_NAME') ne 'number10';
 
@@ -354,8 +361,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         . $q->p($q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
         )
         . $q->div({-id => 'signFormRight' },
-          $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
-                $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:95%', -aria_required => 'true') ),
+          $address,
           $q->p( '<label for="postcode">' . $postcode_label . '</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),

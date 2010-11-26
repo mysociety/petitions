@@ -48,6 +48,12 @@ sub within_area_only() {
     #return ('Surrey Heath', 2450) if $site_name eq 'surreyheath';
 }
 
+sub ask_for_address() {
+    my $site_name = Petitions::Page::site_name();
+    return 0 if $site_name eq 'westminster';
+    return 1;
+}
+
 sub overseas_dropdown {
     my $site_group = Petitions::Page::site_group();
     if ($site_group eq 'westminster' || $site_group eq 'islington') {
