@@ -695,7 +695,10 @@ longer be valid.
 ?>
 </p>
 
-<p>Please also check your contact details:</p>
+<p>Please also check your contact details; these are simply so that we can get
+in touch with you about your petition, and will not be public apart from
+your name and organisation:</p>
+
 <ul><li>Name: <strong><?=$data['name'] ?></strong></li>
 <li>Email: <strong><?=$data['email'] ?></strong></li>
 <li>Organisation: <strong><?=$data['organisation'] ?></strong></li>
