@@ -153,7 +153,11 @@ class Petition {
         $this->data['sentence'] = $this->sentence();
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
-        $this->data['category'] = cobrand_category($this->data['category']);
+        if (cobrand_display_category()){
+            $this->data['category'] = cobrand_category($this->data['category']);
+        } else {
+            $this->data['category'] = 0; # force no-category
+        }
 
         if (array_key_exists('rejection_second_categories', $this->data)
             && $this->data['rejection_second_categories']) {

@@ -359,7 +359,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 </p>
 
 <?
-    if (!cobrand_creation_category_first()) {
+    if (cobrand_display_category() && !cobrand_creation_category_first()) {
 ?>
 <p><label for="category">Please select a category for your petition:</label>
 <select name="category" id="category" aria-required="true">
@@ -483,12 +483,14 @@ the Armed Forces without a postcode, please select from this list:</label>
 
 function step_category_error_check($data) {
     $errors = array();
-    if (!array_key_exists('category', $data)
-      || !$data['category']
-      || !array_key_exists($data['category'], cobrand_categories())) {
-        $errors['category'] = 'Please select a category';
-    } elseif (!cobrand_category_okay($data['category'])) {
-        $errors['category_wrong'] = cobrand_category_wrong_action($data['category']);
+    if (cobrand_display_category()){
+        if (!array_key_exists('category', $data)
+          || !$data['category']
+          || !array_key_exists($data['category'], cobrand_categories())) {
+            $errors['category'] = 'Please select a category';
+        } elseif (!cobrand_category_okay($data['category'])) {
+            $errors['category_wrong'] = cobrand_category_wrong_action($data['category']);
+        }
     }
     return $errors;
 }
@@ -554,12 +556,14 @@ function step_main_error_check($data) {
     if (strlen($ddd) > 1000)
         $errors['detail'] = _('Please make your more details a bit shorter (at most 1000 characters).');
 
-    if (!array_key_exists('category', $data)
-      || !$data['category']
-      || !array_key_exists($data['category'], cobrand_categories())) {
-        $errors['category'] = 'Please select a category';
-    } elseif (!cobrand_category_okay($data['category'])) {
-        $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
+    if (cobrand_display_category()){
+        if (!array_key_exists('category', $data)
+          || !$data['category']
+          || !array_key_exists($data['category'], cobrand_categories())) {
+            $errors['category'] = 'Please select a category';
+        } elseif (!cobrand_category_okay($data['category'])) {
+            $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
+        }
     }
 
     $pet_today_arr = explode('-', $pet_today);
@@ -790,6 +794,8 @@ function petition_create($data) {
     $data['detail'] = str_replace("\t", ' ', $data['detail']);
     $data['pet_content'] = str_replace("\t", ' ', $data['pet_content']);
 
+    if (! cobrand_display_category()) $data['category'] = 0;
+    
     if (OPTION_SITE_APPROVAL && array_key_exists('token', $data)) {
         /* Resubmitted petition. */
         list($what, $id) = token_check($data['token']);

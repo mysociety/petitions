@@ -395,6 +395,12 @@ function cobrand_category($id) {
     return $categories[$id];
 }
 
+function cobrand_display_category(){
+    global $site_name;
+    if ($site_name == 'westminster') return false;
+    return true;
+}
+
 function cobrand_signature_threshold() {
     global $site_name;
     if ($site_name == 'number10') return 500;
