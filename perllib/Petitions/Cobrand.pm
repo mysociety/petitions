@@ -46,6 +46,7 @@ sub within_area_only() {
     return ('Islington', 2507) if $site_name eq 'islington';
     return ('Westminster', 2504) if $site_name eq 'westminster';
     #return ('Surrey Heath', 2450) if $site_name eq 'surreyheath';
+    return;
 }
 
 sub ask_for_address() {

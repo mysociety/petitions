@@ -114,13 +114,13 @@ sub signup_page ($$) {
     $errors{postcode} = 'You can\'t both put a postcode and pick an option from the drop-down.'
         if (defined($qp_postcode) && defined($qp_overseas));
 
-    if ($qp_postcode && (my @area = Petitions::Cobrand::within_area_only())) {
+    if ($qp_postcode && (my ($area, $area_id) = Petitions::Cobrand::within_area_only())) {
         my $mapit = mySociety::MaPit::call('postcode', $qp_postcode);
         if ($mapit->{error}) {
             $errors{postcode} = 'Sorry, that postcode was not recognised.';
         } else {
-            unless (grep { $area[1] == $_ } keys %{$mapit->{areas}}) {
-                $errors{postcode} = "You must live, work or study within $area[0] to sign a petition.";
+            unless (grep { $area_id == $_ } keys %{$mapit->{areas}}) {
+                $errors{postcode} = "You must live, work or study within $area to sign a petition.";
             }
         }
     }
