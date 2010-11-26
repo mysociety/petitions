@@ -332,6 +332,22 @@ the Armed Forces without a postcode, please select from this list:</label>',
         );
     }
 
+    my $address_type = '';
+    if (Petitions::Cobrand::ask_for_address_type()) {
+        my $checked_home = $q->param('address_type') eq 'home' ? ' checked' : '';
+        my $checked_work = $q->param('address_type') eq 'work' ? ' checked' : '';
+        my $checked_study = $q->param('address_type') eq 'study' ? ' checked' : '';
+        $address_type .= $q->p(
+            $q->span({-class => 'label'}, 'Type of address:'),
+            "<input type='radio' id='address_type_home' name='address_type' value='home'$checked_home>
+            <label class='wide' for='address_type_home'>Home</label>
+            <input type='radio' id='address_type_work' name='address_type' value='work'$checked_work>
+            <label class='wide' for='address_type_work'>Work</label>
+            <input type='radio' id='address_type_study' name='address_type' value='study'$checked_study>
+            <label class='wide' for='address_type_study'>Study</label>"
+        );
+    }
+
     my $postcode_label = 'UK postcode:';
     $postcode_label = 'Your postcode:' if mySociety::Config::get('SITE_NAME') ne 'number10';
 
@@ -365,6 +381,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
           $q->p( '<label for="postcode">' . $postcode_label . '</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
         ),
+        $address_type,
         $expat,
         $q->p( { -id => 'signatureSubmit', -align => 'right' },
             $q->submit(-class => 'button', -name => 'submit', -value => 'Sign and submit')

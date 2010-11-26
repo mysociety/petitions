@@ -78,6 +78,7 @@ sub signup_page ($$) {
     $qp_email = i_check_email($qp_email);
     $qp_email2 = i_check_email($qp_email2);
     my $qp_address = $q->param('address') || '';
+    my $qp_address_type = $q->param('address_type') || '';
     my $qp_postcode = $q->param('postcode');
     $qp_postcode =~ s/[^a-z0-9]//ig;
     $qp_postcode = undef unless mySociety::PostcodeUtil::is_valid_postcode($qp_postcode);
@@ -101,6 +102,12 @@ sub signup_page ($$) {
     }
     $errors{address} = 'Please enter your address'
         if (!$qp_address && Petitions::Cobrand::ask_for_address());
+
+    if (Petitions::Cobrand::ask_for_address_type()) {
+        if (!$qp_address_type || $qp_address_type !~ /^(home|work|study)$/) {
+            $errors{address_type} = 'Please specify your address type';
+        }
+    }
 
     $errors{postcode} = 'Please enter a valid postcode, or choose from the drop-down'
         if !$qp_postcode && !$qp_overseas;
@@ -139,6 +146,7 @@ sub signup_page ($$) {
                             email => $qp_email,
                             name => $qp_name,
                             address => $qp_address,
+                            address_type => $qp_address_type,
                             postcode => $qp_postcode,
                             overseas => $qp_overseas
                         })) {

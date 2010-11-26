@@ -186,6 +186,14 @@ create table signer (
     name text not null,
     address text not null,
     postcode text,
+    address_type text not null default '' check (
+        address_type in (
+            'home',
+            'work',
+            'study',
+            ''
+        )
+    ),
     latitude float,
     longitude float,
     overseas text,

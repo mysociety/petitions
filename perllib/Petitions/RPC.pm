@@ -124,16 +124,16 @@ sub sign_petition_db ($) {
                 insert into signer (
                     petition_id,
                     email, name, address, postcode,
-                    overseas,
+                    address_type, overseas,
                     showname,
                     signtime
                 ) values (
                     (select id from petition where ref = ?),
-                    ?, ?, ?, ?, ?,
+                    ?, ?, ?, ?, ?, ?,
                     true,
                     ms_current_timestamp()
                 )', {},
-                map { $r->{$_} } qw(ref email name address postcode overseas));
+                map { $r->{$_} } qw(ref email name address postcode address_type overseas));
     }
 }
 
