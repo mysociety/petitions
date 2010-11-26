@@ -460,6 +460,7 @@ the Armed Forces without a postcode, please select from this list:</label>
                 if ($over = cobrand_creation_email_request()) {
                     $after = "<br />($over)";
                 }
+                $after = '<span id="ms-email2-note">' . $after . '<span>';
             } elseif ($name == 'name') {
                 $after = '(please use a full name e.g. Mr John Smith)';
             }

@@ -41,7 +41,7 @@ function cobrand_creation_address_help() {
 function cobrand_creation_email_request() {
     global $site_name;
     if ($site_name == 'westminster')
-        return 'We need your contact details so we can get in touch with you.
+        return 'We need your contact details so we can get in touch with you.<br/>
         Your details other than your name will not be published.';
 }
 
