@@ -48,4 +48,40 @@ sub within_area_only() {
     #return ('Surrey Heath', 2450) if $site_name eq 'surreyheath';
 }
 
+sub overseas_dropdown {
+    my $site_group = Petitions::Page::site_group();
+    if ($site_group eq 'westminster' || $site_group eq 'islington') {
+        return []; # No drop-down
+    } elsif ($site_group eq 'surreycc') {
+        return [
+            '-- Select --',
+            'Armed Forces',
+            'Non UK address',
+        ];
+    } else {
+        return [
+            '-- Select --',
+            'Expatriate',
+            'Armed Forces',
+            'Anguilla',
+            'Ascension Island',
+            'Bermuda',
+            'British Antarctic Territory',
+            'British Indian Ocean Territory',
+            'British Virgin Islands',
+            'Cayman Islands',
+            'Channel Islands',
+            'Falkland Islands',
+            'Gibraltar',
+            'Isle of Man',
+            'Montserrat',
+            'Pitcairn Island',
+            'St Helena',
+            'S. Georgia and the S. Sandwich Islands',
+            'Tristan da Cunha',
+            'Turks and Caicos Islands',
+        ];
+    }
+}
+
 1;

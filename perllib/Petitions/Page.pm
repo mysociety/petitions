@@ -315,39 +315,7 @@ sub sign_box ($$) {
         $must = 'You must be a British citizen or resident to sign the petition. ';
     }
 
-    my $overseas = [];
-    if (site_group() eq 'westminster') {
-        # No drop-down
-    } elsif (site_group() eq 'surreycc') {
-        push @$overseas, (
-            '-- Select --',
-            'Armed Forces',
-            'Non UK address',
-        );
-    } else {
-        push @$overseas, (
-            '-- Select --',
-            'Expatriate',
-            'Armed Forces',
-            'Anguilla',
-            'Ascension Island',
-            'Bermuda',
-            'British Antarctic Territory',
-            'British Indian Ocean Territory',
-            'British Virgin Islands',
-            'Cayman Islands',
-            'Channel Islands',
-            'Falkland Islands',
-            'Gibraltar',
-            'Isle of Man',
-            'Montserrat',
-            'Pitcairn Island',
-            'St Helena',
-            'S. Georgia and the S. Sandwich Islands',
-            'Tristan da Cunha',
-            'Turks and Caicos Islands',
-        );
-    }
+    my $overseas = Petitions::Cobrand::overseas_dropdown();
     my $expat = '';
     if (@$overseas) {
         $expat = $q->p( '<label class="wide" for="overseas">Or, if you\'re an
