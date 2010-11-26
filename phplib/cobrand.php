@@ -606,6 +606,14 @@ function cobrand_petition_guidelines() {
         } elseif ($site_name == 'suffolkcoastal') {
             $foi_text = 'the Information Commissioner&rsquo;s website';
         }
+        
+        $party_political_example = 'For example, this party political petition
+        would not be permitted: "We petition the council to change the Conservative Cabinet\'s policy on education",
+        but this non-party political version would be: "We petition the council to change their policy on education".';
+        
+        if ($site_name == 'westminster')
+            $party_political_example = '';
+        
 ?>
 
 <p>
@@ -615,11 +623,9 @@ you must not include: </p>
 
 <ul>
 <li>Party political material.
-Please note, this does not mean it is not permissible to petition on
-controversial issues. For example, this party political petition
-would not be permitted: "We petition the council to change the Conservative Cabinet's policy on education",
-but this non-party political version would be:
-"We petition the council to change their policy on education".</li>
+Please note, this does not mean it is not permissible to petition on controversial issues.  
+<?=$party_political_example?>
+</li>
 <li>potentially libellous, false, or defamatory statements;</li>
 <li>information which may be protected by an injunction or court order (for
 example, the identities of children in custody disputes);</li>
