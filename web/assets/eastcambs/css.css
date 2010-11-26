@@ -48,6 +48,7 @@ h3 {
 
 div#petition_actions {
     margin-bottom: 1em;
+    background-color: #F6F1E5;
 }
 
 p.petition_view_tabs {
@@ -64,13 +65,12 @@ p.petition_view_tabs {
 #action_create a:active, #action_view a:active  {
     display: block;
     text-align: center;
-    padding-top: 76px;
+    padding-top: 64px;
     background-position: center top;
     background-repeat: no-repeat;
 }
 #action_create a:hover, #action_view a:hover {
     background-position: center -300px;
-    background-color: #ffffff;
     text-decoration: underline;
 }
 
@@ -83,7 +83,6 @@ h1 {
 }
 
 #most_popular ul, #most_recent ul{
-	padding-left: 2em;
 	margin-left: 0;
 }
 #most_popular ul li, #most_recent ul li{
