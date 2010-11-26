@@ -338,9 +338,9 @@ the Armed Forces without a postcode, please select from this list:</label>',
         my $checked_work = $q->param('address_type') eq 'work' ? ' checked' : '';
         my $checked_study = $q->param('address_type') eq 'study' ? ' checked' : '';
         $address_type .= $q->p(
-            $q->span({-class => 'label'}, 'Type of address:'),
+            $q->span({-class => 'label'}, 'This is where you:'),
             "<input type='radio' id='address_type_home' name='address_type' value='home'$checked_home>
-            <label class='wide' for='address_type_home'>Home</label>
+            <label class='wide' for='address_type_home'>Live</label>
             <input type='radio' id='address_type_work' name='address_type' value='work'$checked_work>
             <label class='wide' for='address_type_work'>Work</label>
             <input type='radio' id='address_type_study' name='address_type' value='study'$checked_study>
