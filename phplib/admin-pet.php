@@ -431,7 +431,7 @@ class ADMIN_PAGE_PET_MAIN {
             $row .= '<td>' . prettify($r['deadline']) . '</td>';
             $row .= '<td><a href="mailto:' . privacy($r['email']).'">'.
                 htmlspecialchars($r['name']).'</a></td>';
-            $row .= '<td>'.$r['laststatuschange'].'</td>';
+            $row .= '<td>'.prettify($r['laststatuschange']).'</td>';
             $late = false;
             if ($status == 'draft' && $r['late'] == 't') $late = true;
             if ($status == 'rejected') {
