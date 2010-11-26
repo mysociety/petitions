@@ -48,19 +48,20 @@ if (array_key_exists('deadline', $data)) {
     <input type="text" name="ref" id="ref" size="16" value="<?=htmlspecialchars($data['ref'])?>" aria-required="true" />
 </p>
 
-<p><label for="category">Category:</label>
-<select name="category" id="category">
-<option value="">-- Select a category --</option><?
-    foreach (cobrand_categories() as $id => $category) {
-        if (!$id) continue;
-        print '<option';
-        if (array_key_exists('category', $data) && $id == $data['category'])
-            print ' selected="selected"'; # I hate XHTML
-        print ' value="' . $id . '">' . $category . '</option>';
-    }
-?>
-</select></p>
-
+<? if (cobrand_display_category()) { ?>
+    <p><label for="category">Category:</label>
+    <select name="category" id="category">
+    <option value="">-- Select a category --</option><?
+        foreach (cobrand_categories() as $id => $category) {
+            if (!$id) continue;
+            print '<option';
+            if (array_key_exists('category', $data) && $id == $data['category'])
+                print ' selected="selected"'; # I hate XHTML
+            print ' value="' . $id . '">' . $category . '</option>';
+        }
+    ?>
+    </select></p>
+<? } ?>
 <p>Number of signatures: <input type="text" name="offline_signers" size=4 value="<?=htmlspecialchars($data['offline_signers'])?>">
 
 <p>Web page (e.g. scan of petition, or related details):

@@ -233,10 +233,14 @@ class ADMIN_PAGE_PET_OFFLINE {
                 $errors[] = 'Please give the main sentence of the petition';
             $ddd = preg_replace('#\s#', '', $data['detail']);
 
-            if (!$data['category'] || !array_key_exists($data['category'], cobrand_categories())) {
-                $errors['category'] = 'Please select a category';
-            #} elseif (!cobrand_category_okay($data['category'])) {
-            #    $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
+            if (cobrand_display_category()){
+                if (!$data['category'] || !array_key_exists($data['category'], cobrand_categories())) {
+                    $errors['category'] = 'Please select a category';
+                #} elseif (!cobrand_category_okay($data['category'])) {
+                #    $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';
+                }
+            } else {
+                $data['category'] = 0; # force no-category
             }
 
             $disallowed_refs = array('contact', 'translate', 'posters', 'graphs', 'privacy', 'reject');
@@ -626,7 +630,9 @@ Deadline: ';
         print '<li>Petition title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
         print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
-        print '<li>Category: ' . htmlspecialchars($petition_obj->data['category']);
+        if (cobrand_display_category()){
+            print '<li>Category: ' . htmlspecialchars($petition_obj->data['category']);
+        }
         if ($pdata['offline_link']) {
             print '<li>Offline petition link: <a href="' . $pdata['offline_link'] . '">' . $pdata['offline_link'] . '</a></li>';
         }
