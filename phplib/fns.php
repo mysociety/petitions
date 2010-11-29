@@ -66,7 +66,7 @@ function pet_send_message($petition_id, $sender, $recips, $circumstance, $templa
 // $to can be one recipient address in a string, or an array of addresses
 function pet_send_email_template($to, $template_name, $values, $headers = array()) {
     if (array_key_exists('creationtime', $values))
-        $values['creationtime'] = prettify($values['creationtime'], false);    
+        $values['creationtime'] = prettify(substr($values['creationtime'], 0, 19), false);    
     if (array_key_exists('deadline', $values))
         $values['pretty_date'] = prettify($values['deadline'], false);
     if (array_key_exists('name', $values)) {
