@@ -914,6 +914,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
     if ($site_name == 'runnymede')
         return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/';
+    if ($site_name == 'waverley')
+        return 'http://www.waverley.gov.uk/petitionsterms';
     if ($site_name == 'westminster')
         return 'http://westminster.gov.uk/services/councilgovernmentanddemocracy/petitions/';
     return null;
