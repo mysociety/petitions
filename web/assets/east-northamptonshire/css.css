@@ -1,5 +1,11 @@
-.mysoc-content{
-	padding: 2px 12px 24px 12px;
+#mysoc-content{
+}
+
+#mysoc-content label{ /* override east-northants's right-aligned floated labels */
+    float:none;
+    width: auto;
+    text-align:left;
+    margin:0;
 }
 
 p {
