@@ -250,7 +250,9 @@ class Petition {
             </p> 
             <p align="center">Submitted by <?=$this->h_name() ?>
             &ndash; Deadline to sign up by: <strong><?=$this->h_pretty_deadline()?></strong></p>
-            <p><strong>Category:</strong> <?=$this->data['category'] ?></p>
+            <?  if (cobrand_display_category()){ ?>
+                <p><strong>Category:</strong> <?=$this->data['category'] ?></p>
+            <? } ?>
             <? if ($this->h_detail() != '<p></p>') {
             print '<p><strong>More details:</strong></p>' . $this->h_detail();
             }
