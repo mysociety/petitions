@@ -603,7 +603,7 @@ function step_you_error_check($data) {
     if ($data['postcode'] && !validate_postcode($data['postcode']))
         $errors['postcode'] = _('Please enter a valid postcode');
 
-    $tel = preg_replace('#[^0-9]#', '', $data['telephone']);
+    $tel = preg_replace('#[^0-9+]#', '', $data['telephone']);
     $tel = preg_replace('#^44#', '0', $tel);
     $tel = str_replace('+44', '0', $tel);
     $tel = str_replace('+', '00', $tel);
