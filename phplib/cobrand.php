@@ -90,6 +90,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'barnet') return array('Barnet', 2489);
     if ($site_name == 'barrowbc') return array('Cumbria', 2220);
     if ($site_name == 'bassetlaw') return array('Bassetlaw', 2410);
+    if ($site_name == 'eastcambs') return array('East Cambridgeshire', 2261);
     if ($site_name == 'east-northamptonshire') return array('East Northamptonshire', 2393);
     if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
     if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
