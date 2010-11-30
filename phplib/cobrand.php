@@ -919,6 +919,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.waverley.gov.uk/petitionsterms';
     if ($site_name == 'westminster')
         return 'http://westminster.gov.uk/services/councilgovernmentanddemocracy/petitions/';
+    if ($site_name == 'elmbridge')
+        return 'http://www.elmbridge.gov.uk/Council/committees/petitionsscheme.htm';
     return null;
 }
 
