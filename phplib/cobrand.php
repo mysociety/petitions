@@ -950,7 +950,7 @@ function cobrand_terms_elsewhere() {
         return 'http://www.east-northamptonshire.gov.uk/site/scripts/documents_info.aspx?documentID=928&pageNumber=10';
     if ($site_name == 'elmbridge')
         return 'http://www.elmbridge.gov.uk/Council/committees/petitionsscheme.htm';
-:    return null;
+    return null;
 }
 
 function cobrand_steps_elsewhere() {
