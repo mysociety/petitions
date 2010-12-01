@@ -1541,7 +1541,7 @@ function petition_admin_perform_actions() {
             if (get_http_var('delete_all')) {
                 db_query('UPDATE signer set showname = false where id in (' . join(',', $ids) . ')');
                 $change = '-';
-                $log = 'Admin hid/reinstated signers ';
+                $log = 'Admin hid signers ';
                 print '<p><em>Those signers have been removed.</em></p>';
             } elseif (get_http_var('confirm_all')) {
                 db_query("UPDATE signer set emailsent = 'confirmed' where id in (" . join(',', $ids) . ')');
