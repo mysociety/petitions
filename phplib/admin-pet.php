@@ -770,12 +770,12 @@ map.setCenter(lonLat, 5);
 <?
             }
 
-            $this->show_signers();
-            $this->show_signers(true);
+            $this->show_signers($petition, $sort, $list_limit, $pdata);
+            $this->show_signers($petition, $sort, $list_limit, $pdata, true);
         }
     }
 
-        function show_signers($removed = false) {
+        function show_signers($petition, $sort, $list_limit, $pdata, $removed = false) {
             $query = "SELECT signer.name as signname, signer.email as signemail,
                          date_trunc('second',signtime) AS signtime,
                          signer.id AS signid, emailsent, showname
