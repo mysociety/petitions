@@ -822,7 +822,10 @@ map.setCenter(lonLat, 5);
                 uksort($out, 'sort_by_domain');
             }
             if (count($out)) {
-                echo '<form name="petition_admin_signature_removal" method="post" action="'.$this->self_link.'">';
+                echo '<form name="petition_admin_signature_';
+                if ($removed) echo 'reinstate';
+                else echo 'removal';
+                echo '" method="post" action="'.$this->self_link.'">';
                 echo '<table><tr><td></td>';
                 $cols = array('e'=>'Signer', 't'=>'Time');
                 foreach ($cols as $s => $col) {
