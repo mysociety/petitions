@@ -49,7 +49,7 @@ function cobrand_creation_deadline_limit() {
     global $site_name;
     if ($site_name == 'east-northamptonshire')
         return array('years' => 0, 'months' => 1);
-    if ($site_name == 'tandridge' || $site_name == 'surreycc')
+    if ($site_name == 'tandridge' || $site_name == 'surreycc' || $site_name == 'rbwm')
         return array('years' => 0, 'months' => 6);
     if ($site_name == 'westminster')
         return array('years' => 0, 'months' => 3);
