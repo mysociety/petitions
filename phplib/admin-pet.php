@@ -772,9 +772,9 @@ map.setCenter(lonLat, 5);
 
             $query = "SELECT signer.name as signname, signer.email as signemail,
                          date_trunc('second',signtime) AS signtime,
-                         signer.id AS signid, emailsent
+                         signer.id AS signid, emailsent, showname
                        FROM signer
-                       WHERE showname = 't' AND petition_id=? AND emailsent in ('sent', 'confirmed')";
+                       WHERE petition_id=? AND emailsent in ('sent', 'confirmed')";
             if ($sort=='t') $query .= ' ORDER BY signtime DESC';
             else $query .= ' ORDER BY signname DESC';
             if ($list_limit) 
@@ -792,8 +792,11 @@ map.setCenter(lonLat, 5);
                     array_push($e, privacy($r['signemail']));
                 $e = join("<br>", $e);
                 $out[$e] = '<td>';
-                if ($r['emailsent'] == 'confirmed')
-                    $out[$e] .= '<input type="checkbox" name="update_signer[]" value="' . $r['signid'] . '">';
+                if ($r['emailsent'] == 'confirmed') {
+                    $out[$e] .= '<input type="checkbox" name="update_signer[]" value="' . $r['signid'] . '"> ';
+                    if ($r['showname'] == 't') $out[$e] .= 'Delete';
+                    elseif ($r['showname'] == 'f') $out[$e] .= 'Reinstate';
+                }
                 $out[$e] .= '</td>';
                 $out[$e] .= '<td>'.$e.'</td>';
                 $out[$e] .= '<td>'.prettify($r['signtime']).'</td>';
@@ -828,7 +831,7 @@ map.setCenter(lonLat, 5);
                 }
                 print '</table>';
                 echo '<p><input type="hidden" name="delete_all" value="1">
-<input type="submit" value="Remove all ticked"></p></form>';
+<input type="submit" value="Remove/reinstate all ticked"></p></form>';
                 if ($list_limit && $c >= $list_limit) {
                     print "<p>... only $list_limit signers shown, "; 
                     print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';
@@ -1523,10 +1526,10 @@ function petition_admin_perform_actions() {
         $ids = $clean_ids;
         if (count($ids)) {
             if (get_http_var('delete_all')) {
-                db_query('UPDATE signer set showname = false where id in (' . join(',', $ids) . ')');
+                db_query('UPDATE signer set showname = NOT showname where id in (' . join(',', $ids) . ')');
                 $change = '-';
-                $log = 'Admin hid signers ';
-                print '<p><em>Those signers have been removed.</em></p>';
+                $log = 'Admin hid/reinstated signers ';
+                print '<p><em>Those signers have been removed or reinstated.</em></p>';
             } else {
                 db_query("UPDATE signer set emailsent = 'confirmed' where id in (" . join(',', $ids) . ')');
                 $change = '+';
