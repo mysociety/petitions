@@ -224,7 +224,7 @@ create table signer (
 ALTER TABLE signer CLUSTER ON signer_pkey;
 
 create index signer_petition_id_idx on signer(petition_id);
-create unique index signer_petition_id_email_idx on signer(petition_id, email) where email != '';
+create unique index signer_petition_id_email_idx on signer(petition_id, lower(email)) where email != '';
 create index signer_emailsent_idx on signer(emailsent);
 create index signer_showname_idx on signer(showname);
 create index signer_petition_id_emailsent_showname on signer(petition_id, emailsent, showname);

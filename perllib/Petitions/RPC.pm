@@ -103,7 +103,7 @@ sub sign_petition_db ($) {
     my $s = dbh()->selectrow_array("
             select emailsent from signer
             where petition_id = (select id from petition where ref = ?)
-                and email!='' and email = ?", {}, map { $r->{$_} } qw(ref email));
+                and email!='' and lower(email) = lower(?)", {}, map { $r->{$_} } qw(ref email));
     return if defined($s) && $s eq 'pending';
     
     # First try updating the row.
@@ -111,13 +111,13 @@ sub sign_petition_db ($) {
         dbh()->do("
                 update signer set emailsent = 'duplicate'
                 where petition_id = (select id from petition where ref = ?)
-                    and email = ?", {},
+                    and lower(email) = lower(?)", {},
                 map { $r->{$_} } qw(ref email));
     } elsif (defined($s)) {
         dbh()->do("
                 update signer set emailsent = 'pending', signtime = ms_current_timestamp()
                 where petition_id = (select id from petition where ref = ?)
-                    and email = ? and emailsent <> 'confirmed'", {},
+                    and lower(email) = lower(?) and emailsent <> 'confirmed'", {},
                 map { $r->{$_} } qw(ref email));
     } else {
         dbh()->do('

@@ -152,6 +152,30 @@ function cobrand_creation_ask_for_address() {
     return true;
 }
 
+function cobrand_creation_do_address_lookup() {
+    global $site_name;
+    if ($site_name == 'islington') {
+        return true;
+    }
+    return false;
+}
+
+function cobrand_perform_address_lookup($pc) {
+    $f = @file_get_contents('http://webgis.islington.gov.uk/Website/WebServices/LLPGSearch/LLPGSearchService.asmx/LLPGSearch?searchTerms=' . urlencode(canonicalise_postcode($pc)));
+    $out = array();
+    if (!$f) {
+        $out['errors'] = 'Sorry, the Islington address lookup is currently not working. Please try again later.';
+    } elseif (preg_match('#<errorDescription>(.*?)</errorDescription>#', $f, $m)) {
+        $out['errors'] = $m[1];
+        if (preg_match('#^There were no addresses matched with these search terms#', $out['errors']))
+            $out['errors'] = 'Sorry, that postcode does not appear to be within Islington';
+    } else {
+        preg_match_all('#<CATADDRESS>(.*?)</CATADDRESS>#', $f, $m);
+        $out['data'] = $m[1];
+    }
+    return $out;
+}
+
 function cobrand_creation_phone_number_optional() {
     global $site_name;
     if ($site_name == 'islington') {
@@ -924,7 +948,9 @@ function cobrand_terms_elsewhere() {
         return 'http://westminster.gov.uk/services/councilgovernmentanddemocracy/petitions/';
     if ($site_name == 'east-northamptonshire')
         return 'http://www.east-northamptonshire.gov.uk/site/scripts/documents_info.aspx?documentID=928&pageNumber=10';
-    return null;
+    if ($site_name == 'elmbridge')
+        return 'http://www.elmbridge.gov.uk/Council/committees/petitionsscheme.htm';
+:    return null;
 }
 
 function cobrand_steps_elsewhere() {

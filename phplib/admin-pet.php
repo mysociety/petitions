@@ -770,11 +770,21 @@ map.setCenter(lonLat, 5);
 <?
             }
 
+            $this->show_signers($petition, $sort, $list_limit, $pdata);
+            $this->show_signers($petition, $sort, $list_limit, $pdata, true);
+        }
+    }
+
+        function show_signers($petition, $sort, $list_limit, $pdata, $removed = false) {
             $query = "SELECT signer.name as signname, signer.email as signemail,
                          date_trunc('second',signtime) AS signtime,
-                         signer.id AS signid, emailsent
+                         signer.id AS signid, emailsent, showname
                        FROM signer
-                       WHERE showname = 't' AND petition_id=? AND emailsent in ('sent', 'confirmed')";
+                       WHERE petition_id=? AND emailsent in ('sent', 'confirmed')";
+            if ($removed)
+                $query .= " AND showname='f'";
+            else
+                $query .= " AND showname='t'";
             if ($sort=='t') $query .= ' ORDER BY signtime DESC';
             else $query .= ' ORDER BY signname DESC';
             if ($list_limit) 
@@ -792,8 +802,11 @@ map.setCenter(lonLat, 5);
                     array_push($e, privacy($r['signemail']));
                 $e = join("<br>", $e);
                 $out[$e] = '<td>';
-                if ($r['emailsent'] == 'confirmed')
-                    $out[$e] .= '<input type="checkbox" name="update_signer[]" value="' . $r['signid'] . '">';
+                if ($r['emailsent'] == 'confirmed') {
+                    $out[$e] .= '<input type="checkbox" name="update_signer[]" value="' . $r['signid'] . '"> ';
+                    if ($r['showname'] == 't') $out[$e] .= 'Delete';
+                    elseif ($r['showname'] == 'f') $out[$e] .= 'Reinstate';
+                }
                 $out[$e] .= '</td>';
                 $out[$e] .= '<td>'.$e.'</td>';
                 $out[$e] .= '<td>'.prettify($r['signtime']).'</td>';
@@ -827,7 +840,11 @@ map.setCenter(lonLat, 5);
                     print '</tr>';
                 }
                 print '</table>';
-                echo '<p><input type="hidden" name="delete_all" value="1">
+                if ($removed)
+                    echo '<p><input type="hidden" name="reinstate_all" value="1">
+<input type="submit" value="Reinstate all ticked"></p></form>';
+                else
+                    echo '<p><input type="hidden" name="delete_all" value="1">
 <input type="submit" value="Remove all ticked"></p></form>';
                 if ($list_limit && $c >= $list_limit) {
                     print "<p>... only $list_limit signers shown, "; 
@@ -838,7 +855,6 @@ map.setCenter(lonLat, 5);
                 print '<p>Nobody has signed up to this petition.</p>';
             }
         }
-    }
 
     function display_categories($current = 0) {
         foreach (cobrand_admin_rejection_categories() as $n => $category) {
@@ -1510,7 +1526,7 @@ map.setCenter(lonLat, 5);
 
 function petition_admin_perform_actions() {
     $petition_id = null;
-    if (get_http_var('delete_all') || get_http_var('confirm_all')) {
+    if (get_http_var('delete_all') || get_http_var('confirm_all') || get_http_var('reinstate_all')) {
         $ids = (array)get_http_var('update_signer');
         $sigs_by_petition = array();
         $clean_ids = array();
@@ -1527,11 +1543,16 @@ function petition_admin_perform_actions() {
                 $change = '-';
                 $log = 'Admin hid signers ';
                 print '<p><em>Those signers have been removed.</em></p>';
-            } else {
+            } elseif (get_http_var('confirm_all')) {
                 db_query("UPDATE signer set emailsent = 'confirmed' where id in (" . join(',', $ids) . ')');
                 $change = '+';
                 $log = 'Admin confirmed signers ';
                 print '<p><em>Those signers have been confirmed.</em></p>';
+            } elseif (get_http_var('reinstate_all')) {
+                db_query("UPDATE signer set showname = true where id in (" . join(',', $ids) . ')');
+                $change = '+';
+                $log = 'Admin reinstated signers ';
+                print '<p><em>Those signers have been reinstated.</em></p>';
             }
         }
         foreach ($sigs_by_petition as $petition_id => $sigs) {
