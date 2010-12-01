@@ -368,7 +368,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
             $maximum = '1 month';
             $example_string = '2 weeks';
         } else {
-            $maximum = sprintf('%d months', $deadline_limits['months']);
+            $maximum = sprintf('%d months', $deadline_limits['months']); 
         } 
     }
     textfield('rawdeadline', $data['rawdeadline'], 15, $errors, '(e.g. "' . $example_string . '"; maximum ' . $maximum . ')');
