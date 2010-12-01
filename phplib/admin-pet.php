@@ -782,9 +782,9 @@ map.setCenter(lonLat, 5);
                        FROM signer
                        WHERE petition_id=? AND emailsent in ('sent', 'confirmed')";
             if ($removed)
-                $query .= " AND showname='t'";
-            else
                 $query .= " AND showname='f'";
+            else
+                $query .= " AND showname='t'";
             if ($sort=='t') $query .= ' ORDER BY signtime DESC';
             else $query .= ' ORDER BY signname DESC';
             if ($list_limit) 
