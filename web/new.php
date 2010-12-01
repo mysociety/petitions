@@ -122,9 +122,9 @@ function petition_form_submitted($steps) {
 
     foreach ($steps as $i => $step) {
         if (!$step) continue;
-        call_user_func('petition_submitted_' . $step, &$data);
+        $errors = call_user_func('petition_submitted_' . $step, &$data);
         if (get_http_var('tostep' . $step)) {
-            call_user_func('petition_form_' . $step, $steps, $i, $data);
+            call_user_func('petition_form_' . $step, $steps, $i, $data, $errors);
             return;
         }
         $errors = call_user_func('step_' . $step . '_error_check', &$data);
@@ -137,7 +137,7 @@ function petition_form_submitted($steps) {
 }
 
 function petition_submitted_category($data) {
-    return; # Dummy function for loop, doesn't do anything
+    return array(); # Dummy function for loop, doesn't do anything
 }
 
 /*
@@ -156,6 +156,7 @@ function petition_submitted_main($data) {
     if (OPTION_SITE_TYPE == 'one') {
         $data['body'] = null;
     }
+    return array();
 }
 
 function petition_submitted_you($data) {
@@ -163,11 +164,28 @@ function petition_submitted_you($data) {
         $data['name'] = '';
     if (array_key_exists('overseas', $data) && $data['overseas']=='-- Select --') 
         $data['overseas'] = '';
+    if (!array_key_exists('address', $data) || $data['address'] == '-- Select --')
+        $data['address'] = '';
+
+    $errors = array();
+    if (cobrand_creation_do_address_lookup() && array_key_exists('postcode', $data)) {
+        if (!$data['postcode'] || !validate_postcode($data['postcode'])) {
+            $errors['postcode'] = _('Please enter a valid postcode');
+        } else {
+            $out = cobrand_perform_address_lookup($data['postcode']);
+            if (array_key_exists('errors', $out))
+                $errors['postcode'] = $out['errors'];
+            if (array_key_exists('data', $out))
+                $data['address_lookup'] = $out['data'];
+        }
+    }
+    return $errors;
 }
 
 function petition_submitted_preview($data) {
     if (!array_key_exists('comments', $data))
         $data['comments'] = '';
+    return array();
 }
 
 /* 
@@ -412,6 +430,13 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
         if ($name == 'address' && ! cobrand_creation_ask_for_address() )
           continue; # skip loop: thereby suppressing address label as well as textarea input
           
+        if ($name == 'address' && cobrand_creation_do_address_lookup() && !array_key_exists('address_lookup', $data))
+            continue;
+
+        if ($name == 'address' && get_http_var('tostepyou') == 'Look up address') {
+            print '<p class="errortext">Please pick an address from the list below:</p>';
+        }
+
         if (is_string($desc))
             printf('<p><label for="%s">%s:</label> ', $name, htmlspecialchars($desc));
 
@@ -419,8 +444,22 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
             $data[$name] = '';
         
         if ($name == 'address') {
-            textarea($name, $data[$name], 30, 4, true, $errors);
-            cobrand_creation_address_help();
+            if (!cobrand_creation_do_address_lookup()) {
+                textarea($name, $data[$name], 30, 4, true, $errors);
+                cobrand_creation_address_help();
+            } else {
+?>
+<select name="address" id="address">
+<option>-- Select --</option>
+<?              foreach ($data['address_lookup'] as $opt) {
+                    print '<option';
+                    if (array_key_exists('address', $data) && $opt == $data['address'])
+                        print ' selected="selected"';
+                    print ">$opt</option>";
+                } ?>
+</select>
+<?
+            }
         } elseif ($name == 'overseas') {
             if (!cobrand_creation_within_area_only()) {
 ?>
@@ -463,6 +502,8 @@ the Armed Forces without a postcode, please select from this list:</label>
                 $after = '<span id="ms-email2-note">' . $after . '<span>';
             } elseif ($name == 'name') {
                 $after = '(please use a full name e.g. Mr John Smith)';
+            } elseif ($name == 'postcode' && cobrand_creation_do_address_lookup()) {
+                $after = '<input type="submit" name="tostepyou" value="Look up address">';
             }
             textfield($name, $data[$name], $size, $errors, $after);
         }
@@ -659,14 +700,16 @@ function step_you_error_check($data) {
     if (!cobrand_creation_phone_number_optional()) {
         $vars['telephone'] = 'phone number';
     }
-    if (cobrand_creation_ask_for_address()) {
+    if (cobrand_creation_do_address_lookup()) {
+        if (!$data['address']) $errors['address'] = 'Please pick an address';
+    } elseif (cobrand_creation_ask_for_address()) {
         $vars['address'] = 'postal address';
     } else {
         # Set it to blank string as no form field printed at all.
         $data['address'] = '';
     }
     foreach ($vars as $var => $p_var) {
-            if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
+        if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
     }
     return $errors;
 }
