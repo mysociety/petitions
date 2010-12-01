@@ -651,11 +651,11 @@ function step_you_error_check($data) {
     if (cobrand_creation_phone_number_optional() && !$data['telephone']) {
         # Optional, so doesn't matter if blank
     } elseif (!preg_match('#[1-9]#', $data['telephone']))
-        $errors['telephone'] = 'Please enter a telephone number';
+        $errors['telephone'] = 'Please enter a telephone number, including the area code';
     elseif (strlen($data['telephone']) < 10)
-        $errors['telephone'] = 'That seems a bit short - please specify your full telephone number';
+        $errors['telephone'] = 'That seems a bit short - please specify your full telephone number, including the area code';
     elseif (!preg_match('#01[2-9][^1]\d{6,7}|01[2-69]1\d{7}|011[3-8]\d{7}|02[03489]\d{8}|07[04-9]\d{8}|00#', $tel))
-        $errors['telephone'] = 'Please enter a valid telephone number';
+        $errors['telephone'] = 'Please enter a valid telephone number, including the area code';
 
     if (!$data['postcode'] && !$data['overseas']) {
         $errors['postcode'] = 'Please enter a valid postcode';
