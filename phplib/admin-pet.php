@@ -770,11 +770,21 @@ map.setCenter(lonLat, 5);
 <?
             }
 
+            $this->show_signers();
+            $this->show_signers(true);
+        }
+    }
+
+        function show_signers($removed = false) {
             $query = "SELECT signer.name as signname, signer.email as signemail,
                          date_trunc('second',signtime) AS signtime,
                          signer.id AS signid, emailsent, showname
                        FROM signer
                        WHERE petition_id=? AND emailsent in ('sent', 'confirmed')";
+            if ($removed)
+                $query .= " AND showname='t'";
+            else
+                $query .= " AND showname='f'";
             if ($sort=='t') $query .= ' ORDER BY signtime DESC';
             else $query .= ' ORDER BY signname DESC';
             if ($list_limit) 
@@ -830,8 +840,12 @@ map.setCenter(lonLat, 5);
                     print '</tr>';
                 }
                 print '</table>';
-                echo '<p><input type="hidden" name="delete_all" value="1">
-<input type="submit" value="Remove/reinstate all ticked"></p></form>';
+                if ($removed)
+                    echo '<p><input type="hidden" name="reinstate_all" value="1">
+<input type="submit" value="Reinstate all ticked"></p></form>';
+                else
+                    echo '<p><input type="hidden" name="delete_all" value="1">
+<input type="submit" value="Remove all ticked"></p></form>';
                 if ($list_limit && $c >= $list_limit) {
                     print "<p>... only $list_limit signers shown, "; 
                     print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';
@@ -841,7 +855,6 @@ map.setCenter(lonLat, 5);
                 print '<p>Nobody has signed up to this petition.</p>';
             }
         }
-    }
 
     function display_categories($current = 0) {
         foreach (cobrand_admin_rejection_categories() as $n => $category) {
@@ -1513,7 +1526,7 @@ map.setCenter(lonLat, 5);
 
 function petition_admin_perform_actions() {
     $petition_id = null;
-    if (get_http_var('delete_all') || get_http_var('confirm_all')) {
+    if (get_http_var('delete_all') || get_http_var('confirm_all') || get_http_var('reinstate_all')) {
         $ids = (array)get_http_var('update_signer');
         $sigs_by_petition = array();
         $clean_ids = array();
@@ -1526,15 +1539,20 @@ function petition_admin_perform_actions() {
         $ids = $clean_ids;
         if (count($ids)) {
             if (get_http_var('delete_all')) {
-                db_query('UPDATE signer set showname = NOT showname where id in (' . join(',', $ids) . ')');
+                db_query('UPDATE signer set showname = false where id in (' . join(',', $ids) . ')');
                 $change = '-';
                 $log = 'Admin hid/reinstated signers ';
-                print '<p><em>Those signers have been removed or reinstated.</em></p>';
-            } else {
+                print '<p><em>Those signers have been removed.</em></p>';
+            } elseif (get_http_var('confirm_all')) {
                 db_query("UPDATE signer set emailsent = 'confirmed' where id in (" . join(',', $ids) . ')');
                 $change = '+';
                 $log = 'Admin confirmed signers ';
                 print '<p><em>Those signers have been confirmed.</em></p>';
+            } elseif (get_http_var('reinstate_all')) {
+                db_query("UPDATE signer set showname = true where id in (" . join(',', $ids) . ')');
+                $change = '+';
+                $log = 'Admin reinstated signers ';
+                print '<p><em>Those signers have been reinstated.</em></p>';
             }
         }
         foreach ($sigs_by_petition as $petition_id => $sigs) {
