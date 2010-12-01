@@ -339,15 +339,21 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 </p>
 <p><label for="rawdeadline">For how long would you like your petition to accept signatures?</label>
     <?
+    $example_string = "1 month";
     $deadline_limits = cobrand_creation_deadline_limit();
     if ($deadline_limits['years'] && $deadline_limits['months']) {
         $maximum = sprintf('%d year, %d months', $deadline_limits['years'], $deadline_limits['months']);
     } elseif ($deadline_limits['years']) {
         $maximum = sprintf('%d year', $deadline_limits['years']);
     } elseif ($deadline_limits['months']) {
-        $maximum = sprintf('%d months', $deadline_limits['months']);
+        if ($deadline_limits['months'] == 1){
+            $maximum = '1 month';
+            $example_string = '2 weeks';
+        } else {
+            $maximum = sprintf('%d months', $deadline_limits['months']);
+        } 
     }
-    textfield('rawdeadline', $data['rawdeadline'], 15, $errors, '(e.g. "2 months"; maximum ' . $maximum . ')');
+    textfield('rawdeadline', $data['rawdeadline'], 15, $errors, '(e.g. "' . $example_string . '"; maximum ' . $maximum . ')');
     ?>
 </p>
 
