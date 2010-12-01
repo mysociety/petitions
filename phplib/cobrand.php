@@ -920,6 +920,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.waverley.gov.uk/petitionsterms';
     if ($site_name == 'westminster')
         return 'http://westminster.gov.uk/services/councilgovernmentanddemocracy/petitions/';
+    if ($site_name == 'east-northamptonshire')
+        return 'http://www.east-northamptonshire.gov.uk/site/scripts/documents_info.aspx?documentID=928&pageNumber=10';
     return null;
 }
 
