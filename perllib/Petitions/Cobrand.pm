@@ -44,6 +44,7 @@ sub approval_word() {
 sub within_area_only() {
     my $site_name = Petitions::Page::site_name();
     return ('Islington', 2507) if $site_name eq 'islington';
+    return ('the Royal Borough of Windsor and Maidenhead', 2622) if $site_name eq 'rbwm';
     return ('Westminster', 2504) if $site_name eq 'westminster';
     #return ('Surrey Heath', 2450) if $site_name eq 'surreyheath';
     return;
@@ -62,7 +63,7 @@ sub ask_for_address_type() {
 
 sub overseas_dropdown {
     my $site_group = Petitions::Page::site_group();
-    if ($site_group eq 'westminster' || $site_group eq 'islington') {
+    if ($site_group eq 'westminster' || $site_group eq 'islington' || $site_group eq 'rbwm') {
         return []; # No drop-down
     } elsif ($site_group eq 'surreycc') {
         return [
