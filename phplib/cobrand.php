@@ -280,11 +280,10 @@ can express your views, see the
 <a href='http://www.reigate-banstead.gov.uk/planning/'>planning
 applications</a> section.";
             } elseif ($site_name == 'elmbridge' && $category_id == 11) { # Planning
-                return "You cannot create a petition about a planning
-application. For further information on the Council's procedures and how you
-can express your views, see the
-<a href='http://www.elmbridge.gov.uk/planning/online.htm'>planning
-applications</a> section.";
+                return "We are unable to accept an e-petition through this
+facility in relation to a specific planning application as there is a
+<a href='http://www.elmbridge.gov.uk/planning/online.htm'>separate
+process for planning representations</a>.";
             } else {
                 $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
                 return "You are petitioning about something which isn't the
@@ -295,22 +294,16 @@ petition in this category</a>.";
         }
         if ($area) {
             # $area is set if we're being called as a result of the form below
-            if (in_array($area, array('tandridge', 'reigate-banstead', 'woking', 'spelthorne')))
+            if (in_array($area, array('tandridge', 'reigate-banstead', 'woking', 'spelthorne', 'runnymede', 'elmbridge', 'waverley')))
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
-            if ($area == 'elmbridge')
-                return 'http://www.elmbridge.gov.uk/Council/information/petition.htm';
             if ($area == 'epsom-ewell')
                 return 'http://www.epsom-ewell.gov.uk/EEBC/Council/E-petitions.htm';
             if ($area == 'guildford')
                 return 'http://www.surreycc.gov.uk/SCCWebsite/SCCWSPages.nsf/LookupWebPagesByUNID_RTF_INT/A4F9AD1334EF7EB480257744005476BA?opendocument';
             if ($area == 'molevalley')
                 return 'http://www.molevalley.gov.uk/index.cfm?articleid=9694';
-            if ($area == 'runnymede')
-                return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.bbcf55f3a4a758ceb14229a7af8ca028/';
             if ($area == 'surreyheath')
                 return 'http://www.surreyheath.gov.uk/council/epetitions/';
-            if ($area == 'waverley')
-                return 'http://www.waverley.gov.uk/site/scripts/documents_info.php?documentID=955';
         } else {
             return '
             <input type="hidden" name="category" value="' . $category_id . '"> 
