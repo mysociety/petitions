@@ -373,7 +373,9 @@ petition in this category</a>.";
     return null;
 }
 
-function cobrand_categories() {
+# Could be run from cron (e.g. send-messages), so have ALL parameter
+# to return everything from a particular group
+function cobrand_categories($all = false) {
     global $site_name, $site_group;
     if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
         $cats = array(
@@ -394,15 +396,17 @@ function cobrand_categories() {
             15 => 'Waste Collection',
             16 => 'Waste Disposal',
         );
-        if ($site_name == 'elmbridge') {
+        if ($site_name == 'elmbridge' || $all) {
             $cats[17] = 'Parking';
             asort($cats);
         }
-        if ($site_name == 'runnymede') {
+        if ($site_name == 'runnymede' || $all) {
             $cats[18] = 'Recycling Service';
             $cats[19] = 'Refuse Service';
-            unset($cats[15]);
-            unset($cats[16]);
+            if (!$all) {
+                unset($cats[15]);
+                unset($cats[16]);
+            }
             asort($cats);
         }
         $cats[99] = 'Other'; # Both
@@ -414,13 +418,14 @@ function cobrand_categories() {
 }
 
 function cobrand_category($id) {
-    $categories = cobrand_categories();
+    $categories = cobrand_categories(true);
     return $categories[$id];
 }
 
-function cobrand_display_category(){
-    global $site_name;
-    if ($site_name == 'westminster') return false;
+# Could be run from cron (e.g. send-messages), so examine site_group
+function cobrand_display_category() {
+    global $site_group;
+    if ($site_group == 'westminster') return false;
     return true;
 }
 
