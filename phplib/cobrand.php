@@ -375,8 +375,10 @@ petition in this category</a>.";
 
 # Could be run from cron (e.g. send-messages), so have ALL parameter
 # to return everything from a particular group
-function cobrand_categories($all = false) {
+function cobrand_categories($override_site_name = '') {
     global $site_name, $site_group;
+    $sn = $site_name;
+    if ($override_site_name) $sn = $override_site_name;
     if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
         $cats = array(
             1 => 'Building Regulations',
@@ -396,17 +398,15 @@ function cobrand_categories($all = false) {
             15 => 'Waste Collection',
             16 => 'Waste Disposal',
         );
-        if ($site_name == 'elmbridge' || $all) {
+        if ($sn == 'elmbridge') {
             $cats[17] = 'Parking';
             asort($cats);
         }
-        if ($site_name == 'runnymede' || $all) {
+        if ($sn == 'runnymede') {
             $cats[18] = 'Recycling Service';
             $cats[19] = 'Refuse Service';
-            if (!$all) {
-                unset($cats[15]);
-                unset($cats[16]);
-            }
+            unset($cats[15]);
+            unset($cats[16]);
             asort($cats);
         }
         $cats[99] = 'Other'; # Both
@@ -417,8 +417,8 @@ function cobrand_categories($all = false) {
     return $global_petition_categories;
 }
 
-function cobrand_category($id) {
-    $categories = cobrand_categories(true);
+function cobrand_category($id, $override_site_name='') {
+    $categories = cobrand_categories($override_site_name);
     return $categories[$id];
 }
 
@@ -521,14 +521,14 @@ function cobrand_admin_site_restriction() {
 }
 
 function cobrand_admin_allow_html_response() {
-    global $site_name;
-    if ($site_name == 'number10') return true;
+    global $site_group;
+    if ($site_group == 'number10') return true;
     return false;
 }
 
 # Admin, so only site_group available
 function cobrand_admin_areas_of_interest() {
-    $site_group = cobrand_site_group();
+    global $site_group;
 
     if ($site_group == 'sbdc' || $site_group == 'sbdc1') {
         return json_decode(file_get_contents('http://mapit.mysociety.org/areas/LBO,MTD,LGD,DIS,UTA,COI'), true);

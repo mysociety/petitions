@@ -154,7 +154,7 @@ class Petition {
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
         if (cobrand_display_category()){
-            $this->data['category'] = cobrand_category($this->data['category']);
+            $this->data['category'] = cobrand_category($this->data['category'], $this->body_ref());
         } else {
             $this->data['category'] = 0; # force no-category
         }
