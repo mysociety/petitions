@@ -234,7 +234,7 @@ class ADMIN_PAGE_PET_OFFLINE {
             $ddd = preg_replace('#\s#', '', $data['detail']);
 
             if (cobrand_display_category()){
-                if (!$data['category'] || !array_key_exists($data['category'], cobrand_categories())) {
+                if (!$data['category'] || !array_key_exists($data['category'], cobrand_categories(cobrand_admin_is_site_user()))) {
                     $errors['category'] = 'Please select a category';
                 #} elseif (!cobrand_category_okay($data['category'])) {
                 #    $errors['category'] = 'Petitions in that category cannot currently be made (they have to go to a different place).';

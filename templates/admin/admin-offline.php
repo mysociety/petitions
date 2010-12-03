@@ -52,7 +52,7 @@ if (array_key_exists('deadline', $data)) {
     <p><label for="category">Category:</label>
     <select name="category" id="category">
     <option value="">-- Select a category --</option><?
-        foreach (cobrand_categories() as $id => $category) {
+        foreach (cobrand_categories(cobrand_admin_is_site_user()) as $id => $category) {
             if (!$id) continue;
             print '<option';
             if (array_key_exists('category', $data) && $id == $data['category'])
