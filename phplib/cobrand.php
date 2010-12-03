@@ -109,6 +109,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'sholland') return array('South Holland', 2381);
     if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
     if ($site_name == 'stedmundsbury') return array('the borough of St Edmundsbury', 2443);
+    if ($site_name == 'stevenage') return array('Stevenage', 2347);
     if ($site_name == 'surreycc') return array('Surrey', null);
     if ($site_name == 'waverley') return array('Waverley', 2447);
     if ($site_name == 'westminster') return array('Westminster', 2504);
