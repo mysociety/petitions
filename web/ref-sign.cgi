@@ -78,6 +78,7 @@ sub signup_page ($$) {
     $qp_email = i_check_email($qp_email);
     $qp_email2 = i_check_email($qp_email2);
     my $qp_address = $q->param('address') || '';
+    $qp_address = '' if $qp_address eq '-- Select --';
     my $qp_address_type = $q->param('address_type') || '';
     my $qp_postcode = $q->param('postcode');
     $qp_postcode =~ s/[^a-z0-9]//ig;
@@ -100,8 +101,6 @@ sub signup_page ($$) {
         $errors{email2} = 'The two email addresses do not match'
             if ($local1 ne $local2 || lc($domain1) ne lc($domain2));
     }
-    $errors{address} = 'Please enter your address'
-        if (!$qp_address && Petitions::Cobrand::ask_for_address());
 
     if (Petitions::Cobrand::ask_for_address_type()) {
         if (!$qp_address_type || $qp_address_type !~ /^(home|work|study)$/) {
@@ -123,6 +122,20 @@ sub signup_page ($$) {
                 $errors{postcode} = "You must live, work or study within $area to sign a petition.";
             }
         }
+    }
+
+    if (Petitions::Cobrand::do_address_lookup()) {
+        if (!$errors{postcode} && !$qp_address) {
+            my %out = Petitions::Cobrand::perform_address_lookup($qp_postcode);
+            $errors{postcode} = $out{errors} if $out{errors};
+            if ($out{data}) {
+                $q->scratch()->{address_lookup} = $out{data};
+                $errors{address} = 'Please pick an address';
+            }
+        }
+    } else {
+        $errors{address} = 'Please enter your address'
+            if (!$qp_address && Petitions::Cobrand::ask_for_address());
     }
 
     my $title = 'Signature addition';
