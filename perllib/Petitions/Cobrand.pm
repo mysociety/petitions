@@ -103,17 +103,17 @@ sub overseas_dropdown {
     }
 }
 
-sub cobrand_creation_do_address_lookup() {
+sub do_address_lookup() {
     my $site_name = Petitions::Page::site_name();
     return 1 if $site_name eq 'islington';
     return 0;
 }
 
-sub cobrand_perform_address_lookup($) {
+sub perform_address_lookup($) {
     my $pc = shift;
     $pc = mySociety::PostcodeUtil::canonicalise_postcode($pc);
     $pc = uri_escape($pc);
-    $f = get("http://webgis.islington.gov.uk/Website/WebServices/LLPGSearch/LLPGSearchService.asmx/LLPGSearch?searchTerms=$pc");
+    my $f = get("http://webgis.islington.gov.uk/Website/WebServices/LLPGSearch/LLPGSearchService.asmx/LLPGSearch?searchTerms=$pc");
     my %out;
     if (!$f) {
         $out{errors} = 'Sorry, the Islington address lookup is currently not working. Please try again later.';

@@ -125,10 +125,11 @@ sub signup_page ($$) {
     }
 
     if (Petitions::Cobrand::do_address_lookup()) {
-        if (!$errors{postcode} && !$qp_address) {
+        if (!$errors{postcode} && (%errors || !$qp_address)) {
             my %out = Petitions::Cobrand::perform_address_lookup($qp_postcode);
             $errors{postcode} = $out{errors} if $out{errors};
             if ($out{data}) {
+                unshift @{$out{data}}, '-- Select --';
                 $q->scratch()->{address_lookup} = $out{data};
                 $errors{address} = 'Please pick an address';
             }
