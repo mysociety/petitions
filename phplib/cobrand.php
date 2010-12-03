@@ -43,6 +43,9 @@ function cobrand_creation_email_request() {
     if ($site_name == 'westminster')
         return 'We need your contact details so we can get in touch with you.<br/>
         Your details other than your name will not be published.';
+    if ($site_name == 'runnymede')
+        return 'We need your contact details so we can get in touch with you.<br/>
+        Your details other than your name will not be published.';
 }
 
 function cobrand_creation_deadline_limit() {
@@ -196,6 +199,19 @@ function cobrand_creation_comments_label(){
     return "If you have any special requests concerning your
         petition, or information about your petition you would like us 
         to know that you do not wish to be public, please include them here:";
+}
+
+function cobrand_creation_extra_footer() {
+    global $site_name;
+    if ($site_name != 'runnymede') return;
+?>
+<p align="center">
+<a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/">Terms and conditions</a>
+| <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.eac7b227d6b697ef53d2dd85af8ca028/">Step by step guide</a>
+| <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.9e3786f0e4a5a623fa43a310af8ca028/">Questions about petitions</a>
+| <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.40b9386d6ff92926fa43a310af8ca028/">Petitions Scheme</a>
+</p>
+<?
 }
 
 function cobrand_error_div_start() {

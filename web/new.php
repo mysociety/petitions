@@ -57,6 +57,7 @@ ob_end_clean();
 page_header($page_title, array());
 cobrand_extra_heading($page_title);
 print $contents;
+cobrand_creation_extra_footer();
 page_footer('Create');
 
 /* check_edited_petition DATA
