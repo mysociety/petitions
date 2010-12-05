@@ -37,6 +37,7 @@ sub site_name {
         foreach (@sites) {
             if ($ENV{HTTP_HOST} eq "petitions.$_.gov.uk") {
                 $site_name = $_;
+                $site_name = 'ashfield' if $site_name eq 'ashfield-dc';
                 last;
             }
         }
