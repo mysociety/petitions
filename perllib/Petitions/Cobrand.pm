@@ -10,7 +10,13 @@
 package Petitions::Cobrand;
 
 use strict;
+use mySociety::Config;
 use Petitions::Page;
+if (mySociety::Config::get('SITE_NAME') eq 'islington') {
+    use LWP::Simple;
+    use mySociety::PostcodeUtil;
+    use URI::Escape;
+}
 
 sub main_heading($) {
     my $text = shift;
@@ -95,6 +101,31 @@ sub overseas_dropdown {
             'Turks and Caicos Islands',
         ];
     }
+}
+
+sub do_address_lookup() {
+    my $site_name = Petitions::Page::site_name();
+    return 1 if $site_name eq 'islington';
+    return 0;
+}
+
+sub perform_address_lookup($) {
+    my $pc = shift;
+    $pc = mySociety::PostcodeUtil::canonicalise_postcode($pc);
+    $pc = uri_escape($pc);
+    my $f = get("http://webgis.islington.gov.uk/Website/WebServices/LLPGSearch/LLPGSearchService.asmx/LLPGSearch?searchTerms=$pc");
+    my %out;
+    if (!$f) {
+        $out{errors} = 'Sorry, the Islington address lookup is currently not working. Please try again later.';
+    } elsif ($f =~ /<errorDescription>(.*?)<\/errorDescription>/) {
+        $out{errors} = $1;
+        if ($out{errors} =~ /^There were no addresses matched with these search terms/) {
+            $out{errors} = 'Sorry, that postcode does not appear to be within Islington';
+        }
+    } else {
+        @{$out{data}} = ($f =~ /<CATADDRESS>(.*?)<\/CATADDRESS>/g);
+    }
+    return %out;
 }
 
 1;
