@@ -107,6 +107,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'east-northamptonshire') return array('East Northamptonshire', 2393);
     if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
     if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
+    if ($site_name == 'forest-heath') return array('Forest Heath', 2444);
     if ($site_name == 'hounslow') return array('Hounslow', 2483);
     if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
     if ($site_name == 'mansfield') return array('Mansfield', 2416);
