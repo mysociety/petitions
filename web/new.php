@@ -365,14 +365,16 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     } elseif ($deadline_limits['years']) {
         $maximum = sprintf('%d year', $deadline_limits['years']);
     } elseif ($deadline_limits['months']) {
-        if ($deadline_limits['months'] == 1){
+        if ($deadline_limits['months'] == 1) {
             $maximum = '1 month';
             $example_string = '2 weeks';
         } else {
             $maximum = sprintf('%d months', $deadline_limits['months']); 
         } 
     }
-    textfield('rawdeadline', $data['rawdeadline'], 15, $errors, '(e.g. "' . $example_string . '"; maximum ' . $maximum . ')');
+    $after = "(e.g. &ldquo;$example_string&rdquo;; maximum $maximum";
+    $after .= cobrand_creation_duration_help() . ')';
+    textfield('rawdeadline', $data['rawdeadline'], 15, $errors, $after);
     ?>
 </p>
 
@@ -531,7 +533,7 @@ the Armed Forces without a postcode, please select from this list:</label>
 
 function step_category_error_check($data) {
     $errors = array();
-    if (cobrand_display_category()){
+    if (cobrand_display_category()) {
         if (!array_key_exists('category', $data)
           || !$data['category']
           || !array_key_exists($data['category'], cobrand_categories())) {
@@ -604,7 +606,7 @@ function step_main_error_check($data) {
     if (strlen($ddd) > 1000)
         $errors['detail'] = _('Please make your more details a bit shorter (at most 1000 characters).');
 
-    if (cobrand_display_category()){
+    if (cobrand_display_category()) {
         if (!array_key_exists('category', $data)
           || !$data['category']
           || !array_key_exists($data['category'], cobrand_categories())) {
@@ -677,7 +679,7 @@ function step_you_error_check($data) {
         $areas = mapit_get_voting_areas($data['postcode']);
         if (is_object($areas)) { # RABX Error
             $errors['postcode'] = 'Sorry, we did not recognise that postcode.';
-        } elseif ($area[1]){
+        } elseif ($area[1]) {
             if (!in_array($area[1], $areas)) {
                 $errors['postcode'] = sprintf("Sorry, that postcode is not within %s", $area[0]);
             }
@@ -757,7 +759,7 @@ your name and organisation:</p>
 <ul><li>Name: <strong><?=$data['name'] ?></strong></li>
 <li>Email: <strong><?=$data['email'] ?></strong></li>
 <li>Organisation: <strong><?=$data['organisation'] ?></strong></li>
-<? if (cobrand_creation_ask_for_address()){
+<? if (cobrand_creation_ask_for_address()) {
       echo '<li>Address: <strong>' . $data['address'] . '</strong></li>';
     } 
 ?>

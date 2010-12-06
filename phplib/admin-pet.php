@@ -209,6 +209,8 @@ class ADMIN_PAGE_PET_OFFLINE {
     }
 
     function display() {
+        global $pet_today;
+
         $data = array();
         foreach (array( 'body', 'pet_content', 'detail', 'ref', 'category', 'offline_signers', 'rawdeadline', 'name', 'email', 'organisation', 'address', 'postcode', 'telephone', 'offline_link', 'offline_location' ) as $var) {
             $data[$var] = get_http_var($var);
@@ -268,6 +270,8 @@ class ADMIN_PAGE_PET_OFFLINE {
             $deadline = datetime_parse_local_date($data['rawdeadline'], time(), 'en', 'GB');
             if (!$data['rawdeadline'])
                 $errors[] = 'Please give a date';
+            elseif ($deadline && !$deadline['error'] && $deadline['iso'] > $pet_today)
+                $errors[] = 'Please specify a date in the past.';
             elseif ($deadline && !$deadline['error'])
                 $data['deadline'] = $deadline['iso'];
             else
@@ -641,7 +645,7 @@ Deadline: ';
         }
         print '</ul>';
 
-        if ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted') {
+        if (!get_http_var('reject') && ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted')) {
             print '
 <form name="petition_admin_approve" method="post" action="'.$this->self_link.'">
 <p align="center">
@@ -1237,7 +1241,6 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
     # Can be both 0 and blank - 0 would imply there was an offline version
     # and it got no signatures, blank would mean no offline version.
     function offline_signers($petition_id) {
-        global $pet_today;
         $p = new Petition($petition_id);
 
         $new = get_http_var('offline_signers');
