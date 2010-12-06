@@ -93,7 +93,7 @@ function cobrand_creation_ask_for_address_type() { # by default: don't ask for a
 # any area in the site database.
 function cobrand_creation_within_area_only() {
     global $site_name;
-    if ($site_name == 'ashfield') return array('Ashfield', 2413);
+    if ($site_name == 'ashfield-dc') return array('Ashfield', 2413);
     if ($site_name == 'barnet') return array('Barnet', 2489);
     if ($site_name == 'barrowbc') return array('Cumbria', 2220);
     if ($site_name == 'bassetlaw') return array('Bassetlaw', 2410);
