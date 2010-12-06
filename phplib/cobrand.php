@@ -435,6 +435,25 @@ function cobrand_categories($override_site_name = '') {
         $cats[99] = 'Other'; # Both
         return $cats;
     }
+    if ($site_group == 'newforest') {
+        return array(
+            1 => 'Building Regulations',
+            2 => 'Community Safety',
+            3 => 'Council Tax',
+            4 => 'Employment/Business Support',
+            5 => 'Environmental Health',
+            6 => 'Highways',
+            7 => 'Housing',
+            8 => 'Leisure and Recreation',
+            9 => 'Planning',
+            10 => 'Tourism',
+            11 => 'Transport',
+            12 => 'Waste Collection',
+            13 => 'Waste Disposal',
+            99 => 'Other', # Both
+        );
+        return $cats;
+    }
 
     global $global_petition_categories;
     return $global_petition_categories;
