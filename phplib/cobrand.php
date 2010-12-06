@@ -61,6 +61,12 @@ function cobrand_creation_deadline_limit() {
     return array('years' => 1, 'months' => 0);
 }
 
+function cobrand_creation_duration_help() {
+    global $site_name;
+    if ($site_name == 'islington') return '. The duration of your petition starts from the time it is approved.';
+    return '';
+}
+
 function cobrand_creation_example_ref() {
     global $site_name;
     if ($site_name == 'spelthorne') return 'recycle';
@@ -469,7 +475,7 @@ function cobrand_site_group() {
 # Runs from cron, so examine site_group or petition body.
 function cobrand_admin_email_finished($body) {
     global $site_group;
-    if ($site_group == 'hounslow') return true;
+    if ($site_group == 'hounslow' || $site_group == 'islington') return true;
     if ($body == 'elmbridge') return true;
     return false;
 }
