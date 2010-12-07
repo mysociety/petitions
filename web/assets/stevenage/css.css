@@ -1,3 +1,21 @@
+/* Table style taken from main site CSS, made global */
+th, td {
+    font-size: 0.75em;
+    border: solid 1px #000000;
+    padding: 0.25em;
+}
+th *, td * {
+    font-size: 1em;
+}
+th {
+    background: #006633;
+    color: #ffffff;
+}
+
+th {
+    font-weight: bold;
+}
+
 #document{
     line-height: 1.3em;
     width: 48em;
