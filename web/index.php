@@ -193,23 +193,17 @@ by the time it closes, you will be sent a response from
 <? } ?>
 </p>
 
-
 <p>All petitions that are submitted to this website will be accepted, as long as
-they are in accordance with our 
-<? if (OPTION_SITE_NAME == 'east-northamptonshire') { ?><a href="http://www.east-northamptonshire.gov.uk/petitions">petitions scheme</a> and <? } ?>
+they are in accordance with our <? cobrand_extra_terms_link() ?>
 <a href="/terms"><?=cobrand_terms_text()?></a>.
 The aim is to enable as many people as possible to make their views known.
 </p>
 
 <p>To ensure transparency, any petition that cannot be accepted will be listed,
 along with the reasons why.
+
 <?
-    if (OPTION_SITE_NAME == 'number10') {
-?>
-A list of <a href="/list/rejected">rejected petitions</a>
-is available on this website.
-<?
-    }
+    cobrand_how_it_works_extra();
     echo '</p></div>';
 }
 

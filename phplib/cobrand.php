@@ -964,6 +964,24 @@ function cobrand_rss_explanation_link() {
     return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
 }
 
+function cobrand_how_it_works_extra() {
+    global $site_name;
+    if ($site_name == 'number10') {
+        echo 'A list of <a href="/list/rejected">rejected petitions</a> is available on this website.';
+    }
+    if ($site_name == 'islington') {
+        echo '</p> <p>If you experience any problems with the e-petitions
+        system, please <a href="http://www.islington.gov.uk/Contact/">contact
+        us</a>.';
+    }
+}
+
+function cobrand_extra_terms_link() {
+    global $site_name;
+    if ($site_name == 'east-northamptonshire')
+        echo '<a href="http://www.east-northamptonshire.gov.uk/petitions">petitions scheme</a> and ';
+}
+
 function cobrand_terms_text() {
     global $site_name;
     if ($site_name == 'westminster') return 'Petitions Scheme';
