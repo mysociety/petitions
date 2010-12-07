@@ -1,14 +1,9 @@
-/* Table style taken from main site CSS, made global */
+/* Table style taken from main site CSS, made global, tweaked */
 th, td {
-    font-size: 0.75em;
-    border: solid 1px #000000;
     padding: 0.25em;
 }
-th *, td * {
-    font-size: 1em;
-}
 th {
-    background: #006633;
+    background-color: #01874A;
     color: #ffffff;
 }
 
