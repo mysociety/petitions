@@ -990,7 +990,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'waverley')
         return 'http://www.waverley.gov.uk/petitionsterms';
     if ($site_name == 'westminster')
-        return 'http://westminster.gov.uk/services/councilgovernmentanddemocracy/petitions/';
+        return 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/westminster-petitions/the-city-councils-petition-scheme/';
     if ($site_name == 'east-northamptonshire')
         return 'http://www.east-northamptonshire.gov.uk/site/scripts/documents_info.aspx?documentID=928&pageNumber=10';
     if ($site_name == 'elmbridge')
