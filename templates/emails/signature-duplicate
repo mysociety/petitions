@@ -1,10 +1,12 @@
 Subject: Signing up to ask <?=$values['petitioned']?> to <?=$values['content_truncated']?>
 
-<?=$values['user_name']?>,
+Hi,
 
-You just filled in the form to sign up to the petition given at
-the bottom of this email. You are already signed up to this
-petition, so you don't need to do anything.
+Someone, perhaps you, just filled in the form to sign up to the
+petition given at the bottom of this email. This email address is
+already signed up to this petition, so you don't need to do
+anything. If you share an email address, then you will need to
+get your own unique email address to sign the petition as well.
 
 <?=$values['url']?>
 
