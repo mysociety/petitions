@@ -61,6 +61,12 @@ function cobrand_creation_deadline_limit() {
     return array('years' => 1, 'months' => 0);
 }
 
+function cobrand_creation_duration_help() {
+    global $site_name;
+    if ($site_name == 'islington') return '. The duration of your petition starts from the time it is approved.';
+    return '';
+}
+
 function cobrand_creation_example_ref() {
     global $site_name;
     if ($site_name == 'spelthorne') return 'recycle';
@@ -101,6 +107,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'east-northamptonshire') return array('East Northamptonshire', 2393);
     if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
     if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
+    if ($site_name == 'forest-heath') return array('Forest Heath', 2444);
     if ($site_name == 'hounslow') return array('Hounslow', 2483);
     if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
     if ($site_name == 'mansfield') return array('Mansfield', 2416);
@@ -357,7 +364,7 @@ petition in this category</a>.";
         if ($area) {
             # $area is set if we're being called as a result of the form below
             # currently handling all mySociety-hosted Notts district councils the same:
-            if (in_array($area, array('ashfield-dc', 'bassetlaw', 'mansfield', 'rushcliffe')))
+            if (in_array($area, array('ashfield', 'bassetlaw', 'mansfield', 'rushcliffe')))
                 return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
             if ($area == 'broxtowe')
                 return 'http://www.broxtowe.gov.uk/'; # no petitions page found
@@ -374,7 +381,7 @@ petition in this category</a>.";
             but instead of your district council. <label for="council_pick">Please
             pick your district council in order to be taken to their petition site:</label>
             <select name="council" id="council_pick">
-            <option value="ashfield-dc">Ashfield Borough Council</option>
+            <option value="ashfield">Ashfield Borough Council</option>
             <option value="bassetlaw">Bassetlaw District Council</option>
             <option value="broxtowe">Broxtowe Borough Council</option>
             <option value="gedling">Gedling Borough Council</option>
@@ -429,6 +436,25 @@ function cobrand_categories($override_site_name = '') {
         $cats[99] = 'Other'; # Both
         return $cats;
     }
+    if ($site_group == 'newforest') {
+        return array(
+            1 => 'Building Regulations',
+            2 => 'Community Safety',
+            3 => 'Council Tax',
+            4 => 'Employment/Business Support',
+            5 => 'Environmental Health',
+            6 => 'Highways',
+            7 => 'Housing',
+            8 => 'Leisure and Recreation',
+            9 => 'Planning',
+            10 => 'Tourism',
+            11 => 'Transport',
+            12 => 'Waste Collection',
+            13 => 'Waste Disposal',
+            99 => 'Other', # Both
+        );
+        return $cats;
+    }
 
     global $global_petition_categories;
     return $global_petition_categories;
@@ -469,7 +495,7 @@ function cobrand_site_group() {
 # Runs from cron, so examine site_group or petition body.
 function cobrand_admin_email_finished($body) {
     global $site_group;
-    if ($site_group == 'hounslow') return true;
+    if ($site_group == 'hounslow' || $site_group == 'islington') return true;
     if ($body == 'elmbridge') return true;
     return false;
 }
@@ -1016,9 +1042,11 @@ function cobrand_allowed_responses() {
 
 # Returns number of days you have to resubmit a rejected petition,
 # if different from normal. Runs from cron.
+# For multi-council arrays, make sure 'other' is always the numerically greatest timeout (if not: specificy them all, explicitly)
 function cobrand_rejected_petition_timeout() {
     global $site_group; # No $site_name available
     if ($site_group == 'westminster') return '8 days';
+    if ($site_group == 'nottinghamshire') return array('rushcliffe' => '15 days', 'other' => '29 days');
     if ($site_group == 'surreycc') return array('elmbridge' => '15 days', 'other' => '29 days');
     // 29 days is 4 weeks, plus a day to allow a margin for the creator
     return '29 days';
