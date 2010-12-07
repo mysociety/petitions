@@ -58,6 +58,8 @@ function cobrand_creation_deadline_limit() {
         return array('years' => 0, 'months' => 4);
     if ($site_name == 'westminster')
         return array('years' => 0, 'months' => 3);
+    if ($site_name == 'eastcambs')
+        return array('years' => 0, 'months' => 3);
     return array('years' => 1, 'months' => 0);
 }
 
