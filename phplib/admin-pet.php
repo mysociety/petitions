@@ -316,6 +316,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                     $data['organisation'], $data['address'],
                     $data['postcode'], $data['telephone'], $data['category']
                 );
+                stats_change($p, 'cached_petitions_finished', '+1');
                 db_commit();
                 header('Location: ' . OPTION_ADMIN_URL . '?page=pet&o=finished');
                 exit;

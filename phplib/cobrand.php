@@ -58,6 +58,8 @@ function cobrand_creation_deadline_limit() {
         return array('years' => 0, 'months' => 4);
     if ($site_name == 'westminster')
         return array('years' => 0, 'months' => 3);
+    if ($site_name == 'eastcambs')
+        return array('years' => 0, 'months' => 3);
     return array('years' => 1, 'months' => 0);
 }
 
@@ -112,6 +114,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
     if ($site_name == 'mansfield') return array('Mansfield', 2416);
     if ($site_name == 'melton') return array('Melton', 2374);
+    if ($site_name == 'molevalley') return array('Mole Valley', 2454);
     if ($site_name == 'reigate-banstead') return array('Surrey', null);
     if ($site_name == 'runnymede') return array('Runnymede', 2451);
     if ($site_name == 'rushcliffe') return array('Rushcliffe', 2411);
@@ -962,6 +965,24 @@ function cobrand_rss_explanation_link() {
     return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
 }
 
+function cobrand_how_it_works_extra() {
+    global $site_name;
+    if ($site_name == 'number10') {
+        echo 'A list of <a href="/list/rejected">rejected petitions</a> is available on this website.';
+    }
+    if ($site_name == 'islington') {
+        echo '</p> <p>If you experience any problems with the e-petitions
+        system, please <a href="http://www.islington.gov.uk/Contact/">contact
+        us</a>.';
+    }
+}
+
+function cobrand_extra_terms_link() {
+    global $site_name;
+    if ($site_name == 'east-northamptonshire')
+        echo '<a href="http://www.east-northamptonshire.gov.uk/petitions">petitions scheme</a> and ';
+}
+
 function cobrand_terms_text() {
     global $site_name;
     if ($site_name == 'westminster') return 'Petitions Scheme';
@@ -988,7 +1009,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'waverley')
         return 'http://www.waverley.gov.uk/petitionsterms';
     if ($site_name == 'westminster')
-        return 'http://westminster.gov.uk/services/councilgovernmentanddemocracy/petitions/';
+        return 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/westminster-petitions/the-city-councils-petition-scheme/';
     if ($site_name == 'east-northamptonshire')
         return 'http://www.east-northamptonshire.gov.uk/site/scripts/documents_info.aspx?documentID=928&pageNumber=10';
     if ($site_name == 'elmbridge')

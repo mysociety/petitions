@@ -1,3 +1,16 @@
+/* Table style taken from main site CSS, made global, tweaked */
+th, td {
+    padding: 0.25em;
+}
+th {
+    background-color: #01874A;
+    color: #ffffff;
+}
+
+th {
+    font-weight: bold;
+}
+
 #document{
     line-height: 1.3em;
     width: 48em;
