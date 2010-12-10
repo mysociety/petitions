@@ -16,9 +16,37 @@ form#signForm label {
 }
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #0C5F5F;
+    border-bottom: 1px #98339B solid;
+    padding: 0;
+    margin-bottom:7px;
 }
-.petition_view_tabs span {
-    background-color: #0C5F5F;
+.petition_view_tabs a {
+    font-weight: bold;
+    background-color: #98339B;
+    color: #ffffff;
+    padding: 2px 10px;
+    font-size: 1.1em;
+    margin: 0;
+    border-bottom:none;
+}
+
+.petition_view_tabs span, .petition_view_tabs a:hover {
+    background-color: #fff !important;
+    border-top: 1px #98339B solid;
+    border-left: 1px #98339B solid;
+    border-right: 1px #98339B solid;
+    border-bottom: 1px #fff solid;
+    color: #98339B !important;
+    font-weight: bold;
+    padding: 2px 10px;
+    font-size: 1.1em;
+    margin: 0;
+}
+
+#most_popular h3, #most_recent h3, #front_how h3 {
+    background: transparent url(http://www.lichfielddc.gov.uk/site/styles/css_img/lilac-dotted-border.png) bottom repeat-x;
+    padding:0 0 7px 0;
+    margin: 5px 0 14px 0;
+    font-size:1.4em;
 }
 
