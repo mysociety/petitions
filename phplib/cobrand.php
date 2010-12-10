@@ -616,6 +616,25 @@ function cobrand_admin_areas_of_interest() {
 # for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {
     global $site_group, $site_name;
+
+    if ($site_name == 'stevenage') {
+?>
+
+<p>In order for the Council to deal with your petition you must not 
+include anything which could be considered to be vexatious, abusive or 
+otherwise inappropriate.</p>
+
+<p>We reserve the right to reject petitions that are similar to and/or 
+overlap with an existing petition or petitions or which ask for things 
+outside the remit or powers of Stevenage Borough Council.</p>
+ 
+<p>For further details please see the Stevenage Borough Council
+<a href="http://www.stevenage.gov.uk/councilanddemocracy/petitions/petitionscheme">Petition Scheme</a>.</p>
+
+<?
+        return;
+    }
+
     echo '<h3 class="page_title_border">Petition Guidelines</h3>';
     if ($site_name == 'tandridge') {
 ?>
