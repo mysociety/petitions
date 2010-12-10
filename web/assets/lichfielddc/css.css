@@ -22,3 +22,14 @@ p.petition_view_tabs {
     background-color: #0C5F5F;
 }
 
+/* Taken from Lichfield style */
+#content input.field {
+    padding: 4px 5px;
+    background: #F9F9F1;
+    border: 1px solid #666666;
+}
+#content input.field:focus {
+    border: 1px solid #000000;
+    outline: 2px solid #98339B;
+}
+

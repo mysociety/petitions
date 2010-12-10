@@ -224,6 +224,7 @@ form#signForm label {
 }
 
 form#signForm label.wide {
+    text-align: left;
     float: none;
     width: auto;
 }
