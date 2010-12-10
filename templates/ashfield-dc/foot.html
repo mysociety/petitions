@@ -13,6 +13,8 @@
   <p id="legal"><span class="hide">|</span><a href="http://www.ashfield-dc.gov.uk/ccm/navigation/useful-links/copyright/" title="Copyright">Copyright</a>&nbsp;|&nbsp; <a href="http://www.ashfield-dc.gov.uk/ccm/navigation/useful-links/disclaimer-and-privacy-statement/" title="Disclaimer and privacy statement" accesskey="8">Disclaimer and privacy statement</a>&nbsp;|&nbsp; <a href="http://www.ashfield-dc.gov.uk/ccm/navigation/sitemap.jsp" title="Sitemap">Sitemap</a>&nbsp;|&nbsp; <a href="http://www.ashfield-dc.gov.uk/ccm/navigation/useful-links/accessibility/" title="Accessibility">Accessibility</a>&nbsp;&nbsp; </p>
 </div>
 <div class="bodyDebug"></div>
+
+<!--Google Analytics Start - changed code 09.12.2010 to track sub domains also - PW-->
 <script type="text/javascript">
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
@@ -20,7 +22,11 @@ document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.
 <script type="text/javascript">
 try {
 var pageTracker = _gat._getTracker("UA-16326760-1");
-pageTracker._trackPageview();
-} catch(err) {}</script>
+pageTracker._setDomainName(".ashfield-dc.gov.uk");
+pageTracker._setAllowHash(false);
+pageTracker._trackPageview(); 
+} catch(err) {}
+</script>
+<!--Google Analytics End -->
 </body>
 </html>
