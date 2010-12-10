@@ -128,4 +128,12 @@ sub perform_address_lookup($) {
     return %out;
 }
 
+sub html_final_changes($$) {
+    my ($html, $p) = @_;
+    my $site_group = Petitions::Page::site_group();
+    $html =~ s/email/e-mail/g if $p->{body_ref} && $p->{body_ref} eq 'spelthorne';
+    $html =~ s/<input([^>]*?type=['"]text)/<input class="field"$1/g if $site_group eq 'lichfielddc';
+    return $html;
+}
+
 1;

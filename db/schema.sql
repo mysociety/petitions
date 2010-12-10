@@ -330,7 +330,7 @@ create unique index message_creator_recipient_message_id_petition_id_idx
 
 create table message_signer_recipient (
     message_id integer not null references message(id),
-    signer_id integer not null references signer(id)
+    signer_id integer not null references signer(id) on delete cascade
 );
 
 create unique index message_signer_recipient_message_id_signer_id_idx

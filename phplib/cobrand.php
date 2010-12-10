@@ -162,7 +162,7 @@ function cobrand_creation_check_heading() {
 
 function cobrand_creation_top_submit_button() {
     global $site_name;
-    if ($site_name == 'westminster') return false;
+    if ($site_name == 'westminster' || $site_name == 'stevenage') return false;
     return true;
 }
 
@@ -289,7 +289,7 @@ function cobrand_category_okay($category_id) {
         $county_only = array(4, 6, 7, 10, 12, 13, 16);
         if ($site_name != 'nottinghamshire' && in_array($category_id, $county_only))
             return false;
-        $district_only = array(1, 2, 3, 5, 8, 9, 15);
+        $district_only = array(1, 3, 5, 8, 9, 15);
         if ($site_name == 'nottinghamshire' && in_array($category_id, $district_only))
             return false;
     }
@@ -464,6 +464,28 @@ function cobrand_categories($override_site_name = '') {
         );
         return $cats;
     }
+    if ($site_group == 'eastcambs') {
+        return array(
+            1 => 'Community Development/Grants',
+            2 => 'Community Safety',
+            3 => 'Car Parking',
+            4 => 'Council Tax/Council Finances',
+            5 => 'Council Land/Buildings',
+            6 => 'Employment/Business Support/Economic Development',
+            7 => 'Environmental Health/Pollution',
+            8 => 'Highways',
+            9 => 'Housing/Homelessness',
+            10 => 'Leisure and Recreation',
+            11 => 'Planning',
+            12 => 'Public Conveniences',
+            13 => 'Tourism',
+            14 => 'Town Centres/Markets',
+            15 => 'Transport',
+            16 => 'Waste Collection/Recycling',
+            99 => 'Other', # Both
+        );
+        return $cats;
+    }
 
     global $global_petition_categories;
     return $global_petition_categories;
@@ -616,6 +638,25 @@ function cobrand_admin_areas_of_interest() {
 # for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {
     global $site_group, $site_name;
+
+    if ($site_name == 'stevenage') {
+?>
+
+<p>In order for the Council to deal with your petition you must not 
+include anything which could be considered to be vexatious, abusive or 
+otherwise inappropriate.</p>
+
+<p>We reserve the right to reject petitions that are similar to and/or 
+overlap with an existing petition or petitions or which ask for things 
+outside the remit or powers of Stevenage Borough Council.</p>
+ 
+<p>For further details please see the Stevenage Borough Council
+<a href="http://www.stevenage.gov.uk/councilanddemocracy/petitions/petitionscheme">Petition Scheme</a>.</p>
+
+<?
+        return;
+    }
+
     echo '<h3 class="page_title_border">Petition Guidelines</h3>';
     if ($site_name == 'tandridge') {
 ?>
