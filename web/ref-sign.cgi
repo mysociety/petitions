@@ -131,7 +131,8 @@ sub signup_page ($$) {
             if ($out{data}) {
                 unshift @{$out{data}}, '-- Select --';
                 $q->scratch()->{address_lookup} = $out{data};
-                $errors{address} = 'Please pick an address';
+                $errors{address} = 'Thanks, now please pick your address from the drop-down.'
+                    if !$qp_address;
             }
         }
     } else {

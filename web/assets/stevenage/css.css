@@ -86,6 +86,10 @@ div#front_how {
     padding-bottom: 10px;
 }
 
+#new_you label, #new_you span.label {
+    width: 15em;
+}
+
 #action_view a, #action_create a{
     text-decoration: none;
 }

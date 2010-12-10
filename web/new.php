@@ -288,7 +288,7 @@ function petition_form_category($steps, $step, $data = array(), $errors = array(
     }
 ?>
 
-<p>Please note that you must <?=cobrand_creator_must_be()?> to create a petition.</p>
+<p>Please note that you <?=cobrand_creator_must_be()?> to create a petition.</p>
 
 <p>First you must pick the relevant category for your petition. This is because the council
 is only responsible for certain matters, and we need to make sure you are taken to the
@@ -331,7 +331,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     errorlist($errors);
 ?>
 
-<p>Please fill in all the fields below. Please note that you must <?=cobrand_creator_must_be()?> to create a petition.</p>
+<p>Please fill in all the fields below. Please note that you <?=cobrand_creator_must_be()?> to create a petition.</p>
 
 <p><?
     echo '<strong><label for="pet_content">' . $petition_prefix;
@@ -415,7 +415,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
     errorlist($errors);
 ?>
 <div id="new_you">
-<p>Please fill in the fields below. Please note that you must <?=cobrand_creator_must_be() ?> to create a petition.</p><?
+<p>Please fill in the fields below. Please note that you <?=cobrand_creator_must_be() ?> to create a petition.</p><?
 
     $fields = array(
             'name'  =>          _('Your name'),
@@ -489,7 +489,7 @@ the Armed Forces without a postcode, please select from this list:</label>
             $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
             $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
             $checked_study = $data['address_type'] == 'study' ? ' checked' : '';
-            print '<p><span class="label">Type of address:</span> ';
+            print '<p><span class="label">' . cobrand_creation_address_type_label() . ':</span> ';
             print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . ' />
 <label class="radio" for="address_type_home">Home</label>
 <input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . ' />
@@ -808,14 +808,7 @@ of this page in your name, and that you agree to the terms and conditions below.
 ?>
 </p>
 
-<h3 class="page_title_border">Petition Guidelines</h3>
-
 <? cobrand_petition_guidelines(); ?>
-
-<p>Petitioners may freely disagree with
-<?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> or
-call for changes of policy. There will be no attempt to exclude critical views
-and decisions will not be made on a party political basis.</p>
 
 <p align="right">
 <?

@@ -19,7 +19,7 @@ function cobrand_page_title($title) {
 function cobrand_creation_sentence_help() {
     global $site_group, $site_name;
     $out = '(Please write a sentence';
-    if ($site_group != 'surreycc' && $site_group != 'westminster') {
+    if ($site_group != 'surreycc' && $site_group != 'westminster' && $site_group != 'stevenage') {
         $out .= ', preferably starting with a verb,';
     }
     $out .= ' that describes what action you would like ';
@@ -52,7 +52,7 @@ function cobrand_creation_deadline_limit() {
     global $site_name;
     if ($site_name == 'east-northamptonshire')
         return array('years' => 0, 'months' => 1);
-    if ($site_name == 'tandridge' || $site_name == 'surreycc' || $site_name == 'rbwm' )
+    if ($site_name == 'tandridge' || $site_name == 'surreycc' || $site_name == 'rbwm' || $site_name == 'stevenage')
         return array('years' => 0, 'months' => 6);
     if ($site_name == 'wellingborough')
         return array('years' => 0, 'months' => 4);
@@ -80,12 +80,19 @@ function cobrand_creation_category_first() {
     return false;
 }
 
+function cobrand_creation_address_type_label() {
+    global $site_name;
+    if ($site_name == 'stevenage') return 'Connection with Stevenage';
+    return 'Type of address';
+}
+
 function cobrand_creation_ask_for_address_type() { # by default: don't ask for address type unless it's within a specified area
     global $site_name;
     if ($site_name == 'barrowbc') return false; 
     if (cobrand_creation_within_area_only()) return true;
     if ($site_name == 'ipswich') return true;
     if ($site_name == 'newforest') return true;
+    if ($site_name == 'stevenage') return true;
     if ($site_name == 'surreyheath') return true;
     if ($site_name == 'suffolkcoastal') return true;
     if ($site_name == 'tandridge') return true;
@@ -120,7 +127,6 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'sholland') return array('South Holland', 2381);
     if ($site_name == 'spelthorne') return array('Spelthorne', 2456);
     if ($site_name == 'stedmundsbury') return array('the borough of St Edmundsbury', 2443);
-    if ($site_name == 'stevenage') return array('Stevenage', 2347);
     if ($site_name == 'surreycc') return array('Surrey', null);
     if ($site_name == 'waverley') return array('Waverley', 2447);
     if ($site_name == 'westminster') return array('Westminster', 2504);
@@ -133,15 +139,17 @@ function cobrand_creation_within_area_only() {
 function cobrand_creator_must_be() {
     global $site_name;
     if ($site_name == 'surreycc' || $site_name == 'reigate-banstead')
-        return 'live, work or study at a Surrey registered address';
+        return 'must live, work or study at a Surrey registered address';
     if ($site_name == 'woking')
-        return 'live, work or study in the Borough of Woking';
+        return 'must live, work or study in the Borough of Woking';
     if ($site_name == 'elmbridge')
-        return 'live, work or study within Elmbridge (including under 18s)';
+        return 'must live, work or study within Elmbridge (including under 18s)';
+    if ($site_name == 'stevenage')
+        return 'should live, work or study within Stevenage';
     if ($area = cobrand_creation_within_area_only()) {
-        return 'live, work or study within ' . $area[0];
+        return 'must live, work or study within ' . $area[0];
     } else {
-        return 'be a British citizen or resident';
+        return 'must be a British citizen or resident';
     }
 }
 
@@ -469,7 +477,7 @@ function cobrand_category($id, $override_site_name='') {
 # Could be run from cron (e.g. send-messages), so examine site_group
 function cobrand_display_category() {
     global $site_group;
-    if ($site_group == 'westminster' || $site_group == 'suffolkcoastal') return false;
+    if ($site_group == 'westminster' || $site_group == 'suffolkcoastal' || $site_group == 'stevenage') return false;
     return true;
 }
 
@@ -608,6 +616,7 @@ function cobrand_admin_areas_of_interest() {
 # for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {
     global $site_group, $site_name;
+    echo '<h3 class="page_title_border">Petition Guidelines</h3>';
     if ($site_name == 'tandridge') {
 ?>
 
@@ -952,6 +961,12 @@ recognisable action.</li>
         }
 
     }
+?>
+<p>Petitioners may freely disagree with
+<?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> or
+call for changes of policy. There will be no attempt to exclude critical views
+and decisions will not be made on a party political basis.</p>
+<?
 }
 
 # If a body has their own explanation of RSS, this function returns it;
