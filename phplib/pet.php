@@ -33,6 +33,9 @@ function ob_callback($s) {
     if ($site_name == 'spelthorne') {
         $s = str_ireplace('email', 'e-mail', $s);
     }
+    if ($site_name == 'lichfielddc') {
+        $s = preg_replace('#<input([^>]*?type=[\'"]text)#', '<input class="field"\1', $s);
+    }
     header('Content-Length: ' . ob_get_length());
     return $s;
 }
