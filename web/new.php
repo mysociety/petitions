@@ -489,7 +489,7 @@ the Armed Forces without a postcode, please select from this list:</label>
             $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
             $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
             $checked_study = $data['address_type'] == 'study' ? ' checked' : '';
-            print '<p><span class="label">Type of address:</span> ';
+            print '<p><span class="label">' . cobrand_creation_address_type_label() . ':</span> ';
             print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . ' />
 <label class="radio" for="address_type_home">Home</label>
 <input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . ' />

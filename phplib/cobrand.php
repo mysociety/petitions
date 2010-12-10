@@ -80,6 +80,12 @@ function cobrand_creation_category_first() {
     return false;
 }
 
+function cobrand_creation_address_type_label() {
+    global $site_name;
+    if ($site_name == 'stevenage') return 'Connection with Stevenage';
+    return 'Type of address';
+}
+
 function cobrand_creation_ask_for_address_type() { # by default: don't ask for address type unless it's within a specified area
     global $site_name;
     if ($site_name == 'barrowbc') return false; 
