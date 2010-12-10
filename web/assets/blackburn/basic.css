@@ -1,0 +1,35 @@
+@charset "utf-8";
+/* CSS Document */
+
+* {margin: 0;padding: 0}
+img {border-style: none; }   
+body{
+	margin: 0px;
+	padding: 0px;
+	font: 76% Arial, Helvetica, sans-serif;
+}
+
+ 
+p{font-size: 1.1em;line-height: 1.3em;margin-bottom: 1em;}
+a:link,a:visited{font-weight:bold}
+a:hover{color:#FC0}
+
+   
+/* Miscellaneous conveniences: */ 
+form label {cursor: pointer; } 
+fieldset {border: none; }  
+/* Form field text-scaling */ 
+input, select, textarea {font-size: 100%}
+ul,ol {padding-left: 3em;margin-bottom:1.5em;font-size: 1.1em;line-height: 1.5;}
+ul li{margin-bottom:1em}
+
+
+h1,h2,h3,h4{font-weight:900;margin-bottom:0.5em;letter-spacing:-1px}
+h1{font-size:3em}
+h2{font-size:2.5em}
+h3{font-size:1.8em}
+h4{font-size:1.2em}
+
+.clear{overflow:auto;}
+
+ /* * div{outline:1px dotted silver} */

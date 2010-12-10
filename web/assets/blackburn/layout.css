@@ -1,0 +1,54 @@
+header, nav, article, footer, address {display: block;}  
+
+body {margin:0;padding:0;background:url(assets/images/bodyback.png) repeat-x}
+#wrapper{width:930px;margin:0px auto;}
+#navbar{width:930px;margin:0px auto;clear:both;margin-bottom:20px;height:20px}
+
+.skipnav{display:none}
+header{position:relative;height:150px;width:930px;margin:0 auto;float:left;top:15px}
+
+#content{position:relative;width:930px;margin:20px auto;clear:both;float:left;min-height:500px;height:auto!important;height:500px;}
+.thincol{width:290px;float:right;}
+.fatcol{width:610px;float:left;position:relative}
+
+header #logo{position:relative;float:left}
+header #logo a:link,header #logo a:visited{z-index:100;background: url(assets/images/logo.png) no-repeat 0px 0px;width:625px;display:block;padding: 107px 0 0 0;overflow: hidden;height: 0px !important;height /**/:107px;}
+
+
+.floatleft{float:left}
+.floatright{float:right}
+
+nav{width:600px;float:left;position:relative;height:25px;}
+nav#footer-menu{float:right;}
+nav ul{height:25px;padding:0;list-style-type:none;text-align:left;border-left:0;no-repeat 0 2px ;padding-top:3px}
+nav ul li{display:block;float:left;text-align:center;padding:0 1em 0 0;margin:0;font-family:Helvetica,Arial,sans-serif;font-size:1.4em;font-weight:900;letter-spacing:-1px}
+nav#footer-menu ul li{float:right}
+
+html nav ul li a{font-size:1em; color:#FFF}
+nav ul li a:focus,nav ul li a:active{color:#fff;text-decoration:none;border:none; }
+nav ul li a,nav li a:visited{color:#FFF;text-decoration: none;}
+nav ul li a:hover,nav li a:visited:hover{color:#FF0;text-decoration: none;}
+
+
+.thincol ul{list-style:none;padding:0;margin:0;font-size:1.2em;font-weight:bold;line-spacing:0px}
+
+.pic-float-right{float:right;margin:5px 0px 20px 20px}
+
+#footer-wacken{width:100%;height:230px;background:url(assets/images/bottgrad.png) repeat-x;clear:both;position:relative;}
+
+footer{position:relative;;height:200px;width:930px;margin:0 auto;padding:15px 0}
+
+#content a:link{color:#060}
+#content a:visited{color:#060}
+#content a:hover, #content a:visited:hover{color:#FC0}
+ 
+.sideMenu {margin-bottom:15px;border-left:1px dotted silver;border-right:1px dotted silver}
+.sideMenu ul{list-style:none;padding:0;margin:0}
+.sideMenu li{margin:0;padding:0;text-align:left}
+.sideMenu li a:link,.sideMenu li a:visited{text-decoration:none;display:block;margin-bottom:0px;padding:10px;color:#060;border-bottom:1px dotted silver;font-weight:normal}
+.sideMenu li a:hover,.sideMenu li a:visited:hover{background:#DFDFDF;color:#060 !important}
+.sideMenu #top{border-top:1px dotted silver}
+
+#footer-menu ul li{font-size:1em !important}
+
+.roundel{background: url(assets/images/petbutt.png);width:105px;height:105px;position:relative;top:10px;float:right;margin-right:90px}
