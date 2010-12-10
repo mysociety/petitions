@@ -289,7 +289,7 @@ function cobrand_category_okay($category_id) {
         $county_only = array(4, 6, 7, 10, 12, 13, 16);
         if ($site_name != 'nottinghamshire' && in_array($category_id, $county_only))
             return false;
-        $district_only = array(1, 2, 3, 5, 8, 9, 15);
+        $district_only = array(1, 3, 5, 8, 9, 15);
         if ($site_name == 'nottinghamshire' && in_array($category_id, $district_only))
             return false;
     }
