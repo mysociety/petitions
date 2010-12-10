@@ -1,4 +1,5 @@
-#mysoc-content{
+#mysoc-content input.field, #mysoc-content select, #mysoc-content textarea{
+    margin-left: 0px;
 }
 
 #mysoc-content label{ /* override east-northants's right-aligned floated labels */
