@@ -469,7 +469,7 @@ function cobrand_category($id, $override_site_name='') {
 # Could be run from cron (e.g. send-messages), so examine site_group
 function cobrand_display_category() {
     global $site_group;
-    if ($site_group == 'westminster') return false;
+    if ($site_group == 'westminster' || $site_group == 'suffolkcoastal') return false;
     return true;
 }
 
