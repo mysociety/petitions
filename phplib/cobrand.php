@@ -162,7 +162,7 @@ function cobrand_creation_check_heading() {
 
 function cobrand_creation_top_submit_button() {
     global $site_name;
-    if ($site_name == 'westminster') return false;
+    if ($site_name == 'westminster' || $site_name == 'stevenage') return false;
     return true;
 }
 
