@@ -69,7 +69,7 @@ sub ask_for_address_type() {
 
 sub overseas_dropdown {
     my $site_group = Petitions::Page::site_group();
-    if ($site_group eq 'westminster' || $site_group eq 'islington' || $site_group eq 'rbwm') {
+    if ($site_group eq 'westminster' || $site_group eq 'islington' || $site_group eq 'rbwm' || $site_group eq 'stevenage') {
         return []; # No drop-down
     } elsif ($site_group eq 'surreycc') {
         return [

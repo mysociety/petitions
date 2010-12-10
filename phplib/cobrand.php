@@ -52,7 +52,7 @@ function cobrand_creation_deadline_limit() {
     global $site_name;
     if ($site_name == 'east-northamptonshire')
         return array('years' => 0, 'months' => 1);
-    if ($site_name == 'tandridge' || $site_name == 'surreycc' || $site_name == 'rbwm' )
+    if ($site_name == 'tandridge' || $site_name == 'surreycc' || $site_name == 'rbwm' || $site_name == 'stevenage')
         return array('years' => 0, 'months' => 6);
     if ($site_name == 'wellingborough')
         return array('years' => 0, 'months' => 4);
@@ -86,6 +86,7 @@ function cobrand_creation_ask_for_address_type() { # by default: don't ask for a
     if (cobrand_creation_within_area_only()) return true;
     if ($site_name == 'ipswich') return true;
     if ($site_name == 'newforest') return true;
+    if ($site_name == 'stevenage') return true;
     if ($site_name == 'surreyheath') return true;
     if ($site_name == 'suffolkcoastal') return true;
     if ($site_name == 'tandridge') return true;
@@ -469,7 +470,7 @@ function cobrand_category($id, $override_site_name='') {
 # Could be run from cron (e.g. send-messages), so examine site_group
 function cobrand_display_category() {
     global $site_group;
-    if ($site_group == 'westminster' || $site_group == 'suffolkcoastal') return false;
+    if ($site_group == 'westminster' || $site_group == 'suffolkcoastal' || $site_group == 'stevenage') return false;
     return true;
 }
 
