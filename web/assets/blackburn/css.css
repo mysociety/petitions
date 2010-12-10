@@ -1,0 +1,81 @@
+body {
+    margin: 1em;
+    border: 1px dashed #cccccc;
+}
+
+div#petition_actions {
+    border: none;
+}
+
+div#most_recent {
+    float: right;
+}
+
+div#front_how {
+    float: left;
+    width: 45%;
+}
+
+p.petition_view_tabs {
+    border-bottom: solid 2px #006600;
+    line-height: 1em;
+    padding-bottom: 0px;
+}
+
+.petition_view_tabs span {
+    background-color: #006600;
+}
+
+#action_view a, #action_create a{
+    text-decoration: none;
+}
+
+#action_view a:hover, #action_create a:hover {
+    text-decoration: none;
+}
+
+h3 {
+  margin: 0.333em 0 ;
+}
+
+div#petition_actions {
+    margin-bottom: 1em;
+}
+
+p.petition_view_tabs {
+    margin-bottom: 1em;
+}
+
+#action_create a, #action_create a:active {
+    background-image: url('petition_button_create.png');
+}
+#action_view a, #action_view a:active {
+    background-image: url('petition_button_view.png');
+}
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    display: block;
+    text-align: center;
+    padding-top: 76px;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+    background-color: #ffffff;
+    text-decoration: underline;
+}
+
+#action_create a img,  #action_view a img {
+    display: none;
+}
+
+h1 {
+    margin-bottom: 1em;
+}
+
+#most_popular ul, #most_recent ul{
+	padding-left: 2em;
+	margin-left: 0;
+}
+
