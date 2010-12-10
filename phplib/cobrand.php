@@ -464,6 +464,28 @@ function cobrand_categories($override_site_name = '') {
         );
         return $cats;
     }
+    if ($site_group == 'eastcambs') {
+        return array(
+            1 => 'Community Development/Grants',
+            2 => 'Community Safety',
+            3 => 'Car Parking',
+            4 => 'Council Tax/Council Finances',
+            5 => 'Council Land/Buildings',
+            6 => 'Employment/Business Support/Economic Development',
+            7 => 'Environmental Health/Pollution',
+            8 => 'Highways',
+            9 => 'Housing/Homelessness',
+            10 => 'Leisure and Recreation',
+            11 => 'Planning',
+            12 => 'Public Conveniences',
+            13 => 'Tourism',
+            14 => 'Town Centres/Markets',
+            15 => 'Transport',
+            16 => 'Waste Collection/Recycling',
+            99 => 'Other', # Both
+        );
+        return $cats;
+    }
 
     global $global_petition_categories;
     return $global_petition_categories;
