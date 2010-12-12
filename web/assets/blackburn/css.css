@@ -1,8 +1,3 @@
-body {
-    margin: 1em;
-    border: 1px dashed #cccccc;
-}
-
 div#petition_actions {
     border: none;
 }
@@ -18,8 +13,6 @@ div#front_how {
 
 p.petition_view_tabs {
     border-bottom: solid 2px #006600;
-    line-height: 1em;
-    padding-bottom: 0px;
 }
 
 .petition_view_tabs span {
@@ -56,9 +49,10 @@ p.petition_view_tabs {
 #action_create a:active, #action_view a:active  {
     display: block;
     text-align: center;
-    padding-top: 76px;
+    padding-top: 70px;
     background-position: center top;
     background-repeat: no-repeat;
+    line-height: 1.2em;
 }
 #action_create a:hover, #action_view a:hover {
     background-position: center -300px;
