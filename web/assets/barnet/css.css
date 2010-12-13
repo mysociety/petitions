@@ -49,15 +49,14 @@ p.petition_view_tabs {
 }
 
 /* note: #content a:active and #content a:focus both specify backgrounds which 
-   effectively hide the background image: so need to explicitly bring it in here */
-#action_create a, #action_create a:active {
+   hide the background image, so make sure they're overridden by specificity here */
+#content #action_create a {
     background-image: url('petition_button_create.png');
 }
-#action_view a, #action_view a:active {
+#content #action_view a {
     background-image: url('petition_button_view.png');
 }
-#action_create a, #action_view a, 
-#action_create a:active, #action_view a:active  {
+#content #action_create a, #content #action_view a {
     color: #008184;
     margin-top: 10px;
     display: block;
@@ -66,7 +65,8 @@ p.petition_view_tabs {
     background-position: center top;
     background-repeat: no-repeat;
 }
-#action_create a:hover, #action_view a:hover {
+#content #action_create a:focus, #content #action_view a:focus,
+#content #action_create a:hover, #content #action_view a:hover {
     background-position: center -300px;
     background-color: #ffffff;
 }
