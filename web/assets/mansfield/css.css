@@ -91,5 +91,6 @@ h1 {
 }
 #most_popular ul li, #most_recent ul li{
 	font-size: 1em;
+	padding: 4px;
 }
 

@@ -83,6 +83,15 @@ h3 {
     display: none;
 }
 
+#most_popular ul, #most_recent ul{
+	padding-left: 1em;
+	margin-left: 0;
+}
+#most_popular ul li, #most_recent ul li{
+	font-size: 1em;
+	padding: 4px;
+}
+
 /* Forms override */
 
 #content label, #content span.label {

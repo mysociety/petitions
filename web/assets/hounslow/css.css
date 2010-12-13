@@ -90,4 +90,12 @@ a:hover {
 #action_create a img,  #action_view a img {
     display: none;
 }
+#most_popular ul, #most_recent ul {
+    padding: 8px 8px 8px 16px;
+}
+
+#most_popular ul li, #most_recent ul li {
+    padding:4px 4px 4px 4px;
+    list-style:disc;
+}
 

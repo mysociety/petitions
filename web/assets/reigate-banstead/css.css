@@ -33,3 +33,15 @@ p.petition_view_tabs {
     background-color: #62c355;
 }
 
+div#petition_actions ul li img {
+    margin-bottom: 0.5em;
+}
+
+div#petition_actions ul li a:hover {
+    background-color:#ffffff;
+    color: #336623;
+}
+
+div#most_recent ul li, div#most_popular ul li {
+    padding: 2px;
+}

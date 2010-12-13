@@ -28,3 +28,17 @@ p.petition_view_tabs {
     background-color: #008800;
 }
 
+#mysociety #errors {
+    margin-top: 1em;
+}
+
+#mysociety #errors ul li {
+    list-style-type: disc;
+}
+
+#most_recent ul, #most_popular ul {
+    list-style: disc;
+}
+#most_recent ul li, #most_popular ul li {
+    padding: 4px;
+}

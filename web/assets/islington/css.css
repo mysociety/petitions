@@ -94,3 +94,7 @@ a:hover {
 #action_create a img,  #action_view a img {
     display: none;
 }
+
+#most_recent ul li, #most_popular ul li {
+    padding: 4px;
+}

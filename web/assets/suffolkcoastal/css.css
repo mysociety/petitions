@@ -62,3 +62,10 @@ p.petition_view_tabs {
 #action_create a img,  #action_view a img {
     display: none;
 }
+
+div#most_recent ul, div#most_popular ul {
+    padding-left:1em;
+}
+div#most_recent ul li, div#most_popular ul li{
+    padding: 4px;
+}

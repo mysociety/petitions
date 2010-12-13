@@ -2,6 +2,10 @@ div#petition_actions {
     border: none;
 }
 
+#content #petition_actions ul li{
+    list-style-image: none;
+}
+
 div#most_recent {
     float: right;
 }

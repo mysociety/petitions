@@ -76,15 +76,22 @@ p.petition_view_tabs {
     padding-top: 80px;
     background-position: center top;
     background-repeat: no-repeat;
-    font-size: 80%;
+    font-size: 90%;
 }
 #action_create a:hover, #action_view a:hover {
     background-position: center -300px;
 }
 
-
 #action_create a img,  #action_view a img {
     display: none;
+}
+
+#most_recent ul, #most_popular ul {
+    margin-left: 0px;
+}
+
+#most_recent ul li, #most_popular ul li {
+    padding: 4px;
 }
 
 /* Forms override */

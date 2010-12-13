@@ -136,16 +136,23 @@ p.petition_view_tabs {
 }
 
 a:hover {
-  color: #b80000; /* Waveney default */
+  color: #b80000;
   background-color: transparent;
 }
 
 #action_create a img,  #action_view a img {
     display: none;
 }
+
+#most_recent ul li, #most_popular ul li {
+    padding: 4px;
+}
+
+
 /* RSS icon fix */
 #article-content p a img{
     display: inline-block;
 }
 #article-content input, #article-content textarea {
   border: 1px solid #666666;
+}

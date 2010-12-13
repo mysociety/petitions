@@ -83,10 +83,12 @@ h1 {
     width: 20px;
 }
 
-#most_popular ul, #most_recent ul{
-	padding-left: 2em;
+#most_popular ul, #most_recent ul {
+	padding-left: 1em;
 	margin-left: 0;
 }
-
+#most_popular ul li, #most_recent ul li {
+    padding: 4px;
+}
 
 

@@ -22,3 +22,12 @@ p.petition_view_tabs {
     background-color: #0099cc;
 }
 
+div#most_recent ul, div#most_popular ul {
+    font-size: 13px; /* matching rest of site */
+    padding-left: 0.75em;
+}
+
+div#most_recent ul li, div#most_popular ul li {
+    padding: 2px;
+}
+
