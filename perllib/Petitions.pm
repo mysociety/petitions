@@ -19,7 +19,7 @@ use DBI;
 use mySociety::Config;
 use mySociety::DBHandle qw(dbh select_all);
 use mySociety::Memcached;
-mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
+mySociety::Memcached::set_config(mySociety::Config::get('MEMCACHE_HOST'), mySociety::Config::get('PET_DB_NAME'));
 use mySociety::Random qw(random_bytes);
 use Petitions::Cobrand;
 

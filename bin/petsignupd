@@ -50,7 +50,7 @@ use Data::Dumper;
 
 use mySociety::DBHandle qw(dbh);
 use mySociety::Memcached;
-mySociety::Memcached::set_namespace(mySociety::Config::get('PET_DB_NAME'));
+mySociety::Memcached::set_config(mySociety::Config::get('MEMCACHE_HOST'), mySociety::Config::get('PET_DB_NAME'));
 use mySociety::PIDFile;
 
 use Petitions;
