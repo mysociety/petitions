@@ -421,6 +421,16 @@ petition in this category</a>.";
             '; 
         }
     }
+
+    if ($site_group == 'eastcambs') {
+        if ($category_id == 11) { # Planning
+            return "We are unable to accept an e-petition through this
+facility in relation to a specific planning application as there is a
+<a href='http://www.eastcambs.gov.uk/planning/planning-services'>separate
+process for planning representations</a>.";
+        }
+    }
+
     return null;
 }
 
