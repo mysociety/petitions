@@ -605,7 +605,7 @@ function cobrand_admin_rejection_snippets() {
 
 function cobrand_admin_rejection_categories() {
     global $global_rejection_categories, $site_group;
-    if ($site_group == 'number10') {
+    if ($site_group == 'number10' || $site_group == 'ipswich') {
         return $global_rejection_categories;
     }
     $categories = $global_rejection_categories;
@@ -754,6 +754,7 @@ outside the remit or powers of Stevenage Borough Council.</p>
 
         $foi_link = 'http://www.ico.gov.uk/';
         $foi_text = $foi_link;
+        $url_text = '';
         $party_political_example = 'For example, this party political petition
         would not be permitted: "We petition the council to change the
         Conservative Cabinet\'s policy on education", but this non-party
@@ -769,6 +770,9 @@ outside the remit or powers of Stevenage Borough Council.</p>
             policy on free swimming", but this non-party political version
             would be: "We petition Ipswich Borough Council to change their
             policy on free swimming".';
+            $url_text = '<li>URLs or web links (we cannot vet the content of
+            external sites, and therefore cannot link to them from this
+            e-Petitions system);</li>';
         } elseif ($site_name == 'reigate-banstead') {
             $foi_link = 'http://www.reigate-banstead.gov.uk/council_and_democracy/about_the_council/access_to_information/freedom_of_information_act_2000/';
             $foi_text = 'Freedom Of Information Act 2000';
@@ -797,6 +801,7 @@ example, the identities of children in custody disputes);</li>
 <li>material which is potentially confidential, commercially sensitive, or which
 may cause personal distress or loss;</li>
 <li>any commercial endorsement, promotion of any product, service or publication;</li>
+<?=$url_text?>
 <li>the names of individual officials of public bodies, unless they
 are part of the senior management of those organisations;</li>
 <li>the names of family members of elected representatives or
