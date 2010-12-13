@@ -19,7 +19,7 @@ function cobrand_page_title($title) {
 function cobrand_creation_sentence_help() {
     global $site_group, $site_name;
     $out = '(Please write a sentence';
-    if ($site_group != 'surreycc' && $site_group != 'westminster' && $site_group != 'stevenage') {
+    if ($site_group != 'surreycc' && $site_group != 'westminster' && $site_group != 'stevenage' && $site_name != 'bassetlaw') {
         $out .= ', preferably starting with a verb,';
     }
     $out .= ' that describes what action you would like ';
@@ -72,6 +72,15 @@ function cobrand_creation_example_ref() {
     if ($site_name == 'spelthorne') return 'recycle';
     return 'badgers';
 }
+
+function cobrand_creation_short_name_label() {
+    global $site_name;
+    if ($site_name == 'bassetlaw'){
+        return 'Choose a short name for your petition that\'s 6 to 16 letters long: <br/><small>Use only letters, numbers, or a hyphen &mdash; no spaces or punctuation.</small><br/>';
+    }
+    return 'Choose a short name for your petition (6 to 16 letters):';
+}
+
 function cobrand_creation_category_first() {
     global $site_group;
     if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
@@ -1126,4 +1135,12 @@ function cobrand_rejected_petition_timeout() {
     if ($site_group == 'surreycc') return array('elmbridge' => '15 days', 'other' => '29 days');
     // 29 days is 4 weeks, plus a day to allow a margin for the creator
     return '29 days';
+}
+
+function cobrand_fill_form_instructions(){
+    global $site_name;
+    if ($site_name == 'bassetlaw'){
+        return 'Please complete all the sections below.';
+    }
+    return 'Please fill in all the fields below.';
 }

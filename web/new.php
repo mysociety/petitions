@@ -331,8 +331,10 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     errorlist($errors);
 ?>
 
-<p>Please fill in all the fields below. Please note that you <?=cobrand_creator_must_be()?> to create a petition.</p>
-
+<p>
+    <?=cobrand_fill_form_instructions()?>
+    Please note that you <?=cobrand_creator_must_be()?> to create a petition.
+</p>
 <p><?
     echo '<strong><label for="pet_content">' . $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
@@ -378,7 +380,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     ?>
 </p>
 
-<p><label for="ref"><?=_('Choose a short name for your petition (6 to 16 letters):') ?></label>
+<p><label for="ref"><?=cobrand_creation_short_name_label() ?></label>
     <?
     textfield('ref', $data['ref'], 16, $errors);
     ?>
