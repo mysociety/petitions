@@ -85,7 +85,7 @@ function cobrand_creation_short_name_label() {
 
 function cobrand_creation_category_first() {
     global $site_group;
-    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
+    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire' || $site_group == 'eastcambs') {
         return true;
     }
     return false;
@@ -293,7 +293,7 @@ function cobrand_overseas_dropdown() {
 #       Duplicated in anticipation of different councils splitting these responsibilities differently.
 function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
-    if ($site_group == 'surreycc'){
+    if ($site_group == 'surreycc') {
         $county_only = array(4, 6, 7, 10, 12, 13, 16);
         if ($site_name == 'tandridge' || $site_name == 'reigate-banstead' || $site_name == 'elmbridge')
             $county_only[] = 11; # Planning not okay
@@ -302,14 +302,15 @@ function cobrand_category_okay($category_id) {
         $district_only = array(1, 2, 3, 5, 8, 9, 15);
         if ($site_name == 'surreycc' && in_array($category_id, $district_only))
             return false;
-    }
-    if ($site_group == 'nottinghamshire'){
+    } elseif ($site_group == 'nottinghamshire') {
         $county_only = array(4, 6, 7, 10, 12, 13, 16);
         if ($site_name != 'nottinghamshire' && in_array($category_id, $county_only))
             return false;
         $district_only = array(1, 3, 5, 8, 9, 15);
         if ($site_name == 'nottinghamshire' && in_array($category_id, $district_only))
             return false;
+    } elseif ($site_group == 'eastcambs') {
+        if ($category_id = 11) return false; # Planning
     }
     return true;
 }
