@@ -1056,28 +1056,30 @@ function cobrand_terms_text() {
 # If a body hosts their own T&Cs page, this function returns its location
 function cobrand_terms_elsewhere() {
     global $site_name;
-    if ($site_name == 'surreycc')
-        return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
-    if ($site_name == 'tandridge')
-        return 'http://www.tandridge.gov.uk/YourCouncil/CouncillorsMeetings/petitions/terms.htm';
-    if ($site_name == 'reigate-banstead')
-        return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
-    if ($site_name == 'spelthorne')
-        return 'http://www.spelthorne.gov.uk/petitions_terms';
-    if ($site_name == 'woking')
-        return 'http://www.woking.gov.uk/council/about/petitions/termsandconditions';
-    if ($site_name == 'hounslow')
-        return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
-    if ($site_name == 'runnymede')
-        return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/';
-    if ($site_name == 'waverley')
-        return 'http://www.waverley.gov.uk/petitionsterms';
-    if ($site_name == 'westminster')
-        return 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/westminster-petitions/the-city-councils-petition-scheme/';
     if ($site_name == 'east-northamptonshire')
         return 'http://www.east-northamptonshire.gov.uk/site/scripts/documents_info.aspx?documentID=928&pageNumber=10';
     if ($site_name == 'elmbridge')
         return 'http://www.elmbridge.gov.uk/Council/committees/petitionsscheme.htm';
+    if ($site_name == 'hounslow')
+        return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
+    if ($site_name == 'lichfielddc')
+        return 'http://www.lichfielddc.gov.uk/petitionterms';
+    if ($site_name == 'reigate-banstead')
+        return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
+    if ($site_name == 'runnymede')
+        return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/';
+    if ($site_name == 'spelthorne')
+        return 'http://www.spelthorne.gov.uk/petitions_terms';
+    if ($site_name == 'surreycc')
+        return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
+    if ($site_name == 'tandridge')
+        return 'http://www.tandridge.gov.uk/YourCouncil/CouncillorsMeetings/petitions/terms.htm';
+    if ($site_name == 'waverley')
+        return 'http://www.waverley.gov.uk/petitionsterms';
+    if ($site_name == 'westminster')
+        return 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/westminster-petitions/the-city-councils-petition-scheme/';
+    if ($site_name == 'woking')
+        return 'http://www.woking.gov.uk/council/about/petitions/termsandconditions';
     return null;
 }
 
