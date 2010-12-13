@@ -474,25 +474,6 @@ function cobrand_categories($override_site_name = '') {
         $cats[99] = 'Other'; # Both
         return $cats;
     }
-    if ($site_group == 'newforest') {
-        return array(
-            1 => 'Building Regulations',
-            2 => 'Community Safety',
-            3 => 'Council Tax',
-            4 => 'Employment/Business Support',
-            5 => 'Environmental Health',
-            6 => 'Highways',
-            7 => 'Housing',
-            8 => 'Leisure and Recreation',
-            9 => 'Planning',
-            10 => 'Tourism',
-            11 => 'Transport',
-            12 => 'Waste Collection',
-            13 => 'Waste Disposal',
-            99 => 'Other', # Both
-        );
-        return $cats;
-    }
     if ($site_group == 'eastcambs') {
         return array(
             1 => 'Community Development/Grants',
@@ -511,6 +492,46 @@ function cobrand_categories($override_site_name = '') {
             14 => 'Town Centres/Markets',
             15 => 'Transport',
             16 => 'Waste Collection/Recycling',
+            99 => 'Other', # Both
+        );
+        return $cats;
+    }
+    if ($site_group == 'ipswich') {
+        return array(
+            1 => 'Building Control',
+            2 => 'Community Safety',
+            3 => 'Council Tax',
+            4 => 'Economic Development',
+            5 => 'Environmental',
+            6 => 'Finance'
+            7 => 'Housing',
+            8 => 'Information and Communication',
+            9 => 'Licensing'
+            10 => 'Legal and Democratic',
+            11 => 'Leisure and Culture',
+            12 => 'Planning',
+            13 => 'Transport and Highways',
+            14 => 'Waste Collection',
+            15 => 'Waste Disposal',
+            99 => 'Other', # Both
+        );
+        return $cats;
+    }
+    if ($site_group == 'newforest') {
+        return array(
+            1 => 'Building Regulations',
+            2 => 'Community Safety',
+            3 => 'Council Tax',
+            4 => 'Employment/Business Support',
+            5 => 'Environmental Health',
+            6 => 'Highways',
+            7 => 'Housing',
+            8 => 'Leisure and Recreation',
+            9 => 'Planning',
+            10 => 'Tourism',
+            11 => 'Transport',
+            12 => 'Waste Collection',
+            13 => 'Waste Disposal',
             99 => 'Other', # Both
         );
         return $cats;
