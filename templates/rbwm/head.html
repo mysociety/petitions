@@ -32,28 +32,28 @@
  <!-- PageID 29542 - published by RedDot 7.5 - 7.5.2.16 - 21542 -->
  <!-- START - Dublin Core DC Meta-Tags -->
  <meta name="DC.title" lang="en" content="e-Petitions" xml:lang="en" />
- <meta name="DC.description" lang="en" content="Information on how to create or view epetitions submitted to the Royal Borough." xml:lang="en" />
+ <meta name="DC.description" lang="en" content="PARAM_DESCRIPTION." xml:lang="en" />
  <meta name="DC.identifier" scheme="URI" content="PARAM_DC_IDENTIFIER" />
  <meta name="DC.format" scheme="IMT" content="text/html" />
  <meta name="DC.language" scheme="RFC3066" content="en-GB" />
  <meta name="DC.language" scheme="ISO639-2/T" content="eng" />
  <meta name="DC.subject" lang="en" content="Local Government" xml:lang="en" />
- <meta name="eGMS.subject.category" scheme="IPSV" lang="en" content="Council meetings" xml:lang="en" />
+ <meta name="eGMS.subject.category" scheme="IPSV" lang="en" content="Online petitions" xml:lang="en" />
  <meta name="eGMS.subject.service" scheme="LGSL" content=" 354" />
  <meta name="DC.coverage" content="UK" />
  <meta name="DC.coverage.spacial" lang="en" content="The Royal Borough of Windsor and Maidenhead, Berkshire, United Kingdom" xml:lang="en" />
  <meta name="DC.date.created" scheme="W3CDTF" content="2010-10-25" />
- <meta name="DC.date.issued" scheme="W3CDTF" content="2010-11-10" />
- <meta name="DC.date.modified" scheme="W3CDTF" content="2010-11-10" />
+ <meta name="DC.date.issued" content="PARAM_DATE" />
+ <meta name="DC.date.modified"  content="PARAM_DATE" />
  <meta name="DC.rights.copyright" lang="en" content="The Royal Borough of Windsor and Maidenhead" xml:lang="en" />
  <meta name="DC.rights" scheme="URI" content="http://www.rbwm.gov.uk/copyrite.htm" />
  <meta name="DC.creator" content="The Royal Borough of Windsor and Maidenhead, Web-Manager, email mailto:customer.service@rbwm.gov.uk" />
- <meta name="DC.date" scheme="W3CDTF" content="2010-11-10" />
+ <meta name="DC.date" content="PARAM_DATE" />
  <meta name="DC.publisher" lang="en" content=" The Royal Borough of Windsor and Maidenhead, The Townhall, St Ives Road, Maidenhead, SL6 1RF United Kingdom - Tel: +44 (0)1628 683800 - Fax: +44 (0)1628 685757 - Email: mailto:customer.service@rbwm.gov.uk" xml:lang="en" /><!-- END - Dublin Core DC Meta-Tags -->
  <!-- START - Standard Meta-Tags -->
  <meta name="identifier" content="PARAM_DC_IDENTIFIER" />
  <meta name="format" content="text/html" />
- <meta name="description" content="Information on how to create or view epetitions submitted to the Royal Borough." />
+ <meta name="description" content="PARAM_DESCRIPTION." />
  <meta name="country" content="uk" />
  <meta name="language" content="en" />
  <meta name="rights" content="The Royal Borough of Windsor and Maidenhead. All rights reserved" />
@@ -65,8 +65,8 @@
  <meta name="robots" content="all" />
  <meta name="revisit" content="7 days" />
  <meta name="created" content="2010-10-25" />
- <meta name="modified" content="2010-11-10" /><!-- END - Standard Meta-Tags -->
- <link rel="shortcut icon" href="/graphics/favicon.ico" />
+ <meta name="modified" content="PARAM_DATE" /><!-- END - Standard Meta-Tags -->
+ <link rel="shortcut icon" href="http://www.rbwm.gov.uk/graphics/favicon.ico" />
  <meta http-equiv="imagetoolbar" content="no" /><!-- START - CSS Stylesheet Selection -->
 
  <script type="text/javascript">
@@ -103,14 +103,15 @@
  </script><!-- END: RSS Homepage Only -->
 
 
- <title>PARAM_TITLE | e-Petitions | The Royal Borough of Windsor and Maidenhead</title>
+ <title>PARAM_TITLE | The Royal Borough of Windsor and Maidenhead</title>
 
  <link href="/pet.css" rel="stylesheet" type="text/css" />
  <link href="/assets/rbwm/css.css" type="text/css" rel="stylesheet" />
-
+  PARAM_RSS_LINKS
+  PARAM_EXTRA
 </head>
 
-<body>
+<body PARAM_BODYID>
  <div id="rbwm-wrapper">
   <div id="rbwm-container">
    <a id="top" name="top"></a>
@@ -346,7 +347,7 @@
      <a name="content" id="content"></a>
 
      <div class="breadcrumbs">
-      Location: PARAM_H1
+      Location: PARAM_TITLE
      </div>
      <!--ZOOMRESTART-->
 
