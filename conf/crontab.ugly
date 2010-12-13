@@ -9,7 +9,7 @@
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=cron-!!(*= $site *)!!@mysociety.org
 
-!!(* if (($hostname eq "steak" && $vhost =~ /barnet|barrow|blackburn|forest-heath|lichfield|westminster/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barnet|barrow|blackburn|forest-heath|lichfield|westminster/)) { *)!!
+!!(* if (($hostname eq "steak" && $vhost =~ /barnet|barrow|blackburn|east-northamptonshire|forest-heath|lichfield|newforest|stedmundsbury|waveney|westminster/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barnet|barrow|blackburn|east-northamptonshire|forest-heath|lichfield|newforest|stedmundsbury|waveney|westminster/)) { *)!!
 
 # On just the database/daemon machine (currently steak for Number 10, balti for dev, whisky for councils)
 

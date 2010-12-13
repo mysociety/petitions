@@ -12,7 +12,7 @@
 #
 # !!(*= $daemon_name *)!! - Start the ePetitions email daemon
 
-!!(* if (($hostname eq "steak" && $vhost =~ /barnet|barrow|blackburn|forest-heath|lichfield|westminster/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barnet|barrow|blackburn|forest-heath|lichfield|westminster/)) { *)!!
+!!(* if (($hostname eq "steak" && $vhost =~ /barnet|barrow|blackburn|east-northamptonshire|forest-heath|lichfield|newforest|stedmundsbury|waveney|westminster/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barnet|barrow|blackburn|east-northamptonshire|forest-heath|lichfield|newforest|stedmundsbury|waveney|westminster/)) { *)!!
 
 NAME=!!(*= $daemon_name *)!!
 DAEMON=/data/vhost/!!(*= $vhost *)!!/petitions/bin/petemaild
