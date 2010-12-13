@@ -310,7 +310,7 @@ function cobrand_category_okay($category_id) {
         if ($site_name == 'nottinghamshire' && in_array($category_id, $district_only))
             return false;
     } elseif ($site_group == 'eastcambs') {
-        if ($category_id = 11) return false; # Planning
+        if ($category_id == 11) return false; # Planning
     }
     return true;
 }
