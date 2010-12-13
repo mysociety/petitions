@@ -44,6 +44,8 @@ $global_rejection_categories = array(
     16384 => 'Issues for which an e-petition is not the appropriate channel',
     32768 => 'Intended to be humorous, or has no point about government policy',
     65536 => 'Contains links to websites',
+    131072 => 'Currently being administered via another process', # for Bassetlaw council
+    
     // XXX also change in perllib/Petitions/Page.pm
 );
 

@@ -586,12 +586,15 @@ function cobrand_admin_rejection_snippets() {
 }
 
 function cobrand_admin_rejection_categories() {
-    global $global_rejection_categories, $site_group;
+    global $global_rejection_categories, $site_group, $site_name;
     if ($site_group == 'number10') {
         return $global_rejection_categories;
     }
     $categories = $global_rejection_categories;
     unset($categories[65536]); # Links to websites
+    if ($site_name != 'bassetlaw'){
+        unset($categories[131072]); # only Bassetlaw use "Currently being administered via another process"
+    }
     return $categories;
 }
 
