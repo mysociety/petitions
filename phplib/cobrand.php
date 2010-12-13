@@ -40,6 +40,8 @@ function cobrand_creation_address_help() {
 
 function cobrand_creation_email_request() {
     global $site_name;
+    if ($site_name == 'ipswich')
+        return 'We need this to get in touch with you e.g. when your petition ends';
     if ($site_name == 'westminster')
         return 'We need your contact details so we can get in touch with you.<br/>
         Your details other than your name will not be published.';
@@ -225,6 +227,12 @@ function cobrand_creation_comments_label(){
     return "If you have any special requests concerning your
         petition, or information about your petition you would like us 
         to know that you do not wish to be public, please include them here:";
+}
+
+function cobrand_creation_previous_button_first() {
+    global $site_name;
+    if ($site_name == 'ipswich') return true;
+    return false;
 }
 
 function cobrand_creation_extra_footer() {
@@ -735,26 +743,35 @@ outside the remit or powers of Stevenage Borough Council.</p>
 <p><a href="/terms">Full terms and conditions</a></p>
 
 <?
-    } elseif ($site_group == 'surreycc' || $site_name == 'westminster' || $site_name == 'suffolkcoastal') {
+    } elseif ($site_group == 'surreycc' || $site_name == 'westminster' || $site_name == 'suffolkcoastal' || $site_name == 'ipswich') {
+
         $foi_link = 'http://www.ico.gov.uk/';
         $foi_text = $foi_link;
-        if ($site_name == 'reigate-banstead') {
+        $party_political_example = 'For example, this party political petition
+        would not be permitted: "We petition the council to change the
+        Conservative Cabinet\'s policy on education", but this non-party
+        political version would be: "We petition the council to change their
+        policy on education".';
+
+        if ($site_name == 'ipswich') {
+            $foi_link = 'http://www.ipswich.gov.uk/site/scripts/documents_info.php?categoryID=722&documentID=248';
+            $foi_text = 'our FOI procedure pages';
+            $party_political_example = 'For example, this party political
+            petition would not be permitted: "We petition Ipswich Borough
+            Council to change the Conservative/Liberal Democrat Executive\'
+            policy on free swimming", but this non-party political version
+            would be: "We petition Ipswich Borough Council to change their
+            policy on free swimming".';
+        } elseif ($site_name == 'reigate-banstead') {
             $foi_link = 'http://www.reigate-banstead.gov.uk/council_and_democracy/about_the_council/access_to_information/freedom_of_information_act_2000/';
             $foi_text = 'Freedom Of Information Act 2000';
+        } elseif ($site_name == 'suffolkcoastal') {
+            $foi_text = 'the Information Commissioner&rsquo;s website';
         } elseif ($site_name == 'westminster') {
             $foi_link = 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/dataprotectionandfreedomofinformation/foi/';
             $foi_text = 'our Freedom of Information section';
-        } elseif ($site_name == 'suffolkcoastal') {
-            $foi_text = 'the Information Commissioner&rsquo;s website';
-        }
-        
-        $party_political_example = 'For example, this party political petition
-        would not be permitted: "We petition the council to change the Conservative Cabinet\'s policy on education",
-        but this non-party political version would be: "We petition the council to change their policy on education".';
-        
-        if ($site_name == 'westminster')
             $party_political_example = '';
-        
+        }
 ?>
 
 <p>
@@ -947,8 +964,6 @@ example, the identities of children in custody disputes);</li>
 <li>material which is potentially confidential, commercially sensitive, or which
 may cause personal distress or loss;</li>
 <li>any commercial endorsement, promotion of any product, service or publication;</li>
-<li>URLs or web links (we cannot vet the content of external sites, and
-therefore cannot link to them from this site);</li>
 <li>the names of individual officials of public bodies, unless they
 are part of the senior management of those organisations;</li>
 <li>the names of family members of elected representatives or
@@ -1029,6 +1044,8 @@ function cobrand_rss_explanation_link() {
     global $site_name;
     if ($site_name == 'surreycc')
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/RSS+feeds?opendocument';
+    if ($site_name == 'ipswich')
+        return 'http://www.ipswich.gov.uk/site/scripts/rss_about.php';
     return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
 }
 
@@ -1065,6 +1082,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.elmbridge.gov.uk/Council/committees/petitionsscheme.htm';
     if ($site_name == 'hounslow')
         return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
+    if ($site_name == 'ipswich')
+        return 'http://www.ipswich.gov.uk/site/scripts/documents_info.php?documentID=1145';
     if ($site_name == 'lichfielddc')
         return 'http://www.lichfielddc.gov.uk/petitionterms';
     if ($site_name == 'reigate-banstead')
@@ -1095,6 +1114,11 @@ function cobrand_steps_elsewhere() {
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_guide';
     return null;
+}
+
+function cobrand_view_petitions_heading() {
+    global $site_name;
+    if ($site_name == 'ipswich') return 'Petitions';
 }
 
 function cobrand_main_heading($text) {
