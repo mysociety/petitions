@@ -494,7 +494,6 @@ function cobrand_categories($override_site_name = '') {
             16 => 'Waste Collection/Recycling',
             99 => 'Other', # Both
         );
-        return $cats;
     }
     if ($site_group == 'ipswich') {
         return array(
@@ -503,10 +502,10 @@ function cobrand_categories($override_site_name = '') {
             3 => 'Council Tax',
             4 => 'Economic Development',
             5 => 'Environmental',
-            6 => 'Finance'
+            6 => 'Finance',
             7 => 'Housing',
             8 => 'Information and Communication',
-            9 => 'Licensing'
+            9 => 'Licensing',
             10 => 'Legal and Democratic',
             11 => 'Leisure and Culture',
             12 => 'Planning',
@@ -515,7 +514,6 @@ function cobrand_categories($override_site_name = '') {
             15 => 'Waste Disposal',
             99 => 'Other', # Both
         );
-        return $cats;
     }
     if ($site_group == 'newforest') {
         return array(
@@ -534,7 +532,6 @@ function cobrand_categories($override_site_name = '') {
             13 => 'Waste Disposal',
             99 => 'Other', # Both
         );
-        return $cats;
     }
 
     global $global_petition_categories;
