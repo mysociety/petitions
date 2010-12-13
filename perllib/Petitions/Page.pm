@@ -362,6 +362,14 @@ the Armed Forces without a postcode, please select from this list:</label>',
     if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
         $body_ref = '<input type="hidden" name="body" value="' . ent($p->{body_ref}) . '" />';
     }
+
+    my $submit = 'Sign and submit';
+    if (Petitions::Cobrand::do_address_lookup()) {
+        unless ($q->scratch()->{address_lookup}) {
+            $submit = 'Look up address';
+        }
+    }
+
     return
         $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => $action)
         . qq(<input type="hidden" name="add_signatory" value="1" />)
@@ -390,7 +398,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         $address_type,
         $expat,
         $q->p( { -id => 'signatureSubmit', -align => 'right' },
-            $q->submit(-class => 'button', -name => 'submit', -value => 'Sign and submit')
+            $q->submit(-class => 'button', -name => 'submit', -value => $submit)
         )
         )
         . $q->end_form();
