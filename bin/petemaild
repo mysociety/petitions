@@ -1783,7 +1783,9 @@ sub make_petition_email ($) {
 sub database_child_process ($) {
     my IO::Socket $s = shift;
 
-    $0 = "petemaild (database child process)";
+    my $site_name = mySociety::Config::get('SITE_NAME');
+    $site_name =~ s/,.*//;
+    $0 = "petemaild (database child process for $site_name)";
 
     # Queue of messages to send.
     my @queue = ( );
