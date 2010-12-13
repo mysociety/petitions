@@ -12,7 +12,7 @@
 #
 # !!(*= $daemon_name *)!! - Start the ePetitions signup daemon
 
-!!(* if (($hostname eq "steak" && $vhost =~ /barnet/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barnet/)) { *)!!
+!!(* if (($hostname eq "steak" && $vhost =~ /barnet|westminster/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barnet|westminster/)) { *)!!
 
 NAME=!!(*= $daemon_name *)!!
 DAEMON=/data/vhost/!!(*= $vhost *)!!/petitions/bin/petsignupd
