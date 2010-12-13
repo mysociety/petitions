@@ -36,7 +36,7 @@ function ob_callback($s) {
     if ($site_name == 'lichfielddc') {
         $s = preg_replace('#<input([^>]*?type=[\'"]text)#', '<input class="field"\1', $s);
     }
-    header('Content-Length: ' . ob_get_length());
+    header('Content-Length: ' . strlen($s));
     return $s;
 }
 ob_start('ob_callback');
