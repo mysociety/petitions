@@ -6,6 +6,15 @@ div#petition_actions {
     list-style-image: none;
 }
 
+#petition_actions a {
+    border: none;
+    padding-bottom: 40px;
+}
+
+#petition_actions img {
+    margin-bottom: 10px;
+}
+
 div#most_recent {
     float: right;
 }
@@ -52,5 +61,9 @@ p.petition_view_tabs {
     padding:0 0 7px 0;
     margin: 5px 0 14px 0;
     font-size:1.4em;
+}
+
+#front_how h3 {
+    margin-top: 20px;
 }
 
