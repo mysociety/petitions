@@ -92,7 +92,7 @@ EOF;
         $to = get_http_var('to');
         
         $multiple = '';
-        if ($site = cobrand_admin_is_site_user())
+        if (OPTION_SITE_TYPE == 'multiple' && ($site = cobrand_admin_is_site_user()))
             $multiple = "_$site";
 
         # Overall
