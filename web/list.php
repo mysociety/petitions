@@ -97,30 +97,33 @@ $qrows .= ($q_cat ? "AND category = ? " : "") .
 /* PG bug: mustn't quote parameter of offset */
 $qrows = db_query($qrows, $sql_params);
 
-$heading = '';
+$title = '';
 if ($q_cat) {
-    $heading = cobrand_category($q_cat) . ' - ';
+    $title = cobrand_category($q_cat) . ' - ';
 }
 if ($q_type == 'open') {
     if ($rss)
-        $heading .= 'New Petitions';
+        $title .= 'New Petitions';
     else
-        $heading .= "Open petitions";
+        $title .= "Open petitions";
 } elseif ($q_type == 'closed') {
-    $heading .= "Closed petitions";
+    $title .= "Closed petitions";
 } elseif ($q_type == 'rejected') {
-    $heading .= "Rejected petitions";
+    $title .= "Rejected petitions";
 } else {
     err('Unknown type ' . $q_type);
 }
 if ($rss) 
-    rss_header($heading, $heading, array());
+    rss_header($title, $title, array());
 else {
-    page_header($heading, array('id'=>'all',
+    $heading = 'View petitions';
+    if ($h = cobrand_view_petitions_heading())
+        $heading = $h;
+    page_header($title, array('id'=>'all',
             'rss'=> array(
-                    $heading => url_new("/rss/list/$q_type", true, 'offset', null, 'type', null)
+                    $title => url_new("/rss/list/$q_type", true, 'offset', null, 'type', null)
              ),
-             'h1' => 'View petitions',
+             'h1' => $heading,
     ));
 }
 
@@ -262,7 +265,7 @@ if ($rss)
     rss_footer($rss_items);
 else {
 ?>
-<p align="right" id="ms-petition-list-rss"><a href="<?=url_new("/rss/list/$q_type", true, 'offset', null, 'type', null) ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $heading ?>" /> RSS</a>
+<p align="right" id="ms-petition-list-rss"><a href="<?=url_new("/rss/list/$q_type", true, 'offset', null, 'type', null) ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $title ?>" /> RSS</a>
 | <a href="<?=cobrand_rss_explanation_link() ?>">What is RSS?</a></p>
 <?
     page_footer('List.' . $q_type);
