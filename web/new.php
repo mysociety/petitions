@@ -198,6 +198,19 @@ function startform() {
 }
 
 function nextprevbuttons($steps, $i) {
+    if (cobrand_creation_previous_button_first()) {
+        print '<p align="right">';
+        if ($i > 1) {
+            submit_button('tostep' . $steps[$i-1], 'Previous');
+            if ($i < count($steps)) print ' ';
+        }
+        if ($i < count($steps)) {
+            submit_button('tostep' . $steps[$i+1], 'Next');
+        }
+        print '</p>';
+        return;
+    }
+
     print '<p align="right">';
     if ($i < count($steps)) {
         submit_button('tostep' . $steps[$i+1], 'Next');

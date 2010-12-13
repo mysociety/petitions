@@ -229,6 +229,12 @@ function cobrand_creation_comments_label(){
         to know that you do not wish to be public, please include them here:";
 }
 
+function cobrand_creation_previous_button_first() {
+    global $site_name;
+    if ($site_name == 'ipswich') return true;
+    return false;
+}
+
 function cobrand_creation_extra_footer() {
     global $site_name;
     if ($site_name != 'runnymede') return;
