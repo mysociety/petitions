@@ -1240,6 +1240,13 @@ function cobrand_rejected_petition_timeout() {
 
 function cobrand_fill_form_instructions(){
     global $site_name;
+    if ($site_name == 'east-northamptonshire') {
+        return '<p>Please make sure you have read the 
+            <a href="http://www.east-northamptonshire.gov.uk/petitions">petitions&nbsp;scheme</a> and 
+            <a href="/terms">terms&nbsp;and&nbsp;conditions</a> before you create a petition. 
+            Your petition will need at least 50 signatures for the council to take any action.</p>
+            Please fill in all the fields below.';
+    }
     if ($site_name == 'bassetlaw'){
         return 'Please complete all the sections below.';
     }
