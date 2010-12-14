@@ -18,14 +18,26 @@ With unconfirmed emails: <?=$counts['unconfirmed']?> not sent,
 <?=$counts['failedconfirm']?> failed send, <?=$counts['sentconfirm']?> sent =
 <strong><?=$counts['all_unconfirmed']?></strong> total with unconfirmed emails
 
-<p><img style="max-width:100%" src="pet-live-creation<?=$multiple?>.png" alt="Graph of petition status by creation date">
+<?
+$f = "pet-live-creation$multiple.png";
+if (is_file($f) && filesize($f)) { ?>
+<p><img style="max-width:100%" src="<?=$f?>" alt="Graph of petition status by creation date">
+<?  } else { ?>
+<p>There is currently no data in the system to draw a graph. Graphs are generated nightly.</p>
+<?  } ?>
 
 <h2>Signatures</h2>
 
 <p><?=$signatures['confirmed']?> confirmed signatures (<?=$signatures['confirmed_unique']?> unique emails
 in past year), <?=$signatures['sent']?> unconfirmed
 
-<p><img style="max-width:100%" src="pet-live-signups<?=$multiple?>.png" alt="Graph of signers across whole site">
+<?
+$f = "pet-live-signups$multiple.png";
+if (is_file($f) && filesize($f)) { ?>
+<p><img style="max-width:100%" src="<?=$f?>" alt="Graph of signers across whole site">
+<?  } else { ?>
+<p>There is currently no data in the system to draw a graph. Graphs are generated nightly.</p>
+<?  } ?>
 
 <h2>Responses</h2>
 

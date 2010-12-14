@@ -20,11 +20,12 @@ site along with online petitions.</p>
     print $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
         if (OPTION_SITE_DOMAINS) {
-            $body = db_getRow('select id, name from body where ref=?', http_auth_user());
+            $body = db_getRow('select id, ref, name from body where ref=?', http_auth_user());
         } else {
             err("Whoops, something has gone wrong");
         }
         print "<input type='hidden' name='body' value='$body[id]' />";
+        print "<input type='hidden' name='body_ref' value='$body[ref]' />";
         print $body['name'];
         echo ' to';
     }

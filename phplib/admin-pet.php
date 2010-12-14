@@ -212,7 +212,7 @@ class ADMIN_PAGE_PET_OFFLINE {
         global $pet_today;
 
         $data = array();
-        foreach (array( 'body', 'pet_content', 'detail', 'ref', 'category', 'offline_signers', 'rawdeadline', 'name', 'email', 'organisation', 'address', 'postcode', 'telephone', 'offline_link', 'offline_location' ) as $var) {
+        foreach (array( 'body', 'body_ref', 'pet_content', 'detail', 'ref', 'category', 'offline_signers', 'rawdeadline', 'name', 'email', 'organisation', 'address', 'postcode', 'telephone', 'offline_link', 'offline_location' ) as $var) {
             $data[$var] = get_http_var($var);
         }
         $errors = array();
@@ -220,15 +220,16 @@ class ADMIN_PAGE_PET_OFFLINE {
         if (get_http_var('offline_create')) {
             # Error checking. Bit of overlap with new.php
             if (OPTION_SITE_TYPE == 'multiple') {
-                if (!$data['body']) {
+                if (!$data['body'] || !$data['body_ref']) {
                     $errors['body'] = _('Please pick who you wish to petition');
                 } else {
-                    $q = db_query('SELECT ref FROM body WHERE id=?', array($data['body']));
+                    $q = db_query('SELECT ref FROM body WHERE id=? and ref=?', array($data['body'], $data['body_ref']));
                     if (!db_num_rows($q))
                         $errors['body'] = _('Please pick a valid body to petition');
                 }
             } else {
                 $data['body'] = null;
+                $data['body_ref'] = null;
             }
 
             if (!$data['pet_content'])
@@ -316,7 +317,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                     $data['organisation'], $data['address'],
                     $data['postcode'], $data['telephone'], $data['category']
                 );
-                stats_change($p, 'cached_petitions_finished', '+1');
+                stats_change($data['body_ref'], 'cached_petitions_finished', '+1');
                 db_commit();
                 header('Location: ' . OPTION_ADMIN_URL . '?page=pet&o=finished');
                 exit;
@@ -1038,7 +1039,7 @@ EOF;
                         lastupdate = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
             memcache_update($id);
-            stats_change($p, 'cached_petitions_rejected', '+1');
+            stats_change($p->body_ref(), 'cached_petitions_rejected', '+1');
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason");
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
@@ -1279,7 +1280,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
             memcache_update($petition_id);
-            stats_change($p, 'cached_petitions_live', '+1');
+            stats_change($p->body_ref(), 'cached_petitions_live', '+1');
             $p->log_event("Admin approved petition");
         } else {
             $p->log_event("Bad approval");
@@ -1320,7 +1321,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
             $p->log_event("Admin $action petition with reason '$reason'");
             db_query("update petition set status='$new_status', laststatuschange=ms_current_timestamp(),
                 lastupdate=ms_current_timestamp() where id=?", $p->id());
-            stats_change($p, "cached_petitions_$status", '-1');
+            stats_change($p->body_ref(), "cached_petitions_$status", '-1');
             db_commit();
             print "<p><em>$message</em></p>";
         } else {
@@ -1635,11 +1636,11 @@ function privacy($e) {
     return htmlspecialchars($e);
 }
 
-function stats_change($p, $key, $a) {
+function stats_change($body_ref, $key, $a) {
     if (!db_do("update stats set value = value::integer $a where key = '$key'")) {
         db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '$key', '1')");
     }
-    if ($body_ref = $p->body_ref()) {
+    if ($body_ref) {
         if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}'")) {
             db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}', '1')");
         }

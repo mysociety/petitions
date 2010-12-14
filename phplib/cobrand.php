@@ -85,7 +85,7 @@ function cobrand_creation_short_name_label() {
 
 function cobrand_creation_category_first() {
     global $site_group;
-    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
+    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire' || $site_group == 'eastcambs') {
         return true;
     }
     return false;
@@ -293,7 +293,7 @@ function cobrand_overseas_dropdown() {
 #       Duplicated in anticipation of different councils splitting these responsibilities differently.
 function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
-    if ($site_group == 'surreycc'){
+    if ($site_group == 'surreycc') {
         $county_only = array(4, 6, 7, 10, 12, 13, 16);
         if ($site_name == 'tandridge' || $site_name == 'reigate-banstead' || $site_name == 'elmbridge')
             $county_only[] = 11; # Planning not okay
@@ -302,14 +302,16 @@ function cobrand_category_okay($category_id) {
         $district_only = array(1, 2, 3, 5, 8, 9, 15);
         if ($site_name == 'surreycc' && in_array($category_id, $district_only))
             return false;
-    }
-    if ($site_group == 'nottinghamshire'){
-        $county_only = array(4, 6, 7, 10, 12, 13, 16);
+    } elseif ($site_group == 'nottinghamshire') {
+        if ($category_id == 6) return false;
+        $county_only = array(4, 7, 10, 12, 13, 14, 17);
         if ($site_name != 'nottinghamshire' && in_array($category_id, $county_only))
             return false;
-        $district_only = array(1, 3, 5, 8, 9, 15);
+        $district_only = array(1, 3, 5, 8, 9, 11, 16);
         if ($site_name == 'nottinghamshire' && in_array($category_id, $district_only))
             return false;
+    } elseif ($site_group == 'eastcambs') {
+        if ($category_id == 11) return false; # Planning
     }
     return true;
 }
@@ -388,17 +390,30 @@ responsibility of your district council, but instead of Nottinghamshire County C
 <a href='$url'>Go to Nottinghamshire County Council's petition website to create a
 petition in this category</a>."; 
         }
+        if ($category_id == 6) { # Fire
+            return 'The fire service is the responsibility of the
+Nottinghamshire and City of Nottingham Fire Authority. For more information see
+<a href="http://www.notts-fire.gov.uk/">www.notts-fire.gov.uk</a>.';
+        }
         if ($area) {
             # $area is set if we're being called as a result of the form below
             # currently handling all mySociety-hosted Notts district councils the same:
-            if (in_array($area, array('ashfield', 'bassetlaw', 'mansfield', 'rushcliffe')))
-                return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            #if (in_array($area, array('ashfield-dc', 'bassetlaw', 'mansfield', 'rushcliffe')))
+            #    return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            if ($area == 'ashfield-dc')
+                return 'http://www.ashfield-dc.gov.uk/ccm/navigation/council--government-and-democracy/petition-scheme/';
+            if ($area == 'bassetlaw')
+                return 'http://www.bassetlaw.gov.uk/services/council__democracy/petitions.aspx';
+            if ($area == 'mansfield')
+                return 'http://www.mansfield.gov.uk/index.aspx?articleid=3672';
+            if ($area == 'rushcliffe')
+                return 'http://www.rushcliffe.gov.uk/doc.asp?cat=11391&doc=11229';
             if ($area == 'broxtowe')
-                return 'http://www.broxtowe.gov.uk/'; # no petitions page found
+                return 'http://www.broxtowe.gov.uk/index.aspx?articleid=8181';
             if ($area == 'gedling')
                 return 'http://www.gedling.gov.uk/'; # no petitions page found
             if ($area == 'newark-sherwooddc')
-                return 'http://www.newark-sherwooddc.gov.uk/'; # no petitions page found
+                return 'http://www.newark-sherwooddc.gov.uk/pp/gold/viewGold.asp?IDType=Page&ID=21319';
             if ($area == 'nottingham')
                 return 'http://www.nottinghamcity.gov.uk/index.aspx?articleid=12595'; # e-petitions page
         } else {
@@ -406,9 +421,9 @@ petition in this category</a>.";
             <input type="hidden" name="category" value="' . $category_id . '"> 
             You are petitioning about something which isn\'t the responsibility of Nottinghamshire Council Council,
             but instead of your district council. <label for="council_pick">Please
-            pick your district council in order to be taken to their petition site:</label>
+            pick your district council in order to be taken to their site:</label>
             <select name="council" id="council_pick">
-            <option value="ashfield">Ashfield Borough Council</option>
+            <option value="ashfield-dc">Ashfield District Council</option>
             <option value="bassetlaw">Bassetlaw District Council</option>
             <option value="broxtowe">Broxtowe Borough Council</option>
             <option value="gedling">Gedling Borough Council</option>
@@ -421,6 +436,16 @@ petition in this category</a>.";
             '; 
         }
     }
+
+    if ($site_group == 'eastcambs') {
+        if ($category_id == 11) { # Planning
+            return "We are unable to accept an e-petition through this
+facility in relation to a specific planning application as there is a
+<a href='http://www.eastcambs.gov.uk/planning/planning-services'>separate
+process for planning representations</a>.";
+        }
+    }
+
     return null;
 }
 
@@ -430,7 +455,7 @@ function cobrand_categories($override_site_name = '') {
     global $site_name, $site_group;
     $sn = $site_name;
     if ($override_site_name) $sn = $override_site_name;
-    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
+    if ($site_group == 'surreycc') {
         $cats = array(
             1 => 'Building Regulations',
             2 => 'Community safety',
@@ -463,23 +488,27 @@ function cobrand_categories($override_site_name = '') {
         $cats[99] = 'Other'; # Both
         return $cats;
     }
-    if ($site_group == 'newforest') {
-        return array(
+    if ($site_group == 'nottinghamshire') {
+        $cats = array(
             1 => 'Building Regulations',
             2 => 'Community Safety',
-            3 => 'Council Tax',
-            4 => 'Employment/Business Support',
+            3 => 'Council Tax Collection',
+            4 => 'Education',
             5 => 'Environmental Health',
-            6 => 'Highways',
-            7 => 'Housing',
-            8 => 'Leisure and Recreation',
-            9 => 'Planning',
-            10 => 'Tourism',
-            11 => 'Transport',
-            12 => 'Waste Collection',
-            13 => 'Waste Disposal',
-            99 => 'Other', # Both
+            6 => 'Fire & Rescue',
+            7 => 'Highways',
+            8 => 'Housing',
+            9 => 'Leisure and Recreation',
+            10 => 'Libraries',
+            11 => 'Planning and Development Control',
+            12 => 'Minerals and Waste planning',
+            13 => 'Social Services',
+            14 => 'Transport and Travel',
+            15 => 'Trading Standards', # Both?
+            16 => 'Waste Collection',
+            17 => 'Waste Disposal',
         );
+        $cats[99] = 'Other'; # Both
         return $cats;
     }
     if ($site_group == 'eastcambs') {
@@ -502,7 +531,44 @@ function cobrand_categories($override_site_name = '') {
             16 => 'Waste Collection/Recycling',
             99 => 'Other', # Both
         );
-        return $cats;
+    }
+    if ($site_group == 'ipswich') {
+        return array(
+            1 => 'Building Control',
+            2 => 'Community Safety',
+            3 => 'Council Tax',
+            4 => 'Economic Development',
+            5 => 'Environmental',
+            6 => 'Finance',
+            7 => 'Housing',
+            8 => 'Information and Communication',
+            9 => 'Licensing',
+            10 => 'Legal and Democratic',
+            11 => 'Leisure and Culture',
+            12 => 'Planning',
+            13 => 'Transport and Highways',
+            14 => 'Waste Collection',
+            15 => 'Waste Disposal',
+            99 => 'Other', # Both
+        );
+    }
+    if ($site_group == 'newforest') {
+        return array(
+            1 => 'Building Regulations',
+            2 => 'Community Safety',
+            3 => 'Council Tax',
+            4 => 'Employment/Business Support',
+            5 => 'Environmental Health',
+            6 => 'Highways',
+            7 => 'Housing',
+            8 => 'Leisure and Recreation',
+            9 => 'Planning',
+            10 => 'Tourism',
+            11 => 'Transport',
+            12 => 'Waste Collection',
+            13 => 'Waste Disposal',
+            99 => 'Other', # Both
+        );
     }
 
     global $global_petition_categories;
@@ -595,14 +661,14 @@ function cobrand_admin_rejection_snippets() {
 
 function cobrand_admin_rejection_categories() {
     global $global_rejection_categories, $site_group, $site_name;
-    if ($site_group == 'number10') {
-        return $global_rejection_categories;
-    }
     $categories = $global_rejection_categories;
-    unset($categories[65536]); # Links to websites
     if ($site_name != 'bassetlaw'){
-        unset($categories[131072]); # only Bassetlaw use "Currently being administered via another process"
+        unset($categories[131072]); # only Bassetlaw uses "Currently being administered via another process"
     }
+    if ($site_group == 'number10' || $site_group == 'ipswich') {
+        return $categories;
+    }
+    unset($categories[65536]); # Links to websites
     return $categories;
 }
 
@@ -747,6 +813,7 @@ outside the remit or powers of Stevenage Borough Council.</p>
 
         $foi_link = 'http://www.ico.gov.uk/';
         $foi_text = $foi_link;
+        $url_text = '';
         $party_political_example = 'For example, this party political petition
         would not be permitted: "We petition the council to change the
         Conservative Cabinet\'s policy on education", but this non-party
@@ -762,6 +829,9 @@ outside the remit or powers of Stevenage Borough Council.</p>
             policy on free swimming", but this non-party political version
             would be: "We petition Ipswich Borough Council to change their
             policy on free swimming".';
+            $url_text = '<li>URLs or web links (we cannot vet the content of
+            external sites, and therefore cannot link to them from this
+            e-Petitions system);</li>';
         } elseif ($site_name == 'reigate-banstead') {
             $foi_link = 'http://www.reigate-banstead.gov.uk/council_and_democracy/about_the_council/access_to_information/freedom_of_information_act_2000/';
             $foi_text = 'Freedom Of Information Act 2000';
@@ -790,6 +860,7 @@ example, the identities of children in custody disputes);</li>
 <li>material which is potentially confidential, commercially sensitive, or which
 may cause personal distress or loss;</li>
 <li>any commercial endorsement, promotion of any product, service or publication;</li>
+<?=$url_text?>
 <li>the names of individual officials of public bodies, unless they
 are part of the senior management of those organisations;</li>
 <li>the names of family members of elected representatives or

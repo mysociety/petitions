@@ -47,10 +47,6 @@ function make_graph {
     ;" | psql --host $OPTION_PET_DB_HOST --port $OPTION_PET_DB_PORT -A -F " " $OPTION_PET_DB_NAME $OPTION_PET_DB_USER | egrep -v "date|rows" >$SOURCEO
     fi
 
-    if [ ! -s $SOURCEO ]; then
-        exit
-    fi
-
     cat >$GPSCRIPT <<END 
     unset border
     unset arrow
