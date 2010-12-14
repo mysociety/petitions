@@ -15,6 +15,20 @@ function cobrand_page_title($title) {
     return str_replace('petition', 'Petition', $title);
 }
 
+function cobrand_create_button_title() {
+    global $site_name;
+    if ($site_name == 'suffolkcoastal')
+        return ' title="Create a petition" ';
+    return '';
+}
+
+function cobrand_view_button_title() {
+    global $site_name;
+    if ($site_name == 'suffolkcoastal')
+        return ' title="View petitions" ';
+    return '';
+}
+
 # The help sentence printed under the main content of a petition's input box.
 function cobrand_creation_sentence_help() {
     global $site_group, $site_name;

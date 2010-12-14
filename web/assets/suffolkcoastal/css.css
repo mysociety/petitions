@@ -69,3 +69,7 @@ div#most_recent ul, div#most_popular ul {
 div#most_recent ul li, div#most_popular ul li{
     padding: 4px;
 }
+
+#most_recent h2 {
+    margin-top: 1em;
+}
