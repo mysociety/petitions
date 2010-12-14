@@ -303,10 +303,11 @@ function cobrand_category_okay($category_id) {
         if ($site_name == 'surreycc' && in_array($category_id, $district_only))
             return false;
     } elseif ($site_group == 'nottinghamshire') {
-        $county_only = array(4, 6, 7, 10, 12, 13, 16);
+        if ($category_id == 6) return false;
+        $county_only = array(4, 7, 10, 12, 13, 14, 17);
         if ($site_name != 'nottinghamshire' && in_array($category_id, $county_only))
             return false;
-        $district_only = array(1, 3, 5, 8, 9, 15);
+        $district_only = array(1, 3, 5, 8, 9, 11, 16);
         if ($site_name == 'nottinghamshire' && in_array($category_id, $district_only))
             return false;
     } elseif ($site_group == 'eastcambs') {
@@ -389,6 +390,11 @@ responsibility of your district council, but instead of Nottinghamshire County C
 <a href='$url'>Go to Nottinghamshire County Council's petition website to create a
 petition in this category</a>."; 
         }
+        if ($category_id == 6) { # Fire
+            return 'The fire service is the responsibility of the
+Nottinghamshire and City of Nottingham Fire Authority. For more information see
+<a href="http://www.notts-fire.gov.uk/">www.notts-fire.gov.uk</a>.';
+        }
         if ($area) {
             # $area is set if we're being called as a result of the form below
             # currently handling all mySociety-hosted Notts district councils the same:
@@ -441,7 +447,7 @@ function cobrand_categories($override_site_name = '') {
     global $site_name, $site_group;
     $sn = $site_name;
     if ($override_site_name) $sn = $override_site_name;
-    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire') {
+    if ($site_group == 'surreycc') {
         $cats = array(
             1 => 'Building Regulations',
             2 => 'Community safety',
@@ -471,6 +477,29 @@ function cobrand_categories($override_site_name = '') {
             unset($cats[16]);
             asort($cats);
         }
+        $cats[99] = 'Other'; # Both
+        return $cats;
+    }
+    if ($site_group == 'nottinghamshire') {
+        $cats = array(
+            1 => 'Building Regulations',
+            2 => 'Community Safety',
+            3 => 'Council Tax Collection',
+            4 => 'Education',
+            5 => 'Environmental Health',
+            6 => 'Fire & Rescue',
+            7 => 'Highways',
+            8 => 'Housing',
+            9 => 'Leisure and Recreation',
+            10 => 'Libraries',
+            11 => 'Planning and Development Control',
+            12 => 'Minerals and Waste planning',
+            13 => 'Social Services',
+            14 => 'Transport and Travel',
+            15 => 'Trading Standards', # Both?
+            16 => 'Waste Collection',
+            17 => 'Waste Disposal',
+        );
         $cats[99] = 'Other'; # Both
         return $cats;
     }
