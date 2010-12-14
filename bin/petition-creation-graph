@@ -70,10 +70,6 @@ function make_graph {
         grab_data "status not in ('unconfirmed', 'failedconfirm', 'sentconfirm', 'draft', 'resubmitted', 'rejectedonce', 'rejected', 'live', 'finished')" $SOURCEF
     fi
 
-    if [ ! -s $SOURCEA ]; then
-        exit
-    fi
-
     cat >$GPSCRIPT <<END 
     unset border
     unset arrow
