@@ -660,9 +660,10 @@ function cobrand_admin_rejection_snippets() {
 }
 
 function cobrand_admin_rejection_categories() {
-    global $global_rejection_categories, $site_group, $site_name;
+    global $global_rejection_categories, $site_group;
     $categories = $global_rejection_categories;
-    if ($site_name != 'bassetlaw'){
+    $site_user = cobrand_admin_is_site_user();
+    if ( ! ($site_group == 'nottinghamshire' && ($site_user == 'bassetlaw' || $site_user == ''))){
         unset($categories[131072]); # only Bassetlaw uses "Currently being administered via another process"
     }
     if ($site_group == 'number10' || $site_group == 'ipswich') {
