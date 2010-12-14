@@ -1164,6 +1164,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
     if ($site_name == 'runnymede')
         return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/';
+    if ($site_name == 'rushcliffe')
+        return 'http://www.rushcliffe.gov.uk/doc.asp?cat=11622';
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_terms';
     if ($site_name == 'surreycc')
@@ -1185,6 +1187,8 @@ function cobrand_steps_elsewhere() {
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Step+by+step+guide+to+e-petitions?opendocument';
     if ($site_name == 'reigate-banstead')
         return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/stepbystep/index.asp';
+    if ($site_name == 'rushcliffe')
+        return 'http://www.rushcliffe.gov.uk/doc.asp?cat=11620';
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_guide';
     return null;
