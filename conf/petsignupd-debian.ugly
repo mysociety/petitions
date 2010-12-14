@@ -12,7 +12,7 @@
 #
 # !!(*= $daemon_name *)!! - Start the ePetitions signup daemon
 
-!!(* if (($hostname eq "steak" && $vhost =~ /barnet|barrow|blackburn|east-northamptonshire|forest-heath|lichfield|newforest|stedmundsbury|waveney|westminster/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barnet|barrow|blackburn|east-northamptonshire|forest-heath|lichfield|newforest|stedmundsbury|waveney|westminster/)) { *)!!
+!!(* if (($hostname eq "steak" && $vhost =~ /barnet|barrow|blackburn|east-northamptonshire|forest-heath|lichfield|newforest|stedmundsbury|stevenage|waveney|westminster/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barnet|barrow|blackburn|east-northamptonshire|forest-heath|lichfield|newforest|stedmundsbury|stevenage|waveney|westminster/)) { *)!!
 
 NAME=!!(*= $daemon_name *)!!
 DAEMON=/data/vhost/!!(*= $vhost *)!!/petitions/bin/petsignupd
