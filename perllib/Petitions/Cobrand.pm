@@ -52,7 +52,7 @@ sub within_area_only() {
     return ('Islington', 2507) if $site_name eq 'islington';
     return ('the Royal Borough of Windsor and Maidenhead', 2622) if $site_name eq 'rbwm';
     return ('Westminster', 2504) if $site_name eq 'westminster';
-    #return ('Surrey Heath', 2450) if $site_name eq 'surreyheath';
+    return ('Surrey Heath', 2450) if $site_name eq 'surreyheath';
     return;
 }
 
