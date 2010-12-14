@@ -5,6 +5,16 @@
     width: 1000px;
 }
 
+#navigation {
+    margin: 0 auto;
+    padding-top: 4px;
+    width: 1000px;
+}
+
+#green_bar, #green_bar a {
+    color: #ffffff;
+}
+
 div#petition_actions {
     border: none;
     font-size: 100%;
