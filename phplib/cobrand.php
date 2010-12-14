@@ -1148,6 +1148,8 @@ function cobrand_terms_text() {
 # If a body hosts their own T&Cs page, this function returns its location
 function cobrand_terms_elsewhere() {
     global $site_name;
+    if ($site_name == 'eastcambs')
+        return 'http://www.eastcambs.gov.uk/council-and-democracy/petition-procedure';
     if ($site_name == 'east-northamptonshire')
         return 'http://www.east-northamptonshire.gov.uk/site/scripts/documents_info.aspx?documentID=928&pageNumber=10';
     if ($site_name == 'elmbridge')
