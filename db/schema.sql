@@ -126,11 +126,11 @@ create table petition (
     -- with that list of reasons.
     rejection_first_categories integer not null default 0
         check (rejection_first_categories >= 0
-                and rejection_first_categories < 131072),
+                and rejection_first_categories < 262144),
     rejection_first_reason text,
     rejection_second_categories integer not null default 0
         check (rejection_second_categories >= 0
-                and rejection_second_categories < 131072),
+                and rejection_second_categories < 262144),
     rejection_second_reason text,
     rejection_hidden_parts integer not null default 0
         check (rejection_hidden_parts >= 0
