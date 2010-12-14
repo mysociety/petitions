@@ -398,14 +398,22 @@ Nottinghamshire and City of Nottingham Fire Authority. For more information see
         if ($area) {
             # $area is set if we're being called as a result of the form below
             # currently handling all mySociety-hosted Notts district councils the same:
-            if (in_array($area, array('ashfield', 'bassetlaw', 'mansfield', 'rushcliffe')))
-                return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            #if (in_array($area, array('ashfield-dc', 'bassetlaw', 'mansfield', 'rushcliffe')))
+            #    return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
+            if ($area == 'ashfield-dc')
+                return 'http://www.ashfield-dc.gov.uk/ccm/navigation/council--government-and-democracy/petition-scheme/';
+            if ($area == 'bassetlaw')
+                return 'http://www.bassetlaw.gov.uk/services/council__democracy/petitions.aspx';
+            if ($area == 'mansfield')
+                return 'http://www.mansfield.gov.uk/index.aspx?articleid=3672';
+            if ($area == 'rushcliffe')
+                return 'http://www.rushcliffe.gov.uk/doc.asp?cat=11391&doc=11229';
             if ($area == 'broxtowe')
-                return 'http://www.broxtowe.gov.uk/'; # no petitions page found
+                return 'http://www.broxtowe.gov.uk/index.aspx?articleid=8181';
             if ($area == 'gedling')
                 return 'http://www.gedling.gov.uk/'; # no petitions page found
             if ($area == 'newark-sherwooddc')
-                return 'http://www.newark-sherwooddc.gov.uk/'; # no petitions page found
+                return 'http://www.newark-sherwooddc.gov.uk/pp/gold/viewGold.asp?IDType=Page&ID=21319';
             if ($area == 'nottingham')
                 return 'http://www.nottinghamcity.gov.uk/index.aspx?articleid=12595'; # e-petitions page
         } else {
@@ -413,9 +421,9 @@ Nottinghamshire and City of Nottingham Fire Authority. For more information see
             <input type="hidden" name="category" value="' . $category_id . '"> 
             You are petitioning about something which isn\'t the responsibility of Nottinghamshire Council Council,
             but instead of your district council. <label for="council_pick">Please
-            pick your district council in order to be taken to their petition site:</label>
+            pick your district council in order to be taken to their site:</label>
             <select name="council" id="council_pick">
-            <option value="ashfield">Ashfield Borough Council</option>
+            <option value="ashfield-dc">Ashfield District Council</option>
             <option value="bassetlaw">Bassetlaw District Council</option>
             <option value="broxtowe">Broxtowe Borough Council</option>
             <option value="gedling">Gedling Borough Council</option>
