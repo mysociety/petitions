@@ -15,6 +15,14 @@ function cobrand_page_title($title) {
     return str_replace('petition', 'Petition', $title);
 }
 
+# return true if council prefers "We, the undersigned," to "We the undersigned"
+function cobrand_we_the_undersigned_use_commas() {
+    global $site_name;
+    if ($site_name == 'suffolkcoastal')
+        return true;
+    return false;
+}
+
 function cobrand_create_button_title() {
     global $site_name;
     if ($site_name == 'suffolkcoastal')
@@ -33,7 +41,7 @@ function cobrand_view_button_title() {
 function cobrand_creation_sentence_help() {
     global $site_group, $site_name;
     $out = '(Please write a sentence';
-    if ($site_group != 'surreycc' && $site_group != 'westminster' && $site_group != 'stevenage' && $site_name != 'bassetlaw') {
+    if ($site_group != 'surreycc' && $site_group != 'westminster' && $site_group != 'stevenage' && $site_name != 'bassetlaw' && $site_group != 'suffolkcoastal') {
         $out .= ', preferably starting with a verb,';
     }
     $out .= ' that describes what action you would like ';

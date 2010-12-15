@@ -14,7 +14,12 @@ require_once 'cobrand.php';
 
 // Textual content
 if (OPTION_SITE_TYPE == 'one') {
-    $petition_prefix = 'We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to';
+    if (cobrand_we_the_undersigned_use_commas()){
+        $petition_prefix = 'We, the undersigned,';
+    } else {
+        $petition_prefix = 'We the undersigned';
+    }
+    $petition_prefix .= ' petition ' . OPTION_SITE_PETITIONED . ' to';
 } else {
     $petition_prefix = 'We the undersigned petition ';
 }
