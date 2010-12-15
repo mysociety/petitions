@@ -1200,6 +1200,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.rushcliffe.gov.uk/doc.asp?cat=11622';
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_terms';
+    if ($site_name == 'stevenage')
+        return 'http://www.stevenage.gov.uk/councilanddemocracy/petitions/petitionscheme/epetitions';
     if ($site_name == 'surreycc')
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
     if ($site_name == 'tandridge')
