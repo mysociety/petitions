@@ -9,6 +9,12 @@
 
 // Load configuration file
 require_once "../phplib/pet.php";
+require_once '../phplib/cobrand.php';
+
+if ($url = cobrand_pivacy_policy_elsewhere()) {
+    header("Location: $url");
+    exit;
+}
 
 page_header('E-petitions Privacy Policy');
 ?>

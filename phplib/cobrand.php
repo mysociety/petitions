@@ -1225,6 +1225,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.spelthorne.gov.uk/petitions_terms';
     if ($site_name == 'stevenage')
         return 'http://www.stevenage.gov.uk/councilanddemocracy/petitions/petitionscheme/epetitions';
+    if ($site_name == 'suffolkcoastal')
+        return 'http://www.suffolkcoastal.gov.uk/yourcouncil/haveyoursay/petitions/petitionsterms/';
     if ($site_name == 'surreycc')
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
     if ($site_name == 'tandridge')
@@ -1248,6 +1250,13 @@ function cobrand_steps_elsewhere() {
         return 'http://www.rushcliffe.gov.uk/doc.asp?cat=11620';
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_guide';
+    if ($site_name == 'suffolkcoastal')
+        return 'http://www.suffolkcoastal.gov.uk/yourcouncil/haveyoursay/petitions/petitionisstepbystep/';
+    return null;
+}
+
+function cobrand_pivacy_policy_elsewhere() { /* council changed mind: but it's here now, for when someone needs it! */
+    global $site_name;
     return null;
 }
 
