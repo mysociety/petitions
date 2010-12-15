@@ -272,3 +272,20 @@ div#success p {
     border: none;
 }
 
+/* default styles if mandatory input fields are being marked (e.g., by red asterisk) */
+.mandatory {
+    width: 20px;
+    padding-right: 6px;
+    padding-left: 6px;
+    color: #ff0000;
+    font-size: 120%;
+    vertical-align: top;
+}
+.mandatory_legend {
+    float:left;
+    width:auto;
+}
+.mandatory_legend .mandatory {
+    padding-right:0;
+    color: #ff0000;
+}

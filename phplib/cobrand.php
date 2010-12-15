@@ -200,6 +200,16 @@ function cobrand_creation_top_submit_button() {
     return true;
 }
 
+# Allows 'red asterisk' (or similar) to mark mandatory fields
+# returns array of markers: 0 for optional input fields, 1 for mandatory, and a legend
+# the optional marker forces same-width span just to make layout easy on sites that use these
+function cobrand_input_field_mandatory_markers() { 
+    global $site_name;
+    if ($site_name == 'suffolkcoastal' || $site_name == 'bassetlaw')
+        return array('<span class="mandatory">&nbsp;</span>', '<span class="mandatory">*</span>', '<span class="mandatory_legend">Fields marked <span class="mandatory">*</span> are mandatory.</span>');
+    return array('','','');
+}
+
 function cobrand_creation_ask_for_address() {
     global $site_name;
     #if ($site_name == 'westminster') {

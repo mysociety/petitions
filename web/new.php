@@ -417,7 +417,6 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 </select></p>
 <?
     }
-
     nextprevbuttons($steps, $step);
     endform($data);
 }
@@ -450,6 +449,8 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
         $fields['email2'] = _('Confirm email'); 
     }
 
+    list ($optional, $mandatory, $mandatory_legend) = cobrand_input_field_mandatory_markers();
+
     foreach ($fields as $name => $desc) {
         if ($name == 'address' && ! cobrand_creation_ask_for_address() )
           continue; # skip loop: thereby suppressing address label as well as textarea input
@@ -461,9 +462,15 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
             print '<p class="errortext">Please pick an address from the list below:</p>';
         }
 
-        if (is_string($desc))
-            printf('<p><label for="%s">%s:</label> ', $name, htmlspecialchars($desc));
-
+        if (is_string($desc)){
+            if ($name == 'org_url' || $name == 'organisation' || ($name == 'telephone' && cobrand_creation_phone_number_optional())) {
+                $mandatory_mark = $optional;
+            } else {
+                $mandatory_mark = $mandatory;            
+            }
+            printf('<p><label for="%s">%s:</label> %s', $name, htmlspecialchars($desc), $mandatory_mark );
+        }
+        
         if (!array_key_exists($name, $data))
             $data[$name] = '';
         
@@ -504,7 +511,7 @@ the Armed Forces without a postcode, please select from this list:</label>
             $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
             $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
             $checked_study = $data['address_type'] == 'study' ? ' checked' : '';
-            print '<p><span class="label">' . cobrand_creation_address_type_label() . ':</span> ';
+            print '<p><span class="label">' . cobrand_creation_address_type_label() . ':</span> ' . $mandatory;
             print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . ' />
 <label class="radio" for="address_type_home">Home</label>
 <input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . ' />
@@ -541,6 +548,7 @@ the Armed Forces without a postcode, please select from this list:</label>
             print '</p>';
     }
 
+    print($mandatory_legend);
     nextprevbuttons($steps, $step);
     print '</div>';
     endform($data);
