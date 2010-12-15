@@ -122,6 +122,7 @@ function cobrand_creation_address_type_label() {
 function cobrand_creation_ask_for_address_type() { # by default: don't ask for address type unless it's within a specified area
     global $site_name;
     if ($site_name == 'barrowbc') return false; 
+    if ($site_name == 'suffolkcoastal') return false; 
     if (cobrand_creation_within_area_only()) return true;
     if ($site_name == 'ipswich') return true;
     if ($site_name == 'newforest') return true;
@@ -172,19 +173,23 @@ function cobrand_creation_within_area_only() {
 
 function cobrand_creator_must_be() {
     global $site_name;
-    if ($site_name == 'surreycc' || $site_name == 'reigate-banstead')
-        return 'must live, work or study at a Surrey registered address';
-    if ($site_name == 'woking')
-        return 'must live, work or study in the Borough of Woking';
-    if ($site_name == 'elmbridge')
-        return 'must live, work or study within Elmbridge (including under 18s)';
-    if ($site_name == 'stevenage')
-        return 'should live, work or study within Stevenage';
-    if ($area = cobrand_creation_within_area_only()) {
-        return 'must live, work or study within ' . $area[0];
+    if ($site_name == 'suffolkcoastal')
+        return ''; 
+    $creator_type = '';
+    if ($site_name == 'surreycc' || $site_name == 'reigate-banstead'){
+        $creator_type = 'must live, work or study at a Surrey registered address';
+    } elseif ($site_name == 'woking'){
+        $creator_type = 'must live, work or study in the Borough of Woking';
+    } elseif ($site_name == 'elmbridge'){
+        $creator_type = 'must live, work or study within Elmbridge (including under 18s)';
+    } elseif ($site_name == 'stevenage'){
+        $creator_type = 'should live, work or study within Stevenage';
+    } elseif ($area = cobrand_creation_within_area_only()) {
+        $creator_type = 'must live, work or study within ' . $area[0];
     } else {
-        return 'must be a British citizen or resident';
+        $creator_type = 'must be a British citizen or resident';
     }
+    return 'Please note that you ' . $creator_type . ' to create a petition';
 }
 
 function cobrand_creation_check_heading() {
@@ -242,9 +247,17 @@ function cobrand_perform_address_lookup($pc) {
     return $out;
 }
 
+function cobrand_creation_postcode_optional() {
+    global $site_name;
+    if ($site_name == 'suffolkcoastal') {
+        return true;
+    }
+    return false;    
+}
+
 function cobrand_creation_phone_number_optional() {
     global $site_name;
-    if ($site_name == 'islington') {
+    if ($site_name == 'islington' || $site_name == 'suffolkcoastal') {
         return true;
     }
     return false;
@@ -288,8 +301,18 @@ function cobrand_error_div_start() {
     return '<div id="errors">';
 }
 
+function cobrand_postcode_label() {
+    global $site_name;    
+    if ($site_name == 'suffolkcoastal')
+        return 'Postcode';
+    return _('UK postcode');
+}
+  
 function cobrand_overseas_dropdown() {
     global $site_group;
+    if ($site_group == 'suffolkcoastal'){
+        return '';
+    }
     if ($site_group == 'surreycc') {
         return array(
             '-- Select --',

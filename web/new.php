@@ -301,7 +301,7 @@ function petition_form_category($steps, $step, $data = array(), $errors = array(
     }
 ?>
 
-<p>Please note that you <?=cobrand_creator_must_be()?> to create a petition.</p>
+<p><?= cobrand_creator_must_be() ?></p>
 
 <p>First you must pick the relevant category for your petition. This is because the council
 is only responsible for certain matters, and we need to make sure you are taken to the
@@ -346,7 +346,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 
 <p>
     <?=cobrand_fill_form_instructions()?>
-    Please note that you <?=cobrand_creator_must_be()?> to create a petition.
+    <?= cobrand_creator_must_be() ?>
 </p>
 <p><?
     echo '<strong><label for="pet_content">' . $petition_prefix;
@@ -429,15 +429,18 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
     errorlist($errors);
 ?>
 <div id="new_you">
-<p>Please fill in the fields below. Please note that you <?=cobrand_creator_must_be() ?> to create a petition.</p><?
+<p>Please fill in the fields below. <?= cobrand_creator_must_be() ?></p><?
 
     $fields = array(
             'name'  =>          _('Your name'),
             'organisation' =>   _('Organisation'),
             'address' =>        _('Address'),
-            'postcode' =>       _('UK postcode'),
+            'postcode' =>       cobrand_postcode_label(),
             'overseas' =>       cobrand_overseas_dropdown(),
     );
+
+    if (! cobrand_overseas_dropdown())
+        unset($fields['overseas']);
         
     if (cobrand_creation_ask_for_address_type()) {
         $fields['address_type'] = true;
@@ -463,7 +466,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
         }
 
         if (is_string($desc)){
-            if ($name == 'org_url' || $name == 'organisation' || ($name == 'telephone' && cobrand_creation_phone_number_optional())) {
+            if ($name == 'org_url' || $name == 'organisation' || ($name == 'postcode' && cobrand_creation_postcode_optional()) || ($name == 'telephone' && cobrand_creation_phone_number_optional())) {
                 $mandatory_mark = $optional;
             } else {
                 $mandatory_mark = $mandatory;            
@@ -541,7 +544,7 @@ the Armed Forces without a postcode, please select from this list:</label>
         if (array_key_exists($name, $errors))
             print '<br /><span class="errortext">'. $errors[$name] . '</span>';
 
-        if ($name == 'org_url' || $name == 'organisation' || ($name == 'telephone' && cobrand_creation_phone_number_optional()))
+        if ($name == 'org_url' || $name == 'organisation' || ($name == 'postcode' && cobrand_creation_postcode_optional()) || ($name == 'telephone' && cobrand_creation_phone_number_optional()))
             print " <small>(optional)</small>";
 
         if (is_string($desc))
@@ -689,15 +692,17 @@ function step_you_error_check($data) {
     elseif (!preg_match('#01[2-9][^1]\d{6,7}|01[2-69]1\d{7}|011[3-8]\d{7}|02[03489]\d{8}|07[04-9]\d{8}|00#', $tel))
         $errors['telephone'] = 'Please enter a valid telephone number, including the area code';
 
-    if (!$data['postcode'] && !$data['overseas']) {
-        $errors['postcode'] = 'Please enter a valid postcode';
-        if (!cobrand_creation_within_area_only()) {
-            $errors['postcode'] .= ' or choose an option from the drop-down menu';
+    if (!cobrand_creation_postcode_optional()) {
+        if (!$data['postcode'] && !$data['overseas']) {
+            $errors['postcode'] = 'Please enter a valid postcode';
+            if (!cobrand_creation_within_area_only()) {
+                $errors['postcode'] .= ' or choose an option from the drop-down menu';
+            }
+        }
+        if ($data['postcode'] && $data['overseas']) {
+            $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
         }
     }
-    if ($data['postcode'] && $data['overseas'])
-        $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
-
     if (($area = cobrand_creation_within_area_only()) && $data['postcode'] && validate_postcode($data['postcode'])) {
         $areas = mapit_get_voting_areas($data['postcode']);
         if (is_object($areas)) { # RABX Error
