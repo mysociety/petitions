@@ -344,6 +344,13 @@ function cobrand_overseas_dropdown() {
     );
 }
 
+function cobrand_click_create_instuction() {
+    global $site_name;
+    if ($site_name == 'suffolkcoastal')
+        return 'click <strong>Create</strong>';
+    return '<strong>click "Create"</strong>'; 
+}
+
 # note: numbers here are category numbers, defined in cobrand_categories()
 #       Duplicated in anticipation of different councils splitting these responsibilities differently.
 function cobrand_category_okay($category_id) {
@@ -1173,8 +1180,6 @@ function cobrand_rss_explanation_link() {
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/RSS+feeds?opendocument';
     if ($site_name == 'ipswich')
         return 'http://www.ipswich.gov.uk/site/scripts/rss_about.php';
-    if ($site_name == 'sholland')
-        return 'http://www.sholland.gov.uk/rss/default.htm';
     return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
 }
 

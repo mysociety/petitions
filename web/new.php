@@ -439,9 +439,6 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
             'overseas' =>       cobrand_overseas_dropdown(),
     );
 
-    if (! cobrand_overseas_dropdown())
-        unset($fields['overseas']);
-        
     if (cobrand_creation_ask_for_address_type()) {
         $fields['address_type'] = true;
     }
@@ -460,6 +457,10 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
           
         if ($name == 'address' && cobrand_creation_do_address_lookup() && !array_key_exists('address_lookup', $data))
             continue;
+        
+        if ($name == 'overseas' && ! $desc) {
+            continue; # council has suppressed the overseas dropdown (e.g., Sufffolk Coastal)
+        }
 
         if ($name == 'address' && get_http_var('tostepyou') == 'Look up address') {
             print '<p class="errortext">Please pick an address from the list below:</p>';
@@ -494,8 +495,8 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
 </select>
 <?
             }
-        } elseif ($name == 'overseas') {
-            if (!cobrand_creation_within_area_only()) {
+        } elseif ($name == 'overseas') {  
+            if ($desc && !cobrand_creation_within_area_only() ) { /* desc is empty if council wants to suppress this */
 ?>
 <p><label class="long" for="overseas">Or, if you're an
 expatriate, you're in an overseas territory, a Crown dependency or in
@@ -720,7 +721,7 @@ function step_you_error_check($data) {
                 $errors['postcode'] = sprintf("Sorry, that postcode is not within %s", $area[0]);
             }
         }
-    }
+    } 
 
     if (cobrand_creation_ask_for_address_type()) {
         if (!isset($data['address_type']) || !in_array($data['address_type'], array('home','work','study'))) {
@@ -737,6 +738,7 @@ function step_you_error_check($data) {
     if (!cobrand_creation_phone_number_optional()) {
         $vars['telephone'] = 'phone number';
     }
+    
     if (cobrand_creation_do_address_lookup()) {
         if (!$data['address']) $errors['address'] = 'Please pick an address';
     } elseif (cobrand_creation_ask_for_address()) {
@@ -745,6 +747,11 @@ function step_you_error_check($data) {
         # Set it to blank string as no form field printed at all.
         $data['address'] = '';
     }
+    
+    if (!cobrand_overseas_dropdown()) {
+        $data['overseas'] = '';
+    }
+    
     foreach ($vars as $var => $p_var) {
         if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
     }
@@ -810,7 +817,7 @@ your name and organisation:</p>
 ?>
 </p>
 
-<p>When you're happy with your petition, <strong>click "Create"</strong> to
+<p>When you are happy with your petition, <?= cobrand_click_create_instuction() ?> to
 confirm that you wish this site to display the petition at the top
 of this page in your name, and that you agree to the terms and conditions below.
 <?
