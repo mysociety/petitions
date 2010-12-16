@@ -72,7 +72,7 @@ function search($search) {
     if (!$rss) {
         global $heading;
 ?><p style="float:right; margin:0;"><a href="/rss<?=$_SERVER['REQUEST_URI'] ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of search results for') . " '".htmlspecialchars($search)."'" ?>" /> RSS</a>
-| <a href="http://news.bbc.co.uk/1/hi/help/3223484.stm">What is RSS?</a></p>
+| <a href="<?=cobrand_rss_explanation_link()?>">What is RSS?</a></p>
 <?
 
     }

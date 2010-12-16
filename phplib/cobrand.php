@@ -1182,7 +1182,7 @@ function cobrand_rss_explanation_link() {
         return 'http://www.ipswich.gov.uk/site/scripts/rss_about.php';
     if ($site_name == 'sholland')
         return 'http://www.sholland.gov.uk/rss/default.htm';
-    return 'http://news.bbc.co.uk/1/hi/help/3223484.stm';
+    return 'http://www.bbc.co.uk/news/10628494';
 }
 
 function cobrand_how_it_works_extra() {
