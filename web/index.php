@@ -149,7 +149,7 @@ function front_most_recent($recent) {
     }
 ?>
 </ul>
-<p align="right"><a href="/list/open?sort=date">More recent petitions</a></p>
+<p class="leading"><a href="/list/open?sort=date">More recent petitions</a></p>
 </div>
 <?
 }
@@ -174,7 +174,7 @@ function front_most_popular($most) {
     }
 ?>
 </ul>
-<p align="right"><a href="/list/open?sort=signers">More popular petitions</a></p>
+<p class="leading"><a href="/list/open?sort=signers">More popular petitions</a></p>
 </div>
 <?
 }

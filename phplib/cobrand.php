@@ -284,7 +284,7 @@ function cobrand_creation_extra_footer() {
     global $site_name;
     if ($site_name != 'runnymede') return;
 ?>
-<p align="center">
+<p class="banner">
 <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/">Terms and conditions</a>
 | <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.eac7b227d6b697ef53d2dd85af8ca028/">Step by step guide</a>
 | <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.9e3786f0e4a5a623fa43a310af8ca028/">Questions about petitions</a>

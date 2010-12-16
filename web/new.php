@@ -199,7 +199,7 @@ function startform() {
 
 function nextprevbuttons($steps, $i) {
     if (cobrand_creation_previous_button_first()) {
-        print '<p align="right">';
+        print '<p class="leading">';
         if ($i > 1) {
             submit_button('tostep' . $steps[$i-1], 'Previous');
             if ($i < count($steps)) print ' ';
@@ -211,7 +211,7 @@ function nextprevbuttons($steps, $i) {
         return;
     }
 
-    print '<p align="right">';
+    print '<p class="leading">';
     if ($i < count($steps)) {
         submit_button('tostep' . $steps[$i+1], 'Next');
         if ($i > 1) print "<br />";
@@ -781,7 +781,7 @@ the petition. If you change the wording, then their signatures would no
 longer be valid.
 </p>
 
-<p align="right">
+<p class="leading">
 <?
     submit_button('tostepmain', 'Change petition text');
 ?>
@@ -811,7 +811,7 @@ your name and organisation:</p>
 <li>Telephone: <strong><?=($data['telephone'] ? $data['telephone'] : 'None provided') ?></strong></li>
 </ul>
 
-<p align="right">
+<p class="leading">
 <?
     submit_button('tostepyou', 'Change my contact details');
 ?>
@@ -836,7 +836,7 @@ of this page in your name, and that you agree to the terms and conditions below.
 ?>
 </p>
 
-<p align="right">
+<p class="leading">
 <?
     if (cobrand_creation_top_submit_button())
         submit_button('tocreate', 'Create');
@@ -845,7 +845,7 @@ of this page in your name, and that you agree to the terms and conditions below.
 
 <? cobrand_petition_guidelines(); ?>
 
-<p align="right">
+<p class="leading">
 <?
     submit_button('tocreate', 'Create');
 ?>

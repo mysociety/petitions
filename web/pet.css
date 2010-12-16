@@ -112,6 +112,13 @@ div#most_popular {
     width: 45%;
 }
 
+.leading {
+    text-align: right;
+}
+.banner {
+    text-align: center;
+}
+
 /* List page */
 
 p.petition_view_tabs {
@@ -207,6 +214,9 @@ ol#breadcrumbs li.hilight {
     display: inline;
     float: none;
     width: auto;
+}
+th.long {
+    text-align: left;
 }
 
 /* Viewing/ Signing */

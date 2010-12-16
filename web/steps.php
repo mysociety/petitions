@@ -126,7 +126,7 @@ signed the e-petition. The response will also be published on this website.</p>
 ?>
 
 <form method="get" action="/new">
-<p align="right">
+<p class="leading">
 <input type="submit" value="Create a petition"></p>
 </form>
 <? 

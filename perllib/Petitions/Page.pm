@@ -267,7 +267,7 @@ sub display_box ($$%) {
                 (exists($params{href}) ? '</a>' : ''),
                 $details
             ),
-            $q->p({ -align => 'center' }, $meta)
+            $q->p({ -class => 'banner' }, $meta)
         );
 
 }
@@ -397,7 +397,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         ),
         $address_type,
         $expat,
-        $q->p( { -id => 'signatureSubmit', -align => 'right' },
+        $q->p( { -id => 'signatureSubmit', -class => 'leading' },
             $q->submit(-class => 'button', -name => 'submit', -value => $submit)
         )
         )

@@ -187,7 +187,7 @@ if (!$rss) {
             else $navlinks .= $desc;
             $b = true;
         }
-        $navlinks .= '</p> <p align="center">';
+        $navlinks .= '</p> <p class="banner">';
         if ($other) {
             $navlinks .= "$first | $prev | " . _('Petitions'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
                 ($q_offset + PAGE_SIZE > $ntotal ? $ntotal : $q_offset + PAGE_SIZE) . ' of ' .
@@ -205,7 +205,7 @@ if ($ntotal > 0) {
         $petitioned = (OPTION_SITE_TYPE == 'one') ? OPTION_SITE_PETITIONED : '';
 ?>
 <table cellpadding="3" cellspacing="0" border="0">
-<tr><th align="left">We the undersigned petition <?=$petitioned ?> to&hellip;</th>
+<tr><th class="long">We the undersigned petition <?=$petitioned ?> to&hellip;</th>
 <th>Submitted by</th>
 <?      if ($q_type != 'rejected') { ?>
 <th>Deadline to sign by</th>
@@ -265,7 +265,7 @@ if ($rss)
     rss_footer($rss_items);
 else {
 ?>
-<p align="right" id="ms-petition-list-rss"><a href="<?=url_new("/rss/list/$q_type", true, 'offset', null, 'type', null) ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $title ?>" /> RSS</a>
+<p class="leading" id="ms-petition-list-rss"><a href="<?=url_new("/rss/list/$q_type", true, 'offset', null, 'type', null) ?>"><img class="noborder" src="/images/rss-icon.gif" alt="<?=_('RSS feed of ') . $title ?>" /> RSS</a>
 | <a href="<?=cobrand_rss_explanation_link() ?>">What is RSS?</a></p>
 <?
     page_footer('List.' . $q_type);

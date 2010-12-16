@@ -255,7 +255,7 @@ class Petition {
             print '</a>';
 ?>
             </p> 
-            <p align="center">Submitted by <?=$this->h_name() ?>
+            <p class="banner">Submitted by <?=$this->h_name() ?>
             &ndash; Deadline to sign up by: <strong><?=$this->h_pretty_deadline()?></strong></p>
             <?  if (cobrand_display_category()){ ?>
                 <p><strong>Category:</strong> <?=$this->data['category'] ?></p>
