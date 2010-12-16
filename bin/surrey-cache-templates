@@ -56,6 +56,7 @@ output('surreyheath', $header, $footer);
 # Elmbridge
 $header = get_page('http://www.elmbridge.gov.uk/website_header.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - /;
+$header =~ s/iso-8859-1/utf-8/; # Sigh
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css">
 <link rel="stylesheet" type="text/css" href="/assets/elmbridge/css.css">
 </head>};
