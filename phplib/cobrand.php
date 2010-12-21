@@ -1276,7 +1276,7 @@ function cobrand_view_petitions_heading() {
 
 function cobrand_main_heading($text) {
     global $site_name;
-    if ($site_name == 'surreycc' || $site_name == 'suffolkcoastal' || $site_name == 'runnymede')
+    if ($site_name == 'surreycc' || $site_name == 'suffolkcoastal' || $site_name == 'runnymede' || $site_name == 'surreyheath')
         return "<h2>$text</h2>";
     elseif ($site_name == 'number10')
         return "<h3 class='page_title_border'>$text</h3>";
