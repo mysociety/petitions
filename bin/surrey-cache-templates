@@ -47,8 +47,8 @@ $header = get_page('http://www.surreyheath.gov.uk/general_header.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - /;
 $header =~ s/<\*\*page_title\*\*>/PARAM_H1/;
 $header =~ s{<span class="current">Home: </span>}{<a title="Breadcrumb link: Home" href="http://www.surreyheath.gov.uk/default.htm">Home</a> &gt; <a title="Breadcrumb link: Council &amp; Democracy" href="http://www.surreyheath.gov.uk/council/default.htm">Council &amp; Democracy</a> &gt; <a href="/">Petitions</a> &gt; <span class="current">PARAM_H1</span>};
-$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css">
-<link rel="stylesheet" type="text/css" href="/assets/surreyheath/css.css">
+$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css" />
+<link rel="stylesheet" type="text/css" href="/assets/surreyheath/css.css" />
 </head>};
 $footer = get_page('http://www.surreyheath.gov.uk/general_footer.asp');
 output('surreyheath', $header, $footer);
@@ -69,8 +69,8 @@ output('elmbridge', $header, $footer);
 # Tandridge
 $header = get_page('http://www.tandridge.gov.uk/petitions_header.asp');
 $header =~ s/<title>/<title>PARAM_TITLE - Tandridge District Council/;
-$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css">
-<link rel="stylesheet" type="text/css" href="/assets/tandridge/css.css">
+$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css" />
+<link rel="stylesheet" type="text/css" href="/assets/tandridge/css.css" />
 </head>};
 $header .= "<div id='mysociety'>\n";
 $footer = "</div>\n";
