@@ -1,3 +1,7 @@
+ul, ol {
+    text-align: left;
+}
+
 #new_defaultmain_content a {
     font-weight: bold;
 }
