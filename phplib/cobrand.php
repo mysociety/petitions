@@ -1226,6 +1226,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.ipswich.gov.uk/site/scripts/documents_info.php?documentID=1145';
     if ($site_name == 'lichfielddc')
         return 'http://www.lichfielddc.gov.uk/petitionterms';
+    if ($site_name == 'molevalley')
+        return 'http://www.molevalley.gov.uk/index.cfm?articleid=11411';
     if ($site_name == 'reigate-banstead')
         return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
     if ($site_name == 'runnymede')
