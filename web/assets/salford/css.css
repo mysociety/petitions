@@ -1,56 +1,40 @@
 div#petition_actions {
-float: left;
-width: 99%;
-background-color: #ffffff;
-font-size: 150%;
-margin: 0 0 15px 0;
-padding: 5px;
-}
-
-div#petition_actions a {
-font-weight: bold;
-}
-
-div#petition_actions ul {
-text-align: center;
-list-style-type: none;
-margin: 0;
-padding: 0;
-}
-
-div#petition_actions ul li {
-width: 48%;
-padding: 0;
-margin: 0;
-background: none;
-}
-
-div#petition_actions ul li#action_create {
-float: left;
-}
-
-div#petition_actions ul li#action_view {
-float: right;
-}
-
-div#content_clipboard #search_front p {
-margin-top: 1em;
+    /* width: 99%; */
+    border: none;
+    /* margin: 0 0 15px 0; */
 }
 
 div#most_recent {
-float: left;
-width: 48%;
+    /* width: 48%; */
+    float: right;
 }
 
 div#most_popular {
-float: right;
-width: 48%;
+    /* width: 48%; */
+}
+
+#most_popular h3 {
+    margin-top: 0;
 }
 
 #front_how {
-clear: both;
+    /* clear: both; */
+    float: left;
+    width: 45%;
 }
 
-.error {
-border: 1px solid #f00;
+p.petition_view_tabs {
+    border-bottom: solid 2px #6B5F6D;
 }
+.petition_view_tabs span {
+    background-color: #6B5F6D;
+}
+
+#action_view a, #action_create a{
+    text-decoration: none;
+}
+
+#action_view a:hover, #action_create a:hover {
+    text-decoration: none;
+}
+
