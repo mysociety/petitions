@@ -1,0 +1,56 @@
+div#petition_actions {
+float: left;
+width: 99%;
+background-color: #ffffff;
+font-size: 150%;
+margin: 0 0 15px 0;
+padding: 5px;
+}
+
+div#petition_actions a {
+font-weight: bold;
+}
+
+div#petition_actions ul {
+text-align: center;
+list-style-type: none;
+margin: 0;
+padding: 0;
+}
+
+div#petition_actions ul li {
+width: 48%;
+padding: 0;
+margin: 0;
+background: none;
+}
+
+div#petition_actions ul li#action_create {
+float: left;
+}
+
+div#petition_actions ul li#action_view {
+float: right;
+}
+
+div#content_clipboard #search_front p {
+margin-top: 1em;
+}
+
+div#most_recent {
+float: left;
+width: 48%;
+}
+
+div#most_popular {
+float: right;
+width: 48%;
+}
+
+#front_how {
+clear: both;
+}
+
+.error {
+border: 1px solid #f00;
+}
