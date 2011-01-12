@@ -247,13 +247,21 @@ function textarea($name, $val, $cols, $rows, $required, $errors) {
 }
 
 function textfield($name, $val, $size, $errors, $after = '') {
+    $class = cobrand_creation_input_class();
+    if (array_key_exists($name, $errors)) {
+        if ($class)
+            $class[] = 'error';
+        else
+            $class = array('error');
+    }
+
     printf('<input type="text" name="%s" id="%s" size="%d" value="%s"%s%s%s />',
             htmlspecialchars($name), htmlspecialchars($name),
             $size,
             htmlspecialchars(is_null($val) ? '' : $val),
             $name=='organisation' ? '' : ' aria-required="true"',
             $name=='email2' ? ' autocomplete="off"' : '',
-            array_key_exists($name, $errors) ? ' class="error"' : '');
+            $class ? ' class="' . join(' ', $class) . '"' : '');
     if ($after)
         print ' <small>' . $after . '</small>';
 }
@@ -366,7 +374,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     echo cobrand_creation_sentence_help();
 ?>
 </p>
-<p><label for="detail">More details about your petition (do not use block capitals &ndash; 1000 characters maximum):</label><br />
+<p><label for="detail">More details about your petition (do not use block capitals &ndash; 1,000 characters maximum):</label><br />
     <?
     textarea('detail', $data['detail'], 70, 7, false, $errors);
     ?>

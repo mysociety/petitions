@@ -40,16 +40,20 @@ function cobrand_view_button_title() {
 # The help sentence printed under the main content of a petition's input box.
 function cobrand_creation_sentence_help() {
     global $site_group, $site_name;
-    $out = '(Please write a sentence';
+    $out = '';
+    if ($site_name != 'salford')
+        $out .= '(';
+    $out .= 'Please write a sentence';
     if ($site_group != 'surreycc' && $site_group != 'westminster' && $site_group != 'stevenage' && $site_name != 'bassetlaw' && $site_group != 'suffolkcoastal') {
         $out .= ', preferably starting with a verb,';
     }
     $out .= ' that describes what action you would like ';
     $out .= OPTION_SITE_NAME=='number10' ? 'the Prime Minister or Government' : OPTION_SITE_PETITIONED;
     $out .= ' to take';
-    if ($site_name != 'spelthorne')
+    if ($site_name != 'spelthorne' && $site_name != 'salford')
         $out .= '.';
-    $out .= ')';
+    if ($site_name != 'salford')
+        $out .= ')';
     return $out;
 }
 
@@ -292,6 +296,11 @@ function cobrand_creation_extra_footer() {
 | <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.40b9386d6ff92926fa43a310af8ca028/">Petitions Scheme</a>
 </p>
 <?
+}
+
+function cobrand_creation_input_class() {
+    global $site_name;
+    if ($site_name == 'salford') return array('input', 'largeField');
 }
 
 function cobrand_error_div_start() {
@@ -1286,7 +1295,7 @@ function cobrand_main_heading($text) {
 
 function cobrand_create_heading($text) {
     global $site_name;
-    if ($site_name == 'reigate-banstead')
+    if ($site_name == 'reigate-banstead' || $site_name == 'salford')
         return "<h3>$text</h3>";
     elseif ($site_name == 'number10')
         return "<h2 class='page_title_border'>$text</h2>";
