@@ -303,11 +303,16 @@ function cobrand_creation_input_class() {
     if ($site_name == 'salford') return array('input', 'largeField');
 }
 
+function cobrand_creation_main_all_newlines() {
+    global $site_name;
+    if ($site_name == 'salford') return true;
+    return false;
+}
+
 function cobrand_error_div_start() {
     global $site_name;
-    if ($site_name == 'surreycc') {
-        return '<div class="scc-error">';
-    }
+    if ($site_name == 'salford') return '<div class="error">';
+    if ($site_name == 'surreycc') return '<div class="scc-error">';
     return '<div id="errors">';
 }
 

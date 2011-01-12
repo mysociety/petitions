@@ -273,7 +273,7 @@ function textfield($name, $val, $size, $errors, $after = '') {
 }
 
 function submit_button($name, $value) {
-    printf('<input type="submit" name="%s" value="%s" class="button" />', $name, $value);
+    printf('<input type="submit" name="%s" value="%s" class="button confirmButton" />', $name, $value);
 }
 
 /* petition_search_first
@@ -356,6 +356,9 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     if ($site_name == 'elmbridge' && !$data['rawdeadline'])
         $data['rawdeadline'] = '90 days';
 
+    $br = '';
+    if (cobrand_creation_main_all_newlines()) $br = '<br />';
+
     startform();
     print cobrand_create_heading('New petition &#8211; Part ' . $step . ' of ' . petition_form_steps() . ' &#8211; Your petition');
     errorlist($errors);
@@ -388,7 +391,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     textarea('detail', $data['detail'], 70, 7, false, $errors);
     ?>
 </p>
-<p><label for="rawdeadline">For how long would you like your petition to accept signatures?</label>
+<p><label for="rawdeadline">For how long would you like your petition to accept signatures?</label><?=$br?>
     <?
     $example_string = "1 month";
     $deadline_limits = cobrand_creation_deadline_limit();
@@ -410,7 +413,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     ?>
 </p>
 
-<p><label for="ref"><?=cobrand_creation_short_name_label() ?></label>
+<p><label for="ref"><?=cobrand_creation_short_name_label() ?></label><?=$br?>
     <?
     textfield('ref', $data['ref'], 16, $errors);
     ?>
@@ -420,8 +423,11 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 <?
     if (cobrand_display_category() && !cobrand_creation_category_first()) {
 ?>
-<p><label for="category">Please select a category for your petition:</label>
-<select name="category" id="category" aria-required="true">
+<p><label for="category">Please select a category for your petition:</label><?=$br?>
+<select name="category" id="category" aria-required="true"<?
+    $class = formfield_class('category', $errors);
+    if ($class) print $class;
+?>>
 <option value="">-- Select a category --</option><?
     foreach (cobrand_categories() as $id => $category) {
         if (!$id) continue;

@@ -38,7 +38,7 @@ p.petition_view_tabs {
     text-decoration: none;
 }
 
-.error {
+input.error, input[type=text].error, select.error, input[type=radio].error, textarea.error {
     border: 1px solid #f00;
     background-color: #ffffff;
 }
