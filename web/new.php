@@ -267,7 +267,7 @@ function textfield($name, $val, $size, $errors, $after = '') {
             htmlspecialchars(is_null($val) ? '' : $val),
             $name=='organisation' ? '' : ' aria-required="true"',
             $name=='email2' ? ' autocomplete="off"' : '',
-            $class ? $class : '',
+            $class ? $class : '');
     if ($after)
         print ' <small>' . $after . '</small>';
 }
