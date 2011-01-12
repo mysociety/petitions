@@ -38,3 +38,8 @@ p.petition_view_tabs {
     text-decoration: none;
 }
 
+.error {
+    border: 1px solid #f00;
+    background-color: #ffffff;
+}
+

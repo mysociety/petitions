@@ -237,16 +237,7 @@ function errorlist($errors) {
                 . '</li></ul></div>';
 }
 
-function textarea($name, $val, $cols, $rows, $required, $errors) {
-    printf('<textarea id="%s" name="%s" cols="%d" rows="%d"%s%s>%s</textarea>',
-            htmlspecialchars($name), htmlspecialchars($name),
-            $cols, $rows,
-            $required ? ' aria-required="true"' : '',
-            array_key_exists($name, $errors) ? ' class="error"' : '',
-            htmlspecialchars(is_null($val) ? '' : $val));
-}
-
-function textfield($name, $val, $size, $errors, $after = '') {
+function formfield_class($name, $errors) {
     $class = cobrand_creation_input_class();
     if (array_key_exists($name, $errors)) {
         if ($class)
@@ -254,14 +245,29 @@ function textfield($name, $val, $size, $errors, $after = '') {
         else
             $class = array('error');
     }
+    if ($class) $class = ' class="' . join(' ', $class) . '"';
+    return $class;
+}
 
+function textarea($name, $val, $cols, $rows, $required, $errors) {
+    $class = formfield_class($name, $errors);
+    printf('<textarea id="%s" name="%s" cols="%d" rows="%d"%s%s>%s</textarea>',
+            htmlspecialchars($name), htmlspecialchars($name),
+            $cols, $rows,
+            $required ? ' aria-required="true"' : '',
+            $class ? $class : '',
+            htmlspecialchars(is_null($val) ? '' : $val));
+}
+
+function textfield($name, $val, $size, $errors, $after = '') {
+    $class = formfield_class($name, $errors);
     printf('<input type="text" name="%s" id="%s" size="%d" value="%s"%s%s%s />',
             htmlspecialchars($name), htmlspecialchars($name),
             $size,
             htmlspecialchars(is_null($val) ? '' : $val),
             $name=='organisation' ? '' : ' aria-required="true"',
             $name=='email2' ? ' autocomplete="off"' : '',
-            $class ? ' class="' . join(' ', $class) . '"' : '');
+            $class ? $class : '',
     if ($after)
         print ' <small>' . $after . '</small>';
 }
@@ -316,7 +322,10 @@ is only responsible for certain matters, and we need to make sure you are taken 
 appropriate place.</p>
 
 <p><label for="category">Category:</label>
-<select name="category" id="category">
+<select name="category" id="category"<?
+    $class = formfield_class('category', $errors);
+    if ($class) print $class;
+?>>
 <option value="">-- Select a category --</option><?
     foreach (cobrand_categories() as $id => $category) {
         if (!$id) continue;
