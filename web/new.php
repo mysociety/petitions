@@ -273,7 +273,9 @@ function textfield($name, $val, $size, $errors, $after = '') {
 }
 
 function submit_button($name, $value) {
-    printf('<input type="submit" name="%s" value="%s" class="button confirmButton" />', $name, $value);
+    $c = cobrand_creation_submit_button_class();
+    $class = $c ? $c : 'button';
+    printf('<input type="submit" name="%s" value="%s" class="%s" />', $name, $value, $class);
 }
 
 /* petition_search_first
