@@ -154,6 +154,7 @@ function cobrand_creation_within_area_only() {
     if ($site_name == 'elmbridge') return array('Elmbridge', 2455);
     if ($site_name == 'epsom-ewell') return array('Epsom &amp; Ewell', 2457);
     if ($site_name == 'forest-heath') return array('Forest Heath', 2444);
+    if ($site_name == 'guildford') return array('Guildford', 2452);
     if ($site_name == 'hounslow') return array('Hounslow', 2483);
     if ($site_name == 'islington') return array('Islington', 2507); # actually Islington requested "County Council" -- maybe meant Greater London?
     if ($site_name == 'mansfield') return array('Mansfield', 2416);
@@ -1334,7 +1335,7 @@ function cobrand_rejected_petition_timeout() {
     global $site_group; # No $site_name available
     if ($site_group == 'westminster') return '8 days';
     if ($site_group == 'nottinghamshire') return array('rushcliffe' => '15 days', 'other' => '29 days');
-    if ($site_group == 'surreycc') return array('elmbridge' => '15 days', 'other' => '29 days');
+    if ($site_group == 'surreycc') return array('elmbridge' => '15 days', 'guildford' => '15 days', 'other' => '29 days');
     // 29 days is 4 weeks, plus a day to allow a margin for the creator
     return '29 days';
 }
