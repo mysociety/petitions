@@ -379,15 +379,16 @@ sub detail ($) {
     my $detail = Petitions::show_part($p, 'detail') ? ent($p->{detail}) : 'More details cannot be shown';
     $detail =~ s/\r//g;
     $detail =~ s/\n\n+/<\/p> <p>/g;
-    if ($detail) {
+    my $out = '';
+    if ($detail || $p->{offline_link}) {
         my $head = Petitions::Cobrand::main_heading('More details from petition creator');
-        $detail = <<EOF;
-<div id="more_detail"><a name="detail"></a>
-$head
-<p>$detail</p></div>
-EOF
+        $out = '<div id="more_detail"><a name="detail"></a>' . $head;
+        $out .= "<p>$detail</p>" if $detail;
+        $out .= "<p class='leading'><a href='$p->{offline_link}'>Further information</a></p>"
+            if $p->{offline_link};
+        $out .= '</div>';
     }
-    return $detail;
+    return $out;
 }
 
 =item show_part PETITION PART
