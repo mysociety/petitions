@@ -1317,7 +1317,7 @@ function cobrand_create_heading($text) {
 # main heading that one council asked for.
 function cobrand_extra_heading($text) {
     global $site_name;
-    if ($site_name == 'tandridge' || $site_name == 'molevalley' || $site_name == 'lichfielddc' || $site_name == 'number10')
+    if ($site_name == 'tandridge' || $site_name == 'molevalley' || $site_name == 'lichfielddc')
         print "<h1>$text</h1>";
 }
 
