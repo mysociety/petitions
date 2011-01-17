@@ -9,13 +9,13 @@
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=cron-!!(*= $site *)!!@mysociety.org
 
-!!(* if (($hostname eq "steak" && $vhost =~ /barrow|blackburn|east-northamptonshire|forest-heath|ipswich|lichfield|newforest|rbwm|stedmundsbury|stevenage|waveney|wellingborough|westminster/) || $hostname eq 'balti' || ($hostname eq 'whisky' && $vhost !~ /barrow|blackburn|east-northamptonshire|forest-heath|ipswich|lichfield|newforest|rbwm|stedmundsbury|stevenage|waveney|wellingborough|westminster/) || ($hostname eq 'comet' && $vhost =~ /barnet|salford/)) { *)!!
+!!(* if (($hostname eq "steak" && $vhost =~ /barrow|blackburn|east-northamptonshire|forest-heath|ipswich|lichfield|newforest|rbwm|stedmundsbury|stevenage|waveney|wellingborough|westminster/) || $hostname eq 'fury' || ($hostname eq 'whisky' && $vhost !~ /barrow|blackburn|east-northamptonshire|forest-heath|ipswich|lichfield|newforest|rbwm|stedmundsbury|stevenage|waveney|wellingborough|westminster/) || ($hostname eq 'comet' && $vhost =~ /number10|barnet|salford/)) { *)!!
 
-# On just the database/daemon machine (currently steak for Number 10 and some concils, balti for dev, whisky for other councils, comet for new councils)
+# On just the database/daemon machine (currently steak for some councils, fury for dev, whisky for other councils, comet for new or moved councils and Number 10)
 
 # Frequently, on one machine only as not concurrent. I think, haven't checked.
 */15 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/send-messages.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/send-messages || echo "stalled?"
-!!(* if ($hostname ne "steak") { *)!!
+!!(* if ($vhost !~ /number10/) { *)!!
 10,25,40,55 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-areas.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/update-areas || echo "stalled?"
 !!(* } *)!!
 6,18,30,42,54 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/response-send.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/response-send || echo "stalled?"
