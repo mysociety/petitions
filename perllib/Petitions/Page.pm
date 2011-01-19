@@ -35,7 +35,7 @@ sub site_name {
     if (mySociety::Config::get('SITE_NAME') =~ /,/) { 
         my @sites = split /,/, mySociety::Config::get('SITE_NAME');
         foreach (@sites) {
-            if ($ENV{HTTP_HOST} eq "petitions.$_.gov.uk") {
+            if ($ENV{HTTP_HOST} eq "petitions.$_.gov.uk" || $ENV{HTTP_HOST} eq "$_.petitions.mysociety.org") {
                 $site_name = $_;
                 last;
             }
