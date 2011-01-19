@@ -9,7 +9,7 @@
 PATH=/usr/local/bin:/usr/bin:/bin
 MAILTO=cron-!!(*= $site *)!!@mysociety.org
 
-!!(* if (($hostname eq "steak" && $vhost =~ /blackburn|east-northamptonshire|forest-heath|ipswich|lichfield|newforest|rbwm|stedmundsbury|stevenage|waveney|wellingborough|westminster/) || $hostname eq 'fury' || ($hostname eq 'whisky' && $vhost !~ /east-northamptonshire|forest-heath|ipswich|lichfield|newforest|rbwm|stedmundsbury|stevenage|waveney|wellingborough|westminster/) || ($hostname eq 'comet' && $vhost =~ /number10|barnet|barrow|blackburn|salford|sbdc/)) { *)!!
+!!(* if (($hostname eq "steak" && $vhost =~ /east-northamptonshire|forest-heath|ipswich|lichfield|newforest|rbwm|stedmundsbury|stevenage|waveney|wellingborough|westminster/) || $hostname eq 'fury' || ($hostname eq 'whisky' && $vhost !~ /east-northamptonshire|forest-heath|ipswich|lichfield|newforest|rbwm|stedmundsbury|stevenage|waveney|wellingborough|westminster/) || ($hostname eq 'comet' && $vhost =~ /number10|barnet|barrow|blackburn|eastcambs|salford|sbdc/)) { *)!!
 
 # On just the database/daemon machine (currently steak for some councils, fury for dev, whisky for other councils, comet for new or moved councils and Number 10)
 
