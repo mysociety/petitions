@@ -86,14 +86,14 @@ sub output {
     mkdir($template_dir);
 
     if ($header) {
-        my $current_header = read_file("$template_dir/head.html");
+        my $current_header = read_file("$template_dir/head.html", err_mode => 'quiet');
         if ($current_header ne $header) {
             write_file("$template_dir/head.html", { atomic => 1 }, \$header);
             $flush = 1;
         }
     }
     if ($footer) {
-        my $current_footer = read_file("$template_dir/foot.html");
+        my $current_footer = read_file("$template_dir/foot.html", err_mode => 'quiet');
         if ($current_footer ne $footer) {
             write_file("$template_dir/foot.html", { atomic => 1 }, \$footer);
             $flush = 1;
