@@ -1,0 +1,25 @@
+Subject: Your petition has been rejected
+
+Hi,
+
+We are sorry to inform you that your petition has been rejected.
+
+Your petition was classed as being in the following categories:
+<?=$values['rejection_categories']?>
+<?=$values['rejection_reason']?>
+
+If you wish to edit and resubmit your petition, please follow
+the following link:
+<?=$values['url']?>
+
+You have 20 days in which to do this, after which your
+petition will appear in the list of rejected petitions.
+
+Your petition reads:
+
+We the undersigned petition <?=$values['petitioned']?> to:
+'<?=$values['content']?>'
+
+<?=$values['detail']?>
+
+<?=$values['signature']?>
