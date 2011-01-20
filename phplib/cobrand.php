@@ -1334,7 +1334,7 @@ function cobrand_allowed_responses() {
 function cobrand_rejected_petition_timeout() {
     global $site_group; # No $site_name available
     if ($site_group == 'westminster') return '8 days';
-    if ($site_group == 'nottinghamshire') return array('rushcliffe' => '15 days', 'other' => '29 days');
+    if ($site_group == 'nottinghamshire') return array('bassetlaw' => '20 days', 'rushcliffe' => '15 days', 'other' => '29 days');
     if ($site_group == 'surreycc') return array('elmbridge' => '15 days', 'guildford' => '15 days', 'other' => '29 days');
     // 29 days is 4 weeks, plus a day to allow a margin for the creator
     return '29 days';
