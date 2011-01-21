@@ -13,8 +13,13 @@ We the undersigned petition <?=$values['petitioned']?> to
 <?=$values['detail']?>
 
 
-Thanks for submitting your petition. The Council will consider
-the petition once 25 or more signatures have been received.
+Thank you for your proposed petition. It has been approved for
+publication on the Council website. A minimum of 25 names and
+addresses will be needed for the petition to be formally
+considered by the Council.
+
+The petition will be processed after the closing date you have
+specified.
 
 <?=$values['signature']?>
 
