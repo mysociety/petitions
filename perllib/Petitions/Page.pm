@@ -340,9 +340,10 @@ the Armed Forces without a postcode, please select from this list:</label>',
 
     my $address_type = '';
     if (Petitions::Cobrand::ask_for_address_type()) {
-        my $checked_home = $q->param('address_type') eq 'home' ? ' checked' : '';
-        my $checked_work = $q->param('address_type') eq 'work' ? ' checked' : '';
-        my $checked_study = $q->param('address_type') eq 'study' ? ' checked' : '';
+        my $q_address_type = $q->param('address_type') || '';
+        my $checked_home = $q_address_type eq 'home' ? ' checked' : '';
+        my $checked_work = $q_address_type eq 'work' ? ' checked' : '';
+        my $checked_study = $q_address_type eq 'study' ? ' checked' : '';
         $address_type .= $q->p(
             $q->span({-class => 'label'}, 'This is where you:'),
             "<input type='radio' id='address_type_home' name='address_type' value='home'$checked_home>
