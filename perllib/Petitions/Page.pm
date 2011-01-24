@@ -428,7 +428,7 @@ sub response_box ($$) {
         $title .= ', ' . Petitions::pretty_date($responsedate);
         $title .= ', while petition was still open' if ($responsedate lt $p->{deadline});
         $out .= Petitions::Cobrand::main_heading($title) .
-            mySociety::HTMLUtil::nl2br(ent($response));
+            mySociety::HTMLUtil::nl2br(mySociety::HTMLUtil::ms_make_clickable(ent($response)));
     }
     $out .= '</div>';
     return $out;
