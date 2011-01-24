@@ -434,6 +434,7 @@ sub do_main_test {
                     message_body => "Thank you for your petition. 
 
 We are going to do exactly what you say, because obviously we would never get contradictory petitions from different people.
+Email us on test\@example.org.
 
 Yours faithfully, 
 
