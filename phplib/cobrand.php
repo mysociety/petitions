@@ -853,7 +853,7 @@ outside the remit or powers of Stevenage Borough Council.</p>
 
 <p>The information in a petition must be submitted in good faith. For the petition service to comply with the law, you must not include: </p>
 <ul>
-<li>Party political material. This does not mean it is not permissible to petition on controversial issues. For example, this party political petition would not be permitted: &quot;we petition the council to change the conservative adminstration's policy on housing&quot;, but this non-party political version would be: &quot;we petition the council to change its policy on housing&quot;. </li>
+<li>Party political material. This does not mean it is not permissible to petition on controversial issues. For example, this party political petition would not be permitted: &quot;we petition the council to change the conservative administration's policy on housing&quot;, but this non-party political version would be: &quot;we petition the council to change its policy on housing&quot;. </li>
 <li>Potentially libellous, false, or defamatory statements. </li>
 <li>Information which may be protected by an injunction or court order (for example, the identities of children in custody disputes).</li>
 <li>Material which is potentially confidential, commercially sensitive, or which may cause personal distress or loss.</li>
@@ -962,7 +962,7 @@ possible to petition for anything, no matter how radical, politely).</li>
 <li>statements that amount to advertisements;</li>
 <li>petitions which are intended to be humorous, or which
 have no point about council policy (however witty these
-are, it is not appropriate to use a publically-funded website
+are, it is not appropriate to use a publicly-funded website
 for purely frivolous purposes);</li>
 <li>issues for which an e-petition is not the appropriate channel
 (for example, correspondence about a personal issue);</li>
@@ -1039,7 +1039,7 @@ possible to petition for anything, no matter how radical, politely).</li>
 <li>statements that amount to advertisements;</li>
 <li>petitions which are intended to be humorous, or which
 have no point about government policy (however witty these
-are, it is not appropriate to use a publically-funded website
+are, it is not appropriate to use a publicly-funded website
 for purely frivolous purposes);</li>
 <li>issues for which an e-petition is not the appropriate channel
 (for example, correspondence about a personal issue);</li>
@@ -1140,10 +1140,15 @@ possible to petition for anything, no matter how radical, politely).</li>
 <li>statements that amount to advertisements;</li>
 <li>petitions which are intended to be humorous, or which
 have no point about government policy (however witty these
-are, it is not appropriate to use a publically-funded website
+are, it is not appropriate to use a publicly-funded website
 for purely frivolous purposes);</li>
 <li>issues for which an e-petition is not the appropriate channel
 (for example, correspondence about a personal issue);</li>
+
+<? if ($site_name == 'bassetlaw') { ?>
+	<li>issues which are currently being administered via another process</li>
+<? } ?>
+
 <li>Freedom of Information requests. This is not the right channel
 for FOI requests; information about the appropriate procedure can be
 found at <a href="http://www.ico.gov.uk/" target="_blank">http://www.ico.gov.uk/ <small>(new window)</small></a>.</li>
