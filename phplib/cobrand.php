@@ -430,12 +430,9 @@ petition in this category</a>.";
         }
         if ($area) {
             # $area is set if we're being called as a result of the form below
-            if (in_array($area, array('tandridge', 'reigate-banstead', 'woking', 'spelthorne', 'runnymede', 'elmbridge', 'waverley', 'surreyheath', 'molevalley')))
-                return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
             if ($area == 'epsom-ewell')
                 return 'http://www.epsom-ewell.gov.uk/EEBC/Council/E-petitions.htm';
-            if ($area == 'guildford')
-                return 'http://www.surreycc.gov.uk/SCCWebsite/SCCWSPages.nsf/LookupWebPagesByUNID_RTF_INT/A4F9AD1334EF7EB480257744005476BA?opendocument';
+            return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
         } else {
             return '
             <input type="hidden" name="category" value="' . $category_id . '"> 
