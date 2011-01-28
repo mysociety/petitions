@@ -19,9 +19,9 @@ if ($url = cobrand_pivacy_policy_elsewhere()) {
 page_header('E-petitions Privacy Policy');
 ?>
 
-<h2 class="page_title_border">Privacy policy</h2>
-
 <? if (OPTION_SITE_NAME == 'number10') { ?>
+
+<h2 class="page_title_border">Privacy policy</h2>
 
 <p>In addition to the <a href="http://www.number10.gov.uk/footer/privacy-policy">normal
 privacy policy</a> we have the following:</p>
@@ -69,6 +69,8 @@ unless you ask us not to, to write to you about the
 issues raised in the petition.</p>
 
 <? } else { ?>
+
+<h2>Privacy policy</h2>
 
 <p>If you create an e-petition on this website, you will be
 required to provide us with basic personal information so that we can contact
