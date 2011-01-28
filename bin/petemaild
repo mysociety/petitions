@@ -1679,7 +1679,7 @@ sub message_id ($$) {
 sub make_url {
     my ($email, $url) = @_;
     if ($email =~ /\@aol\./) {
-        $url = "<a href=\"$url\">$url</a>"; 
+        $url = "<a href=\" $url \">$url</a>";
     }
     return $url;
 }
