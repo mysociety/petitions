@@ -1,3 +1,7 @@
+#content label.radio {
+	margin: 3px 15px 0 0;
+}
+
 #navigation ul {
     border-bottom: solid 5px #cccccc;
 }
@@ -11,6 +15,7 @@ div.petition_box {
 
 div#petition_actions {
     border: none;
+    background-color: #F3F8FD; /* Waverley page background */
 }
 
 div#most_recent {
@@ -25,8 +30,34 @@ div#front_how {
 p.petition_view_tabs {
     border-bottom: solid 2px #093E97;
     padding-bottom: 0.25em;
+	margin-top: 2em;
+	margin-bottom: 1em;
+	line-height: 1em;
 }
 .petition_view_tabs span {
-    background-color: #093E97;
+    background: #1E66B4 url(http://www.waverley.gov.uk/site/styles/css_img/sideNavBg.jpg) no-repeat 100% 100%;
 }
 
+#action_create a {
+    background-image: url('/assets/waverley/petition_button_create.png');
+}
+#action_view a {
+    background-image: url('/assets/waverley/petition_button_view.png');
+}
+
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    margin-top: 10px;
+    display: block;
+    text-align: center;
+    padding-top: 70px;
+    background-position: center top;
+    background-repeat: no-repeat;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+}
+
+#action_create a img,  #action_view a img {
+    display: none;
+}
