@@ -860,7 +860,7 @@ map.setCenter(lonLat, 5);
                     print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';
                     print '</p>';
                 }
-            } else {
+            } elseif (!$removed) {
                 print '<p>Nobody has signed up to this petition.</p>';
             }
         }

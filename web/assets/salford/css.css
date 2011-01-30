@@ -14,6 +14,10 @@ div#most_popular {
     /* width: 48%; */
 }
 
+h3 {
+    margin-top: 15px;
+}
+
 #most_popular h3 {
     margin-top: 0;
 }

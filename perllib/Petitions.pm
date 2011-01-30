@@ -378,6 +378,7 @@ sub detail ($) {
     croak("Field 'detail' missing from PETITION") unless (exists($p->{detail}));
     my $detail = Petitions::show_part($p, 'detail') ? ent($p->{detail}) : 'More details cannot be shown';
     $detail =~ s/\r//g;
+    $detail = mySociety::HTMLUtil::ms_make_clickable($detail);
     $detail =~ s/\n\n+/<\/p> <p>/g;
     my $out = '';
     if ($detail || $p->{offline_link}) {
