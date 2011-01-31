@@ -1,3 +1,17 @@
+.leading input.button{
+	margin-bottom:6px; /* stop buttons running together */
+}
+#content label {
+	width: auto; /* override Waverley's 25% label, which spoils the regular petition form */
+}
+#content #new_you label {
+	width: 12em; /* ...except on new_you */
+	margin-right:4px;
+}
+#content #new_you p textarea {
+	margin-left: 0;
+}
+
 #content label.radio {
 	margin: 3px 15px 0 0;
 }
