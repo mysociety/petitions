@@ -15,7 +15,7 @@ div#petition_actions {
 
 div#most_recent {
     width: 48%;
-    /* margin-top: 1em; */
+    clear: none;
 }
 
 div#most_popular {
@@ -26,13 +26,8 @@ h3 {
     margin-top: 15px;
 }
 
-#most_popular h3 {
-    margin-top: 0;
-}
-
 #front_how {
     clear: both;
-    /* margin-top: 1em; */
 }
 
 p.petition_view_tabs {
