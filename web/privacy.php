@@ -11,12 +11,12 @@
 require_once "../phplib/pet.php";
 require_once '../phplib/cobrand.php';
 
-if ($url = cobrand_pivacy_policy_elsewhere()) {
+if ($url = cobrand_privacy_policy_elsewhere()) {
     header("Location: $url");
     exit;
 }
 
-page_header('E-petitions Privacy Policy');
+page_header('Privacy policy');
 ?>
 
 <? if (OPTION_SITE_NAME == 'number10') { ?>

@@ -214,7 +214,7 @@ function nextprevbuttons($steps, $i) {
     print '<p class="leading">';
     if ($i < count($steps)) {
         submit_button('tostep' . $steps[$i+1], 'Next');
-        if ($i > 1) print "<br />";
+        if ($i > 1) print cobrand_creation_button_separator();
     }
     if ($i > 1) {
         submit_button('tostep' . $steps[$i-1], 'Previous');

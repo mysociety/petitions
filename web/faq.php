@@ -12,7 +12,7 @@ require_once "../phplib/pet.php";
 require_once "../phplib/cobrand.php";
 
 header('Cache-Control: max-age=300');
-page_header('Questions and Answers');
+page_header('Frequently asked questions');
 
 $contact_email = str_replace('@', '&#64;', OPTION_CONTACT_EMAIL);
 

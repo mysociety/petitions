@@ -104,6 +104,18 @@ sub overseas_dropdown {
     }
 }
 
+sub success_attr() {
+    my $site_name = Petitions::Page::site_name();
+    return { -class => 'success' } if $site_name eq 'salford';
+    return { -id =>'success' };
+}
+
+sub button_class() {
+    my $site_name = Petitions::Page::site_name();
+    return 'addButton' if $site_name eq 'salford';
+    return 'button';
+}
+
 sub do_address_lookup() {
     my $site_name = Petitions::Page::site_name();
     return 1 if $site_name eq 'islington';

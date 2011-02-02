@@ -111,7 +111,7 @@ function cobrand_creation_short_name_label() {
 
 function cobrand_creation_category_first() {
     global $site_group;
-    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire' || $site_group == 'eastcambs') {
+    if ($site_group == 'surreycc' || $site_group == 'nottinghamshire' || $site_group == 'eastcambs' || $site_group == 'salford') {
         return true;
     }
     return false;
@@ -286,6 +286,12 @@ function cobrand_creation_previous_button_first() {
     return false;
 }
 
+function cobrand_creation_button_separator() {
+    global $site_name;
+    if ($site_name == 'salford') return ' &nbsp; ';
+    return '<br />';
+}
+
 function cobrand_creation_extra_footer() {
     global $site_name;
     if ($site_name != 'runnymede') return;
@@ -395,6 +401,8 @@ function cobrand_category_okay($category_id) {
             return false;
     } elseif ($site_group == 'eastcambs') {
         if ($category_id == 11) return false; # Planning
+    } elseif ($site_group == 'salford') {
+        if ($category_id == 1 || $category_id == 11) return false; # Planning, or alcohol/gambling
     }
     return true;
 }
@@ -522,6 +530,21 @@ process for planning representations</a>.";
         }
     }
 
+    if ($site_group == 'salford') {
+        if ($category_id == 1) { # Alcohol/gambling/etc.
+            return "We can not accept a petition about an alcohol, gambling or
+sex establishment licensing decision; please contact the
+<a href='http://www.salford.gov.uk/licensing.htm'>Licensing Team</a> for
+further information.";
+        } elseif ($category_id == 11) { # Planning
+            return "We can not accept a petition on an individual planning
+application, including about a development plan document or the community
+infrastructure levy; please contact the
+<a href='http://www.salford.gov.uk/planning-policy.htm'>Spatial Planning
+Team</a> for further information.";
+        }
+    }
+
     return null;
 }
 
@@ -644,6 +667,28 @@ function cobrand_categories($override_site_name = '') {
             12 => 'Waste Collection',
             13 => 'Waste Disposal',
             99 => 'Other', # Both
+        );
+    }
+    if ($site_group == 'salford') {
+        return array(
+            1 => 'Alcohol, gambling or sex establishment licensing decision',
+            2 => 'Building regulations',
+            3 => 'Community safety',
+            4 => 'Council tax collection',
+            5 => 'Education',
+            6 => 'Environment',
+            7 => 'Highways and street lighting',
+            8 => 'Housing',
+            9 => 'Leisure and recreation',
+            10 => 'Libraries',
+            11 => 'Planning applications',
+            12 => 'Planning services',
+            13 => 'Social Services',
+            14 => 'Transport and travel',
+            15 => 'Trading standards',
+            16 => 'Waste collection',
+            17 => 'Waste disposal',
+            99 => 'Other',
         );
     }
 
@@ -1091,6 +1136,92 @@ recognisable action.</li>
 </ul>
 
 <?
+    } elseif ($site_name == 'salford') {
+?>
+
+<p>
+The information in a petition must be submitted in good faith. In
+order for the petition service to comply with the law,
+you must not include:</p>
+
+<ul>
+<li>Party political material.
+Please note, this does not mean it is not permissible to petition on
+controversial issues. For example, this party political petition
+would not be permitted: "We petition <?=OPTION_SITE_PETITIONED ?> to change the Labour executive's policy on education",
+but this non-party political version would be:
+"We petition <?=OPTION_SITE_PETITIONED ?> to change their policy on education".</li>
+<li>potentially libellous, false, or defamatory statements;</li>
+<li>information which may be protected by an injunction or court order (for
+example, the identities of children in custody disputes);</li>
+<li>material which is potentially confidential, commercially sensitive, or which
+may cause personal distress or loss;</li>
+<li>any commercial endorsement, promotion of any product, service or publication;</li>
+<li>the names of individual officials of public bodies, unless they
+are part of the senior management of those organisations;</li>
+<li>the names of family members of elected representatives or
+officials of public bodies;</li>
+<li>the names of individuals, or information where they may be
+identified, in relation to criminal accusations;</li>
+<li>language which is offensive, intemperate, or provocative. This not
+only includes obvious swear words and insults, but any language to which
+people reading it could reasonably take offence (we believe it is
+possible to petition for anything, no matter how radical, politely).</li>
+</ul>
+
+<p>We reserve the right to reject:</p>
+<ul>
+<li>petitions that are similar to and/or overlap with an existing petition or petitions;</li>
+<li>petitions which ask for things outside the remit or powers of <?=OPTION_SITE_PETITIONED ?>;</li>
+<li>statements that don't actually request any action - ideally start the title of your petition with a verb;</li>
+<li>wording that is impossible to understand;</li>
+<li>statements that amount to advertisements;</li>
+<li>petitions which are intended to be humorous, or which
+have no point about government policy (however witty these
+are, it is not appropriate to use a publicly-funded website
+for purely frivolous purposes);</li>
+<li>issues for which an e-petition is not the appropriate channel
+(for example, correspondence about a personal issue);</li>
+<li>Freedom of Information requests. This is not the right channel
+for FOI requests; information about the appropriate procedure can be
+found at <a href="http://www.ico.gov.uk/" target="_blank">http://www.ico.gov.uk/ <small>(new window)</small></a>;</li>
+<li>any matter relating to a planning decision, including about a development
+plan document or the community infrastructure levy. This is not the right
+channel, contact the <a href="http://www.salford.gov.uk/planning-policy.htm">Spatial Planning Team</a>
+for further information;</li>
+<li>any matter relating to an alcohol, gambling or sex establishment licensing
+decision. This is not the right channel, contact the
+<a href="http://www.salford.gov.uk/licensing.htm">Licensing Team</a>
+for further information.</li>
+</ul>
+
+<p>We will strive to ensure that petitions that do not meet our
+criteria are not accepted, but where a petition is accepted which
+contains misleading information we reserve the right to post an
+interim response to highlight this point to anyone visiting to 
+sign the petition.</p>
+
+<h3>Common causes for rejection</h3>
+
+<p>In order to help you avoid common problems, we've produced this list:</p>
+
+<ul>
+<li>We don't accept petitions on individual legal cases such as
+deportations because we can never ascertain whether the individual
+involved has given permission for their details to be made publicly
+known. We advise petitioners to take their concerns on such matters
+directly to the Home Office.</li>
+
+<li>Please don't use 'shouting' capital letters excessively as they
+can make petitions fall foul of our 'impossible to read' criteria.</li>
+
+<li>We cannot accept petitions which call upon <?=OPTION_SITE_PETITIONED?> to "recognise" or
+"acknowledge" something, as they do not clearly call for a
+recognisable action.</li>
+
+</ul>
+
+<?
     } else {
 ?>
 
@@ -1287,7 +1418,7 @@ function cobrand_steps_elsewhere() {
     return null;
 }
 
-function cobrand_pivacy_policy_elsewhere() { /* council changed mind: but it's here now, for when someone needs it! */
+function cobrand_privacy_policy_elsewhere() { /* council changed mind: but it's here now, for when someone needs it! */
     global $site_name;
     return null;
 }

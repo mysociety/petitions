@@ -371,6 +371,8 @@ the Armed Forces without a postcode, please select from this list:</label>',
         }
     }
 
+    my $button_class = Petitions::Cobrand::button_class();
+
     return
         $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => $action)
         . qq(<input type="hidden" name="add_signatory" value="1" />)
@@ -399,7 +401,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         $address_type,
         $expat,
         $q->p( { -id => 'signatureSubmit', -class => 'leading' },
-            $q->submit(-class => 'button', -name => 'submit', -value => $submit)
+            $q->submit(-class => $button_class, -name => 'submit', -value => $submit)
         )
         )
         . $q->end_form();

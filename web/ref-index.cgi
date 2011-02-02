@@ -127,8 +127,9 @@ sub main () {
 
     if ($show_signed_box) {
         my $url = Petitions::absolute_url($p);
+        my $attr = Petitions::Cobrand::success_attr();
         $html .=
-            $q->div({ -id =>'success' },
+            $q->div($attr,
                 $q->p("You are now signed up to this petition. Thank you."),
                 mySociety::Config::get('SITE_NAME') eq 'number10'
                     ? $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.number10.gov.uk/' }, 'main Downing Street homepage')) : '',
