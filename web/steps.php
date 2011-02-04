@@ -117,6 +117,12 @@ the relevant officials at the council for a response.
 We will be able to email the petition organiser and everyone who has signed the
 petition, and responses will also be published on this website.</p>
 <?
+    } elseif ($site_name == 'salford') {
+?>
+<p>When the petition closes we will publish a response; this will be emailed to
+everyone who has signed the e-petition. The response will also be published on
+this website.</p>
+<?
     } else {
 ?>
 <p>If the council responds, it will be emailed to everyone who has

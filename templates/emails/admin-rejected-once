@@ -12,8 +12,9 @@ If you wish to edit and resubmit your petition, please follow
 the following link:
 <?=$values['url']?>
 
-You have four weeks in which to do this, after which your
-petition will appear in the list of rejected petitions.
+You have four weeks in which to do this; if you do not resubmit,
+or your petition is rejected again, it will appear in the list
+of rejected petitions.
 
 Your petition reads:
 

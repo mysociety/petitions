@@ -508,7 +508,7 @@ sub signatories_box ($$) {
 
     if ($p->{signers} == 1 && !$q->param('signed')) {
         $html .=
-            $q->p("So far, only @{[ ent($p->{name}) ]}, the Petition Creator, has signed this petition.")
+            $q->p("So far, only @{[ ent($p->{name}) ]}, the petition creator, has signed this petition.")
             . $q->end_div();
         return $html;
     }
@@ -539,7 +539,7 @@ sub signatories_box ($$) {
         }
     } else {
         $html .=
-            $q->p("@{[ ent($p->{name}) ]}, the Petition Creator, joined by:");
+            $q->p("@{[ ent($p->{name}) ]}, the petition creator, joined by:");
         $st = dbh()->prepare("
                 select name from signer
                 where petition_id = ? and showname = 't' and emailsent = 'confirmed'
