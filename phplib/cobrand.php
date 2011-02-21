@@ -1368,6 +1368,8 @@ function cobrand_terms_elsewhere() {
         return 'http://www.east-northamptonshire.gov.uk/site/scripts/documents_info.aspx?documentID=928&pageNumber=10';
     if ($site_name == 'elmbridge')
         return 'http://www.elmbridge.gov.uk/Council/committees/petitionsscheme.htm';
+    if ($site_name == 'epsom-ewell')
+        return 'http://www.epsom-ewell.gov.uk/EEBC/Council/Terms+and+Conditions+for+Petitions.htm';
     if ($site_name == 'forest-heath')
         return 'http://www.forest-heath.gov.uk/Council/Legal/E-Petition+Terms+and+Conditions.htm';
     if ($site_name == 'hounslow')
