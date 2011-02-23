@@ -195,7 +195,7 @@ function cobrand_creator_must_be() {
     } else {
         $creator_type = 'must be a British citizen or resident';
     }
-    return 'Please note that you ' . $creator_type . ' to create a petition';
+    return 'Please note that you ' . $creator_type . ' to create a petition.';
 }
 
 function cobrand_creation_check_heading() {
@@ -384,7 +384,7 @@ function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
     if ($site_group == 'surreycc') {
         $county_only = array(4, 6, 7, 10, 12, 13, 16);
-        if ($site_name == 'tandridge' || $site_name == 'reigate-banstead' || $site_name == 'elmbridge')
+        if ($site_name == 'tandridge' || $site_name == 'reigate-banstead' || $site_name == 'elmbridge' || $site_name == 'surreyheath')
             $county_only[] = 11; # Planning not okay
         if ($site_name != 'surreycc' && in_array($category_id, $county_only))
             return false;
@@ -416,6 +416,12 @@ function cobrand_category_wrong_action($category_id, $area='') {
 application. For further information on the Council's procedures and how you
 can express your views, see the
 <a href='http://www.tandridge.gov.uk/Planning/planninginteractive/default.htm'>planning
+applications</a> section.";
+            } elseif ($site_name == 'surreyheath' && $category_id == 11) { # Planning
+                return "You cannot create a petition about a planning
+application. For further information on the Council's procedures and how you
+can express your views, see the
+<a href='http://www.surreyheath.gov.uk/planning/default.htm'>planning
 applications</a> section.";
             } elseif ($site_name == 'reigate-banstead' && $category_id == 11) { # Planning
                 return "You cannot create a petition about a planning
