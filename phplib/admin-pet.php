@@ -819,11 +819,13 @@ map.setCenter(lonLat, 5);
 
             }
             if ($sort == 'e') {
-                function sort_by_domain($a, $b) {
-                    $aa = stristr($a, '@');
-                    $bb = stristr($b, '@');
-                    if ($aa==$bb) return 0;
-                    return ($aa>$bb) ? 1 : -1;
+                if (!function_exists('sort_by_domain')) {
+                    function sort_by_domain($a, $b) {
+                        $aa = stristr($a, '@');
+                        $bb = stristr($b, '@');
+                        if ($aa==$bb) return 0;
+                        return ($aa>$bb) ? 1 : -1;
+                    }
                 }
                 uksort($out, 'sort_by_domain');
             }
