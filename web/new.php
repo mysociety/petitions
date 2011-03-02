@@ -355,8 +355,9 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     foreach (array('pet_content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 
-    if ($site_name == 'elmbridge' && !$data['rawdeadline'])
-        $data['rawdeadline'] = '90 days';
+    if (!$data['rawdeadline'] && ($default_deadline = cobrand_creation_default_deadline())) {
+        $data['rawdeadline'] = $default_deadline;
+    }
 
     $br = '';
     if (cobrand_creation_main_all_newlines()) $br = '<br />';

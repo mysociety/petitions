@@ -18,6 +18,15 @@ if (mySociety::Config::get('SITE_NAME') eq 'islington') {
     use URI::Escape;
 }
 
+sub admin_email($) {
+    my $p = shift;
+    return 'petitions@' . $p->{body_ref} . '.gov.uk'
+        if $p->{body_ref} && $p->{body_ref} eq 'elmbridge';
+    return $p->{body_ref} . '@' . mySociety::Config::get('EMAIL_DOMAIN')
+        if mySociety::Config::get('SITE_TYPE') eq 'multiple';
+    return mySociety::Config::get('CONTACT_EMAIL');
+}
+
 sub main_heading($) {
     my $text = shift;
     my $site_name = Petitions::Page::site_name();

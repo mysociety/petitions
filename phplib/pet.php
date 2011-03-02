@@ -29,14 +29,7 @@ err_set_handler_display('pet_handle_error');
  * displaying an error, a redirect, an image or anything else this will break
  * horribly.*/
 function ob_callback($s) {
-    global $site_name;
-    if ($site_name == 'ipswich') {
-        $s = str_replace('e-petition', 'e-Petition', $s);
-    } elseif ($site_name == 'lichfielddc') {
-        $s = preg_replace('#<input([^>]*?type=[\'"]text)#', '<input class="field"\1', $s);
-    } elseif ($site_name == 'spelthorne') {
-        $s = str_ireplace('email', 'e-mail', $s);
-    }
+    $s = cobrand_html_final_changes($s);
     header('Content-Length: ' . strlen($s));
     return $s;
 }

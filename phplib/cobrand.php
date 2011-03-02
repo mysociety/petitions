@@ -57,6 +57,11 @@ function cobrand_creation_sentence_help() {
     return $out;
 }
 
+function cobrand_creation_default_deadline() {
+    global $site_name;
+    if ($site_name == 'elmbridge') return '90 days';
+}
+
 function cobrand_creation_address_help() {
     global $site_name;
     if ($site_name == 'spelthorne') {
@@ -732,6 +737,19 @@ function cobrand_site_group() {
         $site_group = OPTION_SITE_NAME;
     }
     return $site_group;
+}
+
+function cobrand_admin_email($body) {
+    if ($body == 'elmbridge') {
+        $local = 'petitions';
+        $domain = $body . '.gov.uk';
+    } elseif (OPTION_SITE_TYPE == 'multiple') {
+        $local = $body;
+        $domain = OPTION_EMAIL_DOMAIN;
+    } else {
+        return OPTION_CONTACT_EMAIL;
+    }
+    return $local . '@' . $domain;
 }
 
 # Runs from cron, so examine site_group or petition body.
@@ -1426,6 +1444,40 @@ function cobrand_steps_elsewhere() {
     return null;
 }
 
+function cobrand_steps_petition_close() {
+    global $site_name;
+    if ($site_name == 'number10') {
+?>
+<p>When a serious petition closes, usually provided there are <?=cobrand_signature_threshold() ?> signatures or more,
+officials at Downing Street will ensure you get a response to the issues you
+raise. Depending on the nature of the petition, this may be from the Prime
+Minister, or he may ask one of his Ministers or officials to respond.
+
+<p>We will email the petition organiser and everyone who has signed the
+petition via this website giving details of the Government’s response.
+<?
+    } elseif ($site_name == 'woking') {
+?>
+<p>Once your petition has closed, usually provided there are
+<?=cobrand_signature_threshold() ?> signatures or more, it will be passed to
+the relevant officials at the council for a response.
+We will be able to email the petition organiser and everyone who has signed the
+petition, and responses will also be published on this website.</p>
+<?
+    } elseif ($site_name == 'salford') {
+?>
+<p>When the petition closes we will publish a response; this will be emailed to
+everyone who has signed the e-petition. The response will also be published on
+this website.</p>
+<?
+    } else {
+?>
+<p>If the council responds, it will be emailed to everyone who has
+signed the e-petition. The response will also be published on this website.</p>
+<?
+    }
+}
+
 function cobrand_privacy_policy_elsewhere() { /* council changed mind: but it's here now, for when someone needs it! */
     global $site_name;
     return null;
@@ -1495,3 +1547,16 @@ function cobrand_fill_form_instructions(){
     }
     return 'Please fill in all the fields below.';
 }
+
+function cobrand_html_final_changes($s) {
+    global $site_name;
+    if ($site_name == 'ipswich') {
+        $s = str_replace('e-petition', 'e-Petition', $s);
+    } elseif ($site_name == 'lichfielddc') {
+        $s = preg_replace('#<input([^>]*?type=[\'"]text)#', '<input class="field"\1', $s);
+    } elseif ($site_name == 'spelthorne') {
+        $s = str_ireplace('email', 'e-mail', $s);
+    }
+    return $s;
+}
+
