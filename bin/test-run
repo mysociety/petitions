@@ -451,7 +451,7 @@ the PM.",
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
     # Pound can be encoded within ISO-8859-1, so that should be done here.
-    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%=A3%');
+    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Government response%Thank you for your petition%\xa3%");
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check government response is displayed on petition page");
@@ -505,7 +505,7 @@ Second bullet point'
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%<body>%');
     }
     # Apostrophe should manage to be encoded in win-1252
-    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%<body>%=92%');
+    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Government response%Thank you for your petition%<body>%\x92%");
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check 2nd government response is displayed on petition page");
@@ -1056,7 +1056,7 @@ sub do_early_response_test {
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
     # Encoded in UTf-8.
-    $wth->email_get_containing('%To: '.email_n(511).'%Subject: Government response%Thank you for your petition%=C5=99=C3=A1k%');
+    $wth->email_get_containing('%To: '.email_n(511)."%Subject: Government response%Thank you for your petition%\xC5\x99\xC3\xA1k%");
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
     $wth->email_check_none_left();
 
