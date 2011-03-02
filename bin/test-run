@@ -450,7 +450,8 @@ the PM.",
     foreach my $signer_no (1488,1490) {
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
-    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%=C2=A3%');
+    # Pound can be encoded within ISO-8859-1, so that should be done here.
+    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%=A3%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check government response is displayed on petition page");
@@ -503,7 +504,8 @@ Second bullet point'
     foreach my $signer_no (1488,1490) {
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%<body>%');
     }
-    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%<body>%');
+    # Apostrophe should manage to be encoded in win-1252
+    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%<body>%=92%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check 2nd government response is displayed on petition page");
@@ -1042,7 +1044,7 @@ sub do_early_response_test {
                 fields => { }, button => 'respond') or die "Failed to submit write response button";
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
                 fields => {
-                    message_body => "Thank you for your petition. Here is my early response as requested.",
+                    message_body => "Thank you for your petition. Here is my early response as requested. It includes the name of Dvo\xc5\x99\xc3\xa1k.",
                 }, button => 'respond') or die "Failed to submit response preview form";
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
                 button => 'submit') or die "Failed to submit response form";
@@ -1053,7 +1055,8 @@ sub do_early_response_test {
     foreach my $signer_no (512..514) {
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
-    $wth->email_get_containing('%To: '.email_n(511).'%Subject: Government response%Thank you for your petition%');
+    # Encoded in UTf-8.
+    $wth->email_get_containing('%To: '.email_n(511).'%Subject: Government response%Thank you for your petition%=C5=99=C3=A1k%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
     $wth->email_check_none_left();
 
