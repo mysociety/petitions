@@ -197,12 +197,10 @@ function send_pending_messages() {
             $f = pet_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $headers);
         } else {
             // We assume that this is now a government response
-            $subject = "";
             if ($msg['fromaddress'] == 'admin-html') {
-                $type = 'email';
+                $type = 'email-html';
             } else {   
-                $type = 'plain';
-                $subject = "Subject: " . $msg['emailsubject'] . "\n";
+                $type = 'email-plain';
             }
             $out = pet_create_response_email($type, $petition->url_main(), $msg['emailsubject'], $msg['emailbody']);
 
@@ -217,7 +215,7 @@ function send_pending_messages() {
             $to = "To: " . $petition->creator_email() . "\n";
             $precedence = "Precedence: bulk\n";
 
-            $out = $from . $to . $date . $precedence . $subject . $out;
+            $out = $from . $to . $date . $precedence . $out;
             $f = evel_send($out, $petition->creator_email());
         }
 

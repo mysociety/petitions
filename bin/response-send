@@ -203,15 +203,13 @@ function pump_message_to_exim($message_id) {
 
 function create_message_body($message) {
     if ($message['fromaddress'] == 'admin-html') {
-        $type = 'email';
-        $headers = '';
+        $type = 'email-html';
     } else {
-        $type = 'plain';
-        $headers = "Subject: " . $message['emailsubject'] . "\r\n";
+        $type = 'email-plain';
     }
     $out = pet_create_response_email($type, $message['petition']->url_main(),
         $message['emailsubject'], $message['emailbody']);
-    return $headers . $out;
+    return $out;
 }
 
 function check_machine_load_values() {

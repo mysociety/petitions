@@ -18,6 +18,20 @@ use Net::SMTP;
 use POSIX qw(strftime);
 use Text::Wrap qw();
 
+# construct_plain TEXT SUBJECT
+# Given constituent parts, construct a non-HTML email
+sub construct_plain {
+    my ($text, $subject) = @_;
+    my $plain = Petitions::HTMLEmail::create_plain($text);
+    $plain = construct_part($plain, 0);
+    my $email = <<EOF;
+Subject: $subject
+MIME-Version: 1.0
+$plain
+EOF
+    return $email;
+}
+
 # construct_email TEXT SUBJECT
 # Given constituent parts, construct an HTML email
 sub construct_email {
