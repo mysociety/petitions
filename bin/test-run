@@ -435,6 +435,7 @@ sub do_main_test {
 
 We are going to do exactly what you say, because obviously we would never get contradictory petitions from different people.
 Email us on test\@example.org.
+It will cost \xc2\xa34.99.
 
 Yours faithfully, 
 
@@ -449,7 +450,7 @@ the PM.",
     foreach my $signer_no (1488,1490) {
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
-    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%');
+    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%=C2=A3%');
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check government response is displayed on petition page");
