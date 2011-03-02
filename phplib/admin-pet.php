@@ -1142,8 +1142,8 @@ EOF;
                     print '<div id="errors"><ul><li>' . 
                         join('</li><li>' , $errors) . '</li></ul></div>';
                 print '<h2>Preview</h2>';
-                $out = $this->respond_generate($q_html_mail ? 'html' : 'plain',
-                    $p->url_main(), "$q_message_subject\n\n$email");
+                $out = pet_create_response_email($q_html_mail ? 'html' : 'plain',
+                    $p->url_main(), $q_message_subject, $email);
                 if ($q_html_mail) {
                     $out = preg_replace('#^.*?<body>#s', '', $out);
                     $out = preg_replace('#</body>.*$#s', '', $out);
@@ -1185,23 +1185,6 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
 <hr>
 <?
         }
-    }
-
-    function respond_generate($pp, $url, $input) {
-        $descriptorspec = array(
-            0 => array('pipe', 'r'),
-            1 => array('pipe', 'w'),
-        );
-        $pp = proc_open("../bin/create-preview $pp $url", $descriptorspec, $pipes);
-        fwrite($pipes[0], $input);
-        fclose($pipes[0]);
-        $out = '';
-        while (!feof($pipes[1])) {
-            $out .= fread($pipes[1], 8192);
-        }
-        fclose($pipes[1]);
-        proc_close($pp);
-        return $out;
     }
 
     # Admin function to change the deadline of a petition, up to the 1 year limit

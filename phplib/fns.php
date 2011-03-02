@@ -165,9 +165,6 @@ function pet_search_form($params=array()) {
 }
 
 function pet_create_response_email($type, $url, $subject, $body) {
-    if ($type == 'html')
-        $type = 'email';
-
     $descriptorspec = array(
         0 => array('pipe', 'r'), 
         1 => array('pipe', 'w'),
