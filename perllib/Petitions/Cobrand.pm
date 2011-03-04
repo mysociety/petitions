@@ -68,8 +68,10 @@ sub within_area_only() {
 
 sub ask_for_address() {
     my $site_name = Petitions::Page::site_name();
-    return 0 if $site_name eq 'westminster';
-    return 1;
+    return '' if $site_name eq 'westminster';
+    return 'Your home, work or study address (this must be a Salford address, this will not be published)'
+        if $site_name eq 'salford';
+    return 'Your address (will not be published)';
 }
 
 sub ask_for_address_type() {

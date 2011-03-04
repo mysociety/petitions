@@ -332,8 +332,8 @@ the Armed Forces without a postcode, please select from this list:</label>',
                 $q->popup_menu(-name=>'address', -id=>'address', -style=>'width:100%', -values=> $q->scratch()->{address_lookup})
             );
         }
-    } elsif (Petitions::Cobrand::ask_for_address()) {
-        $address = $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
+    } elsif (my $address_label = Petitions::Cobrand::ask_for_address()) {
+        $address = $q->p( '<label class="wide" for="address">' . $address_label . ':</label><br />',
             $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:95%', -aria_required => 'true')
         );
     }
