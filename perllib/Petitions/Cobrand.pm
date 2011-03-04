@@ -61,6 +61,7 @@ sub within_area_only() {
     return ('Guildford', 2452) if $site_name eq 'guildford';
     return ('Islington', 2507) if $site_name eq 'islington';
     return ('the Royal Borough of Windsor and Maidenhead', 2622) if $site_name eq 'rbwm';
+    return ('Salford', 2534) if $site_name eq 'salford';
     return ('Westminster', 2504) if $site_name eq 'westminster';
     return;
 }
@@ -73,12 +74,12 @@ sub ask_for_address() {
 
 sub ask_for_address_type() {
     my $site_name = Petitions::Page::site_name();
-    return 1 if $site_name eq 'westminster';
+    return 1 if $site_name eq 'westminster' || $site_name eq 'salford';
 }
 
 sub overseas_dropdown {
     my $site_group = Petitions::Page::site_group();
-    if ($site_group eq 'westminster' || $site_group eq 'islington' || $site_group eq 'rbwm' || $site_group eq 'stevenage') {
+    if ($site_group eq 'westminster' || $site_group eq 'islington' || $site_group eq 'rbwm' || $site_group eq 'stevenage' || $site_group eq 'salford') {
         return []; # No drop-down
     } elsif ($site_group eq 'surreycc') {
         return [
