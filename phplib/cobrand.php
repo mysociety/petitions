@@ -945,7 +945,7 @@ outside the remit or powers of Stevenage Borough Council.</p>
 <li>Petitions similar to and/or overlap with an existing petition or petitions.</li>
 <li>Petitions which ask for things outside the remit or powers of the council. </li>
 <li>Statements that don't request any action. We cannot accept petitions which call upon the council to &quot;recognise&quot; or &quot;acknowledge&quot; something, as they do not call for a recognisable action. </li>
-<li>Wording that is impossible to understand. Please don't use capital letters excessively as they can make petitions hard to read. </li>
+<li>Wording that needs amending, or is impossible to understand. Please don't use capital letters excessively as they can make petitions hard to read. </li>
 <li>Statements that amount to advertisements.</li>
 <li>Petitions intended to be humorous, or which have no point about council policy.</li>
 <li>Issues for which an e-petition is not the appropriate channel (for example, correspondence about a personal issue).</li>
@@ -1359,8 +1359,28 @@ function cobrand_rss_explanation_link() {
     return 'http://www.bbc.co.uk/news/10628494';
 }
 
+function cobrand_how_it_works_start() {
+    global $site_name, $site_group;
+    if ($site_name == 'number10') {
+?>
+<p>You can view and sign any <a href="/list">current petitions</a>, and see the
+Government response to any <a href="/list/closed">completed petitions</a>. If
+you have signed a petition that has reached more than
+<?=cobrand_signature_threshold() ?> signatures by the time it closes, you will
+be sent a response from the Government by email.
+</p>
+<?
+    } else {
+?>
+<p>You can view and sign any <a href="/list">current petitions</a>, and see our
+response to any <a href="/list/closed">completed petitions</a>.
+</p>
+<?
+    }
+}
+
 function cobrand_how_it_works_extra() {
-    global $site_name;
+    global $site_name, $site_group;
     if ($site_name == 'number10') {
         echo 'A list of <a href="/list/rejected">rejected petitions</a> is available on this website.';
     }
@@ -1368,6 +1388,11 @@ function cobrand_how_it_works_extra() {
         echo '</p> <p>If you experience any problems with the e-petitions
         system, please <a href="http://www.islington.gov.uk/Contact/">contact
         us</a>.';
+    }
+    if ($site_group == 'surreycc' && $site_name != 'surreycc') {
+        echo '</p> <p>You can also view
+        <a href="http://petitions.surreycc.gov.uk/">petitions to Surrey County
+        Council</a> on their website.';
     }
 }
 

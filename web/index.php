@@ -182,17 +182,8 @@ function front_most_popular($most) {
 function front_how_it_works() {
     echo '<div id="front_how">';
     echo cobrand_main_heading('How it works');
+    cobrand_how_it_works_start();
 ?>
-<p>You can view and sign any <a href="/list">current petitions</a>, and see
-<?=OPTION_SITE_NAME=='number10' ? 'the Government' : 'our' ?> response to any
-<a href="/list/closed">completed petitions</a>.
-<? if (OPTION_SITE_NAME == 'number10') { ?>
-If you have signed a petition that has reached more than <?=cobrand_signature_threshold() ?> signatures
-by the time it closes, you will be sent a response from
-<?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> by email.
-<? } ?>
-</p>
-
 <p>All petitions that are submitted to this website will be accepted, as long as
 they are in accordance with our <? cobrand_extra_terms_link() ?>
 <a href="/terms"><?=cobrand_terms_text()?></a>.

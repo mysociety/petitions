@@ -463,7 +463,7 @@ sub reject_box ($$) {
         32 => 'It contained the names of family members of elected representatives or officials of public bodies',
         64 => 'It contained the names of individuals, or information where they may be identified, in relation to criminal accusations',
         128 => 'It contained language which is offensive, intemperate, or provocative',
-        256 => 'It contained wording that is impossible to understand',
+        256 => 'It contained wording that needed to be amended, or is impossible to understand',
         512 => 'It doesn\'t actually request any action',
         1024 => 'It was commercial endorsement, promotion of a product, service or publication, or statements that amounted to adverts',
         2048 => 'It was similar to and/or overlaps with an existing petition or petitions',
