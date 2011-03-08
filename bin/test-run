@@ -643,7 +643,7 @@ sub do_rejection_test {
                 'rejection_cats[]' => ['256', 9], # the 9th checkbox has value 256, and means "Wording that is impossible to understand"
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
-    $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%impossible to understand%');
+    $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%impossible%understand%');
     die "Rejection email link found when it should not have been\n" if ($rejection_email =~ m{^\s*(https?://.*)$}m);
 
     comment("Check appears on rejection page");
