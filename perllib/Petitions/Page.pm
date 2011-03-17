@@ -132,7 +132,7 @@ sub header ($$%) {
     } else {
         $subjects = '<meta name="dc.subject" content="10 Downing Street" />
 <meta name="dc.subject" content="Petitions" />
-<meta name="dc.subject" content="Prime Minister" />
+<meta name="dc.subject" content="Prime Minister" />';
     }
     my $extra = '';
     $extra .= '<meta name="eGMS.status" content="' . $params{status} . '" />' if $params{status};
