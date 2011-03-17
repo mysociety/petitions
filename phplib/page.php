@@ -82,8 +82,8 @@ function page_header($title, $params = array()) {
 <meta name="dc.subject" content="Prime Minister" />
 <meta name="dc.subject" content="Gordon Brown" />', $contents);
     } else {
-        $creator = OPTION_SITE_NAME;
-        $desc = 'Petitions to ' . OPTION_SITE_NAME;
+        $creator = OPTION_SITE_PETITIONED;
+        $desc = 'Petitions to ' . OPTION_SITE_PETITIONED;
     }
 
     $extra = '';

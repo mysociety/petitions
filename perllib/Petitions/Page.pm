@@ -123,8 +123,8 @@ sub header ($$%) {
     my $ent_url = ent($q->url());
     (my $ent_url_no_http = $ent_url) =~ s{http://}{};
     my $ent_title = ent($title);
-    my $creator = $params{creator} || '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
-    my $description = $params{description} || 'Petitions to the Prime Minister, 10 Downing Street';
+    my $creator = $params{creator} || mySociety::Config::get('SITE_PETITIONED');
+    my $description = $params{description} || 'Petitions to ' . mySociety::Config::get('SITE_PETITIONED');
     my $subjects = '';
     if ($params{category}) {
         $subjects = '<meta name="dc.subject" scheme="eGMS.IPSV" content="' . $params{category} . '" />';
@@ -133,7 +133,6 @@ sub header ($$%) {
         $subjects = '<meta name="dc.subject" content="10 Downing Street" />
 <meta name="dc.subject" content="Petitions" />
 <meta name="dc.subject" content="Prime Minister" />
-<meta name="dc.subject" content="Gordon Brown" />';
     }
     my $extra = '';
     $extra .= '<meta name="eGMS.status" content="' . $params{status} . '" />' if $params{status};
