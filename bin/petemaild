@@ -1781,7 +1781,7 @@ sub make_petition_email ($) {
 sub fix_email_link {
     my ($email, $message) = @_;
     return $message unless $email =~ /\@aol\./;
-    $message =~ s/<a\s*href="\s*([^"]*)\s*(">[^<]*<\/a>)/<a href=" $1 $2/;
+    $message =~ s/<a\s*href="\s*([^"\s]*)\s*(">[^<]*<\/a>)/<a href=" $1 $2/;
     return $message;
 }
 
