@@ -1727,13 +1727,13 @@ sub make_duplicate_email ($$) {
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
-    return mySociety::Email::construct_email({
+    return fix_email_link( $petition->{email}, mySociety::Email::construct_email({
         _template_ => get_template('signature-duplicate', $petition),
         _parameters_ => \%h,
         To => [[$signer->{email}, $signer->{name}]],
         From => [ $from_email, $from_name ],
         'Message-ID' => message_id('signer', $signer->{id})
-    });
+    }) );
 }
 
 # make_signer_email SIGNER PETITION
@@ -1749,13 +1749,13 @@ sub make_signer_email ($$) {
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
-    return mySociety::Email::construct_email({
+    return fix_email_link( $petition->{email}, mySociety::Email::construct_email({
         _template_ => get_template('signature-confirm', $petition),
         _parameters_ => \%h,
         To => [[$signer->{email}, $signer->{name}]],
         From => [ $from_email, $from_name ],
         'Message-ID' => message_id('signer', $signer->{id})
-    });
+    }) );
 }
 
 # make_petition_email PETITION
@@ -1769,13 +1769,20 @@ sub make_petition_email ($) {
 
     my $from_name = Petitions::from_name($petition);
     my $from_email = Petitions::admin_email($petition);
-    return mySociety::Email::construct_email ({
+    return fix_email_link( $petition->{email}, mySociety::Email::construct_email ({
         _template_ => get_template('petition-confirm', $petition),
         _parameters_ => \%h,
         To => [[$petition->{email}, $petition->{name}]],
         From => [ $from_email, $from_name ],
         'Message-ID' => message_id('petition', $petition->{id})
-    });
+    }) );
+}
+
+sub fix_email_link {
+    my ($email, $message) = @_;
+    return $message unless $email =~ /\@aol\./;
+    $message =~ s/<a\s*href="\s*([^"]*)\s*(">[^<]*<\/a>)/<a href=" $1 $2/;
+    return $message;
 }
 
 # database_child_process SOCKET
