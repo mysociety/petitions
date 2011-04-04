@@ -142,12 +142,12 @@ EOF;
         # Percentages
         foreach (array('live', 'finished', 'rejected', 'online', 'offline') as $t) {
             $petitions[$t.'_pc'] = $petitions['all_confirmed']
-                ? round($petitions[$t] / $petitions['all_confirmed'], 2)
+                ? round($petitions[$t] / $petitions['all_confirmed'] * 100, 1)
                 : '-';
         }
         foreach (array('confirmed', 'offline') as $t) {
             $signatures[$t.'_pc'] = $signatures['total']
-                ? round($signatures[$t] / $signatures['total'], 2)
+                ? round($signatures[$t] / $signatures['total'] * 100, 1)
                 : '-';
         }
 
