@@ -882,6 +882,12 @@ function cobrand_admin_show_map() {
     return false;
 }
 
+function cobrand_admin_show_graphs() {
+    global $site_group;
+    if ($site_group == 'hounslow') return false;
+    return true;
+}
+
 # A bit of a yucky function, containing slightly varying guidelines
 # for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {

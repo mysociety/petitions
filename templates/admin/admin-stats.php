@@ -25,8 +25,11 @@
 <h2>Petitions</h2>
 
 <?
-$f = "pet-live-creation$multiple.png";
-if (is_file($f) && filesize($f)) { ?>
+
+if (cobrand_admin_show_graphs()) {
+
+    $f = "pet-live-creation$multiple.png";
+    if (is_file($f) && filesize($f)) { ?>
 <p><img style="max-width:100%" src="<?=$f?>" alt="Graph of petition status by creation date">
 <?  } else { ?>
 <p>There is currently no data in the system to draw a graph. Graphs are generated nightly.</p>
@@ -35,10 +38,12 @@ if (is_file($f) && filesize($f)) { ?>
 <h2>Signatures</h2>
 
 <?
-$f = "pet-live-signups$multiple.png";
-if (is_file($f) && filesize($f)) { ?>
+    $f = "pet-live-signups$multiple.png";
+    if (is_file($f) && filesize($f)) { ?>
 <p><img style="max-width:100%" src="<?=$f?>" alt="Graph of signers across whole site">
 <?  } else { ?>
 <p>There is currently no data in the system to draw a graph. Graphs are generated nightly.</p>
-<?  } ?>
+<?  }
+
+}
 
