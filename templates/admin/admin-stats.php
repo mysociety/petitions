@@ -9,14 +9,14 @@
 
 <h2>Petitions</h2>
 
-<p><?=$counts['live']?> live, <?=$counts['finished']?> finished,
-<?=$counts['draft']?> draft, <?=$counts['rejectedonce']?> rejected once,
-<?=$counts['resubmitted']?> resubmitted, <?=$counts['rejected']?> rejected again =
-<strong><?=$counts['all_confirmed']?></strong> total with confirmed emails<br>
-
-With unconfirmed emails: <?=$counts['unconfirmed']?> not sent,
-<?=$counts['failedconfirm']?> failed send, <?=$counts['sentconfirm']?> sent =
-<strong><?=$counts['all_unconfirmed']?></strong> total with unconfirmed emails
+<table>
+<tr><th>Total petitions received</th><td><?=$petitions['all_confirmed']?></td><td>&nbsp;</td></tr>
+<tr><th>Live petitions</th><td><?=$petitions['live']?></td><td><?=$petitions['live_pc']?>%</td></tr>
+<tr><th>Closed petitions</th><td><?=$petitions['finished']?></td><td><?=$petitions['finished_pc']?>%</td></tr>
+<tr><th>Rejected petitions</th><td><?=$petitions['rejected']?></td><td><?=$petitions['rejected_pc']?>%</td></tr>
+<tr><th>Online petitions</th><td><?=$petitions['online']?></td><td><?=$petitions['online_pc']?>%</td></tr>
+<tr><th>Offline petitions</th><td><?=$petitions['offline']?></td><td><?=$petitions['offline_pc']?>%</td></tr>
+</table>
 
 <?
 $f = "pet-live-creation$multiple.png";

@@ -99,15 +99,15 @@ EOF;
         $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
 
         # Petitions
-        $counts = array(
+        $petitions = array(
             'unconfirmed'=>0, 'failedconfirm'=>0, 'sentconfirm'=>0,
             'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
             'rejected'=>0, 'live'=>0, 'finished'=>0,
             'all_confirmed'=>0, 'all_unconfirmed'=>0
         );
-        foreach (array_keys($counts) as $t) {
-            $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t$multiple' order by id desc limit 1");
-            if (!$counts[$t]) $counts[$t] = 0;
+        foreach (array_keys($petitions) as $t) {
+            $petitions[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t$multiple' order by id desc limit 1");
+            if (!$petitions[$t]) $petitions[$t] = 0;
         }
 
         # Signatures
@@ -120,9 +120,28 @@ EOF;
         }
 
         # Responses 
-        $responses = db_getOne("select count(*) from message where circumstance = 'government-response$multiple'");
-        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response$multiple'");
-    
+        $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
+        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
+
+        # Online/offline
+        $petitions['offline'] = db_getOne("select count(*) from petition
+            where state = 'finished'
+                and (select count(*) from signer where petition_id=petition.id) = 0
+                and offline_signers != 0
+        ");
+        $petitions['online'] = db_getOne("select count(*) from petition
+            where state in ('live', 'finished', 'rejected')
+                and ( (select count(*) from signer where petition_id=petition.id) > 0
+                or offline_signers = 0 )
+        ");
+
+        # Percentages
+        foreach (array('live', 'finished', 'rejected', 'online', 'offline') as $t) {
+            $petitions[$t.'_pc'] = $petitions['all_confirmed']
+                ? $petitions[$t] / $petitions['all_confirmed']
+                : '-';
+        }
+
         petition_admin_navigation($this);
         if ($from && $to) {
             $parsed_from = datetime_parse_local_date($from, $pet_time, 'en', 'GB');
