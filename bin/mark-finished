@@ -115,6 +115,12 @@ function _find_timed_out_rejected_petitions($timeout, $body_ref='') {
             rejection_second_reason = rejection_first_reason,
             laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
             where id=?", $petition['id']);
+        $q = db_query("insert into petition_log (petition_id, whenlogged, message, editor)
+            values (?, ms_current_timestamp(), ?, ?)", array(
+                $petition['id'],
+                'Petition timed out into rejected state',
+                '-'
+        ));
         $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $petition['id'], time());
         stats_change($petition['body_ref'], $petition['category'], 'cached_petitions_rejected', '+1');
         pet_send_message($petition['id'], MSG_ADMIN, MSG_CREATOR, 'rejected-timeout', 'admin-rejected-timeout');
