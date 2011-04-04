@@ -853,7 +853,7 @@ function cobrand_admin_areas_of_interest() {
         foreach ($soas as $k => $v) {
             $soas[$k]['parent_area'] = 2483;
         }
-        $out = array_merge($wards, $soas);
+        $out = $wards + $soas;
         $out[2483] = array( 'name' => 'Hounslow Borough Council' );
         return $out;
     }
