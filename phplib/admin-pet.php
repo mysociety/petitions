@@ -112,12 +112,16 @@ EOF;
 
         # Signatures
         $signatures = array(
-            'confirmed' => 0, 'sent' => 0, 'confirmed_unique' => 0
+            'confirmed' => 0, 'sent' => 0, 'confirmed_unique' => 0, 'offline' => 0
         );
         foreach (array_keys($signatures) as $t) {
             $signatures[$t] = db_getOne("SELECT value FROM stats WHERE key = 'signatures_$t$multiple' order by id desc limit 1");
             if (!$signatures[$t]) $signatures[$t] = 0;
         }
+        $signatures['total'] = $signatures['confirmed'] + $signatures['offline'];
+        $average_sigs_per_petition = '-';
+        if ($petitions['live'] || $petitions['finished'])
+            $average_sigs_per_petition = round($signatures['total'] / ($petitions['live'] + $petitions['finished']), 2);
 
         # Responses 
         $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
@@ -130,15 +134,20 @@ EOF;
                 and offline_signers != 0
         ");
         $petitions['online'] = db_getOne("select count(*) from petition
-            where status in ('live', 'finished', 'rejected')
+            where status in ('live', 'rejected') or ( status = 'finished'
                 and ( (select count(*) from signer where petition_id=petition.id) > 0
-                or offline_signers = 0 )
+                or offline_signers = 0 ) )
         ");
 
         # Percentages
         foreach (array('live', 'finished', 'rejected', 'online', 'offline') as $t) {
             $petitions[$t.'_pc'] = $petitions['all_confirmed']
-                ? $petitions[$t] / $petitions['all_confirmed']
+                ? round($petitions[$t] / $petitions['all_confirmed'], 2)
+                : '-';
+        }
+        foreach (array('confirmed', 'offline') as $t) {
+            $signatures[$t.'_pc'] = $signatures['total']
+                ? round($signatures[$t] / $signatures['total'], 2)
                 : '-';
         }
 

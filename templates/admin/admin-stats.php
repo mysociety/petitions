@@ -7,16 +7,22 @@
         
 <p>Summary statistics last updated: <?=$statsdate?>
 
-<h2>Petitions</h2>
-
-<table>
+<table class="stats">
 <tr><th>Total petitions received</th><td><?=$petitions['all_confirmed']?></td><td>&nbsp;</td></tr>
 <tr><th>Live petitions</th><td><?=$petitions['live']?></td><td><?=$petitions['live_pc']?>%</td></tr>
 <tr><th>Closed petitions</th><td><?=$petitions['finished']?></td><td><?=$petitions['finished_pc']?>%</td></tr>
 <tr><th>Rejected petitions</th><td><?=$petitions['rejected']?></td><td><?=$petitions['rejected_pc']?>%</td></tr>
 <tr><th>Online petitions</th><td><?=$petitions['online']?></td><td><?=$petitions['online_pc']?>%</td></tr>
 <tr><th>Offline petitions</th><td><?=$petitions['offline']?></td><td><?=$petitions['offline_pc']?>%</td></tr>
+<tr><th>Total signatures</th><td><?=$signatures['total']?></td><td>&nbsp;</td></tr>
+<tr><th>Online signatures</th><td><?=$signatures['confirmed']?></td><td><?=$signatures['confirmed_pc']?>%</td>
+    <td>(<?=$signatures['confirmed_unique']?> unique emails in past year)</td></tr>
+<tr><th>Offline signatures</th><td><?=$signatures['offline']?></td><td><?=$signatures['offline_pc']?>%</td></tr>
+<tr><th>Average signatures per petition</th><td><?=$average_sigs_per_petition?></td><td>&nbsp;</td></tr>
+<tr><th>Responses sent</th><td><?=$responses?></td><td>to <?=$unique_responses?> unique petitions</td></tr>
 </table>
+
+<h2>Petitions</h2>
 
 <?
 $f = "pet-live-creation$multiple.png";
@@ -28,9 +34,6 @@ if (is_file($f) && filesize($f)) { ?>
 
 <h2>Signatures</h2>
 
-<p><?=$signatures['confirmed']?> confirmed signatures (<?=$signatures['confirmed_unique']?> unique emails
-in past year), <?=$signatures['sent']?> unconfirmed
-
 <?
 $f = "pet-live-signups$multiple.png";
 if (is_file($f) && filesize($f)) { ?>
@@ -38,8 +41,4 @@ if (is_file($f) && filesize($f)) { ?>
 <?  } else { ?>
 <p>There is currently no data in the system to draw a graph. Graphs are generated nightly.</p>
 <?  } ?>
-
-<h2>Responses</h2>
-
-<p><?=$responses?> responses sent, to <?=$unique_responses?> unique petitions
 
