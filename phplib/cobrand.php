@@ -849,7 +849,7 @@ function cobrand_admin_areas_of_interest() {
 
     if ($site_group == 'hounslow') {
         $wards = json_decode(file_get_contents('http://mapit.mysociety.org/area/2483/children'), true);
-        $soas = json_decode(file_get_contents('http://mapit.mysociety.org/areas/Hounslow.html?type=OLF'), true);
+        $soas = json_decode(file_get_contents('http://mapit.mysociety.org/areas/Hounslow?type=OLF'), true);
         foreach ($soas as $k => $v) {
             $soas[$k]['parent_area'] = 2483;
         }

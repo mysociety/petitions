@@ -125,12 +125,12 @@ EOF;
 
         # Online/offline
         $petitions['offline'] = db_getOne("select count(*) from petition
-            where state = 'finished'
+            where status = 'finished'
                 and (select count(*) from signer where petition_id=petition.id) = 0
                 and offline_signers != 0
         ");
         $petitions['online'] = db_getOne("select count(*) from petition
-            where state in ('live', 'finished', 'rejected')
+            where status in ('live', 'finished', 'rejected')
                 and ( (select count(*) from signer where petition_id=petition.id) > 0
                 or offline_signers = 0 )
         ");
