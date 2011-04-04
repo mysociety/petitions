@@ -758,7 +758,7 @@ Deadline: ';
                     }
                     if (in_array($id, array_keys($areas))) {
                         if (array_key_exists('parent_area', $areas[$id])) {
-                            $children[$areas[$id]['parent_area']][] = $area;
+                            $children[$areas[$id]['parent_area']][] = $area + array('name' => $areas[$id]['name']);
                         } else {
                             $parents[$id] = $area;
                         }
@@ -771,8 +771,8 @@ Deadline: ';
                     }
                 }
                 function sort_by_name($a, $b) {
-                    $aa = $areas[$a['area_id']]['name'];
-                    $bb = $areas[$b['area_id']]['name'];
+                    $aa = $a['name'];
+                    $bb = $b['name'];
                     if ($aa==$bb) return 0;
                     return ($aa>$bb) ? 1 : -1;
                 }
@@ -781,7 +781,7 @@ Deadline: ';
                     if (!array_key_exists($id, $children)) continue;
                     usort($children[$id], 'sort_by_name');
                     foreach ($children[$id] as $child) {
-                        print '<tr><td>&nbsp;&nbsp;' . $areas[$child['area_id']]['name'] . "</td><td>$child[c]</td></tr>\n";
+                        print "<tr><td>&nbsp;&nbsp;$child[name]</td><td>$child[c]</td></tr>\n";
                     }
                 }
                 if ($other) print '<tr><td><i>Other</i></td><td>' . $other . '</td></tr>';
