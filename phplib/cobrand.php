@@ -849,6 +849,7 @@ function cobrand_admin_areas_of_interest() {
 
     if ($site_group == 'hounslow') {
         $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2483/children'), true);
+        $out = array_merge($out, json_decode(file_get_contents('http://mapit.mysociety.org/areas/Hounslow.html?type=OLF'), true));
         $out[2483] = array( 'name' => 'Hounslow Borough Council' );
         return $out;
     }
