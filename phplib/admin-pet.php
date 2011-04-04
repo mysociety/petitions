@@ -753,7 +753,7 @@ Deadline: ';
                 if ($unknown) print '<tr><td><i>Unknown</i></td><td>' . $unknown . '</td></tr>';
                 print '</table></div>';
             }
-            if ($pdata['signers_confirmed'] && get_http_var('test_map')) {
+            if ($pdata['signers_confirmed'] && cobrand_admin_show_map()) {
 ?>
 <div id="signer_map"></div>
 <script>
