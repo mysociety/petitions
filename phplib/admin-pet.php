@@ -770,9 +770,16 @@ Deadline: ';
                         continue;
                     }
                 }
+                function sort_by_name($a, $b) {
+                    $aa = $areas[$a['area_id']]['name'];
+                    $bb = $areas[$b['area_id']]['name'];
+                    if ($aa==$bb) return 0;
+                    return ($aa>$bb) ? 1 : -1;
+                }
                 foreach ($parents as $id => $area) {
                     print '<tr><td>' . $areas[$id]['name'] . "</td><td>$area[c]</td></tr>\n";
                     if (!array_key_exists($id, $children)) continue;
+                    usort($children[$id], 'sort_by_name');
                     foreach ($children[$id] as $child) {
                         print '<tr><td>&nbsp;&nbsp;' . $areas[$child['area_id']]['name'] . "</td><td>$child[c]</td></tr>\n";
                     }
