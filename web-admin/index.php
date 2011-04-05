@@ -53,7 +53,7 @@ function admin_header($title) {
 <script src="/jslib/openlayers/OpenLayers.js"></script>
 </head>
 <body id="admin">
-<div id="header"></div>
+<div id="header"><a class="help-link" href="help/index.html">admin&nbsp;help</a></div>
 <div id="content">
 <?
 }
