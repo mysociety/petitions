@@ -614,6 +614,67 @@ petitions.</p>';
             . '">' . $pdata['ref'] . '</a>&rsquo;';
         print "</h2>";
 
+        # Actions
+        print '<div id="petition_actions"> <h2>Petition actions</h2>';
+        if (!get_http_var('reject') && ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted')) {
+            print '
+<form name="petition_admin_approve" method="post" action="'.$this->self_link.'">
+<p>
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<input type="submit" name="approve" value="Approve">
+<input type="submit" name="reject" value="Reject">
+</p>
+</form>';
+        } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
+            print '<form name="petition_admin_go_respond" method="post" action="'
+                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                '">';
+            if ($pdata['response_possible'] == 't' && !OPTION_RESPONSE_DISABLED) {
+                print '<input type="submit" name="respond" value="Write response">';
+            }
+            if ($pdata['status'] == 'live')
+                print ' <input type="submit" name="redraft" value="Undo approval">';
+            print ' <input type="submit" name="remove" value="Remove petition">';
+            print '</form>';
+        } elseif ($pdata['status'] == 'rejected') {
+            print '<form name="petition_admin_go_respond" method="post" action="'
+                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                '"><input type="submit" name="remove" value="Remove petition">';
+            print '</form>';
+        }
+        if ($pdata['status'] == 'live') {
+            print '<form name="petition_admin_change_deadline" method="post" action="' . $this->self_link . '">
+<input type="hidden" name="deadline_change" value="1">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<p>Change deadline: <input type="text" name="deadline" value="';
+            print trim(prettify($pdata['deadline']));
+            print '">';
+            print ' <input type="submit" value="Change">';
+            print '</form>';
+        }
+        if ($wards = cobrand_admin_wards_for_petition()) {
+            $rows = db_getAll('select area_id from petition_area where petition_id=?', $pdata['id']);
+            $ward_ids = array();
+            foreach ($rows as $r) {
+                $ward_ids[] = $r['area_id'];
+            }
+            print '<form method="post" action="' . $this->self_link . '">
+<input type="hidden" name="wards_change" value="1">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<p>If applicable, pick the ward or wards this petition applies to:
+<select name="wards[]" multiple size=5 title="-- Pick --">';
+            foreach ($wards as $ward) {
+                print '<option value="' . $ward['id'] . '"';
+                if (in_array($ward['id'], $ward_ids)) print ' selected';
+                print '>' . $ward['name'] . '</option>';
+            }
+            print '</select>';
+            print ' <input type="submit" value="Update">';
+            print '</form>';
+        }
+
+        print '</div>';
+
         print "<ul><li>Created by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  privacy($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
         if ($pdata['address_type']) {
             print '<li>Address type: ' . $pdata['address_type'];
@@ -644,23 +705,9 @@ petitions.</p>';
                 . $cats_pretty . ' &mdash; <input type="submit" value="Change"></form>';
             print '<li>Extra reason provided by admin: ' . $reason . '</li></ul>';
         }
-        print '<li><form name="petition_admin_change_deadline" method="post" action="' . $this->self_link . '">
-<input type="hidden" name="deadline_change" value="1">
-<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
-Deadline: ';
-        if ($pdata['status'] == 'live')
-            print '<input type="text" name="deadline" value="';
-        else
-            print '<b>';
+        print '<li>Deadline: <b>';
         print trim(prettify($pdata['deadline']));
-        if ($pdata['status'] == 'live')
-            print '">';
-        else
-            print '</b>';
-        if ($pdata['status'] == 'live')
-            print ' <input type="submit" value="Change">';
-        print ' (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")
-</form>';
+        print '</b> (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")';
         print '<li>Petition title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
         print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
@@ -673,34 +720,15 @@ Deadline: ';
         if ($pdata['offline_location']) {
             print '<li>Offline petition location: ' . $pdata['offline_location'] . '</li>';
         }
-        print '</ul>';
-
-        if (!get_http_var('reject') && ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted')) {
-            print '
-<form name="petition_admin_approve" method="post" action="'.$this->self_link.'">
-<p align="center">
-<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
-<input type="submit" name="approve" value="Approve">
-<input type="submit" name="reject" value="Reject">
-</p>
-</form>';
-        } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
-            print '<form name="petition_admin_go_respond" method="post" action="'
-                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
-                '">';
-            if ($pdata['response_possible'] == 't' && !OPTION_RESPONSE_DISABLED) {
-                print '<input type="submit" name="respond" value="Write response">';
+        if ($wards) {
+            print '<li>Wards: ';
+            $ward_names = array();
+            foreach ($ward_ids as $id) {
+                $ward_names[] = $wards[$id]['name'];
             }
-            if ($pdata['status'] == 'live')
-                print ' <input type="submit" name="redraft" value="Undo approval">';
-            print ' <input type="submit" name="remove" value="Remove petition">';
-            print '</form>';
-        } elseif ($pdata['status'] == 'rejected') {
-            print '<form name="petition_admin_go_respond" method="post" action="'
-                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
-                '"><input type="submit" name="remove" value="Remove petition">';
-            print '</form>';
+            print $ward_names ? join(', ', $ward_names) : 'No ward';
         }
+        print '</ul>';
 
         // Admin actions
         print '<h3>Administrator events and notes</h3>';
@@ -1259,6 +1287,23 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         }
     }
 
+    # Admin function to change the deadline of a petition, up to the 1 year limit
+    function change_wards($petition_id) {
+        $new_wards = get_http_var('wards');
+        $wards = cobrand_admin_wards_for_petition();
+        db_query('delete from petition_area where petition_id = ?', $petition_id);
+        $ward_names = array();
+        foreach ($new_wards as $ward) {
+            if (!array_key_exists($ward, $wards)) continue;
+            $ward_names[] = $wards[$ward]['name'];
+            db_query('insert into petition_area (petition_id, area_id) values (?, ?)', $petition_id, $ward);
+        }
+        $p = new Petition($petition_id);
+        $p->log_event("Admin updated wards to " . join(', ', $ward_names));
+        db_commit();
+        print '<p><em>Wards updated</em></p>';
+    }
+
     # Admin function to update the number of offline signers a petition has
     # Can be both 0 and blank - 0 would imply there was an offline version
     # and it got no signatures, blank would mean no offline version.
@@ -1490,6 +1535,8 @@ can be rejected properly.</p>
             $this->respond($petition_id);
         } elseif (get_http_var('deadline_change')) {
             $this->change_deadline($petition_id);
+        } elseif (get_http_var('wards_change')) {
+            $this->change_wards($petition_id);
         } elseif (get_http_var('offline_signers_change')) {
             $this->offline_signers($petition_id);
         } elseif (get_http_var('redraft')) {

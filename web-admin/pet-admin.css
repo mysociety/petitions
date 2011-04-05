@@ -18,6 +18,7 @@ div#errors > p {
     width: 25em;
     border: solid 1px #ccccff;
     padding: 1em 0 0 1em;
+    margin: 0 0 1em 1em;
     background-color: #eeeeff;
 }
 
@@ -49,6 +50,20 @@ div#errors > p {
     width: 100%;
     height: 500px;
     border: solid 1px #666666;
+}
+
+#petition_actions {
+    clear: right;
+    float: right;
+    width: 25em;
+    padding: 0 0 0 1em;
+    margin: 0 0 1em 1em;
+    border: solid 1px #ffccaa;
+    background-color: #ffeecc;
+}
+
+#petition_actions input[type=submit] {
+    margin-right: 1em;
 }
 
 div.olControlAttribution {

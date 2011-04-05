@@ -888,6 +888,16 @@ function cobrand_admin_show_graphs() {
     return true;
 }
 
+function cobrand_admin_wards_for_petition() {
+    global $site_group;
+    if ($site_group == 'hounslow') {
+        $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2483/children'), true);
+        asort($out);
+        return $out;
+    }
+    return false;
+}
+
 # A bit of a yucky function, containing slightly varying guidelines
 # for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {
