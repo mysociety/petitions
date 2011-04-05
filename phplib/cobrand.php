@@ -898,6 +898,12 @@ function cobrand_admin_wards_for_petition() {
     return false;
 }
 
+function cobrand_admin_responsible_option() {
+    global $site_group;
+    if ($site_group == 'hounslow') return true;
+    return false;
+}
+
 # A bit of a yucky function, containing slightly varying guidelines
 # for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {

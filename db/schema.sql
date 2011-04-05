@@ -108,7 +108,10 @@ create table petition (
     offline_signers integer,
     offline_link text,
     offline_location text,
-    
+
+    -- Optional person/thing responsible for this petition
+    responsible text,
+
     status text not null default 'unconfirmed' check (
         status in (
         'unconfirmed',      -- email not yet confirmed nor confirmation sent

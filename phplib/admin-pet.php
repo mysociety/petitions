@@ -652,6 +652,16 @@ petitions.</p>';
             print ' <input type="submit" value="Change">';
             print '</form>';
         }
+        if (cobrand_admin_responsible_option()) {
+            print '<form method="post" action="' . $this->self_link . '">
+<input type="hidden" name="responsible_change" value="1">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<p>Responsible department: <input type="text" name="responsible" value="';
+            print trim(prettify($pdata['responsible']));
+            print '">';
+            print ' <input type="submit" value="Change">';
+            print '</form>';
+        }
         if ($wards = cobrand_admin_wards_for_petition()) {
             $rows = db_getAll('select area_id from petition_area where petition_id=?', $pdata['id']);
             $ward_ids = array();
@@ -727,6 +737,10 @@ petitions.</p>';
                 $ward_names[] = $wards[$id]['name'];
             }
             print $ward_names ? join(', ', $ward_names) : 'No ward';
+        }
+        if (cobrand_admin_responsible_option()) {
+            print '<li>Responsible: ';
+            print $pdata['responsible'] ? $pdata['responsible'] : 'None at present';
         }
         print '</ul>';
 
@@ -1287,7 +1301,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         }
     }
 
-    # Admin function to change the deadline of a petition, up to the 1 year limit
+    # Admin function to change the wards associated with a petition
     function change_wards($petition_id) {
         $new_wards = get_http_var('wards');
         $wards = cobrand_admin_wards_for_petition();
@@ -1302,6 +1316,17 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         $p->log_event("Admin updated wards to " . join(', ', $ward_names));
         db_commit();
         print '<p><em>Wards updated</em></p>';
+    }
+
+    # Admin function to change the thing currently responsible for a petition
+    function change_responsible($petition_id) {
+        $new_resp = get_http_var('responsible');
+        db_query('update petition set responsible=?, lastupdate = ms_current_timestamp()
+            where id=?', $new_resp, $petition_id);
+        $p = new Petition($petition_id);
+        $p->log_event("Admin updated responsible to $new_resp");
+        db_commit();
+        print '<p><em>Responsible field updated</em></p>';
     }
 
     # Admin function to update the number of offline signers a petition has
@@ -1537,6 +1562,8 @@ can be rejected properly.</p>
             $this->change_deadline($petition_id);
         } elseif (get_http_var('wards_change')) {
             $this->change_wards($petition_id);
+        } elseif (get_http_var('responsible_change')) {
+            $this->change_responsible($petition_id);
         } elseif (get_http_var('offline_signers_change')) {
             $this->offline_signers($petition_id);
         } elseif (get_http_var('redraft')) {
