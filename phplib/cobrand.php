@@ -1534,6 +1534,12 @@ function cobrand_view_petitions_heading() {
     if ($site_name == 'ipswich') return 'Petitions';
 }
 
+function cobrand_view_petitions_category_filter() {
+    global $site_name;
+    if ($site_name == 'hounslow') return true;
+    return false;
+}
+
 function cobrand_main_heading($text) {
     global $site_name;
     if ($site_name == 'surreycc' || $site_name == 'suffolkcoastal' || $site_name == 'runnymede' || $site_name == 'surreyheath')

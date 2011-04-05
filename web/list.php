@@ -169,6 +169,19 @@ if (!$rss) {
         $last = '<a href="' . htmlspecialchars(url_new("/list/$q_type", true, 'offset', floor(($ntotal-1)/PAGE_SIZE)*PAGE_SIZE, 'type', null)) . '">Last</a>';
     }
     $navlinks = '<p style="clear: both;" class="petition_view_tabs">' . $views . "</p>\n";
+    $cat_filter = '';
+    if (cobrand_view_petitions_category_filter()) {
+        $navlinks .= '<form method="get" action="">';
+        $cats = cobrand_categories();
+        $cat_filter = 'View category: <select name="cat">';
+        foreach ($cats as $k => $v) {
+            if ($v == 'None') $v = 'All';
+            $cat_filter .= "<option value='$k'";
+            if ($q_cat == $k) $cat_filter .= ' selected';
+            $cat_filter .= ">$v</option>\n";
+        }
+        $cat_filter .= "</select> <input type='submit' value='Show'>\n";
+    }
     if ($ntotal > 0) {
         $navlinks .= '<p class="list_sort_by">' . _('Sort by'). ': ';
         $arr = array(
@@ -187,13 +200,20 @@ if (!$rss) {
             else $navlinks .= $desc;
             $b = true;
         }
-        $navlinks .= '</p> <p class="banner">';
+        if ($cat_filter) {
+            $navlinks .= ". $cat_filter</p></form>\n";
+        } else {
+            $navlinks .= "</p>\n";
+        }
+        $navlinks .= '<p class="banner">';
         if ($other) {
             $navlinks .= "$first | $prev | " . _('Petitions'). ' ' . ($q_offset + 1) . ' &ndash; ' . 
                 ($q_offset + PAGE_SIZE > $ntotal ? $ntotal : $q_offset + PAGE_SIZE) . ' of ' .
                 $ntotal . " | $next | $last";
         }
         $navlinks .= '</p>';
+    } elseif ($cat_filter) {
+        $navlinks .= '<p class="list_sort_by">' . $cat_filter . '</p>';
     }
     print $navlinks;
 }
