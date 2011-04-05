@@ -98,6 +98,6 @@ ul.pet-help-nav li {
 .pet-help-prev { text-align:left;}
 .pet-help-contents { text-align:center;}
 .pet-help-next { text-align:right;}
-.pet-help { clear: both; margin:2.5em 1em 1em 1em; }
+.pet-help { clear: both; margin:1.5em 1em 1em 1em; border-top:1px solid #dddddd; }
 .pet-help img { max-width: 80%; }
 
