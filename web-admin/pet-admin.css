@@ -82,3 +82,32 @@ hr {
     color: #000000;
 }
 
+/* Stats table */
+
+table.stats th {
+    text-align: left;
+    font-weight: normal;
+    padding-left: 3em;
+}
+
+table.stats td {
+    min-width: 4em;
+    text-align: right;
+}
+
+table.stats tr.total th, table.stats tr.total td {
+    padding-left: 0;
+    font-weight: bold;
+}
+
+table.stats tr.total {
+    border-bottom: 1px solid black;
+}
+
+table.stats tr.separator {
+    border-bottom: 1px dashed black;
+}
+
+table.stats tr.alone th {
+    padding-left: 0;
+}
