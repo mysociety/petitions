@@ -904,6 +904,12 @@ function cobrand_admin_responsible_option() {
     return false;
 }
 
+function cobrand_admin_archive_option() {
+    global $site_group;
+    if ($site_group == 'hounslow') return true;
+    return false;
+}
+
 # A bit of a yucky function, containing slightly varying guidelines
 # for displaying at last stage of petition creation process.
 function cobrand_petition_guidelines() {

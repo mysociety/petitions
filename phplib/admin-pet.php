@@ -428,13 +428,17 @@ class ADMIN_PAGE_PET_MAIN {
         }
 
         $status = get_http_var('o');
-        if (!$status || !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
+        if (!$status || !preg_match('#^(draft|live|rejected|finished|archived)$#', $status)) $status = 'draft';
 
         $status_query = "status = '$status'";
         if ($status == 'draft')
             $status_query = "(status = 'draft' or status = 'resubmitted')";
         elseif ($status == 'rejected')
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
+        elseif ($status == 'finished' && cobrand_admin_archive_option())
+            $status_query = "(status = 'finished' and not archived)";
+        elseif ($status == 'archived')
+            $status_query = "(status = 'finished' and archived)";
         
         $status_query .= cobrand_admin_site_restriction();
 
@@ -522,6 +526,8 @@ class ADMIN_PAGE_PET_MAIN {
                     }
                     if ($status == 'live') {
                         $row .= ' <input type="submit" name="redraft" value="Undo approval">';
+                    } elseif (cobrand_admin_archive_option() && $r['archived'] == 'f') {
+                        $row .= ' <input type="submit" name="archive" value="Archive petition">';
                     }
                     $row .= ' <input type="submit" name="remove" value="Remove petition">';
                     $row .= '</form>';
@@ -627,6 +633,9 @@ petitions.</p>';
 
         print '<h2>Petition &lsquo;<a href="' . $petition_obj->url_main()
             . '">' . $pdata['ref'] . '</a>&rsquo;';
+        if (cobrand_admin_archive_option() && $pdata['archived'] == 't') {
+            print ' &ndash;  ARCHIVED';
+        }
         print "</h2>";
 
         # Actions
@@ -649,6 +658,8 @@ petitions.</p>';
             }
             if ($pdata['status'] == 'live')
                 print ' <input type="submit" name="redraft" value="Undo approval">';
+            elseif (cobrand_admin_archive_option() && $pdata['archived'] == 'f')
+                print ' <input type="submit" name="archive" value="Archive petition">';
             print ' <input type="submit" name="remove" value="Remove petition">';
             print '</form>';
         } elseif ($pdata['status'] == 'rejected') {
@@ -1273,6 +1284,25 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         }
     }
 
+    # Admin function to archive a petition
+    function archive($petition_id) {
+        $p = new Petition($petition_id);
+
+        $status = $p->status();
+        if ($status != 'finished') {
+            $p->log_event("Bad response state");
+            db_commit();
+            print '<p><em>You cannot archive a petition unless it is closed</em></p>';
+            return;
+        }
+
+        $p->log_event("Admin archived petition");
+        db_query("UPDATE petition SET archived='t', lastupdate=ms_current_timestamp()
+            where id=?", $p->id());
+        db_commit();
+        print '<p><em>That petition has been archived.</em></p>';
+    }
+
     # Admin function to change the deadline of a petition, up to the 1 year limit
     function change_deadline($petition_id) {
         global $pet_today;
@@ -1543,7 +1573,7 @@ can be rejected properly.</p>
         }
 
         $status = get_http_var('o');
-        if ($status && !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
+        if ($status && !preg_match('#^(draft|live|rejected|finished|archived)$#', $status)) $status = 'draft';
         if (!count($_POST) && count($_GET) == 1) $status = 'draft'; # Main page for this section, no queries
         petition_admin_navigation($this, array('status'=>$status));
 
@@ -1567,6 +1597,8 @@ can be rejected properly.</p>
             }
         } elseif (get_http_var('respond')) {
             $this->respond($petition_id);
+        } elseif (get_http_var('archive')) {
+            $this->archive($petition_id);
         } elseif (get_http_var('deadline_change')) {
             $this->change_deadline($petition_id);
         } elseif (get_http_var('wards_change')) {
@@ -1711,6 +1743,9 @@ function petition_admin_navigation($page, $array = array()) {
         'finished' => 'Finished',
         'rejected' => 'Rejected',
     );
+    if (cobrand_admin_archive_option()) {
+        $statuses['archived'] = 'Archived';
+    }
     $c = 0;
     foreach ($statuses as $k => $v) {
         if ($c++) print ' / ';
