@@ -526,8 +526,6 @@ class ADMIN_PAGE_PET_MAIN {
                     }
                     if ($status == 'live') {
                         $row .= ' <input type="submit" name="redraft" value="Undo approval">';
-                    } elseif (cobrand_admin_archive_option() && $r['archived'] == 'f') {
-                        $row .= ' <input type="submit" name="archive" value="Archive petition">';
                     }
                     $row .= ' <input type="submit" name="remove" value="Remove petition">';
                     $row .= '</form>';
