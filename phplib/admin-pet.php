@@ -139,6 +139,15 @@ EOF;
                 or offline_signers = 0 ) )
         ");
 
+        $wards_summary = array();
+        if ($wards = cobrand_admin_wards_for_petition()) {
+            $wards_summary = db_getAll('select area_id,count(*) as c from petition_area group by area_id');
+            foreach ($wards_summary as $id => $row) {
+                $wards_summary[$id] = $row + $wards[$row['area_id']];
+            }
+            usort($wards_summary, 'sort_by_name');
+        }
+
         # Percentages
         foreach (array('live', 'finished', 'rejected', 'online', 'offline') as $t) {
             $petitions[$t.'_pc'] = $petitions['all_confirmed']
@@ -811,12 +820,6 @@ petitions.</p>';
                         $other += $area['c'];
                         continue;
                     }
-                }
-                function sort_by_name($a, $b) {
-                    $aa = $a['name'];
-                    $bb = $b['name'];
-                    if ($aa==$bb) return 0;
-                    return ($aa>$bb) ? 1 : -1;
                 }
                 foreach ($parents as $id => $area) {
                     print '<tr><td>' . $areas[$id]['name'] . "</td><td>$area[c]</td></tr>\n";
@@ -1750,5 +1753,12 @@ function memcache_update($id) {
         $memcache->connect('localhost', 11211);
     }
     $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $id, time());
+}
+
+function sort_by_name($a, $b) {
+    $aa = $a['name'];
+    $bb = $b['name'];
+    if ($aa==$bb) return 0;
+    return ($aa>$bb) ? 1 : -1;
 }
 

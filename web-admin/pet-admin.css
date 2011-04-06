@@ -110,8 +110,12 @@ table.stats td {
     text-align: right;
 }
 
+table.stats td:first-child {
+    text-align: left;
+}
+
 table.stats tr.total th, table.stats tr.total td {
-    padding-left: 0;
+    padding-left: 4px;
     font-weight: bold;
 }
 
@@ -124,5 +128,5 @@ table.stats tr.separator {
 }
 
 table.stats tr.alone th {
-    padding-left: 0;
+    padding-left: 4px;
 }

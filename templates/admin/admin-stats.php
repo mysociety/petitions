@@ -24,6 +24,16 @@
 
 <?
 
+if ($wards_summary) {
+    print '<h2>Ward breakdown of petitions</h2>
+    <table class="stats">
+    <tr class="total"><th>Ward</th><th>Petitions</th></tr>';
+    foreach ($wards_summary as $ward) {
+        print "<tr><td>$ward[name]</td><td>$ward[c]</td></tr>\n";
+    }
+    print '</table>';
+}
+
 if (cobrand_admin_show_graphs()) {
 
     print '<h2>Petitions</h2>';
