@@ -35,6 +35,7 @@ div#errors > p {
 
 #signer_areas {
     float: right;
+    clear: right;
     margin-bottom: 1em;
 }
 
