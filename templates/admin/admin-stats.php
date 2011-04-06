@@ -34,6 +34,17 @@ if ($wards_summary) {
     print '</table>';
 }
 
+if ($responsible_summary) {
+    print '<h2>Responsibility breakdown of petitions</h2>
+    <table class="stats">
+    <tr class="total"><th>Responsible</th><th>Petitions</th></tr>';
+    foreach ($responsible_summary as $r) {
+        $name = $r['name'] ? $r['name'] : '<em>None</em>';
+        print "<tr><td>$name</td><td>$r[c]</td></tr>\n";
+    }
+    print '</table>';
+}
+
 if (cobrand_admin_show_graphs()) {
 
     print '<h2>Petitions</h2>';

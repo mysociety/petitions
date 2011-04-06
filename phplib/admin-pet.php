@@ -148,6 +148,12 @@ EOF;
             usort($wards_summary, 'sort_by_name');
         }
 
+        $responsible_summary = array();
+        if (cobrand_admin_responsible_option()) {
+            $responsible_summary = db_getAll('select responsible as name,count(*) as c from petition group by responsible');
+            usort($responsible_summary, 'sort_by_name');
+        }
+
         # Percentages
         foreach (array('live', 'finished', 'rejected', 'online', 'offline') as $t) {
             $petitions[$t.'_pc'] = $petitions['all_confirmed']
