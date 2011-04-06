@@ -807,6 +807,31 @@ petitions.</p>';
             print ' <small>(optional)</small> <input type="submit" value="Update">';
             print '</form>';
 
+            if ($pdata['signers_confirmed'] && cobrand_admin_show_map()) {
+?>
+<div id="signer_map"></div>
+<script>
+var map = new OpenLayers.Map("signer_map");
+var wms = new OpenLayers.Layer.OSM();
+var pois = new OpenLayers.Layer.Text("Signatures", {
+    location: "?page=pet&petition=<?=$pdata['ref']?>&locations=1"
+});
+pois.events.register('loadend', undefined, function(){
+    map.zoomToExtent(pois.getDataExtent());
+});
+map.addLayers([wms, pois]);
+var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
+    new OpenLayers.Projection("EPSG:4326"), // transform from WGS84
+    map.getProjectionObject() // to Spherical Mercator Projection
+);
+map.setCenter(lonLat, 5);
+</script>
+<p style="float:right;clear:right;">
+<a href="?page=map&amp;ref=<?=$pdata['ref']?>">Larger map, count signatures in a hand-drawn shape</a>
+</p>
+<?
+            }
+
             $areas = cobrand_admin_areas_of_interest();
             if ($areas && $pdata['signers_confirmed']) {
                 print '<div id="signer_areas"> <table><tr><th>Council</th><th>Signatures</th></tr>';
@@ -847,28 +872,6 @@ petitions.</p>';
                 if ($other) print '<tr><td><i>Other</i></td><td>' . $other . '</td></tr>';
                 if ($unknown) print '<tr><td><i>Unknown</i></td><td>' . $unknown . '</td></tr>';
                 print '</table></div>';
-            }
-            if ($pdata['signers_confirmed'] && cobrand_admin_show_map()) {
-?>
-<div id="signer_map"></div>
-<script>
-var map = new OpenLayers.Map("signer_map");
-var wms = new OpenLayers.Layer.OSM();
-var pois = new OpenLayers.Layer.Text("Signatures", {
-    location: "?page=pet&petition=<?=$pdata['ref']?>&locations=1"
-});
-pois.events.register('loadend', undefined, function(){
-    map.zoomToExtent(pois.getDataExtent());
-});
-map.addLayers([wms, pois]);
-var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
-    new OpenLayers.Projection("EPSG:4326"), // transform from WGS84
-    map.getProjectionObject() // to Spherical Mercator Projection
-);
-map.setCenter(lonLat, 5);
-</script>
-<p style="float:right;clear:right;"><a href="?page=map&amp;ref=<?=$pdata['ref']?>">Larger version</a></p>
-<?
             }
 
             $this->show_signers($petition, $sort, $list_limit, $pdata);
