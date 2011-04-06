@@ -1644,9 +1644,26 @@ class ADMIN_PAGE_PET_MAP {
         $ref = htmlspecialchars(get_http_var('ref'));
 ?>
 <h2>Petition <?=$ref?> signer map</h2>
+
+<p>Pan and zoom to the appropriate bit of map. Select the pencil icon and then
+click points to draw a polygon, double clicking to finish. Alternatively, hold
+down shift and free draw a polygon. You can modify an existing shape using the
+arrowed modify tool.</p>
+
 <div id="signer_map_large"></div>
+
+<style>
+    /* Fix a bug in OpenLayers CSS, looks like */
+    .olControlEditingToolbar .olControlModifyFeatureItemInactive {
+        background-position: -1px 0px;
+    }
+    .olControlEditingToolbar .olControlModifyFeatureItemActive {
+        background-position: -1px -23px;
+    }
+</style>
 <script>
 var map = new OpenLayers.Map("signer_map_large");
+var polygonLayer = new OpenLayers.Layer.Vector("Polygon Layer");
 var wms = new OpenLayers.Layer.OSM();
 var pois = new OpenLayers.Layer.Text("Signatures", {
     location: "?page=pet&petition=<?=$ref?>&locations=1"
@@ -1654,12 +1671,51 @@ var pois = new OpenLayers.Layer.Text("Signatures", {
 pois.events.register('loadend', undefined, function(){
     map.zoomToExtent(pois.getDataExtent());
 });
-map.addLayers([wms, pois]);
+map.addLayers([wms, pois, polygonLayer]);
+
+var panel = new OpenLayers.Control.Panel({ displayClass: "olControlEditingToolbar" });
+panel.addControls([
+    new OpenLayers.Control.Navigation({ title: "Navigate" }),
+    new OpenLayers.Control.DrawFeature(
+        polygonLayer, OpenLayers.Handler.Polygon, {
+            displayClass: "olControlDrawFeaturePoint",
+            title: "Draw polygon",
+            handlerOptions: { holeModifier: "altKey" }, // Not until 2.11
+            featureAdded: count_signatures
+        }
+    ),
+    new OpenLayers.Control.ModifyFeature(
+        polygonLayer, {
+            displayClass: "olControlModifyFeature",
+            title: "Alter polygon"
+        }
+    )
+]);
+map.addControl(panel);
+
 var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
     new OpenLayers.Projection("EPSG:4326"), // transform from WGS84
     map.getProjectionObject() // to Spherical Mercator Projection
 );
 map.setCenter(lonLat, 5);
+
+function count_signatures(poly) {
+    // When called from afterfeaturemodified event, the polygon is not directly there.
+    if (!poly.CLASS_NAME) poly = poly.feature;
+    var inside = 0;
+    for (var i = 0; i < pois.features.length; i++) {
+        var loc = pois.features[i].lonlat;
+        var point = new OpenLayers.Geometry.Point( loc.lon, loc.lat );
+        if (poly.geometry.intersects(point))
+            inside++;
+    }
+    if (inside == 1)
+        alert("There is one point within that polygon.");
+    else
+        alert("There are " + inside + " points within that polygon.");
+}
+polygonLayer.events.register('afterfeaturemodified', undefined, count_signatures);
+
 </script>
 <?
     }
