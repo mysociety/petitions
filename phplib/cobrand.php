@@ -892,6 +892,7 @@ function cobrand_admin_wards_for_petition() {
     global $site_group;
     if ($site_group == 'hounslow') {
         $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2483/children'), true);
+        $out[-1] = array( 'id' => -1, 'name' => 'All wards' );
         asort($out);
         return $out;
     }
