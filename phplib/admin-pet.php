@@ -1803,7 +1803,13 @@ function petition_admin_navigation($page, $array = array()) {
         'rejected' => 'Rejected',
     );
     if (cobrand_archive_option()) {
-        $statuses['archived'] = 'Archived';
+        $statuses = array(
+            'draft' => 'Draft',
+            'live' => 'Open',
+            'finished' => 'Closed - being considered',
+            'archived' => 'Closed - no further action',
+            'rejected' => 'Rejected',
+        );
     }
     $c = 0;
     foreach ($statuses as $k => $v) {
