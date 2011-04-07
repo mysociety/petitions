@@ -391,6 +391,8 @@ class ADMIN_PAGE_PET_MAIN {
             'e'=>'Creator', 
             'c'=>'Last Status Change', 
         );
+        if ($status == 'archived')
+            $cols['m'] => 'Month of archiving';
         foreach ($cols as $s => $col) {
             print '<th>';
             if ($sort != $s && ($s != 'z' || $status == 'live'))
@@ -409,7 +411,9 @@ class ADMIN_PAGE_PET_MAIN {
     function list_all_petitions() {
         global $global_petition_categories;
         $sort = get_http_var('s');
-        if (!$sort || preg_match('/[^radecsz]/', $sort)) $sort = 'c';
+        $default_sort = 'c';
+        if (get_http_var('o') == 'archived') $default_sort = 'm';
+        if (!$sort || preg_match('/[^radecszm]/', $sort)) $sort = $default_sort;
         $order = '';
         if ($sort=='r') $order = 'ref';
         elseif ($sort=='a') $order = 'content';
@@ -418,6 +422,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='c') $order = 'petition.laststatuschange desc';
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
+        elseif ($sort=='m') $order = 'archived';
 
         $page = get_http_var('p'); if (!ctype_digit($page) || $page<0) $page = 0;
         $page_limit = 100;
@@ -454,6 +459,7 @@ class ADMIN_PAGE_PET_MAIN {
                 (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
                 (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 cached_signers AS signers,
+                date_trunc('month', archived) as archived,
                 $surge
                 message.c AS message_count
             FROM petition
@@ -532,6 +538,10 @@ class ADMIN_PAGE_PET_MAIN {
                     $row .= ' <input type="submit" name="remove" value="Remove petition">';
                     $row .= '</form>';
                 }
+                $row .= '</td>';
+            } elseif ($status == 'archived') {
+                $row .= '<td>';
+                $row .= $r['archived'];
                 $row .= '</td>';
             }
             $found[] = array($late, $row);
