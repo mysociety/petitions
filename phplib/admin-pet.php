@@ -1302,6 +1302,8 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         $p->log_event("Admin archived petition");
         db_query("UPDATE petition SET archived=ms_current_timestamp(), lastupdate=ms_current_timestamp()
             where id=?", $p->id());
+        stats_change($p->body_ref(), 'cached_petitions_finished', '-1');
+        stats_change($p->body_ref(), 'cached_petitions_archived', '+1');
         db_commit();
         print '<p><em>That petition has been archived.</em></p>';
     }
