@@ -459,7 +459,6 @@ class ADMIN_PAGE_PET_MAIN {
                 (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
                 (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 cached_signers AS signers,
-                date_trunc('month', archived) as archived_month,
                 $surge
                 message.c AS message_count
             FROM petition
@@ -541,7 +540,7 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '</td>';
             } elseif ($status == 'archived') {
                 $row .= '<td>';
-                $row .= $r['archived_month'];
+                $row .= date('F Y', strtotime($r['archived']));
                 $row .= '</td>';
             }
             $found[] = array($late, $row);
