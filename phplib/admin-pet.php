@@ -437,7 +437,7 @@ class ADMIN_PAGE_PET_MAIN {
             $status_query = "(status = 'draft' or status = 'resubmitted')";
         elseif ($status == 'rejected')
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
-        elseif ($status == 'finished' && cobrand_admin_archive_option())
+        elseif ($status == 'finished' && cobrand_archive_option())
             $status_query = "(status = 'finished' and archived is null)";
         elseif ($status == 'archived')
             $status_query = "(status = 'finished' and archived is not null)";
@@ -633,7 +633,7 @@ petitions.</p>';
 
         print '<h2>Petition &lsquo;<a href="' . $petition_obj->url_main()
             . '">' . $pdata['ref'] . '</a>&rsquo;';
-        if (cobrand_admin_archive_option() && $pdata['archived']) {
+        if (cobrand_archive_option() && $pdata['archived']) {
             print ' &ndash; Archived';
         }
         print "</h2>";
@@ -658,7 +658,7 @@ petitions.</p>';
             }
             if ($pdata['status'] == 'live')
                 print ' <input type="submit" name="redraft" value="Undo approval">';
-            elseif (cobrand_admin_archive_option() && !$pdata['archived'])
+            elseif (cobrand_archive_option() && !$pdata['archived'])
                 print ' <input type="submit" name="archive" value="Archive petition">';
             print ' <input type="submit" name="remove" value="Remove petition">';
             print '</form>';
@@ -1802,7 +1802,7 @@ function petition_admin_navigation($page, $array = array()) {
         'finished' => 'Finished',
         'rejected' => 'Rejected',
     );
-    if (cobrand_admin_archive_option()) {
+    if (cobrand_archive_option()) {
         $statuses['archived'] = 'Archived';
     }
     $c = 0;
