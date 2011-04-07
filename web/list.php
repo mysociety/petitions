@@ -153,6 +153,7 @@ if (!$rss) {
     } else {
         $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
             'rejected' => 'Rejected petitions');
+    }
     $views = '';
     $b = false;
     foreach ($viewsarray as $s => $desc) {
