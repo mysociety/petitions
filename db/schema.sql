@@ -125,7 +125,7 @@ create table petition (
         'finished'          -- deadline passed
         )
     ),
-    archived boolean not null default false,
+    archived timestamp,
 
     -- the _categories fields are bitmasks of possible reasons in
     -- petition.php; the constraints here must be kept up to date

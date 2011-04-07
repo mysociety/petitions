@@ -438,9 +438,9 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($status == 'rejected')
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
         elseif ($status == 'finished' && cobrand_admin_archive_option())
-            $status_query = "(status = 'finished' and not archived)";
+            $status_query = "(status = 'finished' and archived is null)";
         elseif ($status == 'archived')
-            $status_query = "(status = 'finished' and archived)";
+            $status_query = "(status = 'finished' and archived is not null)";
         
         $status_query .= cobrand_admin_site_restriction();
 
@@ -633,8 +633,8 @@ petitions.</p>';
 
         print '<h2>Petition &lsquo;<a href="' . $petition_obj->url_main()
             . '">' . $pdata['ref'] . '</a>&rsquo;';
-        if (cobrand_admin_archive_option() && $pdata['archived'] == 't') {
-            print ' &ndash;  ARCHIVED';
+        if (cobrand_admin_archive_option() && $pdata['archived']) {
+            print ' &ndash; Archived';
         }
         print "</h2>";
 
@@ -658,7 +658,7 @@ petitions.</p>';
             }
             if ($pdata['status'] == 'live')
                 print ' <input type="submit" name="redraft" value="Undo approval">';
-            elseif (cobrand_admin_archive_option() && $pdata['archived'] == 'f')
+            elseif (cobrand_admin_archive_option() && !$pdata['archived'])
                 print ' <input type="submit" name="archive" value="Archive petition">';
             print ' <input type="submit" name="remove" value="Remove petition">';
             print '</form>';
@@ -1300,7 +1300,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         }
 
         $p->log_event("Admin archived petition");
-        db_query("UPDATE petition SET archived='t', lastupdate=ms_current_timestamp()
+        db_query("UPDATE petition SET archived=ms_current_timestamp(), lastupdate=ms_current_timestamp()
             where id=?", $p->id());
         db_commit();
         print '<p><em>That petition has been archived.</em></p>';
