@@ -45,7 +45,7 @@ sub main () {
         return;
     }
 
-    my $title = Petitions::sentence($p, 1, 1);
+    my $title = Petitions::sentence($p, 0, 1);
     my $html =
         Petitions::Page::header($q, $title);
     $html .= $q->h2({-class=>'page_title_border'}, 'Rejected petition');
