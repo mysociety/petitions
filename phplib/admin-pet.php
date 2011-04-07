@@ -392,7 +392,7 @@ class ADMIN_PAGE_PET_MAIN {
             'c'=>'Last Status Change', 
         );
         if ($status == 'archived')
-            $cols['m'] => 'Month of archiving';
+            $cols['m'] = 'Month of archiving';
         foreach ($cols as $s => $col) {
             print '<th>';
             if ($sort != $s && ($s != 'z' || $status == 'live'))
