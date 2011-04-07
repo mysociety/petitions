@@ -455,19 +455,17 @@ class ADMIN_PAGE_PET_MAIN {
                 (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 cached_signers AS signers,
                 $surge
-                message.id AS message_id
+                message.c AS message_count
             FROM petition
-            LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
+            LEFT JOIN (select petition_id, count(id) as c from message where circumstance='government-response' group by petition_id) message
+                ON petition.id = message.petition_id
             LEFT JOIN body ON body.id = petition.body_id
             WHERE $status_query
             " .  ($order ? ' ORDER BY ' . $order : '')
             . ' OFFSET ' . $offset . ' LIMIT ' . $page_limit);
         $found = array();
-        $already = array();
         while ($r = db_fetch_array($q)) {
             $p = new Petition($r);
-            if (isset($already[$r['id']])) continue;
-            $already[$r['id']] = true;
 
             $row = "";
             $row .= '<td>' . (isset($r['surge']) ? $r['surge'] : '') . '</td>';
@@ -518,7 +516,9 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '</td>';
             } elseif (!$this->cat_change && ($status == 'finished' || $status == 'live')) {
                 $row .= '<td>';
-                if ($r['message_id']) 
+                if ($r['message_count'] > 1)
+                    $row .= 'Responses sent';
+                elseif ($r['message_count'])
                     $row .= 'Response sent';
                 else {
                     $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
