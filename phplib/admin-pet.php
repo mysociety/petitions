@@ -100,6 +100,7 @@ EOF;
 
         # Petitions
         $petitions = array(
+            'offline' => 0, 'online' => 0,
             'unconfirmed'=>0, 'failedconfirm'=>0, 'sentconfirm'=>0,
             'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
             'rejected'=>0, 'live'=>0, 'finished'=>0,
@@ -126,18 +127,6 @@ EOF;
         # Responses 
         $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
         $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
-
-        # Online/offline
-        $petitions['offline'] = db_getOne("select count(*) from petition
-            where status = 'finished'
-                and (select count(*) from signer where petition_id=petition.id) = 0
-                and offline_signers != 0
-        ");
-        $petitions['online'] = db_getOne("select count(*) from petition
-            where status in ('live', 'rejected') or ( status = 'finished'
-                and ( (select count(*) from signer where petition_id=petition.id) > 0
-                or offline_signers = 0 ) )
-        ");
 
         $wards_summary = array();
         if ($wards = cobrand_admin_wards_for_petition()) {
