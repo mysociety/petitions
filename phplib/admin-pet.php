@@ -150,7 +150,9 @@ EOF;
 
         $responsible_summary = array();
         if (cobrand_admin_responsible_option()) {
-            $responsible_summary = db_getAll("select coalesce(responsible,'') as name,count(*) as c from petition group by coalesce(responsible, '')");
+            $responsible_summary = db_getAll("select coalesce(responsible,'') as name,count(*) as c from petition
+                where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')
+                group by coalesce(responsible, '')");
             usort($responsible_summary, 'sort_by_name');
         }
 
