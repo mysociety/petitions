@@ -38,6 +38,8 @@ if (OPTION_SITE_NAME=='number10' && !$rss && $q_type == 'default' && $q_sort == 
 $q_sort = preg_replace("#/$#", "", $q_sort);
 if ($q_type == 'closed') {
     $status = 'finished';
+} elseif (cobrand_archive_option() && $q_type == 'archived') {
+    $status = 'finished';
 } elseif ($q_type == 'rejected') {
     $status = 'rejected';
 } else {
@@ -54,6 +56,7 @@ if (!array_key_exists($q_cat, cobrand_categories())) $q_cat = null;
 
 # count() is far too slow - many seconds for a count of live petitions :-/
 $key = $status;
+if ($q_type == 'archived') $key = 'archived';
 if (OPTION_SITE_TYPE=='multiple') $key .= "_$site_name";
 if ($q_cat) $key .= "_$q_cat";
 $ntotal = db_getOne("select value from stats where key='cached_petitions_$key'");
@@ -90,11 +93,23 @@ if (OPTION_SITE_TYPE == 'multiple') {
 } else {
     $qrows .= " FROM petition WHERE status = ? ";
 }
-if ($q_cat) $sql_params[] = $q_cat;
+
+if ($q_cat) {
+    $sql_params[] = $q_cat;
+    $qrows .= "AND category = ? ";
+}
+
+if (cobrand_archive_option()) {
+    if ($q_type == 'archived')
+        $qrows .= ' AND archived IS NOT NULL';
+    elseif ($q_type == 'closed')
+        $qrows .= ' AND archived IS NULL';
+}
+
 $sql_params[] = PAGE_SIZE;
-$qrows .= ($q_cat ? "AND category = ? " : "") .
-           "ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset";
+$qrows .= " ORDER BY $sort_phrase,petition.id LIMIT ? OFFSET $q_offset";
 /* PG bug: mustn't quote parameter of offset */
+
 $qrows = db_query($qrows, $sql_params);
 
 $title = '';
@@ -106,6 +121,10 @@ if ($q_type == 'open') {
         $title .= 'New Petitions';
     else
         $title .= "Open petitions";
+} elseif (cobrand_archive_option() && $q_type == 'closed') {
+    $title .= "Closed petitions &ndash; being considered";
+} elseif (cobrand_archive_option() && $q_type == 'archived') {
+    $title .= "Closed petitions &ndash; no further action";
 } elseif ($q_type == 'closed') {
     $title .= "Closed petitions";
 } elseif ($q_type == 'rejected') {
@@ -128,8 +147,12 @@ else {
 }
 
 if (!$rss) {
-    $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
-        'rejected' => 'Rejected petitions');
+    if (cobrand_archive_option()) {
+        $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed &ndash; being considered',
+            'archived' => 'Closed &ndash; no further action', 'rejected' => 'Rejected petitions');
+    } else {
+        $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed petitions',
+            'rejected' => 'Rejected petitions');
     $views = '';
     $b = false;
     foreach ($viewsarray as $s => $desc) {
