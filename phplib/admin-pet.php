@@ -848,7 +848,7 @@ map.setCenter(lonLat, 5);
                         continue;
                     }
                     if (in_array($id, array_keys($areas))) {
-                        if (array_key_exists('parent_area', $areas[$id])) {
+                        if (array_key_exists('parent_area', $areas[$id]) && $areas[$id]['parent_area']) {
                             $children[$areas[$id]['parent_area']][] = $area + array('name' => $areas[$id]['name']);
                         } else {
                             $parents[$id] = $area;
