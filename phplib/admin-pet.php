@@ -351,7 +351,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                     $data['organisation'], $data['address'],
                     $data['postcode'], $data['telephone'], $data['category']
                 );
-                stats_change($data['body_ref'], 'cached_petitions_finished', '+1');
+                stats_change('cached_petitions_finished', '+1', $data['category'], $data['body_ref']);
                 db_commit();
                 header('Location: ' . OPTION_ADMIN_URL . '?page=pet&o=finished');
                 exit;
@@ -1139,7 +1139,7 @@ EOF;
                         lastupdate = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
             memcache_update($id);
-            stats_change($p->body_ref(), 'cached_petitions_rejected', '+1');
+            stats_change('cached_petitions_rejected', '+1', $p->category_id(), $p->body_ref());
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason");
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
@@ -1300,8 +1300,8 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         $p->log_event("Admin archived petition");
         db_query("UPDATE petition SET archived=ms_current_timestamp(), lastupdate=ms_current_timestamp()
             where id=?", $p->id());
-        stats_change($p->body_ref(), 'cached_petitions_finished', '-1');
-        stats_change($p->body_ref(), 'cached_petitions_archived', '+1');
+        stats_change('cached_petitions_finished', '-1', $p->category_id(), $p->body_ref());
+        stats_change('cached_petitions_archived', '+1', $p->category_id(), $p->body_ref());
         db_commit();
         print '<p><em>That petition has been archived.</em></p>';
     }
@@ -1412,7 +1412,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
             memcache_update($petition_id);
-            stats_change($p->body_ref(), 'cached_petitions_live', '+1');
+            stats_change('cached_petitions_live', '+1', $p->category_id(), $p->body_ref());
             $p->log_event("Admin approved petition");
         } else {
             $p->log_event("Bad approval");
@@ -1453,7 +1453,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
             $p->log_event("Admin $action petition with reason '$reason'");
             db_query("update petition set status='$new_status', laststatuschange=ms_current_timestamp(),
                 lastupdate=ms_current_timestamp() where id=?", $p->id());
-            stats_change($p->body_ref(), "cached_petitions_$status", '-1');
+            stats_change("cached_petitions_$status", '-1', $p->category_id(), $p->body_ref());
             db_commit();
             print "<p><em>$message</em></p>";
         } else {
@@ -1837,18 +1837,6 @@ Search for user&rsquo;s name/email, or petition reference: <input type="text" na
 function privacy($e) {
     if (OPTION_ADMIN_PUBLIC) return '<em>hidden in public interface</em>';
     return htmlspecialchars($e);
-}
-
-function stats_change($body_ref, $key, $a) {
-    if (!db_do("update stats set value = value::integer $a where key = '$key'")) {
-        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '$key', '1')");
-    }
-    if ($body_ref) {
-        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}'")) {
-            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}', '1')");
-        }
-    }
-    # db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected_$cat'");
 }
 
 $memcache = null;

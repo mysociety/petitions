@@ -85,6 +85,19 @@ function prettify_categories($categories, $newlines) {
     return join(', ', $out);
 }
 
+function stats_change($key, $a, $cat, $body_ref) {
+    if (!db_do("update stats set value = value::integer $a where key = '$key'"))
+        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '$key', '1')");
+    if (!db_do("update stats set value = value::integer $a where key = '${key}_$cat'"))
+        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_$cat', 1)");
+    if ($body_ref) {
+        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}'"))
+            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}', '1')");
+        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}_$cat'"))
+            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}_$cat', 1)");
+    }
+}
+
 class Petition {
     // Associative array of parameters about the petition, taken from database
     var $data;
@@ -161,8 +174,10 @@ class Petition {
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
         if (cobrand_display_category()){
+            $this->data['category_id'] = $this->data['category'];
             $this->data['category'] = cobrand_category($this->data['category'], $this->body_ref());
         } else {
+            $this->data['category_id'] = 0;
             $this->data['category'] = 0; # force no-category
         }
 
@@ -193,6 +208,8 @@ class Petition {
 
     function body_ref() { return OPTION_SITE_TYPE=='multiple' ? $this->data['body_ref'] : ''; }
     function body_name() { return $this->data['body_name']; }
+
+    function category_id() { return $this->data['category_id']; }
 
     // Parameters:
     // html - return HTML, rather than plain text
