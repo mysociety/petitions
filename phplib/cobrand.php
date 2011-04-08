@@ -891,16 +891,12 @@ function cobrand_admin_show_graphs() {
 
 function cobrand_admin_wards_for_petition() {
     global $site_group;
-    if ($site_group == 'hounslow') {
-        $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2483/children'), true);
-        $out[-1] = array( 'id' => -1, 'name' => 'All wards' );
-        asort($out);
-        return $out;
-    }
-    if ($site_group == 'sbdc') {
-        $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2246/children'), true);
-        $out[-1] = array( 'id' => -1, 'name' => 'All wards' );
-        asort($out);
+    if ($site_group == 'hounslow' || $site_group == 'sbdc') {
+        if ($site_group == 'hounslow') $id = 2483;
+        if ($site_group == 'sbdc') $id = 2246;
+        $out = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id/children"), true);
+        usort($out, 'sort_by_name');
+        $out = array( 'id' => -1, 'name' => 'All wards' ) + $out;
         return $out;
     }
     return false;
