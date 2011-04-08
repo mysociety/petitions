@@ -878,6 +878,7 @@ function cobrand_admin_areas_of_interest() {
 function cobrand_admin_show_map() {
     global $site_group;
     if ($site_group == 'hounslow') return true;
+    if ($site_group == 'sbdc') return true;
     if (get_http_var('test_map')) return true;
     return false;
 }
@@ -896,12 +897,19 @@ function cobrand_admin_wards_for_petition() {
         asort($out);
         return $out;
     }
+    if ($site_group == 'sbdc') {
+        $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2246/children'), true);
+        $out[-1] = array( 'id' => -1, 'name' => 'All wards' );
+        asort($out);
+        return $out;
+    }
     return false;
 }
 
 function cobrand_admin_responsible_option() {
     global $site_group;
     if ($site_group == 'hounslow') return true;
+    if ($site_group == 'sbdc') return true;
     return false;
 }
 
