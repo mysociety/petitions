@@ -309,7 +309,7 @@ sub do_main_test {
             $wth->browser_submit_form(form_name => 'petition_admin_search',
                 fields => { 'search' => '1490' } ) or die 'Failed to submit admin search form';
             $wth->browser_submit_form(form_name => 'petition_admin_signature_confirmation',
-                fields => { 'update_signer[]' => 18 }) or die "Failed to submit admin confirm signer form"; # XXX 18 shouldn't be hard-coded!
+                fields => { 'update_signer[]' => 19 }) or die "Failed to submit admin confirm signer form"; # XXX 19 shouldn't be hard-coded!
             $wth->browser_check_contents("Those signers have been confirmed");
             $wth->browser_check_no_contents("confirm_all");
         } else {
