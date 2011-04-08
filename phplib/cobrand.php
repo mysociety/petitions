@@ -895,7 +895,7 @@ function cobrand_admin_wards_for_petition() {
         if ($site_group == 'hounslow') $id = 2483;
         if ($site_group == 'sbdc') $id = 2246;
         $out = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id/children"), true);
-        usort($out, 'sort_by_name');
+        uasort($out, 'sort_by_name');
         $out = array( -1 => array( 'id' => -1, 'name' => 'All wards' ) ) + $out;
         return $out;
     }
