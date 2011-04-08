@@ -49,13 +49,24 @@ dbh()->commit();
  
 # Cached petition totals
 dbh()->do("delete from stats where key like 'cached\_petitions\_%'");
-insert_multi("'cached_petitions_'||status", "FROM petition WHERE status in ('live','finished','rejected') GROUP BY status");
-insert_multi("'cached_petitions_'||status||'_'||body.ref", "from petition LEFT JOIN body ON body_id=body.id where status in ('live','finished','rejected') group by status,body.ref");
-insert("cached_petitions_archived", "SELECT COUNT(*) FROM petition WHERE status = 'finished' AND archived IS NOT NULL");
-insert_multi("'cached_petitions_archived_'||body.ref", "from petition LEFT JOIN body ON body_id=body.id where status = 'finished' AND archived IS NOT NULL group by body.ref");
-insert_multi("'cached_petitions_'||status||'_'||category", "FROM petition WHERE status in ('live','finished','rejected') GROUP BY category,status");
-insert_multi("'cached_petitions_'||status||'_'||body.ref||'_'||category", "from petition LEFT JOIN body ON body_id=body.id where status in ('live','finished','rejected') group by category,status,body.ref");
+cached_status("'||status||'", "status in ('live', 'rejected')", ', status');
+cached_status('finished', "status = 'finished' AND archived IS NULL", '');
+cached_status('archived', "status = 'finished' AND archived IS NOT NULL", '');
+
 dbh()->commit();
+
+sub cached_status {
+    my ($key, $where, $status) = @_;
+    if ($status) {
+        insert_multi("'cached_petitions_'||status", "FROM petition WHERE $where GROUP BY status");
+    } else {
+        insert("cached_petitions_$key", "SELECT COUNT(*) FROM petition WHERE $where");
+    }
+    insert_multi("'cached_petitions_${key}_'||category", "FROM petition WHERE $where GROUP BY category$status");
+    my $pet_body = 'petition LEFT JOIN body ON body_id=body.id';
+    insert_multi("'cached_petitions_${key}_'||body.ref", "from $pet_body where $where group by body.ref$status");
+    insert_multi("'cached_petitions_${key}_'||body.ref||'_'||category", "from $pet_body where $where group by category,body.ref$status");
+}
 
 # Most prolific signers
 # fun but probably pointless (unless maybe helps with antispamming)
