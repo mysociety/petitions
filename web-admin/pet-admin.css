@@ -53,7 +53,7 @@ div#errors > p {
     border: solid 1px #666666;
 }
 
-#petition_actions {
+#petition_admin_actions {
     clear: right;
     float: right;
     width: 25em;
@@ -63,7 +63,7 @@ div#errors > p {
     background-color: #ffeecc;
 }
 
-#petition_actions input[type=submit] {
+#petition_admin_actions input[type=submit] {
     margin-right: 1em;
 }
 

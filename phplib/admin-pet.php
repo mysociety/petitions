@@ -637,7 +637,7 @@ petitions.</p>';
         print "</h2>";
 
         # Actions
-        print '<div id="petition_actions"> <h2>Petition actions</h2>';
+        print '<div id="petition_admin_actions"> <h2>Petition actions</h2>';
         if (!get_http_var('reject') && ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted')) {
             print '
 <form name="petition_admin_approve" method="post" action="'.$this->self_link.'">
