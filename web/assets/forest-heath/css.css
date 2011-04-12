@@ -1,18 +1,11 @@
-#maincontentpage p{
-    margin: 10px 0;
-}
-
-h3 {
-	font-size: 120%;
-}
-
 div#petition_actions {
-    border: none;
-    font-size: 120%;
     margin-bottom: 1em;
+    padding-bottom: 0.5em;
 }
 
-#petition_actions ul{
+#main-content .container #petition_actions ul li {
+    margin: 0;
+    padding: 0;
     list-style: none;
 }
 
@@ -32,11 +25,11 @@ form#signForm label {
 */
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #CCFFCC;
+    border-bottom: solid 2px #653366;
 }
 .petition_view_tabs span {
-    background-color: #CCFFCC;
-    color: #000000;
+    background-color: #653366;
+    color: #ffffff;
 }
 
 h3 {
