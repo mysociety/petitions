@@ -103,7 +103,7 @@ sub main () {
     }
 
     my $p = Petitions::DB::get($ref, 1);
-    my $title = Petitions::sentence($p, 1, 1);
+    my $title = Petitions::sentence($p, 0, 1);
     # XXX: Should all the show_parts be done in the get() so I don't need to worry about remembering to do it?
     my $name = Petitions::show_part($p, 'name') ? ent($p->{name}) : '&lt;Name cannot be shown&gt;';
     my $detail = Petitions::show_part($p, 'detail') ? ent($p->{detail}) : 'More details cannot be shown';

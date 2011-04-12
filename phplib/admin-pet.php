@@ -99,30 +99,64 @@ EOF;
         $statsdate = prettify(substr(db_getOne("SELECT whencounted FROM stats order by id desc limit 1"), 0, 19));
 
         # Petitions
-        $counts = array(
+        $petitions = array(
+            'offline' => 0, 'online' => 0,
             'unconfirmed'=>0, 'failedconfirm'=>0, 'sentconfirm'=>0,
             'draft'=>0, 'rejectedonce'=>0, 'resubmitted'=>0,
             'rejected'=>0, 'live'=>0, 'finished'=>0,
             'all_confirmed'=>0, 'all_unconfirmed'=>0
         );
-        foreach (array_keys($counts) as $t) {
-            $counts[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t$multiple' order by id desc limit 1");
-            if (!$counts[$t]) $counts[$t] = 0;
+        foreach (array_keys($petitions) as $t) {
+            $petitions[$t] = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$t$multiple' order by id desc limit 1");
+            if (!$petitions[$t]) $petitions[$t] = 0;
         }
 
         # Signatures
         $signatures = array(
-            'confirmed' => 0, 'sent' => 0, 'confirmed_unique' => 0
+            'confirmed' => 0, 'sent' => 0, 'confirmed_unique' => 0, 'offline' => 0
         );
         foreach (array_keys($signatures) as $t) {
             $signatures[$t] = db_getOne("SELECT value FROM stats WHERE key = 'signatures_$t$multiple' order by id desc limit 1");
             if (!$signatures[$t]) $signatures[$t] = 0;
         }
+        $signatures['total'] = $signatures['confirmed'] + $signatures['offline'];
+        $average_sigs_per_petition = '-';
+        if ($petitions['live'] || $petitions['finished'])
+            $average_sigs_per_petition = round($signatures['total'] / ($petitions['live'] + $petitions['finished']), 2);
 
         # Responses 
-        $responses = db_getOne("select count(*) from message where circumstance = 'government-response$multiple'");
-        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response$multiple'");
-    
+        $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
+        $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
+
+        $wards_summary = array();
+        if ($wards = cobrand_admin_wards_for_petition()) {
+            $wards_summary = db_getAll('select area_id,count(*) as c from petition_area group by area_id');
+            foreach ($wards_summary as $id => $row) {
+                $wards_summary[$id] = $row + $wards[$row['area_id']];
+            }
+            usort($wards_summary, 'sort_by_name');
+        }
+
+        $responsible_summary = array();
+        if (cobrand_admin_responsible_option()) {
+            $responsible_summary = db_getAll("select coalesce(responsible,'') as name,count(*) as c from petition
+                where status not in ('unconfirmed', 'failedconfirm', 'sentconfirm')
+                group by coalesce(responsible, '')");
+            usort($responsible_summary, 'sort_by_name');
+        }
+
+        # Percentages
+        foreach (array('live', 'finished', 'rejected', 'online', 'offline') as $t) {
+            $petitions[$t.'_pc'] = $petitions['all_confirmed']
+                ? round($petitions[$t] / $petitions['all_confirmed'] * 100, 1)
+                : '-';
+        }
+        foreach (array('confirmed', 'offline') as $t) {
+            $signatures[$t.'_pc'] = $signatures['total']
+                ? round($signatures[$t] / $signatures['total'] * 100, 1)
+                : '-';
+        }
+
         petition_admin_navigation($this);
         if ($from && $to) {
             $parsed_from = datetime_parse_local_date($from, $pet_time, 'en', 'GB');
@@ -317,7 +351,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                     $data['organisation'], $data['address'],
                     $data['postcode'], $data['telephone'], $data['category']
                 );
-                stats_change($data['body_ref'], 'cached_petitions_finished', '+1');
+                stats_change('cached_petitions_finished', '+1', $data['category'], $data['body_ref']);
                 db_commit();
                 header('Location: ' . OPTION_ADMIN_URL . '?page=pet&o=finished');
                 exit;
@@ -346,6 +380,8 @@ class ADMIN_PAGE_PET_MAIN {
             'e'=>'Creator', 
             'c'=>'Last Status Change', 
         );
+        if ($status == 'archived')
+            $cols['m'] = 'Month of archiving';
         foreach ($cols as $s => $col) {
             print '<th>';
             if ($sort != $s && ($s != 'z' || $status == 'live'))
@@ -364,7 +400,9 @@ class ADMIN_PAGE_PET_MAIN {
     function list_all_petitions() {
         global $global_petition_categories;
         $sort = get_http_var('s');
-        if (!$sort || preg_match('/[^radecsz]/', $sort)) $sort = 'c';
+        $default_sort = 'c';
+        if (get_http_var('o') == 'archived') $default_sort = 'm';
+        if (!$sort || preg_match('/[^radecszm]/', $sort)) $sort = $default_sort;
         $order = '';
         if ($sort=='r') $order = 'ref';
         elseif ($sort=='a') $order = 'content';
@@ -373,6 +411,7 @@ class ADMIN_PAGE_PET_MAIN {
         elseif ($sort=='c') $order = 'petition.laststatuschange desc';
         elseif ($sort=='s') $order = 'signers desc';
         elseif ($sort=='z') $order = 'surge desc';
+        elseif ($sort=='m') $order = 'archived';
 
         $page = get_http_var('p'); if (!ctype_digit($page) || $page<0) $page = 0;
         $page_limit = 100;
@@ -385,13 +424,17 @@ class ADMIN_PAGE_PET_MAIN {
         }
 
         $status = get_http_var('o');
-        if (!$status || !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
+        if (!$status || !preg_match('#^(draft|live|rejected|finished|archived)$#', $status)) $status = 'draft';
 
         $status_query = "status = '$status'";
         if ($status == 'draft')
             $status_query = "(status = 'draft' or status = 'resubmitted')";
         elseif ($status == 'rejected')
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
+        elseif ($status == 'finished' && cobrand_archive_option())
+            $status_query = "(status = 'finished' and archived is null)";
+        elseif ($status == 'archived')
+            $status_query = "(status = 'finished' and archived is not null)";
         
         $status_query .= cobrand_admin_site_restriction();
 
@@ -406,19 +449,17 @@ class ADMIN_PAGE_PET_MAIN {
                 (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
                 cached_signers AS signers,
                 $surge
-                message.id AS message_id
+                message.c AS message_count
             FROM petition
-            LEFT JOIN message ON petition.id = message.petition_id AND circumstance = 'government-response'
+            LEFT JOIN (select petition_id, count(id) as c from message where circumstance='government-response' group by petition_id) message
+                ON petition.id = message.petition_id
             LEFT JOIN body ON body.id = petition.body_id
             WHERE $status_query
             " .  ($order ? ' ORDER BY ' . $order : '')
             . ' OFFSET ' . $offset . ' LIMIT ' . $page_limit);
         $found = array();
-        $already = array();
         while ($r = db_fetch_array($q)) {
             $p = new Petition($r);
-            if (isset($already[$r['id']])) continue;
-            $already[$r['id']] = true;
 
             $row = "";
             $row .= '<td>' . (isset($r['surge']) ? $r['surge'] : '') . '</td>';
@@ -469,7 +510,9 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= '</td>';
             } elseif (!$this->cat_change && ($status == 'finished' || $status == 'live')) {
                 $row .= '<td>';
-                if ($r['message_id']) 
+                if ($r['message_count'] > 1)
+                    $row .= 'Responses sent';
+                elseif ($r['message_count'])
                     $row .= 'Response sent';
                 else {
                     $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
@@ -483,6 +526,10 @@ class ADMIN_PAGE_PET_MAIN {
                     $row .= ' <input type="submit" name="remove" value="Remove petition">';
                     $row .= '</form>';
                 }
+                $row .= '</td>';
+            } elseif ($status == 'archived') {
+                $row .= '<td>';
+                $row .= date('F Y', strtotime($r['archived']));
                 $row .= '</td>';
             }
             $found[] = array($late, $row);
@@ -584,7 +631,83 @@ petitions.</p>';
 
         print '<h2>Petition &lsquo;<a href="' . $petition_obj->url_main()
             . '">' . $pdata['ref'] . '</a>&rsquo;';
+        if (cobrand_archive_option() && $pdata['archived']) {
+            print ' &ndash; Archived';
+        }
         print "</h2>";
+
+        # Actions
+        print '<div id="petition_admin_actions"> <h2>Petition actions</h2>';
+        if (!get_http_var('reject') && ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted')) {
+            print '
+<form name="petition_admin_approve" method="post" action="'.$this->self_link.'">
+<p>
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<input type="submit" name="approve" value="Approve">
+<input type="submit" name="reject" value="Reject">
+</p>
+</form>';
+        } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
+            print '<form name="petition_admin_go_respond" method="post" action="'
+                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                '">';
+            if ($pdata['response_possible'] == 't' && !OPTION_RESPONSE_DISABLED) {
+                print '<input type="submit" name="respond" value="Write response">';
+            }
+            if ($pdata['status'] == 'live')
+                print ' <input type="submit" name="redraft" value="Undo approval">';
+            elseif (cobrand_archive_option() && !$pdata['archived'])
+                print ' <input type="submit" name="archive" value="Archive petition">';
+            print ' <input type="submit" name="remove" value="Remove petition">';
+            print '</form>';
+        } elseif ($pdata['status'] == 'rejected') {
+            print '<form name="petition_admin_go_respond" method="post" action="'
+                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                '"><input type="submit" name="remove" value="Remove petition">';
+            print '</form>';
+        }
+        if ($pdata['status'] == 'live') {
+            print '<form name="petition_admin_change_deadline" method="post" action="' . $this->self_link . '">
+<input type="hidden" name="deadline_change" value="1">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<p>Change deadline: <input type="text" name="deadline" value="';
+            print trim(prettify($pdata['deadline']));
+            print '">';
+            print ' <input type="submit" value="Change">';
+            print '</form>';
+        }
+        if (cobrand_admin_responsible_option()) {
+            print '<form method="post" action="' . $this->self_link . '">
+<input type="hidden" name="responsible_change" value="1">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<p>Responsible department: <input type="text" name="responsible" value="';
+            print trim(prettify($pdata['responsible']));
+            print '">';
+            print ' <input type="submit" value="Change">';
+            print '</form>';
+        }
+        if ($wards = cobrand_admin_wards_for_petition()) {
+            $rows = db_getAll('select area_id from petition_area where petition_id=?', $pdata['id']);
+            $ward_ids = array();
+            foreach ($rows as $r) {
+                $ward_ids[] = $r['area_id'];
+            }
+            print '<form method="post" action="' . $this->self_link . '">
+<input type="hidden" name="wards_change" value="1">
+<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
+<p>If applicable, pick the ward or wards this petition applies to:
+<select name="wards[]" multiple size=5 title="-- Pick --">';
+            foreach ($wards as $ward) {
+                print '<option value="' . $ward['id'] . '"';
+                if (in_array($ward['id'], $ward_ids)) print ' selected';
+                print '>' . $ward['name'] . '</option>';
+            }
+            print '</select>';
+            print ' <input type="submit" value="Update">';
+            print '</form>';
+        }
+
+        print '</div>';
 
         print "<ul><li>Created by: <b>" . htmlspecialchars($pdata['name']) . " &lt;" .  privacy($pdata['email']) . "&gt;</b>, " . $pdata['address'] . ', ' . $pdata['postcode'] . ', ' . $pdata['telephone'];
         if ($pdata['address_type']) {
@@ -616,23 +739,9 @@ petitions.</p>';
                 . $cats_pretty . ' &mdash; <input type="submit" value="Change"></form>';
             print '<li>Extra reason provided by admin: ' . $reason . '</li></ul>';
         }
-        print '<li><form name="petition_admin_change_deadline" method="post" action="' . $this->self_link . '">
-<input type="hidden" name="deadline_change" value="1">
-<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
-Deadline: ';
-        if ($pdata['status'] == 'live')
-            print '<input type="text" name="deadline" value="';
-        else
-            print '<b>';
+        print '<li>Deadline: <b>';
         print trim(prettify($pdata['deadline']));
-        if ($pdata['status'] == 'live')
-            print '">';
-        else
-            print '</b>';
-        if ($pdata['status'] == 'live')
-            print ' <input type="submit" value="Change">';
-        print ' (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")
-</form>';
+        print '</b> (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")';
         print '<li>Petition title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
         print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
@@ -645,34 +754,19 @@ Deadline: ';
         if ($pdata['offline_location']) {
             print '<li>Offline petition location: ' . $pdata['offline_location'] . '</li>';
         }
-        print '</ul>';
-
-        if (!get_http_var('reject') && ($pdata['status'] == 'draft' || $pdata['status'] == 'resubmitted')) {
-            print '
-<form name="petition_admin_approve" method="post" action="'.$this->self_link.'">
-<p align="center">
-<input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
-<input type="submit" name="approve" value="Approve">
-<input type="submit" name="reject" value="Reject">
-</p>
-</form>';
-        } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
-            print '<form name="petition_admin_go_respond" method="post" action="'
-                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
-                '">';
-            if ($pdata['response_possible'] == 't' && !OPTION_RESPONSE_DISABLED) {
-                print '<input type="submit" name="respond" value="Write response">';
+        if ($wards) {
+            print '<li>Wards: ';
+            $ward_names = array();
+            foreach ($ward_ids as $id) {
+                $ward_names[] = $wards[$id]['name'];
             }
-            if ($pdata['status'] == 'live')
-                print ' <input type="submit" name="redraft" value="Undo approval">';
-            print ' <input type="submit" name="remove" value="Remove petition">';
-            print '</form>';
-        } elseif ($pdata['status'] == 'rejected') {
-            print '<form name="petition_admin_go_respond" method="post" action="'
-                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
-                '"><input type="submit" name="remove" value="Remove petition">';
-            print '</form>';
+            print $ward_names ? join(', ', $ward_names) : 'No ward';
         }
+        if (cobrand_admin_responsible_option()) {
+            print '<li>Responsible: ';
+            print $pdata['responsible'] ? $pdata['responsible'] : 'None at present';
+        }
+        print '</ul>';
 
         // Admin actions
         print '<h3>Administrator events and notes</h3>';
@@ -713,47 +807,7 @@ Deadline: ';
             print ' <small>(optional)</small> <input type="submit" value="Update">';
             print '</form>';
 
-            $areas = cobrand_admin_areas_of_interest();
-            if ($areas && $pdata['signers_confirmed']) {
-                print '<div id="signer_areas"> <table><tr><th>Council</th><th>Signatures</th></tr>';
-                $summary = db_getAll("select area_id,count(*) as c
-                    from signer left join signer_area on signer.id=signer_id
-                    where showname='t' and petition_id=? and emailsent = 'confirmed'
-                    group by area_id", $pdata['id']);
-                $other = 0; $unknown = 0;
-                $parents = array(); $children = array();
-                foreach ($summary as $area) {
-                    $id = $area['area_id'];
-                    if (!$id) {
-                        $unknown = $area['c'];
-                        continue;
-                    }
-                    if (in_array($id, array_keys($areas))) {
-                        if (array_key_exists('parent_area', $areas[$id])) {
-                            $children[$areas[$id]['parent_area']][] = $area;
-                        } else {
-                            $parents[$id] = $area;
-                        }
-                        continue;
-                    }
-                    $area_info = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id"), true);
-                    if (in_array($area_info['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI'))) {
-                        $other += $area['c'];
-                        continue;
-                    }
-                }
-                foreach ($parents as $id => $area) {
-                    print '<tr><td>' . $areas[$id]['name'] . "</td><td>$area[c]</td></tr>\n";
-                    if (!array_key_exists($id, $children)) continue;
-                    foreach ($children[$id] as $child) {
-                        print '<tr><td>&nbsp;&nbsp;' . $areas[$child['area_id']]['name'] . "</td><td>$child[c]</td></tr>\n";
-                    }
-                }
-                if ($other) print '<tr><td><i>Other</i></td><td>' . $other . '</td></tr>';
-                if ($unknown) print '<tr><td><i>Unknown</i></td><td>' . $unknown . '</td></tr>';
-                print '</table></div>';
-            }
-            if ($pdata['signers_confirmed'] && get_http_var('test_map')) {
+            if ($pdata['signers_confirmed'] && cobrand_admin_show_map()) {
 ?>
 <div id="signer_map"></div>
 <script>
@@ -772,8 +826,52 @@ var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
 );
 map.setCenter(lonLat, 5);
 </script>
-<p style="float:right;clear:right;"><a href="?page=map&amp;ref=<?=$pdata['ref']?>">Larger version</a></p>
+<p style="float:right;clear:right;">
+<a href="?page=map&amp;ref=<?=$pdata['ref']?>">Larger map, count signatures in a hand-drawn shape</a>
+</p>
 <?
+            }
+
+            $areas = cobrand_admin_areas_of_interest();
+            if ($areas && $pdata['signers_confirmed']) {
+                print '<div id="signer_areas"> <table><tr><th>Council</th><th>Signatures</th></tr>';
+                $summary = db_getAll("select area_id,count(*) as c
+                    from signer left join signer_area on signer.id=signer_id
+                    where showname='t' and petition_id=? and emailsent = 'confirmed'
+                    group by area_id", $pdata['id']);
+                $other = 0; $unknown = 0;
+                $parents = array(); $children = array();
+                foreach ($summary as $area) {
+                    $id = $area['area_id'];
+                    if (!$id) {
+                        $unknown = $area['c'];
+                        continue;
+                    }
+                    if (in_array($id, array_keys($areas))) {
+                        if (array_key_exists('parent_area', $areas[$id]) && $areas[$id]['parent_area']) {
+                            $children[$areas[$id]['parent_area']][] = $area + array('name' => $areas[$id]['name']);
+                        } else {
+                            $parents[$id] = $area;
+                        }
+                        continue;
+                    }
+                    $area_info = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id"), true);
+                    if (in_array($area_info['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI'))) {
+                        $other += $area['c'];
+                        continue;
+                    }
+                }
+                foreach ($parents as $id => $area) {
+                    print '<tr><td>' . $areas[$id]['name'] . "</td><td>$area[c]</td></tr>\n";
+                    if (!array_key_exists($id, $children)) continue;
+                    usort($children[$id], 'sort_by_name');
+                    foreach ($children[$id] as $child) {
+                        print "<tr><td>&nbsp;&nbsp;$child[name]</td><td>$child[c]</td></tr>\n";
+                    }
+                }
+                if ($other) print '<tr><td><i>Other</i></td><td>' . $other . '</td></tr>';
+                if ($unknown) print '<tr><td><i>Unknown</i></td><td>' . $unknown . '</td></tr>';
+                print '</table></div>';
             }
 
             $this->show_signers($petition, $sort, $list_limit, $pdata);
@@ -1041,7 +1139,7 @@ EOF;
                         lastupdate = ms_current_timestamp()
                     WHERE id = ?", $categories, $reason, $hide, $id);
             memcache_update($id);
-            stats_change($p->body_ref(), 'cached_petitions_rejected', '+1');
+            stats_change('cached_petitions_rejected', '+1', $p->category_id(), $p->body_ref());
             $p->log_event("Admin rejected petition for the second time. Categories: $cats_pretty. Reason: $reason");
             $template = 'admin-rejected-again';
             $circumstance = 'rejected-again';
@@ -1142,8 +1240,8 @@ EOF;
                     print '<div id="errors"><ul><li>' . 
                         join('</li><li>' , $errors) . '</li></ul></div>';
                 print '<h2>Preview</h2>';
-                $out = $this->respond_generate($q_html_mail ? 'html' : 'plain',
-                    $p->url_main(), "$q_message_subject\n\n$email");
+                $out = pet_create_response_email($q_html_mail ? 'html' : 'plain',
+                    $p->url_main(), $q_message_subject, $email);
                 if ($q_html_mail) {
                     $out = preg_replace('#^.*?<body>#s', '', $out);
                     $out = preg_replace('#</body>.*$#s', '', $out);
@@ -1187,21 +1285,25 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         }
     }
 
-    function respond_generate($pp, $url, $input) {
-        $descriptorspec = array(
-            0 => array('pipe', 'r'),
-            1 => array('pipe', 'w'),
-        );
-        $pp = proc_open("../bin/create-preview $pp $url", $descriptorspec, $pipes);
-        fwrite($pipes[0], $input);
-        fclose($pipes[0]);
-        $out = '';
-        while (!feof($pipes[1])) {
-            $out .= fread($pipes[1], 8192);
+    # Admin function to archive a petition
+    function archive($petition_id) {
+        $p = new Petition($petition_id);
+
+        $status = $p->status();
+        if ($status != 'finished') {
+            $p->log_event("Bad response state");
+            db_commit();
+            print '<p><em>You cannot archive a petition unless it is closed</em></p>';
+            return;
         }
-        fclose($pipes[1]);
-        proc_close($pp);
-        return $out;
+
+        $p->log_event("Admin archived petition");
+        db_query("UPDATE petition SET archived=ms_current_timestamp(), lastupdate=ms_current_timestamp()
+            where id=?", $p->id());
+        stats_change('cached_petitions_finished', '-1', $p->category_id(), $p->body_ref());
+        stats_change('cached_petitions_archived', '+1', $p->category_id(), $p->body_ref());
+        db_commit();
+        print '<p><em>That petition has been archived.</em></p>';
     }
 
     # Admin function to change the deadline of a petition, up to the 1 year limit
@@ -1239,6 +1341,34 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
             db_commit();
             print '<p><em>Deadline updated</em></p>';
         }
+    }
+
+    # Admin function to change the wards associated with a petition
+    function change_wards($petition_id) {
+        $new_wards = get_http_var('wards');
+        $wards = cobrand_admin_wards_for_petition();
+        db_query('delete from petition_area where petition_id = ?', $petition_id);
+        $ward_names = array();
+        foreach ($new_wards as $ward) {
+            if (!array_key_exists($ward, $wards)) continue;
+            $ward_names[] = $wards[$ward]['name'];
+            db_query('insert into petition_area (petition_id, area_id) values (?, ?)', $petition_id, $ward);
+        }
+        $p = new Petition($petition_id);
+        $p->log_event("Admin updated wards to " . join(', ', $ward_names));
+        db_commit();
+        print '<p><em>Wards updated</em></p>';
+    }
+
+    # Admin function to change the thing currently responsible for a petition
+    function change_responsible($petition_id) {
+        $new_resp = get_http_var('responsible');
+        db_query('update petition set responsible=?, lastupdate = ms_current_timestamp()
+            where id=?', $new_resp, $petition_id);
+        $p = new Petition($petition_id);
+        $p->log_event("Admin updated responsible to $new_resp");
+        db_commit();
+        print '<p><em>Responsible field updated</em></p>';
     }
 
     # Admin function to update the number of offline signers a petition has
@@ -1282,7 +1412,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
             memcache_update($petition_id);
-            stats_change($p->body_ref(), 'cached_petitions_live', '+1');
+            stats_change('cached_petitions_live', '+1', $p->category_id(), $p->body_ref());
             $p->log_event("Admin approved petition");
         } else {
             $p->log_event("Bad approval");
@@ -1323,7 +1453,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
             $p->log_event("Admin $action petition with reason '$reason'");
             db_query("update petition set status='$new_status', laststatuschange=ms_current_timestamp(),
                 lastupdate=ms_current_timestamp() where id=?", $p->id());
-            stats_change($p->body_ref(), "cached_petitions_$status", '-1');
+            stats_change("cached_petitions_$status", '-1', $p->category_id(), $p->body_ref());
             db_commit();
             print "<p><em>$message</em></p>";
         } else {
@@ -1446,7 +1576,7 @@ can be rejected properly.</p>
         }
 
         $status = get_http_var('o');
-        if ($status && !preg_match('#^(draft|live|rejected|finished)$#', $status)) $status = 'draft';
+        if ($status && !preg_match('#^(draft|live|rejected|finished|archived)$#', $status)) $status = 'draft';
         if (!count($_POST) && count($_GET) == 1) $status = 'draft'; # Main page for this section, no queries
         petition_admin_navigation($this, array('status'=>$status));
 
@@ -1470,8 +1600,14 @@ can be rejected properly.</p>
             }
         } elseif (get_http_var('respond')) {
             $this->respond($petition_id);
+        } elseif (get_http_var('archive')) {
+            $this->archive($petition_id);
         } elseif (get_http_var('deadline_change')) {
             $this->change_deadline($petition_id);
+        } elseif (get_http_var('wards_change')) {
+            $this->change_wards($petition_id);
+        } elseif (get_http_var('responsible_change')) {
+            $this->change_responsible($petition_id);
         } elseif (get_http_var('offline_signers_change')) {
             $this->offline_signers($petition_id);
         } elseif (get_http_var('redraft')) {
@@ -1513,9 +1649,26 @@ class ADMIN_PAGE_PET_MAP {
         $ref = htmlspecialchars(get_http_var('ref'));
 ?>
 <h2>Petition <?=$ref?> signer map</h2>
+
+<p>Pan and zoom to the appropriate bit of map. Select the pencil icon and then
+click points to draw a polygon, double clicking to finish. Alternatively, hold
+down shift and free draw a polygon. You can modify an existing shape using the
+arrowed modify tool.</p>
+
 <div id="signer_map_large"></div>
+
+<style>
+    /* Fix a bug in OpenLayers CSS, looks like */
+    .olControlEditingToolbar .olControlModifyFeatureItemInactive {
+        background-position: -1px 0px;
+    }
+    .olControlEditingToolbar .olControlModifyFeatureItemActive {
+        background-position: -1px -23px;
+    }
+</style>
 <script>
 var map = new OpenLayers.Map("signer_map_large");
+var polygonLayer = new OpenLayers.Layer.Vector("Polygon Layer");
 var wms = new OpenLayers.Layer.OSM();
 var pois = new OpenLayers.Layer.Text("Signatures", {
     location: "?page=pet&petition=<?=$ref?>&locations=1"
@@ -1523,12 +1676,51 @@ var pois = new OpenLayers.Layer.Text("Signatures", {
 pois.events.register('loadend', undefined, function(){
     map.zoomToExtent(pois.getDataExtent());
 });
-map.addLayers([wms, pois]);
+map.addLayers([wms, pois, polygonLayer]);
+
+var panel = new OpenLayers.Control.Panel({ displayClass: "olControlEditingToolbar" });
+panel.addControls([
+    new OpenLayers.Control.Navigation({ title: "Navigate" }),
+    new OpenLayers.Control.DrawFeature(
+        polygonLayer, OpenLayers.Handler.Polygon, {
+            displayClass: "olControlDrawFeaturePoint",
+            title: "Draw polygon",
+            handlerOptions: { holeModifier: "altKey" }, // Not until 2.11
+            featureAdded: count_signatures
+        }
+    ),
+    new OpenLayers.Control.ModifyFeature(
+        polygonLayer, {
+            displayClass: "olControlModifyFeature",
+            title: "Alter polygon"
+        }
+    )
+]);
+map.addControl(panel);
+
 var lonLat = new OpenLayers.LonLat( -2, 53.5 ).transform(
     new OpenLayers.Projection("EPSG:4326"), // transform from WGS84
     map.getProjectionObject() // to Spherical Mercator Projection
 );
 map.setCenter(lonLat, 5);
+
+function count_signatures(poly) {
+    // When called from afterfeaturemodified event, the polygon is not directly there.
+    if (!poly.CLASS_NAME) poly = poly.feature;
+    var inside = 0;
+    for (var i = 0; i < pois.features.length; i++) {
+        var loc = pois.features[i].lonlat;
+        var point = new OpenLayers.Geometry.Point( loc.lon, loc.lat );
+        if (poly.geometry.intersects(point))
+            inside++;
+    }
+    if (inside == 1)
+        alert("There is one point within that polygon.");
+    else
+        alert("There are " + inside + " points within that polygon.");
+}
+polygonLayer.events.register('afterfeaturemodified', undefined, count_signatures);
+
 </script>
 <?
     }
@@ -1610,6 +1802,15 @@ function petition_admin_navigation($page, $array = array()) {
         'finished' => 'Finished',
         'rejected' => 'Rejected',
     );
+    if (cobrand_archive_option()) {
+        $statuses = array(
+            'draft' => 'Draft',
+            'live' => 'Open',
+            'finished' => 'Closed - being considered',
+            'archived' => 'Closed - no further action',
+            'rejected' => 'Rejected',
+        );
+    }
     $c = 0;
     foreach ($statuses as $k => $v) {
         if ($c++) print ' / ';
@@ -1638,18 +1839,6 @@ function privacy($e) {
     return htmlspecialchars($e);
 }
 
-function stats_change($body_ref, $key, $a) {
-    if (!db_do("update stats set value = value::integer $a where key = '$key'")) {
-        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '$key', '1')");
-    }
-    if ($body_ref) {
-        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}'")) {
-            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}', '1')");
-        }
-    }
-    # db_query("update stats set value = value + 1 where key = 'cached_petitions_rejected_$cat'");
-}
-
 $memcache = null;
 function memcache_update($id) {
     global $memcache;
@@ -1658,5 +1847,12 @@ function memcache_update($id) {
         $memcache->connect('localhost', 11211);
     }
     $memcache->set(OPTION_PET_DB_NAME . 'lastupdate:' . $id, time());
+}
+
+function sort_by_name($a, $b) {
+    $aa = $a['name'];
+    $bb = $b['name'];
+    if ($aa==$bb) return 0;
+    return ($aa>$bb) ? 1 : -1;
 }
 

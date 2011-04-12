@@ -28,6 +28,7 @@ my $debug = shift;
 my $types = join('|', @$mySociety::VotingArea::council_parent_types);
 $types .= '|';
 $types .= join('|', @$mySociety::VotingArea::council_child_types);
+$types .= '|OLF'; # Want LSOA sometimes too
 
 my $rows = select_all("select id,postcode from signer where postcode is not null and latitude is null");
 foreach my $signer (@$rows) {

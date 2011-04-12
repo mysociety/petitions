@@ -25,12 +25,20 @@ insert_multi("'signatures_'||emailsent", "FROM signer WHERE showname='t' GROUP B
 insert_multi("'signatures_'||emailsent||'_'||body.ref", "FROM signer, petition, body WHERE petition_id=petition.id AND body_id=body.id AND showname='t' GROUP BY emailsent, body.ref");
 insert('signatures_confirmed_unique', "SELECT COUNT(DISTINCT email) FROM signer WHERE showname = 't' AND emailsent = 'confirmed' AND signtime > '$date'");
 insert_multi("'signatures_confirmed_unique_'||body.ref", "COUNT(DISTINCT signer.email) FROM signer, petition, body WHERE petition_id=petition.id AND body_id=body.id AND showname='t' AND emailsent='confirmed' AND signtime>'$date' GROUP BY body.ref");
+insert('signatures_offline', 'SELECT COALESCE(SUM(offline_signers), 0) FROM petition');
+insert_multi("'signatures_offline_'||body.ref", 'COALESCE(SUM(offline_signers), 0) FROM petition, body WHERE body_id=body.id GROUP BY body.ref');
 dbh()->commit();
 
 # Petition counts
 insert_multi("'petitions_'||status", "FROM petition GROUP BY status");
 insert_multi("'petitions_'||status||'_'||body.ref", "FROM petition, body WHERE body_id=body.id GROUP BY status, body.ref");
 dbh()->commit();
+
+# Online/offline counts
+insert('petitions_offline', "SELECT count(*) from petition where status = 'finished' and (select count(*) from signer where petition_id=petition.id) = 0 and offline_signers != 0");
+insert('petitions_online', "select count(*) from petition where status in ('live', 'rejected') or ( status = 'finished' and ( (select count(*) from signer where petition_id=petition.id) > 0 or offline_signers = 0 ) )");
+insert_multi("'petitions_offline_'||body.ref", "from petition, body where petition_id=petition.id and status = 'finished' and (select count(*) from signer where petition_id=petition.id) = 0 and offline_signers != 0");
+insert_multi("'petitions_online_'||body.ref", "from petition, body where petition_id=petition.id and ( status in ('live', 'rejected') or ( status = 'finished' and ( (select count(*) from signer where petition_id=petition.id) > 0 or offline_signers = 0 ) ) )");
 
 # Petition totals
 insert('petitions_all_unconfirmed', "SELECT COUNT(*) FROM petition WHERE status in ('unconfirmed', 'failedconfirm', 'sentconfirm')");
@@ -41,11 +49,24 @@ dbh()->commit();
  
 # Cached petition totals
 dbh()->do("delete from stats where key like 'cached\_petitions\_%'");
-insert_multi("'cached_petitions_'||status", "FROM petition WHERE status in ('live','finished','rejected') GROUP BY status");
-insert_multi("'cached_petitions_'||status||'_'||body.ref", "from petition LEFT JOIN body ON body_id=body.id where status in ('live','finished','rejected') group by status,body.ref");
-insert_multi("'cached_petitions_'||status||'_'||category", "FROM petition WHERE status in ('live','finished','rejected') GROUP BY category,status");
-insert_multi("'cached_petitions_'||status||'_'||body.ref||'_'||category", "from petition LEFT JOIN body ON body_id=body.id where status in ('live','finished','rejected') group by category,status,body.ref");
+cached_status("'||status||'", "status in ('live', 'rejected')", ', status');
+cached_status('finished', "status = 'finished' AND archived IS NULL", '');
+cached_status('archived', "status = 'finished' AND archived IS NOT NULL", '');
+
 dbh()->commit();
+
+sub cached_status {
+    my ($key, $where, $status) = @_;
+    if ($status) {
+        insert_multi("'cached_petitions_'||status", "FROM petition WHERE $where GROUP BY status");
+    } else {
+        insert("cached_petitions_$key", "SELECT COUNT(*) FROM petition WHERE $where");
+    }
+    insert_multi("'cached_petitions_${key}_'||category", "FROM petition WHERE $where GROUP BY category$status");
+    my $pet_body = 'petition LEFT JOIN body ON body_id=body.id';
+    insert_multi("'cached_petitions_${key}_'||body.ref", "from $pet_body where $where group by body.ref$status");
+    insert_multi("'cached_petitions_${key}_'||body.ref||'_'||category", "from $pet_body where $where group by category,body.ref$status");
+}
 
 # Most prolific signers
 # fun but probably pointless (unless maybe helps with antispamming)
@@ -60,7 +81,7 @@ sub insert {
 sub insert_multi {
     my ($key, $query) = @_;
     return if $key =~ /body\.ref/ && mySociety::Config::get('SITE_TYPE') ne 'multiple';
-    $query = "COUNT(*) $query" unless $query =~ /^COUNT/;
+    $query = "COUNT(*) $query" unless $query =~ /^COUNT/ || $query =~ /^SUM/;
     dbh()->do("INSERT INTO stats (whencounted, key, value)
         SELECT ms_current_timestamp(), $key, $query");
 }

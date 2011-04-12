@@ -99,36 +99,7 @@ display the names of signatories, unless they have opted not to be shown.</p>
 <?=cobrand_create_heading('Step ' . ($n++) . ': Petition close')?>
 
 <?
-    if (OPTION_SITE_NAME == 'number10') {
-?>
-<p>When a serious petition closes, usually provided there are <?=cobrand_signature_threshold() ?> signatures or more,
-officials at Downing Street will ensure you get a response to the issues you
-raise. Depending on the nature of the petition, this may be from the Prime
-Minister, or he may ask one of his Ministers or officials to respond.
-
-<p>We will email the petition organiser and everyone who has signed the
-petition via this website giving details of the Government’s response.
-<?
-    } elseif ($site_name == 'woking') {
-?>
-<p>Once your petition has closed, usually provided there are
-<?=cobrand_signature_threshold() ?> signatures or more, it will be passed to
-the relevant officials at the council for a response.
-We will be able to email the petition organiser and everyone who has signed the
-petition, and responses will also be published on this website.</p>
-<?
-    } elseif ($site_name == 'salford') {
-?>
-<p>When the petition closes we will publish a response; this will be emailed to
-everyone who has signed the e-petition. The response will also be published on
-this website.</p>
-<?
-    } else {
-?>
-<p>If the council responds, it will be emailed to everyone who has
-signed the e-petition. The response will also be published on this website.</p>
-<?
-    }
+    cobrand_steps_petition_close();
 ?>
 
 <form method="get" action="/new">
@@ -137,6 +108,4 @@ signed the e-petition. The response will also be published on this website.</p>
 </form>
 <? 
 }
-
-?>
 

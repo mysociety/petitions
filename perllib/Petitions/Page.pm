@@ -123,8 +123,8 @@ sub header ($$%) {
     my $ent_url = ent($q->url());
     (my $ent_url_no_http = $ent_url) =~ s{http://}{};
     my $ent_title = ent($title);
-    my $creator = $params{creator} || '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
-    my $description = $params{description} || 'Petitions to the Prime Minister, 10 Downing Street';
+    my $creator = $params{creator} || mySociety::Config::get('SITE_PETITIONED');
+    my $description = $params{description} || 'Petitions to ' . mySociety::Config::get('SITE_PETITIONED');
     my $subjects = '';
     if ($params{category}) {
         $subjects = '<meta name="dc.subject" scheme="eGMS.IPSV" content="' . $params{category} . '" />';
@@ -132,8 +132,7 @@ sub header ($$%) {
     } else {
         $subjects = '<meta name="dc.subject" content="10 Downing Street" />
 <meta name="dc.subject" content="Petitions" />
-<meta name="dc.subject" content="Prime Minister" />
-<meta name="dc.subject" content="Gordon Brown" />';
+<meta name="dc.subject" content="Prime Minister" />';
     }
     my $extra = '';
     $extra .= '<meta name="eGMS.status" content="' . $params{status} . '" />' if $params{status};
@@ -332,8 +331,8 @@ the Armed Forces without a postcode, please select from this list:</label>',
                 $q->popup_menu(-name=>'address', -id=>'address', -style=>'width:100%', -values=> $q->scratch()->{address_lookup})
             );
         }
-    } elsif (Petitions::Cobrand::ask_for_address()) {
-        $address = $q->p( '<label class="wide" for="address">Your address (will not be published):</label><br />',
+    } elsif (my $address_label = Petitions::Cobrand::ask_for_address()) {
+        $address = $q->p( '<label class="wide" for="address">' . $address_label . ':</label><br />',
             $q->textarea(-name => 'address', -id => 'address', -cols => 30, -rows => 4, -style => 'width:95%', -aria_required => 'true')
         );
     }
@@ -463,7 +462,7 @@ sub reject_box ($$) {
         32 => 'It contained the names of family members of elected representatives or officials of public bodies',
         64 => 'It contained the names of individuals, or information where they may be identified, in relation to criminal accusations',
         128 => 'It contained language which is offensive, intemperate, or provocative',
-        256 => 'It contained wording that is impossible to understand',
+        256 => 'It contained wording that needed to be amended, or is impossible to understand',
         512 => 'It doesn\'t actually request any action',
         1024 => 'It was commercial endorsement, promotion of a product, service or publication, or statements that amounted to adverts',
         2048 => 'It was similar to and/or overlaps with an existing petition or petitions',

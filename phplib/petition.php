@@ -40,7 +40,7 @@ $global_rejection_categories = array(
     32 => 'The names of family members of elected representatives or officials of public bodies',
     64 => 'The names of individuals, or information where they may be identified, in relation to criminal accusations',
     128 => 'Language which is offensive, intemperate, or provocative',
-    256 => 'Wording that is impossible to understand',
+    256 => 'Wording that needs to be amended, or is impossible to understand',
     512 => 'Statements that don\'t actually request any action',
     1024 => 'Commercial endorsement, promotion of any product, service or publication, or statements that amount to adverts',
     2048 => 'Duplicate - this is similar to and/or overlaps with an existing petition or petitions',
@@ -83,6 +83,19 @@ function prettify_categories($categories, $newlines) {
     if ($newlines)
         return "\n\n   * " . join("\n\n   * ", $out) . "\n\n";
     return join(', ', $out);
+}
+
+function stats_change($key, $a, $cat, $body_ref) {
+    if (!db_do("update stats set value = value::integer $a where key = '$key'"))
+        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '$key', '1')");
+    if (!db_do("update stats set value = value::integer $a where key = '${key}_$cat'"))
+        db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_$cat', 1)");
+    if ($body_ref) {
+        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}'"))
+            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}', '1')");
+        if (!db_do("update stats set value = value::integer $a where key = '${key}_${body_ref}_$cat'"))
+            db_query("insert into stats (whencounted, key, value) values (ms_current_timestamp(), '${key}_${body_ref}_$cat', 1)");
+    }
 }
 
 class Petition {
@@ -161,8 +174,10 @@ class Petition {
         $this->data['h_sentence'] = $this->sentence(array('html'=>true));
 
         if (cobrand_display_category()){
+            $this->data['category_id'] = $this->data['category'];
             $this->data['category'] = cobrand_category($this->data['category'], $this->body_ref());
         } else {
+            $this->data['category_id'] = 0;
             $this->data['category'] = 0; # force no-category
         }
 
@@ -193,6 +208,8 @@ class Petition {
 
     function body_ref() { return OPTION_SITE_TYPE=='multiple' ? $this->data['body_ref'] : ''; }
     function body_name() { return $this->data['body_name']; }
+
+    function category_id() { return $this->data['category_id']; }
 
     // Parameters:
     // html - return HTML, rather than plain text
@@ -302,16 +319,7 @@ class Petition {
 
     # Used from cron to get relevant admin email for this petition
     function admin_email() {
-        if ($this->body_ref() == 'elmbridge') {
-            $local = 'petitions';
-            $domain = $this->body_ref() . '.gov.uk';
-        } elseif (OPTION_SITE_TYPE == 'multiple') {
-            $local = $this->body_ref();
-            $domain = OPTION_EMAIL_DOMAIN;
-        } else {
-            return OPTION_CONTACT_EMAIL;
-        }
-        return $local . '@' . $domain;
+        return cobrand_admin_email($this->body_ref());
     }
 
     // Write history to log file 

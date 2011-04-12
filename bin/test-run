@@ -309,7 +309,7 @@ sub do_main_test {
             $wth->browser_submit_form(form_name => 'petition_admin_search',
                 fields => { 'search' => '1490' } ) or die 'Failed to submit admin search form';
             $wth->browser_submit_form(form_name => 'petition_admin_signature_confirmation',
-                fields => { 'update_signer[]' => 18 }) or die "Failed to submit admin confirm signer form"; # XXX 18 shouldn't be hard-coded!
+                fields => { 'update_signer[]' => 19 }) or die "Failed to submit admin confirm signer form"; # XXX 19 shouldn't be hard-coded!
             $wth->browser_check_contents("Those signers have been confirmed");
             $wth->browser_check_no_contents("confirm_all");
         } else {
@@ -352,7 +352,8 @@ sub do_main_test {
     $wth->browser_check_contents(name_n(1489));
     $wth->browser_check_contents("Signers \\(3 confirmed, 0 unconfirmed\\)");
     $wth->browser_submit_form(form_name => 'petition_admin_signature_removal',
-        fields => { 'update_signer[]' => [17, 2] }) or die "Failed to submit admin remove signer form";
+        fields => { 'update_signer[]' => [18, 2] }) or die "Failed to submit admin remove signer form";
+         # XXX 18 shouldn't be hard-coded!
     $wth->browser_check_contents("Those signers have been removed");
     $wth->browser_check_contents("Reinstate.*?" . name_n(1489));
     $wth->browser_check_contents("Signers \\(2 confirmed, 0 unconfirmed\\)");
@@ -435,6 +436,7 @@ sub do_main_test {
 
 We are going to do exactly what you say, because obviously we would never get contradictory petitions from different people.
 Email us on test\@example.org.
+It will cost \xc2\xa34.99.
 
 Yours faithfully, 
 
@@ -449,7 +451,8 @@ the PM.",
     foreach my $signer_no (1488,1490) {
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
-    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%');
+    # Pound can be encoded within ISO-8859-1, so that should be done here.
+    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Government response%Thank you for your petition%\xa3%");
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check government response is displayed on petition page");
@@ -502,7 +505,8 @@ Second bullet point'
     foreach my $signer_no (1488,1490) {
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%<body>%');
     }
-    $wth->email_get_containing('%To: '.email_n(99).'%Subject: Government response%Thank you for your petition%<body>%');
+    # Apostrophe should manage to be encoded in win-1252
+    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Government response%Thank you for your petition%<body>%\x92%");
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check 2nd government response is displayed on petition page");
@@ -640,7 +644,7 @@ sub do_rejection_test {
                 'rejection_cats[]' => ['256', 9], # the 9th checkbox has value 256, and means "Wording that is impossible to understand"
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
-    $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%impossible to understand%');
+    $rejection_email = $wth->email_get_containing('%Subject: Your petition has been rejected%To: '.email_n(44).'%impossible%understand%');
     die "Rejection email link found when it should not have been\n" if ($rejection_email =~ m{^\s*(https?://.*)$}m);
 
     comment("Check appears on rejection page");
@@ -1041,7 +1045,7 @@ sub do_early_response_test {
                 fields => { }, button => 'respond') or die "Failed to submit write response button";
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
                 fields => {
-                    message_body => "Thank you for your petition. Here is my early response as requested.",
+                    message_body => "Thank you for your petition. Here is my early response as requested. It includes the name of Dvo\xc5\x99\xc3\xa1k.",
                 }, button => 'respond') or die "Failed to submit response preview form";
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
                 button => 'submit') or die "Failed to submit response form";
@@ -1052,7 +1056,8 @@ sub do_early_response_test {
     foreach my $signer_no (512..514) {
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
-    $wth->email_get_containing('%To: '.email_n(511).'%Subject: Government response%Thank you for your petition%');
+    # Encoded in UTf-8.
+    $wth->email_get_containing('%To: '.email_n(511)."%Subject: Government response%Thank you for your petition%\xC5\x99\xC3\xA1k%");
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
     $wth->email_check_none_left();
 

@@ -103,10 +103,15 @@ create table petition (
     -- metadata
     creationtime timestamp not null,
     cached_signers integer not null default 1,
+
+    -- Offline petition component
     offline_signers integer,
     offline_link text,
     offline_location text,
-    
+
+    -- Optional person/thing responsible for this petition
+    responsible text,
+
     status text not null default 'unconfirmed' check (
         status in (
         'unconfirmed',      -- email not yet confirmed nor confirmation sent
@@ -120,6 +125,7 @@ create table petition (
         'finished'          -- deadline passed
         )
     ),
+    archived timestamp,
 
     -- the _categories fields are bitmasks of possible reasons in
     -- petition.php; the constraints here must be kept up to date
@@ -167,6 +173,13 @@ create index petition_lastupdate_idx on petition(lastupdate);
 create index petition_deadline_idx on petition(deadline);
 create index petition_cached_signers_idx on petition(cached_signers);
 create index petition_cached_signers_status_deadline_idx on petition(cached_signers, status, deadline); -- Not sure about this one, but it's currently there
+
+create table petition_area (
+    petition_id integer not null references petition(id) on delete cascade,
+    area_id integer not null
+);
+create unique index petition_area_petition_id_area_id_idx on petition_area(petition_id, area_id);
+create index petition_area_id_idx on petition_area(area_id);
 
 -- History of things which have happened to a petition
 create table petition_log (

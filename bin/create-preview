@@ -47,8 +47,10 @@ if ($type eq 'html') {
     $out = Petitions::HTMLEmail::create_html($text, $subject);
 } elsif ($type eq 'plain') {
     $out = Petitions::HTMLEmail::create_plain($text);
-} elsif ($type eq 'email') {
+} elsif ($type eq 'email-html') {
     $out = Petitions::HTMLEmail::construct_email($text, $subject);
+} elsif ($type eq 'email-plain') {
+    $out = Petitions::HTMLEmail::construct_plain($text, $subject);
 } else {
     die "Illegal type used!";
 }

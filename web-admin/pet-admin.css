@@ -18,6 +18,7 @@ div#errors > p {
     width: 25em;
     border: solid 1px #ccccff;
     padding: 1em 0 0 1em;
+    margin: 0 0 1em 1em;
     background-color: #eeeeff;
 }
 
@@ -34,6 +35,7 @@ div#errors > p {
 
 #signer_areas {
     float: right;
+    clear: right;
     margin-bottom: 1em;
 }
 
@@ -49,6 +51,20 @@ div#errors > p {
     width: 100%;
     height: 500px;
     border: solid 1px #666666;
+}
+
+#petition_admin_actions {
+    clear: right;
+    float: right;
+    width: 25em;
+    padding: 0 0 0 1em;
+    margin: 0 0 1em 1em;
+    border: solid 1px #ffccaa;
+    background-color: #ffeecc;
+}
+
+#petition_admin_actions input[type=submit] {
+    margin-right: 1em;
 }
 
 div.olControlAttribution {
@@ -82,3 +98,36 @@ hr {
     color: #000000;
 }
 
+/* Stats table */
+
+table.stats th {
+    text-align: left;
+    font-weight: normal;
+    padding-left: 3em;
+}
+
+table.stats td {
+    min-width: 4em;
+    text-align: right;
+}
+
+table.stats td:first-child {
+    text-align: left;
+}
+
+table.stats tr.total th, table.stats tr.total td {
+    padding-left: 4px;
+    font-weight: bold;
+}
+
+table.stats tr.total {
+    border-bottom: 1px solid black;
+}
+
+table.stats tr.separator {
+    border-bottom: 1px dashed black;
+}
+
+table.stats tr.alone th {
+    padding-left: 4px;
+}

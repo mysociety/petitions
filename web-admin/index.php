@@ -50,7 +50,25 @@ function admin_header($title) {
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 <link rel="stylesheet" type="text/css" href="pet-admin.css">
 <link rel="stylesheet" type="text/css" href="<?=$style?>">
+<?
+    if (cobrand_admin_show_map()) {
+?>
 <script src="/jslib/openlayers/OpenLayers.js"></script>
+<?
+    }
+    if (cobrand_admin_wards_for_petition()) {
+?>
+<script src="/jslib/jquery/jquery-1.5.2.min.js"></script>
+<script src="asmselect/jquery.asmselect.js"></script>
+<link rel="stylesheet" type="text/css" href="asmselect/jquery.asmselect.css" />
+<script type="text/javascript">
+$(document).ready(function(){
+    $('select[multiple]').asmSelect();
+});
+</script>
+<?
+    }
+?>
 </head>
 <body id="admin">
 <div id="header"><a class="help-link" href="help/index.html">admin&nbsp;help</a></div>

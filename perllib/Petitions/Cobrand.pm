@@ -18,6 +18,15 @@ if (mySociety::Config::get('SITE_NAME') eq 'islington') {
     use URI::Escape;
 }
 
+sub admin_email($) {
+    my $p = shift;
+    return 'petitions@' . $p->{body_ref} . '.gov.uk'
+        if $p->{body_ref} && $p->{body_ref} eq 'elmbridge';
+    return $p->{body_ref} . '@' . mySociety::Config::get('EMAIL_DOMAIN')
+        if mySociety::Config::get('SITE_TYPE') eq 'multiple';
+    return mySociety::Config::get('CONTACT_EMAIL');
+}
+
 sub main_heading($) {
     my $text = shift;
     my $site_name = Petitions::Page::site_name();
@@ -52,24 +61,27 @@ sub within_area_only() {
     return ('Guildford', 2452) if $site_name eq 'guildford';
     return ('Islington', 2507) if $site_name eq 'islington';
     return ('the Royal Borough of Windsor and Maidenhead', 2622) if $site_name eq 'rbwm';
+    return ('Salford', 2534) if $site_name eq 'salford';
     return ('Westminster', 2504) if $site_name eq 'westminster';
     return;
 }
 
 sub ask_for_address() {
     my $site_name = Petitions::Page::site_name();
-    return 0 if $site_name eq 'westminster';
-    return 1;
+    return '' if $site_name eq 'westminster';
+    return 'Your home, work or study address (this must be a Salford address, this will not be published)'
+        if $site_name eq 'salford';
+    return 'Your address (will not be published)';
 }
 
 sub ask_for_address_type() {
     my $site_name = Petitions::Page::site_name();
-    return 1 if $site_name eq 'westminster';
+    return 1 if $site_name eq 'westminster' || $site_name eq 'salford';
 }
 
 sub overseas_dropdown {
     my $site_group = Petitions::Page::site_group();
-    if ($site_group eq 'westminster' || $site_group eq 'islington' || $site_group eq 'rbwm' || $site_group eq 'stevenage') {
+    if ($site_group eq 'westminster' || $site_group eq 'islington' || $site_group eq 'rbwm' || $site_group eq 'stevenage' || $site_group eq 'salford') {
         return []; # No drop-down
     } elsif ($site_group eq 'surreycc') {
         return [

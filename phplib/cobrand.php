@@ -57,6 +57,11 @@ function cobrand_creation_sentence_help() {
     return $out;
 }
 
+function cobrand_creation_default_deadline() {
+    global $site_name;
+    if ($site_name == 'elmbridge') return '90 days';
+}
+
 function cobrand_creation_address_help() {
     global $site_name;
     if ($site_name == 'spelthorne') {
@@ -734,6 +739,19 @@ function cobrand_site_group() {
     return $site_group;
 }
 
+function cobrand_admin_email($body) {
+    if ($body == 'elmbridge') {
+        $local = 'petitions';
+        $domain = $body . '.gov.uk';
+    } elseif (OPTION_SITE_TYPE == 'multiple') {
+        $local = $body;
+        $domain = OPTION_EMAIL_DOMAIN;
+    } else {
+        return OPTION_CONTACT_EMAIL;
+    }
+    return $local . '@' . $domain;
+}
+
 # Runs from cron, so examine site_group or petition body.
 function cobrand_admin_email_finished($body) {
     global $site_group;
@@ -829,8 +847,16 @@ function cobrand_admin_areas_of_interest() {
         );
     }
 
-    if ($site_group == 'hounslow')
-        return array( 2483 => array( 'name' => 'Hounslow Borough Council' ) );
+    if ($site_group == 'hounslow') {
+        $wards = json_decode(file_get_contents('http://mapit.mysociety.org/area/2483/children'), true);
+        $soas = json_decode(file_get_contents('http://mapit.mysociety.org/areas/Hounslow?type=OLF'), true);
+        foreach ($soas as $k => $v) {
+            $soas[$k]['parent_area'] = 2483;
+        }
+        $out = $wards + $soas;
+        $out[2483] = array( 'name' => 'Hounslow Borough Council' );
+        return $out;
+    }
 
     if ($site_group == 'islington') {
         $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2507/children'), true);
@@ -848,6 +874,46 @@ function cobrand_admin_areas_of_interest() {
     return $out;
 }
 
+# Admin, so only site_group available
+function cobrand_admin_show_map() {
+    global $site_group;
+    if ($site_group == 'hounslow') return true;
+    if ($site_group == 'sbdc') return true;
+    if (get_http_var('test_map')) return true;
+    return false;
+}
+
+function cobrand_admin_show_graphs() {
+    global $site_group;
+    if ($site_group == 'hounslow') return false;
+    return true;
+}
+
+function cobrand_admin_wards_for_petition() {
+    global $site_group;
+    if ($site_group == 'hounslow' || $site_group == 'sbdc') {
+        if ($site_group == 'hounslow') $id = 2483;
+        if ($site_group == 'sbdc') $id = 2246;
+        $out = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id/children"), true);
+        uasort($out, 'sort_by_name');
+        $out = array( -1 => array( 'id' => -1, 'name' => 'All wards' ) ) + $out;
+        return $out;
+    }
+    return false;
+}
+
+function cobrand_admin_responsible_option() {
+    global $site_group;
+    if ($site_group == 'hounslow') return true;
+    if ($site_group == 'sbdc') return true;
+    return false;
+}
+
+function cobrand_archive_option() {
+    global $site_group;
+    if ($site_group == 'hounslow') return true;
+    return false;
+}
 
 # A bit of a yucky function, containing slightly varying guidelines
 # for displaying at last stage of petition creation process.
@@ -927,7 +993,7 @@ outside the remit or powers of Stevenage Borough Council.</p>
 <li>Petitions similar to and/or overlap with an existing petition or petitions.</li>
 <li>Petitions which ask for things outside the remit or powers of the council. </li>
 <li>Statements that don't request any action. We cannot accept petitions which call upon the council to &quot;recognise&quot; or &quot;acknowledge&quot; something, as they do not call for a recognisable action. </li>
-<li>Wording that is impossible to understand. Please don't use capital letters excessively as they can make petitions hard to read. </li>
+<li>Wording that needs amending, or is impossible to understand. Please don't use capital letters excessively as they can make petitions hard to read. </li>
 <li>Statements that amount to advertisements.</li>
 <li>Petitions intended to be humorous, or which have no point about council policy.</li>
 <li>Issues for which an e-petition is not the appropriate channel (for example, correspondence about a personal issue).</li>
@@ -1341,8 +1407,28 @@ function cobrand_rss_explanation_link() {
     return 'http://www.bbc.co.uk/news/10628494';
 }
 
+function cobrand_how_it_works_start() {
+    global $site_name, $site_group;
+    if ($site_name == 'number10') {
+?>
+<p>You can view and sign any <a href="/list">current petitions</a>, and see the
+Government response to any <a href="/list/closed">completed petitions</a>. If
+you have signed a petition that has reached more than
+<?=cobrand_signature_threshold() ?> signatures by the time it closes, you will
+be sent a response from the Government by email.
+</p>
+<?
+    } else {
+?>
+<p>You can view and sign any <a href="/list">current petitions</a>, and see our
+response to any <a href="/list/closed">completed petitions</a>.
+</p>
+<?
+    }
+}
+
 function cobrand_how_it_works_extra() {
-    global $site_name;
+    global $site_name, $site_group;
     if ($site_name == 'number10') {
         echo 'A list of <a href="/list/rejected">rejected petitions</a> is available on this website.';
     }
@@ -1350,6 +1436,11 @@ function cobrand_how_it_works_extra() {
         echo '</p> <p>If you experience any problems with the e-petitions
         system, please <a href="http://www.islington.gov.uk/Contact/">contact
         us</a>.';
+    }
+    if ($site_group == 'surreycc' && $site_name != 'surreycc') {
+        echo '</p> <p>You can also view
+        <a href="http://petitions.surreycc.gov.uk/">petitions to Surrey County
+        Council</a> on their website.';
     }
 }
 
@@ -1426,6 +1517,40 @@ function cobrand_steps_elsewhere() {
     return null;
 }
 
+function cobrand_steps_petition_close() {
+    global $site_name;
+    if ($site_name == 'number10') {
+?>
+<p>When a serious petition closes, usually provided there are <?=cobrand_signature_threshold() ?> signatures or more,
+officials at Downing Street will ensure you get a response to the issues you
+raise. Depending on the nature of the petition, this may be from the Prime
+Minister, or he may ask one of his Ministers or officials to respond.
+
+<p>We will email the petition organiser and everyone who has signed the
+petition via this website giving details of the Government’s response.
+<?
+    } elseif ($site_name == 'woking') {
+?>
+<p>Once your petition has closed, usually provided there are
+<?=cobrand_signature_threshold() ?> signatures or more, it will be passed to
+the relevant officials at the council for a response.
+We will be able to email the petition organiser and everyone who has signed the
+petition, and responses will also be published on this website.</p>
+<?
+    } elseif ($site_name == 'salford') {
+?>
+<p>When the petition closes we will publish a response; this will be emailed to
+everyone who has signed the e-petition. The response will also be published on
+this website.</p>
+<?
+    } else {
+?>
+<p>If the council responds, it will be emailed to everyone who has
+signed the e-petition. The response will also be published on this website.</p>
+<?
+    }
+}
+
 function cobrand_privacy_policy_elsewhere() { /* council changed mind: but it's here now, for when someone needs it! */
     global $site_name;
     return null;
@@ -1434,6 +1559,12 @@ function cobrand_privacy_policy_elsewhere() { /* council changed mind: but it's 
 function cobrand_view_petitions_heading() {
     global $site_name;
     if ($site_name == 'ipswich') return 'Petitions';
+}
+
+function cobrand_view_petitions_category_filter() {
+    global $site_name;
+    if ($site_name == 'hounslow') return true;
+    return false;
 }
 
 function cobrand_main_heading($text) {
@@ -1495,3 +1626,16 @@ function cobrand_fill_form_instructions(){
     }
     return 'Please fill in all the fields below.';
 }
+
+function cobrand_html_final_changes($s) {
+    global $site_name;
+    if ($site_name == 'ipswich') {
+        $s = str_replace('e-petition', 'e-Petition', $s);
+    } elseif ($site_name == 'lichfielddc') {
+        $s = preg_replace('#<input([^>]*?type=[\'"]text)#', '<input class="field"\1', $s);
+    } elseif ($site_name == 'spelthorne') {
+        $s = str_ireplace('email', 'e-mail', $s);
+    }
+    return $s;
+}
+

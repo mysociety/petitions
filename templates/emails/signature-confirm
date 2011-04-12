@@ -7,6 +7,10 @@ petition at the bottom of this email.
 
 <?=$values['url']?>
 
+If clicking the link doesn't work, you may have to copy and then
+paste it into the 'Location' or 'Address' box of your web browser,
+and then press 'enter' or 'return' on your keyboard.
+
 The petition was created by <?=$values['creator_name']?> and reads:
 
 '<?=$values['sentence']?>'
