@@ -20,7 +20,7 @@ site along with online petitions.</p>
     print $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
         if (OPTION_SITE_DOMAINS) {
-            $body = db_getRow('select id, ref, name from body where ref=?', http_auth_user());
+            $body = db_getRow('select id, ref, name from body where ref=?', cobrand_admin_is_site_user());
         } else {
             err("Whoops, something has gone wrong");
         }

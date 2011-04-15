@@ -1025,7 +1025,7 @@ Do this for petitions for which you are not the appropriate body to contact, but
 <?
     $bodies = db_getAll('select ref,name from body');
     foreach ($bodies as $body) {
-        if ($body['ref'] == http_auth_user()) continue;
+        if ($body['ref'] == cobrand_admin_is_site_user()) continue;
         print '<option value="' . $body['ref'] . '">' . $body['name'] . '</option>';
     }
 ?>
