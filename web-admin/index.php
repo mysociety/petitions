@@ -71,7 +71,7 @@ $(document).ready(function(){
 ?>
 </head>
 <body id="admin">
-<div id="header"></div>
+<div id="header"><a class="help-link" href="help/index.html">admin&nbsp;help</a></div>
 <div id="content">
 <?
 }
