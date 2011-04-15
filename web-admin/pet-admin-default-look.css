@@ -101,3 +101,13 @@ ul.pet-help-nav li {
 .pet-help { clear: both; margin:1.5em 1em 1em 1em; border-top:1px solid #dddddd; }
 .pet-help img { max-width: 80%; }
 
+.pet-help h2 { margin-top: 1.666em; }
+
+#content .warning {
+    width: 90%;
+    background-color: #ffeeee;
+    border: 1px solid #c63838;
+    padding: 0.5em 1em 0.5em 48px;
+    background-image: url(help/images/warning_triangle.png);
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
