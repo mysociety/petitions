@@ -50,6 +50,7 @@ small {
     background-repeat: no-repeat;
     background-color: #ffffff;
     min-height: 130px;
+    position: relative;
 }
 
 #content {
@@ -62,4 +63,14 @@ small {
     background-color: #f2f2f2;
 }
 
+#header .help-link {
+    position: absolute;
+    bottom: -2px;
+    right: 0;
+    width: auto;
+    background-color: #ffffff;
+    padding: 8px 18px 8px 8px;
+    border-top-left-radius: 8px;    
+    -moz-border-radius-topleft: 8px;
+}
 
