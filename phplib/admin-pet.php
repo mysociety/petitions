@@ -1470,9 +1470,10 @@ onsubmit="this.submit_button.disabled=true">
             if ($type == 'redraft') {
 ?>
 <p>You are moving the <em><?=$p->ref() ?></em> petition back into its draft state.
-<br>This will remove the petition from the site, and it can then be
+This will remove the petition from the site, and it can then be
 rejected through the admin interface as normal.
-<br>All current signatories will be deleted.</p>
+Only use this if a petition has been approved by mistake.</p>
+<p style="font-size:150%"><strong>All current signatories will be deleted.</strong></p>
 <p><label for="reason">Please give the reason for moving this petition back to draft, for audit purposes:</label>
 <br><textarea id="reason" name="reason" rows="5" cols="40"></textarea></p>
 <input type="submit" name="submit" value="Move petition">
