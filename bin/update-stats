@@ -81,7 +81,7 @@ sub insert {
 sub insert_multi {
     my ($key, $query) = @_;
     return if $key =~ /body\.ref/ && mySociety::Config::get('SITE_TYPE') ne 'multiple';
-    $query = "COUNT(*) $query" unless $query =~ /^COUNT/ || $query =~ /^SUM/;
+    $query = "COUNT(*) $query" unless $query =~ /^(COUNT|SUM|COALESCE)/;
     dbh()->do("INSERT INTO stats (whencounted, key, value)
         SELECT ms_current_timestamp(), $key, $query");
 }
