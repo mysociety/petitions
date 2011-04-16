@@ -1727,6 +1727,81 @@ polygonLayer.events.register('afterfeaturemodified', undefined, count_signatures
     }
 }
 
+class ADMIN_PAGE_PET_HELP {
+    function ADMIN_PAGE_PET_HELP() {
+        $this->id = 'help';
+        $this->noindex = true;
+        $this->navname = 'Admin help';
+    }
+    
+    function display() {
+        $this_topic = get_http_var('topic');
+
+        # list of all topics and their titles: note order here is order they are presented ot the user!
+        $topics = array(
+            'overview                   => Overview: draft &rarr; live &rarr; finished (or draft &rarr; rejected)',
+            "approve                    => Approving a petition",
+            "undo_approve               => Undoing the approval of a petition",
+            "find_unconfirmed_petition  => Finding an unconfirmed petition and confirming it manually",
+            "reject_first               => Rejecting a petition for the first time",
+            "reject_second              => Rejecting a petition for the second time",
+            "change_category            => Changing the category under which a petition was rejected",
+            "change_deadline            => Changing the deadline of a petition",
+            "offline_petition           => Creating an offline petition",
+            "remove                     => Removing a petition",
+            "write_response             => Writing a response to a petition",
+            "view                       => Viewing a petition on the public website",
+            "admin_history              => The admin history of a petition",
+            "find_unconfirmed_signature => Finding an unconfirmed signature in the system and confirming it manually",
+            "remove_signature           => Removing signatures",
+            "reinstate_signature        => Reinstating removed signatures",
+            "offline_signatures         => Adding offline signatures",
+            );
+        $topic_titles = array();
+        $previous_topic = "&nbsp;";
+        $next_topic = "&nbsp;";
+        $size =  sizeof($topics);
+        $index = NULL;
+        for($i = 0; $i < $size; ++$i) {
+            $t = preg_split("/\s*=>\s*/", $topics[$i], 2);
+            $topics[$i] = $t[0];
+            $topic_titles[$t[0]]=$t[1];
+            if ($this_topic === $t[0]) {
+                $index = $i;
+                # heuristic: actually could do prev/next here, and drop out
+            }
+        }
+        if (isset($index)) {
+            if ($index > 0) {
+                $topic = $topics[$index - 1];
+                $previous_topic = "<a href='?page=help&amp;topic=$topic'>&laquo; previous<br/>" . $topic_titles[$topic] . '</a>';
+            }
+            if ($index < $size - 1) {
+                $topic = $topics[$index + 1];
+                $next_topic = "<a href='?page=help&amp;topic=$topic'>next &raquo;<br/>" .  $topic_titles[$topic] . '</a>';
+            }            
+            # build nav
+            $nav = <<<HTML
+                <div class="doc_header">
+                  <ul class="pet-help-nav">
+                   <li class="pet-help-prev">$previous_topic</li>
+                   <li class="pet-help-contents"><a href="?page=help&amp;topic=index">Contents</a></li>
+                   <li class="pet-help-next">$next_topic</li>
+                 </ul>
+                </div>
+HTML;
+        } else {
+            $this_topic = 'index';
+            $nav = "";
+            # TODO construct the list of links here, don't read them in off index
+        }         
+        print "<div id='content'>\n  <div class='doc_header'>$nav\n</div><div class='pet-help'>\n";
+        include("help/$this_topic.html");
+        print "</div><div class='help-footer'>$nav<a href='http://www.mysociety.org/'><img src='help/images/mysociety_logo.png' style='border:0;'></a></div></div>";
+    }
+}
+
+
 function petition_admin_perform_actions() {
     $petition_id = null;
     if (get_http_var('delete_all') || get_http_var('confirm_all') || get_http_var('reinstate_all')) {
@@ -1856,4 +1931,43 @@ function sort_by_name($a, $b) {
     if ($aa==$bb) return 0;
     return ($aa>$bb) ? 1 : -1;
 }
+
+// Header at start of page
+function admin_header($title, $want_scripts=true) {
+    $style = 'pet-admin-default-look.css';
+    if ($s = cobrand_admin_style()) $style = $s;
+?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title><?=$title?></title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="pet-admin.css">
+<link rel="stylesheet" type="text/css" href="<?=$style?>">
+<?
+    if ($want_scripts && cobrand_admin_show_map()) {
+?>
+<script src="/jslib/openlayers/OpenLayers.js"></script>
+<?
+    }
+    if ($want_scripts && cobrand_admin_wards_for_petition()) {
+?>
+<script src="/jslib/jquery/jquery-1.5.2.min.js"></script>
+<script src="asmselect/jquery.asmselect.js"></script>
+<link rel="stylesheet" type="text/css" href="asmselect/jquery.asmselect.css" />
+<script type="text/javascript">
+$(document).ready(function(){
+    $('select[multiple]').asmSelect();
+});
+</script>
+<?
+    }
+?>
+</head>
+<body id="admin">
+<div id="header"><a class="help-link" href="help/index.html">Admin&nbsp;Help</a></div>
+<div id="content">
+<?
+}
+
 

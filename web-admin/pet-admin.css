@@ -131,3 +131,60 @@ table.stats tr.separator {
 table.stats tr.alone th {
     padding-left: 4px;
 }
+
+
+/* help pages */
+#content {
+    padding: 0 1em 1em;
+}
+
+.help-footer {
+    text-align: right;
+    margin-top: 2em;
+    border-top:1px solid #dddddd;
+}
+.help-footer img {
+    clear: both;
+    margin: 0.5em 1em;
+}
+
+#content img.pet-screenshot {
+    margin: 1.5em auto;
+    display: block;
+    border:1px solid #dddddd;
+    -moz-box-shadow: 6px 6px 5px #aaa;
+    -webkit-box-shadow: 6px 6px 5px #aaa;
+    box-shadow: 6px 6px 5px #aaa;
+}
+
+ul.pet-help-nav {
+    font-size:80%;
+    list-style: none;
+    padding: 1em 1em 3em 1em;
+    margin: 0.25em 0 1em 0;
+}
+
+ul.pet-help-nav li {
+    display: block;
+    float: left;
+    width: 33%;
+}
+
+.pet-help-prev { text-align:left;}
+.pet-help-contents { text-align:center;}
+.pet-help-next { text-align:right;}
+.pet-help { clear: both; margin:1.5em 1em 1em 1em; border-top:1px solid #dddddd; }
+.pet-help img { max-width: 80%; }
+
+.pet-help h2 { margin-top: 1.666em; }
+
+#content .warning {
+    width: 90%;
+    background-color: #ffeeee;
+    border: 1px solid #c63838;
+    padding: 0.5em 1em 0.5em 48px;
+    background-image: url(help/images/warning_triangle.png);
+    background-repeat: no-repeat;
+    background-position: 10px 10px;
+}
+
