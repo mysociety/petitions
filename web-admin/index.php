@@ -25,6 +25,7 @@ $pages = array(
     new ADMIN_PAGE_PET_OFFLINE,
     new ADMIN_PAGE_PET_STATS,
     new ADMIN_PAGE_PET_MAP,
+    new ADMIN_PAGE_PET_HELP,
 );
 
 if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
@@ -38,41 +39,4 @@ if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
     admin_page_display(OPTION_CONTACT_NAME, $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
 }
 
-// Header at start of page
-function admin_header($title) {
-    $style = 'pet-admin-default-look.css';
-    if ($s = cobrand_admin_style()) $style = $s;
 ?>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<title><?=$title?></title>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<link rel="stylesheet" type="text/css" href="pet-admin.css">
-<link rel="stylesheet" type="text/css" href="<?=$style?>">
-<?
-    if (cobrand_admin_show_map()) {
-?>
-<script src="/jslib/openlayers/OpenLayers.js"></script>
-<?
-    }
-    if (cobrand_admin_wards_for_petition()) {
-?>
-<script src="/jslib/jquery/jquery-1.5.2.min.js"></script>
-<script src="asmselect/jquery.asmselect.js"></script>
-<link rel="stylesheet" type="text/css" href="asmselect/jquery.asmselect.css" />
-<script type="text/javascript">
-$(document).ready(function(){
-    $('select[multiple]').asmSelect();
-});
-</script>
-<?
-    }
-?>
-</head>
-<body id="admin">
-<div id="header"><a class="help-link" href="help/index.html">admin&nbsp;help</a></div>
-<div id="content">
-<?
-}
-
