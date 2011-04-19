@@ -304,7 +304,7 @@ sub do_main_test {
             $wth->browser_check_no_contents($petition_text);
             $wth->browser_follow_link(text_regex => qr/Live/);
             $wth->browser_check_contents($petition_text);
-            $wth->browser_follow_link(text_regex => qr/admin/);
+            $wth->browser_follow_link(text => 'admin');
             $wth->browser_check_contents($petition_text);
             $wth->browser_submit_form(form_name => 'petition_admin_search',
                 fields => { 'search' => '1490' } ) or die 'Failed to submit admin search form';
@@ -347,7 +347,7 @@ sub do_main_test {
     $wth->browser_check_contents("Petitions and signers");
     $wth->browser_follow_link(text_regex => qr/Live/);
     $wth->browser_check_contents($petition_text);
-    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_follow_link(text => 'admin');
     $wth->browser_check_contents($petition_text);
     $wth->browser_check_contents(name_n(1489));
     $wth->browser_check_contents("Signers \\(3 confirmed, 0 unconfirmed\\)");
@@ -479,7 +479,7 @@ the PM.",
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
-    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_follow_link(text => 'admin');
     $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
                 fields => { }, button => 'respond') or die "Failed to submit write response button";
     $wth->browser_submit_form(form_name => 'petition_admin_respond',
@@ -522,7 +522,7 @@ Second bullet point'
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
-    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_follow_link(text => 'admin');
     $wth->browser_submit_form(form_name => 'petition_admin_go_respond',
                 fields => { }, button => 'respond') or die "Failed to submit write response button";
     $wth->browser_check_contents('already sent 2 responses');
@@ -533,14 +533,14 @@ Second bullet point'
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
-    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_follow_link(text => 'admin');
     $wth->browser_check_contents(quotemeta(email_n(1490)));
     set_pet_date('1990-01-01');
     call_remove_old(); # Should remove 1501 row completely, 1488-1490 scrubbed
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
-    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_follow_link(text => 'admin');
     $wth->browser_check_no_contents(quotemeta(email_n(1490)));
 }
 
@@ -893,7 +893,7 @@ sub do_resubmit_test {
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Live/);
-    $wth->browser_follow_link(text_regex => qr/admin/);
+    $wth->browser_follow_link(text => 'admin');
     $wth->browser_submit_form(form_name => 'petition_admin_change_deadline',
                 fields => { deadline => '1st January 1991' }) or die "Failed to submit too high deadline change";
     $wth->browser_check_contents('less than 1 year');
