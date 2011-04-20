@@ -37,8 +37,8 @@ dbh()->commit();
 # Online/offline counts
 insert('petitions_offline', "SELECT count(*) from petition where status = 'finished' and (select count(*) from signer where petition_id=petition.id) = 0 and offline_signers != 0");
 insert('petitions_online', "select count(*) from petition where status in ('live', 'rejected') or ( status = 'finished' and ( (select count(*) from signer where petition_id=petition.id) > 0 or offline_signers = 0 ) )");
-insert_multi("'petitions_offline_'||body.ref", "from petition, body where body_id=body.id and status = 'finished' and (select count(*) from signer where petition_id=petition.id) = 0 and offline_signers != 0");
-insert_multi("'petitions_online_'||body.ref", "from petition, body where body_id=body.id and ( status in ('live', 'rejected') or ( status = 'finished' and ( (select count(*) from signer where petition_id=petition.id) > 0 or offline_signers = 0 ) ) )");
+insert_multi("'petitions_offline_'||body.ref", "from petition, body where body_id=body.id and status = 'finished' and (select count(*) from signer where petition_id=petition.id) = 0 and offline_signers != 0 GROUP BY body.ref");
+insert_multi("'petitions_online_'||body.ref", "from petition, body where body_id=body.id and ( status in ('live', 'rejected') or ( status = 'finished' and ( (select count(*) from signer where petition_id=petition.id) > 0 or offline_signers = 0 ) ) ) GROUP BY body.ref");
 
 # Petition totals
 insert('petitions_all_unconfirmed', "SELECT COUNT(*) FROM petition WHERE status in ('unconfirmed', 'failedconfirm', 'sentconfirm')");

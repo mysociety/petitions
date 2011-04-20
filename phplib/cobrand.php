@@ -1468,7 +1468,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'epsom-ewell')
         return 'http://www.epsom-ewell.gov.uk/EEBC/Council/Terms+and+Conditions+for+Petitions.htm';
     if ($site_name == 'forest-heath')
-        return 'http://www.forest-heath.gov.uk/Council/Legal/E-Petition+Terms+and+Conditions.htm';
+        return 'http://www.forest-heath.gov.uk/info/100004/council_and_democracy/286/petitions/2';
     if ($site_name == 'hounslow')
         return 'http://www.hounslow.gov.uk/epetitions_tandcs.pdf';
     if ($site_name == 'ipswich')
