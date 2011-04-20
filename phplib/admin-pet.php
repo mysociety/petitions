@@ -1756,6 +1756,7 @@ class ADMIN_PAGE_PET_HELP {
             "remove_signature           => Removing signatures",
             "reinstate_signature        => Reinstating removed signatures",
             "offline_signatures         => Adding offline signatures",
+            "faq                        => Frequently Asked Questions (common worries or clarifications)",
             );
         $topic_titles = array();
         $previous_topic = "&nbsp;";
