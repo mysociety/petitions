@@ -1765,13 +1765,14 @@ class ADMIN_PAGE_PET_HELP {
         $index = NULL;
         for($i = 0; $i < $size; ++$i) {
             $t = preg_split("/\s*=>\s*/", $topics[$i], 2);
+            # TODO: conditionally skip this topic if it's not relevant to the current council
             $topics[$i] = $t[0];
             $topic_titles[$t[0]]=$t[1];
             if ($this_topic === $t[0]) {
                 $index = $i;
-                # heuristic: actually could do prev/next here, and drop out
             }
         }
+        $auto_index_html = "";
         if (isset($index)) {
             if ($index > 0) {
                 $topic = $topics[$index - 1];
@@ -1794,7 +1795,11 @@ HTML;
         } else {
             $this_topic = 'index';
             $nav = "";
-            # TODO construct the list of links here, don't read them in off index
+            $auto_index_html = "<ul>\n";
+            foreach ($topics as $topic) {
+                $auto_index_html .= "<li><a href='?page=help&amp;topic=$topic'>$topic_titles[$topic]</a></li>\n";
+            }
+            $auto_index_html .= "</ul>";
         }
         $contact_email = str_replace('@', '&#64;', OPTION_CONTACT_EMAIL);
         $mailto_contact_email = "<a href='mailto:$contact_email'>$contact_email</a>";
