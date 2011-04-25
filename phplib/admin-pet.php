@@ -1734,55 +1734,63 @@ class ADMIN_PAGE_PET_HELP {
         $this->navname = 'Admin help';
     }
     
+    # the order of pages here is the order in which they are presented
+    # use 'separator' => 'yes' to push the topic a little apart in the contents
+    # topic *must* match the filename in web-admin/help/<topic>.php
+    
+    private static $all_help_pages = array( 
+        
+        array('topic' => "overview",           'title' => "Overview: draft &rarr; live &rarr; finished (or draft &rarr; rejected)"),
+        array('topic' => "approve",            'title' => "Approving a petition"),
+        array('topic' => "undo_approve",       'title' => "Undoing the approval of a petition"),
+        array('topic' => "find_unconfirmed_petition", 'title' => "Finding an unconfirmed petition and confirming it manually"),
+        array('topic' => "reject_first",       'title' => "Rejecting a petition for the first time"),
+        array('topic' => "reject_second",      'title' => "Rejecting a petition for the second time"),
+        array('topic' => "change_category",    'title' => "Changing the category under which a petition was rejected"),
+        array('topic' => "change_deadline",    'title' => "Changing the deadline of a petition"),
+        array('topic' => "offline_petition",   'title' => "Creating an offline petition"),
+        array('topic' => "remove",             'title' => "Removing a petition"),
+        array('topic' => "write_response",     'title' => "Writing a response to a petition"),
+        array('topic' => "view",               'title' => "Viewing a petition on the public website"),
+        array('topic' => "admin_history",      'title' => "The admin history of a petition"),
+        array('topic' => "find_unconfirmed_signature", 'title' => "Finding an unconfirmed signature in the system and confirming it manually"),
+        array('topic' => "remove_signature",   'title' => "Removing signatures"),
+        array('topic' => "reinstate_signature",'title' => "Reinstating removed signatures"),
+        array('topic' => "offline_signatures", 'title' => "Adding offline signatures"),
+        array('topic' => "faq",                'title' => "Frequently Asked Questions (common worries or clarifications)", 'separator' => 'yes'),
+
+    );
+        
     function display() {
         $this_topic = get_http_var('topic');
-
-        # list of all topics and their titles: note order here is order they are presented ot the user!
-        $topics = array(
-            'overview                   => Overview: draft &rarr; live &rarr; finished (or draft &rarr; rejected)',
-            "approve                    => Approving a petition",
-            "undo_approve               => Undoing the approval of a petition",
-            "find_unconfirmed_petition  => Finding an unconfirmed petition and confirming it manually",
-            "reject_first               => Rejecting a petition for the first time",
-            "reject_second              => Rejecting a petition for the second time",
-            "change_category            => Changing the category under which a petition was rejected",
-            "change_deadline            => Changing the deadline of a petition",
-            "offline_petition           => Creating an offline petition",
-            "remove                     => Removing a petition",
-            "write_response             => Writing a response to a petition",
-            "view                       => Viewing a petition on the public website",
-            "admin_history              => The admin history of a petition",
-            "find_unconfirmed_signature => Finding an unconfirmed signature in the system and confirming it manually",
-            "remove_signature           => Removing signatures",
-            "reinstate_signature        => Reinstating removed signatures",
-            "offline_signatures         => Adding offline signatures",
-            "faq                        => Frequently Asked Questions (common worries or clarifications)",
-            );
-        $topic_titles = array();
         $previous_topic = "&nbsp;";
         $next_topic = "&nbsp;";
-        $size =  sizeof($topics);
-        $index = NULL;
-        for($i = 0; $i < $size; ++$i) {
-            $t = preg_split("/\s*=>\s*/", $topics[$i], 2);
+        $pages = array(); # copy of all help pages, possibly with unwanted pages knocked out
+        $index = NULL; # this topic's index in the help_pages array (if any)
+        $i = -1;
+        foreach(self::$all_help_pages as $page) {
             # TODO: conditionally skip this topic if it's not relevant to the current council
-            $topics[$i] = $t[0];
-            $topic_titles[$t[0]]=$t[1];
-            if ($this_topic === $t[0]) {
+            # if this topic isn't wanted, skip it. Otherwise...
+            array_push($pages, $page);
+            $i++;
+            if ($this_topic === $page['topic']) {
                 $index = $i;
             }
         }
         $auto_index_html = "";
         if (isset($index)) {
             if ($index > 0) {
-                $topic = $topics[$index - 1];
-                $previous_topic = "<a href='?page=help&amp;topic=$topic'>&laquo; previous<br/>" . $topic_titles[$topic] . '</a>';
+                $page = $pages[$index - 1];
+                $topic = $page['topic'];
+                $title = $page['title'];
+                $previous_topic = "<a href='?page=help&amp;topic=$topic'>&laquo; previous<br/>$title</a>";
             }
-            if ($index < $size - 1) {
-                $topic = $topics[$index + 1];
-                $next_topic = "<a href='?page=help&amp;topic=$topic'>next &raquo;<br/>" .  $topic_titles[$topic] . '</a>';
+            if ($index < sizeof($pages) - 1) {
+                $page = $pages[$index + 1];
+                $topic = $page['topic'];
+                $title = $page['title'];
+                $next_topic = "<a href='?page=help&amp;topic=$topic'>next &raquo;<br/>$title</a>";
             }            
-            # build nav
             $nav = <<<HTML
                 <div class="doc_header">
                   <ul class="pet-help-nav">
@@ -1796,8 +1804,11 @@ HTML;
             $this_topic = 'index';
             $nav = "";
             $auto_index_html = "<ul>\n";
-            foreach ($topics as $topic) {
-                $auto_index_html .= "<li><a href='?page=help&amp;topic=$topic'>$topic_titles[$topic]</a></li>\n";
+            foreach ($pages as $page) {
+                if (array_key_exists('separator', $page)) {
+                    $auto_index_html .= "</ul>\n<ul>\n";
+                }
+                $auto_index_html .= '<li><a href="?page=help&amp;topic=' . $page['topic'] . '">' . $page['title'] . "</a></li>\n";
             }
             $auto_index_html .= "</ul>";
         }
