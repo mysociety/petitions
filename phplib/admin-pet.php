@@ -1816,7 +1816,7 @@ HTML;
         $mailto_contact_email = "<a href='mailto:$contact_email'>$contact_email</a>";
         
         print "<div id='content'>\n  <div class='doc_header'>$nav\n</div><div class='pet-help'>\n";
-        include("help/$this_topic.html");
+        include("help/$this_topic.php");
         print "</div><div class='help-footer'>$nav<a href='http://www.mysociety.org/'><img src='help/images/mysociety_logo.png' style='border:0;'></a></div></div>";
     }
 }
