@@ -1940,6 +1940,12 @@ function sort_by_name($a, $b) {
 function admin_header($title, $want_scripts=true) {
     $style = 'pet-admin-default-look.css';
     if ($s = cobrand_admin_style()) $style = $s;
+    if (get_http_var("page") == 'help') {
+        $help_link = "<a class='help-link' href='./'>Admin</a>";
+        $want_scripts = false;
+    } else {
+        $help_link = "<a class='help-link' href='./?page=help'>Admin&nbsp;Help</a>";
+    }
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
@@ -1969,7 +1975,7 @@ $(document).ready(function(){
 ?>
 </head>
 <body id="admin">
-<div id="header"><a class="help-link" href="help/index.html">Admin&nbsp;Help</a></div>
+<div id="header"><?= $help_link ?></div>
 <div id="content">
 <?
 }
