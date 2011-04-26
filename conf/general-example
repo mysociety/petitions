@@ -70,6 +70,9 @@ define('OPTION_BASE_URL', 'http://www.---.com');
 define('OPTION_ADMIN_URL', 'https://secure.---.com');
 define('OPTION_ADMIN_PUBLIC', 0);
 
+// suport email, provided as point of contact in the admin docs
+define('OPTION_SUPPORT_EMAIL', 'team@petitions.mysociety.org');
+
 // Domain name for emails to current website (email this for help etc)
 define('OPTION_EMAIL_DOMAIN', '---.com');
 // The address team@ OPTION_EMAIL_DOMAIN is also used, in error messages

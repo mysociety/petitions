@@ -1812,8 +1812,8 @@ HTML;
             }
             $auto_index_html .= "</ul>";
         }
-        $contact_email = str_replace('@', '&#64;', OPTION_CONTACT_EMAIL);
-        $mailto_contact_email = "<a href='mailto:$contact_email'>$contact_email</a>";
+        $support_email = str_replace('@', '&#64;', OPTION_SUPPORT_EMAIL);
+        $mailto_support_email = "<a href='mailto:$support_email'>$support_email</a>";
         
         print "<div id='content'>\n  <div class='doc_header'>$nav\n</div><div class='pet-help'>\n";
         include("help/$this_topic.php");

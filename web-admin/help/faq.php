@@ -53,7 +53,7 @@
     </h2>
     <p>
       If there is anything that you want to do that is not covered in the admin interface or the user manual then please contact
-      <?= $mailto_contact_email ?>. 
+      <?= $mailto_support_email ?>. 
     </p>
 </div>
 
@@ -69,7 +69,7 @@
       In this situation write back to the user and ask them to resubmit their petition/ re-sign the petition, paying special attention to the spelling of their email address.
     </p>
     <p>
-      If the user continues to have trouble, please contact <?= $mailto_contact_email ?> for help.
+      If the user continues to have trouble, please contact <?= $mailto_support_email ?> for help.
     </p>
 </div>
 
@@ -109,7 +109,7 @@
       </dd>
     </dl>
     <p>
-      If the user continues to have trouble, please contact <?= $mailto_contact_email ?> for assistance.
+      If the user continues to have trouble, please contact <?= $mailto_support_email ?> for assistance.
     </p>
 </div>
 
@@ -144,7 +144,7 @@
       A petition creator has changed their email address since creating the petition
     </h2>
     <p>
-      Please contact <?= $mailto_contact_email ?> if this happens and ask us to change it for you.
+      Please contact <?= $mailto_support_email ?> if this happens and ask us to change it for you.
     </p>
 </div>
 
@@ -160,12 +160,12 @@
     <p>
       If you have noticed errors in a draft petition (i.e., one that has not yet been approved) then it is best to reject the petition, and ask 
       the petition creator to correct the errors and resubmit the petition. You can then approve it.  If you have a petition that has 
-      already been rejected once and it still has errors please contact <?= $mailto_contact_email ?> &mdash; rejecting the petition for a second 
+      already been rejected once and it still has errors please contact <?= $mailto_support_email ?> &mdash; rejecting the petition for a second 
       time does not give the creator a second chance to amend and resubmit.
     </p>
     <p>
       If a petition creator has contacted you to ask for corrections to be made to a live petition then please contact 
-      <?= $mailto_contact_email ?> and ask us to make the changes for you. However, once a petition has started to collect 
+      <?= $mailto_support_email ?> and ask us to make the changes for you. However, once a petition has started to collect 
       signatures then the best policy is not to change the wording of the petition substantially, as this would change what 
       the early signatories have signed up to &mdash; you may wish to point this out to the petition creator if they have asked for a major amendment.
     </p>
@@ -241,7 +241,7 @@
       The screenshots were created in early 2011, and since then some minor cosmetic changes have been implemented 
       (although these should not affect your understanding of the documentation).  Your council may also have 
       requested extra features that are not covered by the basic manual. If you are struggling to follow the 
-      documentation or would like extra clarification please contact <?= $mailto_contact_email ?> &mdash; we&rsquo;re always 
+      documentation or would like extra clarification please contact <?= $mailto_support_email ?> &mdash; we&rsquo;re always 
       happy to offer help and advice.
     </p>
 </div>

@@ -6,5 +6,5 @@
 <?= $auto_index_html ?>
 
 <p style="margin-top:2em">
-Can't find the answer here? Need help?  Email <?= $mailto_contact_email ?>.
+Can't find the answer here? Need help?  Email <?= $mailto_support_email ?>.
 </p>
