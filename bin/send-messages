@@ -192,7 +192,10 @@ function send_pending_messages() {
 
         // Send with template or raw appropriately
         $f = false;
-        if (isset($msg['emailtemplatename'])) {
+        if (!$petition->creator_email()) {
+            # An offline petition might not have a creator's email address.
+            $f = true;
+        } elseif (isset($msg['emailtemplatename'])) {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
             $f = pet_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $headers);
         } else {
