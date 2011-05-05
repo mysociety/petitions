@@ -176,7 +176,8 @@ ul.pet-help-nav li {
 .pet-help { clear: both; margin:1.5em 1em 1em 1em; border-top:1px solid #dddddd; }
 .pet-help img { max-width: 80%; }
 .pet-help .faq_question { margin: 1em 0 3em 2em; }
-.pet-help h2 { margin-left: -2em; margin-top: 1.666em; }
+.pet-help h2 { margin-top: 1.666em; }
+.pet-help .faq_question h2 { margin-left: -2em; }
 .pet-help dl dt { font-weight: bold; margin: 1em 0 0.5em 0;}
 
 #content .warning {
