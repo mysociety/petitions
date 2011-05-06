@@ -1597,6 +1597,16 @@ can be rejected properly.</p>
             if ($categories) {
                 $this->reject_petition($petition_id, $categories, $reason);
             } else {
+                if (get_http_var('reject_submit')) {
+                    print "<div id='errors'><ul>";
+                    print "<li>You must select at least one category in order to reject the petition.</li>";
+                    if (! get_http_var('reject_reason')) {
+                        print "<li>Please also supply a reason for the rejection &mdash; this will give the petition 
+                            creator some guidance if they decide to resubmit, so be as helpful as 
+                            possible about what is wrong with this petition.</li>";                        
+                    }
+                    print "</ul></div>";
+                }
                 $this->reject_form($petition_id);
             }
         } elseif (get_http_var('respond')) {
