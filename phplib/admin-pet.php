@@ -840,7 +840,7 @@ map.setCenter(lonLat, 5);
                     where showname='t' and petition_id=? and emailsent = 'confirmed'
                     group by area_id", $pdata['id']);
                 $other = 0; $unknown = 0;
-                $parents = array(); $children = array();
+                $children = array();
                 foreach ($summary as $area) {
                     $id = $area['area_id'];
                     if (!$id) {
@@ -851,7 +851,7 @@ map.setCenter(lonLat, 5);
                         if (array_key_exists('parent_area', $areas[$id]) && $areas[$id]['parent_area']) {
                             $children[$areas[$id]['parent_area']][] = $area + array('name' => $areas[$id]['name']);
                         } else {
-                            $parents[$id] = $area;
+                            $children[0][] = $area + array('name' => $areas[$id]['name']);
                         }
                         continue;
                     }
@@ -861,14 +861,17 @@ map.setCenter(lonLat, 5);
                         continue;
                     }
                 }
-                foreach ($parents as $id => $area) {
-                    print '<tr><td>' . $areas[$id]['name'] . "</td><td>$area[c]</td></tr>\n";
-                    if (!array_key_exists($id, $children)) continue;
+
+                function recurse($id, $level, $children) {
                     usort($children[$id], 'sort_by_name');
-                    foreach ($children[$id] as $child) {
-                        print "<tr><td>&nbsp;&nbsp;$child[name]</td><td>$child[c]</td></tr>\n";
+                    foreach ($children[$id] as $area) {
+                        print '<tr><td>' . str_repeat('&nbsp;', $level*2) . $area['name'] . '</td><td>' . $area['c'] . "</td></tr>\n";
+                        if (!array_key_exists($area['area_id'], $children)) continue;
+                        recurse($area['area_id'], $level+1, $children);
                     }
                 }
+                recurse(0, 0, $children);
+
                 if ($other) print '<tr><td><i>Other</i></td><td>' . $other . '</td></tr>';
                 if ($unknown) print '<tr><td><i>Unknown</i></td><td>' . $unknown . '</td></tr>';
                 print '</table></div>';
