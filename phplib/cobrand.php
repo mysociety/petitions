@@ -895,7 +895,7 @@ function cobrand_admin_areas_of_interest() {
 # Admin, so only site_group available
 function cobrand_admin_show_map() {
     global $site_group;
-    if (in_array($site_name, array(
+    if (in_array($site_group, array(
         'hounslow', 'sbdc', 'surreycc',
     )))
         return true;
