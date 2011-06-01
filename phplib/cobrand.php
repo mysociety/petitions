@@ -866,11 +866,29 @@ function cobrand_admin_areas_of_interest() {
 
     if ($site_group != 'surreycc') return null;
 
-    $out = json_decode(file_get_contents('http://mapit.mysociety.org/area/2242/covers?type=DIS'), true);
+    $user_to_area_id = array(
+        'surreycc' => 2242,
+        'elmbridge' => 2455,
+        'epsom-ewell' => 2457,
+        'guildford' => 2452,
+        'molevalley' => 2454,
+        'reigate-banstead' => 2453,
+        'runnymede' => 2451,
+        'spelthorne' => 2456,
+        'surreyheath' => 2450,
+        'tandridge' => 2448,
+        'waverley' => 2447,
+        'woking' => 2449,
+    );
+    $out = json_decode(file_get_contents("http://mapit.mysociety.org/areas/" . join(',', array_values($user_to_area_id))), true);
     foreach ($out as $k => $v) {
+        if ($v['id'] == 2242) continue;
         $out[$k]['parent_area'] = 2242;
     }
-    $out[2242] = array( 'name' => 'Surrey County Council' );
+    if ($user = cobrand_admin_is_site_user()) {
+        $wards = json_decode(file_get_contents("http://mapit.mysociety.org/area/$user_to_area_id[$user]/children"), true);
+        $out += $wards;
+    }
     return $out;
 }
 
