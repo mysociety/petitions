@@ -160,4 +160,11 @@ sub html_final_changes($$) {
     return $html;
 }
 
+# Called from cron, so only use site_group
+sub archive_front_end() {
+    my $site_group = Petitions::Page::site_group();
+    return 1 if $site_group eq 'hounslow';
+    return 0;
+}
+
 1;

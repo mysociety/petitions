@@ -431,7 +431,7 @@ class ADMIN_PAGE_PET_MAIN {
             $status_query = "(status = 'draft' or status = 'resubmitted')";
         elseif ($status == 'rejected')
             $status_query = "(status = 'rejected' or status = 'rejectedonce')";
-        elseif ($status == 'finished' && cobrand_archive_option())
+        elseif ($status == 'finished' && cobrand_archive_admin())
             $status_query = "(status = 'finished' and archived is null)";
         elseif ($status == 'archived')
             $status_query = "(status = 'finished' and archived is not null)";
@@ -631,7 +631,7 @@ petitions.</p>';
 
         print '<h2>Petition &lsquo;<a href="' . $petition_obj->url_main()
             . '">' . $pdata['ref'] . '</a>&rsquo;';
-        if (cobrand_archive_option() && $pdata['archived']) {
+        if (cobrand_archive_admin() && $pdata['archived']) {
             print ' &ndash; Archived';
         }
         print "</h2>";
@@ -656,7 +656,7 @@ petitions.</p>';
             }
             if ($pdata['status'] == 'live')
                 print ' <input type="submit" name="redraft" value="Undo approval">';
-            elseif (cobrand_archive_option() && !$pdata['archived'])
+            elseif (cobrand_archive_admin() && !$pdata['archived'])
                 print ' <input type="submit" name="archive" value="Archive petition">';
             print ' <input type="submit" name="remove" value="Remove petition">';
             print '</form>';
@@ -1303,8 +1303,10 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         $p->log_event("Admin archived petition");
         db_query("UPDATE petition SET archived=ms_current_timestamp(), lastupdate=ms_current_timestamp()
             where id=?", $p->id());
-        stats_change('cached_petitions_finished', '-1', $p->category_id(), $p->body_ref());
-        stats_change('cached_petitions_archived', '+1', $p->category_id(), $p->body_ref());
+        if (cobrand_archive_front_end()) {
+            stats_change('cached_petitions_finished', '-1', $p->category_id(), $p->body_ref());
+            stats_change('cached_petitions_archived', '+1', $p->category_id(), $p->body_ref());
+        }
         db_commit();
         print '<p><em>That petition has been archived.</em></p>';
     }
@@ -1911,7 +1913,7 @@ function petition_admin_navigation($page, $array = array()) {
         'finished' => 'Finished',
         'rejected' => 'Rejected',
     );
-    if (cobrand_archive_option()) {
+    if (cobrand_archive_admin()) {
         $statuses = array(
             'draft' => 'Draft',
             'live' => 'Open',

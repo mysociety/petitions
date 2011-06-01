@@ -15,6 +15,7 @@ BEGIN {
 }
 use mySociety::DBHandle qw(dbh);
 use Petitions;
+use Petitions::Cobrand;
 
 my @time = localtime();
 $time[5]--; # One year ago
@@ -50,8 +51,12 @@ dbh()->commit();
 # Cached petition totals
 dbh()->do("delete from stats where key like 'cached\_petitions\_%'");
 cached_status("'||status||'", "status in ('live', 'rejected')", ', status');
-cached_status('finished', "status = 'finished' AND archived IS NULL", '');
-cached_status('archived', "status = 'finished' AND archived IS NOT NULL", '');
+if (Petitions::Cobrand::archive_front_end()) {
+    cached_status('finished', "status = 'finished' AND archived IS NULL", '');
+    cached_status('archived', "status = 'finished' AND archived IS NOT NULL", '');
+} else {
+    cached_status('finished', "status = 'finished'", '');
+}
 
 dbh()->commit();
 

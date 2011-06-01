@@ -929,7 +929,18 @@ function cobrand_admin_responsible_option() {
     return false;
 }
 
-function cobrand_archive_option() {
+# Whether petitions can be archived or not (ie. response/closed from council
+# point of view). This can be just for admins, or display differently on list
+# pages as well.
+
+function cobrand_archive_admin() {
+    global $site_group;
+    if ($site_group == 'hounslow') return true;
+    if ($site_group == 'surreycc') return true;
+    return false;
+}
+
+function cobrand_archive_front_end() {
     global $site_group;
     if ($site_group == 'hounslow') return true;
     return false;

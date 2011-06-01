@@ -38,7 +38,7 @@ if (OPTION_SITE_NAME=='number10' && !$rss && $q_type == 'default' && $q_sort == 
 $q_sort = preg_replace("#/$#", "", $q_sort);
 if ($q_type == 'closed') {
     $status = 'finished';
-} elseif (cobrand_archive_option() && $q_type == 'archived') {
+} elseif (cobrand_archive_front_end() && $q_type == 'archived') {
     $status = 'finished';
 } elseif ($q_type == 'rejected') {
     $status = 'rejected';
@@ -99,7 +99,7 @@ if ($q_cat) {
     $qrows .= "AND category = ? ";
 }
 
-if (cobrand_archive_option()) {
+if (cobrand_archive_front_end()) {
     if ($q_type == 'archived')
         $qrows .= ' AND archived IS NOT NULL';
     elseif ($q_type == 'closed')
@@ -121,9 +121,9 @@ if ($q_type == 'open') {
         $title .= 'New Petitions';
     else
         $title .= "Open petitions";
-} elseif (cobrand_archive_option() && $q_type == 'closed') {
+} elseif (cobrand_archive_front_end() && $q_type == 'closed') {
     $title .= "Closed petitions &ndash; being considered";
-} elseif (cobrand_archive_option() && $q_type == 'archived') {
+} elseif (cobrand_archive_front_end() && $q_type == 'archived') {
     $title .= "Closed petitions &ndash; no further action";
 } elseif ($q_type == 'closed') {
     $title .= "Closed petitions";
@@ -147,7 +147,7 @@ else {
 }
 
 if (!$rss) {
-    if (cobrand_archive_option()) {
+    if (cobrand_archive_front_end()) {
         $viewsarray = array('open'=>'Open petitions', 'closed' => 'Closed &ndash; being considered',
             'archived' => 'Closed &ndash; no further action', 'rejected' => 'Rejected petitions');
     } else {
