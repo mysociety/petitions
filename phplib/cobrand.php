@@ -756,7 +756,7 @@ function cobrand_admin_email($body) {
 function cobrand_admin_email_finished($body) {
     global $site_group;
     if ($site_group == 'hounslow' || $site_group == 'islington') return true;
-    if ($body == 'elmbridge') return true;
+    if ($body == 'elmbridge' || $body == 'woking') return true;
     return false;
 }
 
