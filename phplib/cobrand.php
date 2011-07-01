@@ -1626,6 +1626,8 @@ function cobrand_extra_heading($text) {
 
 function cobrand_allowed_responses() {
     global $site_name;
+    if ($site_name == 'hounslow')
+        return 12;
     if ($site_name == 'surrey' || $site_name == 'tandridge' || $site_name == 'number10')
         return 2;
     return 8;
