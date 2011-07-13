@@ -960,7 +960,7 @@ map.setCenter(lonLat, 5);
 <input type="submit" value="Remove all ticked"></p></form>';
                 if ($list_limit && $c >= $list_limit) {
                     print "<p>... only $list_limit signers shown, "; 
-                    print '<a href="'.$this->self_link.'&amp;petition='.$petition.'&amp;l=-1">show all</a>';
+                    print "<a href='" . $this->self_link . "&amp;petition=$petition&amp;s=$sort&amp;l=-1'>show all</a>";
                     print '</p>';
                 }
             } elseif (!$removed) {
