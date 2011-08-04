@@ -1,3 +1,4 @@
+
 div#petition_actions {
     border: none;
 }
@@ -18,10 +19,19 @@ form#signForm label {
 */
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #e28834;
+    border-bottom: solid 2px #919E67;
 }
 .petition_view_tabs span {
-    background-color: #e28834;
+    background-color: #919E67;
+    padding-bottom:14px;
+}
+
+.petition_view_tabs a {
+    font-weight:bold;
+}
+
+#ms th.long {
+    padding-left: 0.5em;
 }
 
 h3 {
@@ -55,24 +65,29 @@ p.petition_view_tabs {
 #action_create a:hover, #action_view a:hover {
     background-position: center -300px;
     background-color: #ffffff;
-    color: #b80000;
 }
 
 a:hover {
-  color: #b80000; /* Waveney default */
   background-color: transparent;
+}
+
+#ms ul {
+    list-style: disc;
+}
+
+div#most_recent ul, div#most_popular ul  {
+    padding-left: 0;
+    list-style: none;
+    margin: 4px;
 }
 
 #action_create a img,  #action_view a img {
     display: none;
 }
 
-div#most_recent ul, div#most_popular ul {
-    padding-left: 1em;
-}
-
 div#most_recent ul li, div#most_popular ul li {
     padding: 4px;
+    border-bottom:1px solid #ffffff;
 }
 
 
