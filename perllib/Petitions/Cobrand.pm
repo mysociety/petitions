@@ -66,6 +66,14 @@ sub within_area_only() {
     return;
 }
 
+sub name_only_text() {
+    my $site_name = Petitions::Page::site_name();
+    return '<strong>Please enter your full name</strong>. Signatures containing
+        incomplete names, false names or other text may be removed by the
+        petitions team.' if $site_name eq 'islington';
+    return '';
+}
+
 sub ask_for_address() {
     my $site_name = Petitions::Page::site_name();
     return '' if $site_name eq 'westminster';

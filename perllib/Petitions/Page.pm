@@ -372,6 +372,9 @@ the Armed Forces without a postcode, please select from this list:</label>',
 
     my $button_class = Petitions::Cobrand::button_class();
 
+    my $name_only = Petitions::Cobrand::name_only_text()
+        || 'Please enter your name only; signatures containing other text may be removed by the petitions team.';
+
     return
         $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => $action)
         . qq(<input type="hidden" name="add_signatory" value="1" />)
@@ -379,7 +382,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         . $body_ref
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
         . $q->div({ -id => 'signFormLeft' }, 
-          $q->p( $must . 'Please enter your name only; signatures containing other text may be removed by the petitions team.'),
+          $q->p( $must . $name_only ),
           $q->p("I, ",
                 $q->textfield(
                     -name => 'name', -id => 'name', -size => 20, -aria_required => 'true'
