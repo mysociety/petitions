@@ -1,65 +1,3 @@
-/* Table style taken from main site CSS, made global, tweaked */
-th, td {
-    padding: 0.25em;
-}
-th {
-    background-color: #01874A;
-    color: #ffffff;
-}
-
-th {
-    font-weight: bold;
-}
-
-#document{
-    line-height: 1.3em;
-    width: 48em;
-}
-
-#document p{
-    padding: 0;
-    margin: 0 0 0.75em 0;
-}
-
-#document a{
-    color: #7FBB57;
-    text-decoration: underline;
-}
-
-#mysoc-content{
-    font-size: 13px; /* matching Stevenage main site */
-    padding:1em;
-}
-#mysoc-content ul{
-    margin: 0.5em 0 1em 2em;
-}
-#mysoc-nav{
-    background-color: #A6B888;
-    font-size: 100%;
-    width: 48em;
-    margin-top: 4px;
-}
-#mysoc-nav ul{
-    padding: 4px 0;
-    margin: 0;
-    font-size:13px;
-}
-#mysoc-nav ul li{
-    display: inline;
-    padding: 0;
-    margin: 0;
-}
-
-#mysoc-nav ul li a{
-    border-right: 4px solid #ffffff;
-    padding: 4px 8px;
-    color: #ffffff;
-    font-weight: bold;
-}
-#mysoc-nav ul li a:hover{
-    background: #01874A;
-    text-decoration: none;
-}
 
 div#petition_actions {
     border: none;
@@ -74,38 +12,25 @@ div#front_how {
     width: 45%;
 }
 
-#mysoc-content p.petition_view_tabs {
-    border-bottom: solid 2px #01874A;
+p.petition_view_tabs {
+    border-bottom: solid 2px #363636;
     line-height: 1em;
     padding-bottom: 10px;
     margin-top: 1em;
 }
 
-#mysoc-content .petition_view_tabs span {
-    background-color: #01874A;
+.petition_view_tabs span {
+    background-color: #363636;
     padding-bottom: 10px;
-}
-
-#new_you label, #new_you span.label {
-    width: 15em;
 }
 
 #action_view a, #action_create a{
     text-decoration: none;
+	font-size: 80%;
 }
 
 #action_view a:hover, #action_create a:hover {
     text-decoration: none;
-}
-
-
-#mysoc-content h2, #mysoc-content h3 {
-  margin: 0.333em 0 ;
-  font-size: 1.2em;
-  color: #01874A;
-}
-#mysoc-content h2{
-    font-weight: bold;
 }
 
 div#petition_actions {
@@ -141,20 +66,16 @@ p.petition_view_tabs {
     display: none;
 }
 
-h1 {
-    margin-bottom: 1em;
-}
-
-/* overriding http://www.guildford.gov.uk/guildford/template/home/css/home.css */
-#breadcrumb{
-    display: block;
-}
-#leftspace, #rightspace {
-    width: 20px;
-}
-
 #most_popular ul, #most_recent ul{
 	padding-left: 2em;
 	margin: 1em 0 1em 0;
 }
 
+p.list_sort_by {
+	font-size: 120%;
+}
+
+.leading .button {
+	font-size: 125%; /* assuming 150% is too big in our context */
+	margin-bottom: 6px;
+}
