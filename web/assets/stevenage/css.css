@@ -79,3 +79,11 @@ p.list_sort_by {
 	font-size: 125%; /* assuming 150% is too big in our context */
 	margin-bottom: 6px;
 }
+
+#response {
+	font-family: 'PTSansRegular', PT Sans, Verdana, Arial, Sans-Serif;
+	font-weight: normal;
+	font-size: 1.5em;
+	color: #656867;
+	margin-bottom: 1em;
+}
