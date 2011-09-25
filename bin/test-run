@@ -436,7 +436,7 @@ sub do_main_test {
 
 We are going to do exactly what you say, because obviously we would never get contradictory petitions from different people.
 Email us on test\@example.org.
-It will cost \xc2\xa34.99.
+It will cost \xa34.99.
 
 Yours faithfully, 
 
@@ -452,7 +452,7 @@ the PM.",
         $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
     }
     # Pound can be encoded within ISO-8859-1, so that should be done here.
-    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Government response%Thank you for your petition%\xa3%");
+    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Government response%Thank you for your petition% \xa3%");
     $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check government response is displayed on petition page");
@@ -487,7 +487,7 @@ the PM.",
                     html_mail => 1,
                     message_body => "Thank you for your petition. 
 
-We've changed our minds, and now we\xe2\x80\x99re not going to do this at all.
+We've changed our minds, and now we\x{2019}re not going to do this at all.
 
 Yours faithfully, 
 
