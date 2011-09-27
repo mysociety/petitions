@@ -1988,12 +1988,12 @@ function admin_header($title, $want_scripts=true) {
 <?
     if ($want_scripts && cobrand_admin_show_map()) {
 ?>
-<script src="/jslib/openlayers/OpenLayers.js"></script>
+<script src="/jslib/OpenLayers-2.10/OpenLayers.js"></script>
 <?
     }
     if ($want_scripts && cobrand_admin_wards_for_petition()) {
 ?>
-<script src="/jslib/jquery/jquery-1.5.2.min.js"></script>
+<script src="/jslib/jquery/jquery-1.6.2.min.js"></script>
 <script src="asmselect/jquery.asmselect.js"></script>
 <link rel="stylesheet" type="text/css" href="asmselect/jquery.asmselect.css" />
 <script type="text/javascript">
