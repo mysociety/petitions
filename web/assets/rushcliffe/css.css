@@ -8,6 +8,15 @@
       word-wrap:break-word;
 }
 
+#mysoc_mainContent5col label { /* override Rushcliffe width:150px on all labels */
+  width: auto;
+}
+#mysoc_mainContent5col table { /* petition summaries */
+  width: 100%;
+}
+#mysoc_mainContent5col th, #mysoc_mainContent5col td  { /* petition summaries */
+  padding: 6px;
+}
 #mysoc_mainContent5col dt { /* FAQs */
  font-weight: bold; 
 }
