@@ -313,7 +313,7 @@ Returns the base URL, adjusted if we're given a body.
 sub domain ($) {
     my ($body) = @_;
     if (mySociety::Config::get('SITE_DOMAINS')) {
-        return "http://petitions.$body.gov.uk";
+        return Petitions::Cobrand::custom_domain($body);
     }
     return mySociety::Config::get('BASE_URL');
 }

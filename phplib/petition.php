@@ -294,7 +294,7 @@ class Petition {
     // URLs
     function domain() {
         if (OPTION_SITE_DOMAINS) {
-            $domain = 'http://petitions.' . $this->body_ref() . '.gov.uk';
+            $domain = cobrand_custom_domain($this->body_ref());
         } else {
             $domain = OPTION_BASE_URL;
         }

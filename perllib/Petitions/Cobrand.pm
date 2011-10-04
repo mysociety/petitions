@@ -175,4 +175,12 @@ sub archive_front_end() {
     return 0;
 }
 
+# allow specific councils to completely override normal domain settings:
+# this is rare (currently only applies if SITE_DOMAINS is true)
+sub custom_domain($) {
+    my $body = shift;
+    return 'http://bassetlaw.petitions.mysociety.org' if $body eq 'bassetlaw';
+    return "http://petitions.$body.gov.uk";
+}
+
 1;

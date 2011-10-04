@@ -1672,3 +1672,13 @@ function cobrand_html_final_changes($s) {
     return $s;
 }
 
+# allow specific councils to completely override normal domain settings: 
+# this is rare (currently only applies if SITE_DOMAINS is true)
+function cobrand_custom_domain($body) {
+  if ($body == 'bassetlaw') {
+      return 'http://bassetlaw.petitions.mysociety.org'; 
+  } else {
+      return 'http://petitions.' . $body . '.gov.uk';
+  }
+}
+
