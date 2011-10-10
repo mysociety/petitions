@@ -398,7 +398,10 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     <?
     $example_string = "1 month";
     $deadline_limits = cobrand_creation_deadline_limit();
-    if ($deadline_limits['years'] && $deadline_limits['months']) {
+    if (array_key_exists('date', $deadline_limits)) {
+        $example_string = '1 week';
+        $maximum = date('jS F Y', strtotime($deadline_limits['date']));
+    } elseif ($deadline_limits['years'] && $deadline_limits['months']) {
         $maximum = sprintf('%d year, %d months', $deadline_limits['years'], $deadline_limits['months']);
     } elseif ($deadline_limits['years']) {
         $maximum = sprintf('%d year', $deadline_limits['years']);
@@ -669,9 +672,13 @@ function step_main_error_check($data) {
         }
     }
 
-    $pet_today_arr = explode('-', $pet_today);
     $deadline_limits = cobrand_creation_deadline_limit();
-    $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $pet_today_arr[1] + $deadline_limits['months'], $pet_today_arr[2], $pet_today_arr[0] + $deadline_limits['years']));
+    if (array_key_exists('date', $deadline_limits)) {
+        $deadline_limit = $deadline_limits['date'];
+    } else {
+        $pet_today_arr = explode('-', $pet_today);
+        $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $pet_today_arr[1] + $deadline_limits['months'], $pet_today_arr[2], $pet_today_arr[0] + $deadline_limits['years']));
+    }
     if (!$data['rawdeadline'] || !$data['deadline'])
         $errors['rawdeadline'] = _('Please enter a duration');
     elseif ($data['deadline_details']['error'])
@@ -679,7 +686,9 @@ function step_main_error_check($data) {
     elseif ($data['deadline'] < $pet_today)
         $errors['rawdeadline'] = _('The duration must be positive');
     elseif ($deadline_limit < $data['deadline']) {
-        if ($deadline_limits['years'] && $deadline_limits['months']) {
+        if (array_key_exists('date', $deadline_limits)) {
+            $errors['rawdeadline'] = sprintf(_('Please change your duration so it is before %s.'), date('jS F Y', strtotime($deadline_limits['date'])));
+        } elseif ($deadline_limits['years'] && $deadline_limits['months']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year, %d months.'), $deadline_limits['years'], $deadline_limits['months']);
         } elseif ($deadline_limits['years']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year.'), $deadline_limits['years']);

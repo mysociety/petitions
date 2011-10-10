@@ -149,6 +149,16 @@ tr.a, li.a {
 
 /* Errors */
 
+#sitewide {
+    margin: 1em auto;
+    padding: 0.5em 15%;
+    background-color: #ffee99;
+    -moz-border-radius: 0.5em;
+    -webkit-border-radius: 0.5em;
+    -o-border-radius: 0.5em;
+    border-radius: 0.5em;
+}
+
 div#errors {
     margin: 0 auto 1em;
     color: #000000;
