@@ -81,17 +81,19 @@ function cobrand_creation_email_request() {
         Your details other than your name will not be published.';
 }
 
-function cobrand_creation_deadline_limit() {
+function cobrand_creation_deadline_limit($body='') {
     global $site_name;
-    if ($site_name == 'east-northamptonshire')
+    if (!$body) $body = $site_name;
+
+    if ($body == 'east-northamptonshire')
         return array('years' => 0, 'months' => 1);
-    if ($site_name == 'tandridge' || $site_name == 'surreycc' || $site_name == 'rbwm' || $site_name == 'stevenage' || $site_name == 'suffolkcoastal' || $site_name == 'forest-heath')
+    if ($body == 'tandridge' || $body == 'surreycc' || $body == 'rbwm' || $body == 'stevenage' || $body == 'suffolkcoastal' || $body == 'forest-heath')
         return array('years' => 0, 'months' => 6);
-    if ($site_name == 'wellingborough')
+    if ($body == 'wellingborough')
         return array('years' => 0, 'months' => 4);
-    if ($site_name == 'westminster' || $site_name == 'eastcambs' || $site_name == 'stedmundsbury')
+    if ($body == 'westminster' || $body == 'eastcambs' || $body == 'stedmundsbury')
         return array('years' => 0, 'months' => 3);
-    if ($site_name == 'barrowbc')
+    if ($body == 'barrowbc')
         return array('date' => '2011-12-01');
     return array('years' => 1, 'months' => 0);
 }

@@ -1410,10 +1410,14 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         $p = new Petition($petition_id);
         $status = $p->status();
         if ($status == 'draft' || $status == 'resubmitted') {
+            $limit = cobrand_creation_deadline_limit($p->body_ref());
+            if (array_key_exists('date', $limit)) {
+                $new_deadline = "least('$limit[date]', deadline+(ms_current_date()-date_trunc('day', laststatuschange)))";
+            } else {
+                $new_deadline = "deadline+(ms_current_date()-date_trunc('day', laststatuschange))";
+            }
             db_query("UPDATE petition
-                SET status='live',
-                deadline=deadline+(ms_current_date()-date_trunc('day', laststatuschange)),
-                rejection_hidden_parts = 0,
+                SET status='live', deadline=$new_deadline, rejection_hidden_parts = 0,
                 laststatuschange = ms_current_timestamp(), lastupdate = ms_current_timestamp()
                 WHERE id=?", $petition_id);
             memcache_update($petition_id);
