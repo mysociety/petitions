@@ -169,7 +169,7 @@ function pet_create_response_email($type, $url, $subject, $body) {
         0 => array('pipe', 'r'), 
         1 => array('pipe', 'w'),
     );
-    $result = proc_open("./create-preview $type $url", $descriptorspec, $pipes);
+    $result = proc_open("../bin/create-preview $type $url", $descriptorspec, $pipes);
 
     fwrite($pipes[0], "$subject\n\n$body");
     fclose($pipes[0]);
