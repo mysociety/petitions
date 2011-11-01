@@ -1,6 +1,27 @@
-.cattext .button{
-    cursor: pointer;
-    padding: 6px; /* Rushcliffe button is very skinny */
+/* note: FIXME:: looks like deployed resources will be on /media/rushcliffe/styleassets/images/ */
+
+/* faked extra wide container (no right-hand column): based on mainContent3col */
+#mysoc_mainContent5col {
+      width: 676px; /* 458px (3 cols) + 218px (width of 2-col right-hand sidebar) */
+      float: left;
+      padding: 10px;
+      word-wrap:break-word;
+}
+
+#mysoc_mainContent5col label { /* override Rushcliffe width:150px on all labels */
+  width: auto;
+}
+#mysoc_mainContent5col table { /* petition summaries */
+  width: 100%;
+}
+#mysoc_mainContent5col th, #mysoc_mainContent5col td  { /* petition summaries */
+  padding: 6px;
+}
+#mysoc_mainContent5col dt { /* FAQs */
+ font-weight: bold; 
+}
+#mysoc_mainContent5col dd { /* FAQs */
+  margin-left: 2em;
 }
 
 div#petition_actions {
@@ -17,22 +38,14 @@ div#front_how {
 }
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #819762;
+    border-bottom: solid 2px #004879;
     line-height: 1em;
     padding-bottom: 10px;
 }
 
 .petition_view_tabs span {
-    background-color: #819762;
+    background-color: #004879;
     padding-bottom: 10px;
-}
-
-#action_view a, #action_create a{
-    text-decoration: none;
-}
-
-#action_view a:hover, #action_create a:hover {
-    text-decoration: none;
 }
 
 h3 {
@@ -60,12 +73,15 @@ p.petition_view_tabs {
     padding-top: 76px;
     background-position: center top;
     background-repeat: no-repeat;
+    font-size: 90%;
 }
-#action_create a:hover, #action_view a:hover {
+div#petition_actions #action_create a:hover, #action_view a:hover {
     background-position: center -300px;
     background-color: #ffffff;
     text-decoration: underline;
+    border: none;
 }
+
 
 #action_create a img,  #action_view a img {
     display: none;
@@ -75,7 +91,6 @@ h1 {
     margin-bottom: 1em;
 }
 
-/* overriding http://www.guildford.gov.uk/guildford/template/home/css/home.css */
 #breadcrumb{
     display: block;
 }
@@ -84,7 +99,8 @@ h1 {
 }
 
 #most_popular ul, #most_recent ul {
-	padding-left: 1em;
+  list-style: none;
+	padding-left: 0em;
 	margin-left: 0;
 }
 #most_popular ul li, #most_recent ul li {
