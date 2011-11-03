@@ -1517,7 +1517,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'runnymede')
         return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/';
     if ($site_name == 'rushcliffe')
-        return 'http://www.rushcliffe.gov.uk/doc.asp?cat=11622';
+        return 'http://www.rushcliffe.gov.uk/councilanddemocracy/haveyoursay/petitions/'; # best guess
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_terms';
     if ($site_name == 'stevenage')
