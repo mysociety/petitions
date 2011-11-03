@@ -1543,8 +1543,6 @@ function cobrand_steps_elsewhere() {
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Step+by+step+guide+to+e-petitions?opendocument';
     if ($site_name == 'reigate-banstead')
         return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/stepbystep/index.asp';
-    if ($site_name == 'rushcliffe')
-        return 'http://www.rushcliffe.gov.uk/doc.asp?cat=11620';
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/petitions_guide';
     if ($site_name == 'suffolkcoastal')
