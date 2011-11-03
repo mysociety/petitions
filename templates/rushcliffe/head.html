@@ -46,9 +46,20 @@
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js"></script>
 		<script type="text/javascript" src="http://www.rushcliffe.gov.uk/media/rushcliffe/styleassets/js/jQuery.tabs.doItOnline.js"></script>
 		<script type="text/javascript" src="http://www.rushcliffe.gov.uk/media/rushcliffe/styleassets/js/jQuery.tabs.promoArea.js"></script>
-		<script type="text/javascript" src="http://www.rushcliffe.gov.uk/media/rushcliffe/styleassets/js/jquery.system.js"></script>
-		<script type="text/javascript" src="http://www.rushcliffe.gov.uk/media/rushcliffe/styleassets/js/resizer.js"></script>
-                <link rel="stylesheet" type="text/css" media="" href="/media/rushcliffe/styleassets/css/tinyMCECustomClasses.css" />
+
+
+
+
+
+		<!-- [NOTE-SYS] calling jquery.system.js recurses: disabled
+		<XXXscript type="text/javascript" src="http://www.rushcliffe.gov.uk/media/rushcliffe/styleassets/js/jquery.system.js"></script>
+		<XXX-script type="text/javascript" src="http://www.rushcliffe.gov.uk/media/rushcliffe/styleassets/js/resizer.js"></script>
+		-->
+		
+		
+		
+		
+    <link rel="stylesheet" type="text/css" media="" href="http://www.rushcliffe.gov.uk/media/rushcliffe/styleassets/css/tinyMCECustomClasses.css" />
 		<!-- navigation object : Google Analytics Code --><script type="text/javascript">
 		
   var _gaq = _gaq || [];
@@ -101,11 +112,15 @@ PARAM_EXTRA
 
 				<div id="headerLinks">
 					<ul>
-						<li class="first" id="insertAtoZ">A-Z</li>
-						<li><!-- navigation object : Find and contact us --><a href="http://www.rushcliffe.gov.uk/contactus/">Find and contact us</a></li>
-						<li><a href="javascript:decreaseFontSize();"><span class="onea">A</span></a>
-						<a href="javascript:increaseFontSize();"><span class="twoa"> A</span></a>
-						<a href="javascript:increaseFontSizeTwo();"><span class="threea"> A</span></a></li>
+					  <!-- suppressed due to [NOTE-SYS]: see line ~54
+						  <li class="first" id="insertAtoZ">A-Z</li>
+						-->
+						<li  class="first"><!-- navigation object : Find and contact us --><a href="http://www.rushcliffe.gov.uk/contactus/">Find and contact us</a></li>
+						<!-- suppressed due to [NOTE-SYS]: see line ~54
+						  <li><a href="javascript:decreaseFontSize();"><span class="onea">A</span></a>
+						  <a href="javascript:increaseFontSize();"><span class="twoa"> A</span></a>
+						  <a href="javascript:increaseFontSizeTwo();"><span class="threea"> A</span></a></li>
+						-->
 					</ul>
 				</div>
 				<div class="clearing"></div>
