@@ -28,17 +28,23 @@ my ($header, $footer);
 my $template_root = "$FindBin::Bin/../templates";
 
 # Surrey
-$header = get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/header1.asp');
-$header .= <<EOF;
+my $header1 = get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/header1.asp');
+my $header2 = get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/header2.asp');
+
+if ($header1 && $header2) {
+    $header = $header1;
+    $header .= <<EOF;
 <title>Surrey County Council - PARAM_TITLE</title>
 <link rel="stylesheet" type="text/css" href="/pet.css" />
 <link rel="stylesheet" type="text/css" href="/assets/surreycc/css.css" />
 EOF
-$header .= get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/header2.asp');
-$header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>/PARAM_RSS_LINKS\nPARAM_SUBJECTS/;
-$header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>//g;
-$header =~ s/(<meta name="DC\.Identifier".*?")http.*?"/$1PARAM_DC_IDENTIFIER"/;
-$header .= "\n<h1>PARAM_H1</h1>\n";
+    $header .= $header2;
+    $header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>/PARAM_RSS_LINKS\nPARAM_SUBJECTS/;
+    $header =~ s/<link rel="alternate" type="application\/rss+xml".*? \/>//g;
+    $header =~ s/(<meta name="DC\.Identifier".*?")http.*?"/$1PARAM_DC_IDENTIFIER"/;
+    $header .= "\n<h1>PARAM_H1</h1>\n";
+}
+
 $footer = get_page('http://www1.surreycc.gov.uk/scctemplate/petitions/footer.asp');
 output('surreycc', $header, $footer);
 
