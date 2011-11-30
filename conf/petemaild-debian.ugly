@@ -2,8 +2,8 @@
 #
 ### BEGIN INIT INFO
 # Provides: !!(*= $daemon_name *)!!
-# Required-Start: $local_fs $syslog
-# Required-Stop: $local_fs $syslog
+# Required-Start: $local_fs $syslog postgresql
+# Required-Stop: $local_fs $syslog postgresql
 # Default-Start: 2 3 4 5 
 # Default-Stop: 0 1 6
 # Short-Description: !!(*= $daemon_name *)!! is a daemon running the ePetitions email queue
