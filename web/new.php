@@ -43,7 +43,7 @@ if (get_http_var('toothercouncil')) {
         $data = array('token' => $token);
         check_edited_petition($data);
         call_user_func('petition_form_' . $steps[1], $steps, 1, $data);
-    } elseif (OPTION_CREATION_DISABLED) {
+    } elseif (cobrand_creation_disabled()) {
         page_closed_message();
     } elseif (OPTION_SITE_NAME == 'number10') {
         # Special search for Number 10
@@ -116,7 +116,7 @@ function petition_form_submitted($steps) {
     }
 
     $isedited = check_edited_petition($data);
-    if (OPTION_CREATION_DISABLED && !$isedited) {
+    if (cobrand_creation_disabled() && !$isedited) {
         page_closed_message();
         return;
     }

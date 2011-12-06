@@ -68,7 +68,7 @@ function page_header($title, $params = array()) {
 
     // Display header
     global $site_name;
-    if (OPTION_CREATION_DISABLED && file_exists('../templates/' . $site_name . '/head-nocreation.html')) {
+    if (cobrand_creation_disabled() && file_exists('../templates/' . $site_name . '/head-nocreation.html')) {
         $contents = file_get_contents('../templates/' . $site_name . '/head-nocreation.html');
     } else {
         $contents = file_get_contents('../templates/' . $site_name . '/head.html');
@@ -228,8 +228,8 @@ function rss_footer($items) {
 
 function page_closed_message($front = false) {
     if ($front) echo '<br style="clear:both" />';
-    if (is_string(OPTION_CREATION_DISABLED)) {
-        echo OPTION_CREATION_DISABLED;
+    if (is_string(cobrand_creation_disabled())) {
+        echo cobrand_creation_disabled();
     } else {
         echo '<p>Notice: Submission of new petitions is currently closed.
 You can still sign any petition during this time.</p>';

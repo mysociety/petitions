@@ -1684,3 +1684,22 @@ function cobrand_custom_domain($body) {
   }
 }
 
+# returns OPTION_CREATION_DISABLED value
+# with consideration for specific bodies within the installation if multi-body sites
+#   (Note: OPTION_CREATION_DISABLED may be pure HTML (for a single site), but for multi-body 
+#          sites it's a list of sitenames that gets returned as a short HTML notice here)
+function cobrand_creation_disabled() {
+    global $site_name;
+    if (OPTION_CREATION_DISABLED) {
+        if (OPTION_SITE_TYPE == 'multiple') { # this is a multi-body installation, only disable if site_name is explicitly mentioned
+            $disabled_bodies = preg_split("/[\s,]+/", OPTION_CREATION_DISABLED);
+            if (in_array($site_name, $disabled_bodies)) {
+                return "<p>Creation of petitions is disabled for this site.</p>"; # default message: customise here if needed
+            } else {
+                return false;
+            }
+        }
+    } 
+    return OPTION_CREATION_DISABLED;
+}
+

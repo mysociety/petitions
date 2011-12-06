@@ -72,7 +72,7 @@ if (OPTION_SITE_NAME != 'number10') {
     front_actions();
     front_intro_text();
     pet_search_form(array('front'=>true));
-    if (OPTION_CREATION_DISABLED) {
+    if (cobrand_creation_disabled()) {
         page_closed_message(true);
     }
     echo '</div>';
@@ -86,7 +86,7 @@ page_footer('Home');
 
 function front_actions() {
     echo '<div id="petition_actions"> <ul>';
-    if (!OPTION_CREATION_DISABLED) {
+    if (! cobrand_creation_disabled()) {
         echo '<li id="action_create"><a href="/new"' . cobrand_create_button_title() . '><img src="/images/clipboard-add.gif" alt="" class="noborder"
 /><br />Create a petition</a></li>';
     }
@@ -141,7 +141,7 @@ function front_most_recent($recent) {
         petition_row($petition, $c++);
     }
     if (!count($recent)) {
-        if (OPTION_CREATION_DISABLED) {
+        if (cobrand_creation_disabled()) {
             print '<li><em>There are currently no petitions.</em></li>';
         } else {
             print '<li><em>None</em>; you can <a href="/new">create a petition</a>.</li>';
@@ -166,7 +166,7 @@ function front_most_popular($most) {
         petition_row($petition, $c++);
     }
     if (!count($most)) {
-        if (OPTION_CREATION_DISABLED) {
+        if (cobrand_creation_disabled()) {
             print '<li><em>There are currently no petitions.</em></li>';
         } else {
             print '<li><em>None</em>; you can <a href="/new">create a petition</a>.</li>';
