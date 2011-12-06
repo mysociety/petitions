@@ -1685,7 +1685,7 @@ function cobrand_custom_domain($body) {
 }
 
 # returns OPTION_CREATION_DISABLED value
-# with consideration for specific bodies within the installation if multi-body sites
+# if this is a multi-body site, can't just return OPTION_CREATION_DISABLED but must inspect it first
 #   (Note: OPTION_CREATION_DISABLED may be pure HTML (for a single site), but for multi-body 
 #          sites it's a list of sitenames that gets returned as a short HTML notice here)
 function cobrand_creation_disabled() {
