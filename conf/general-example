@@ -29,8 +29,18 @@ define('OPTION_SITE_PETITIONED', '');
 // Whether there's an approval step
 define('OPTION_SITE_APPROVAL', '');
 
-define('OPTION_CREATION_DISABLED', 0); // Set to disable creation of petitions. If a string, will be printed as error message.
-define('OPTION_SIGNING_DISABLED', 0); // Set to a string to disable signing of petitions. The string will be printed as a message instead of the signing form.
+// Set to disable creation of petitions. If a string, will be printed as error message.
+// Multiple sites only:
+//   If you've set SITE_TYPE to "multiple", enter a comma-separated list of the names of the body or bodies
+//   for whom petition creation is disabled (a default message will be shown), e.g. "alpha, beta"
+define('OPTION_CREATION_DISABLED', 0); 
+
+// Set to a string to disable signing of petitions. The string will be printed as a message instead of the signing form.
+// Multiple sites only:
+//   If you've set SITE_TYPE to "multiple", enter a comma-separated list of the names of the body or bodies 
+//   for whom petition signing is disabled (a default message will be shown), e.g. "alpha, beta"
+define('OPTION_SIGNING_DISABLED', 0); 
+
 define('OPTION_RESPONSE_DISABLED', 0); // Set to 1 to disable responding to petitions.
 
 define('OPTION_PET_DB_NAME', 'pet');
