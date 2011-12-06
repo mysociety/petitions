@@ -183,4 +183,23 @@ sub custom_domain($) {
     return "http://petitions.$body.gov.uk";
 }
 
+# determine if signing is disabled by inspecting SIGNING_DISABLED
+# If this is a multi-body site, then we can't just return SIGNING_DISABLED but must inspect it first.
+#   (Note: OPTION_SIGNING_DISABLED may be pure HTML (for a single site), but 
+#          for multi-body sites it's a list of sitenames that gets returned as a short HTML notice here)
+sub signing_disabled($) {
+    my $body = shift;
+    if (mySociety::Config::get('SIGNING_DISABLED')) {
+        if (mySociety::Config::get('SITE_TYPE') eq 'multiple') { # this is a multi-body installation, only disable if site_name is explicitly mentioned
+            my @disabled_bodies = split(/[\s,]+/, mySociety::Config::get('SIGNING_DISABLED'));
+            if (grep {$_ eq $body} @disabled_bodies) {
+                return "Petition signing is currently disabled"; # default message: customise here if needed
+            } else {
+                return 0;
+            }
+        }
+    } 
+    return mySociety::Config::get('SIGNING_DISABLED');
+}
+
 1;

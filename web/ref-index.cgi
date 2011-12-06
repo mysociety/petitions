@@ -146,7 +146,7 @@ sub main () {
 
     $html .= Petitions::Page::display_box($q, $p, detail=>1);
     $html .= Petitions::Page::response_box($q, $p) if ($p->{response});
-    if ($p->{status} eq 'live' && (my $disabled = mySociety::Config::get('SIGNING_DISABLED'))) {
+    if ($p->{status} eq 'live' && (my $disabled = Petitions::Cobrand::signing_disabled($qp_body))) {
         $html .= Petitions::Cobrand::main_heading('Sign a petition')
             if $p->{response};
         $html .= $disabled;

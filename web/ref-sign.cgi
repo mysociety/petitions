@@ -49,7 +49,16 @@ sub signup_page ($$) {
     my mySociety::Web $q = shift;
     my $p = shift;
 
-    if (my $disabled = mySociety::Config::get('SIGNING_DISABLED')) {
+    my $qp_body; # need body to selectively determine if signing is disabled
+    if (mySociety::Config::get('SITE_TYPE') eq 'multiple') {
+        if (mySociety::Config::get('SITE_DOMAINS')) {
+            $qp_body = Petitions::Page::site_name();
+        } else {
+            $qp_body = $q->ParamValidate(body => qr/^[A-Za-z0-9-]+$/);
+        }
+    }
+
+    if (my $disabled = Petitions::Cobrand::signing_disabled($qp_body)) {
         Petitions::Page::error_page($q, $disabled);
         return;
     }
