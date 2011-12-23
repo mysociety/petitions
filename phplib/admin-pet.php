@@ -446,7 +446,7 @@ class ADMIN_PAGE_PET_MAIN {
             SELECT petition.*, body.name as body_name, body.ref as body_ref,
                 date_trunc('second',laststatuschange) AS laststatuschange,
                 (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
-                (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
+                (deadline + interval '2 years' >= ms_current_date()) AS response_possible,
                 cached_signers AS signers,
                 $surge
                 message.c AS message_count
@@ -608,7 +608,7 @@ petitions.</p>';
         $sel_query_part .= "
                 date_trunc('second', laststatuschange) AS laststatuschange,
                 date_trunc('second', creationtime) AS creationtime,
-                (deadline + interval '1 year' >= ms_current_date()) AS response_possible,
+                (deadline + interval '2 years' >= ms_current_date()) AS response_possible,
                 (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
                     emailsent = 'confirmed') AS signers_confirmed,
                 (SELECT count(*) FROM signer WHERE showname = 't' and petition_id=petition.id AND
