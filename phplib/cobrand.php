@@ -759,7 +759,7 @@ function cobrand_admin_email($body) {
 # Runs from cron, so examine site_group or petition body.
 function cobrand_admin_email_finished($body) {
     global $site_group;
-    if ($site_group == 'hounslow' || $site_group == 'islington' || $site_group == 'westminster') return true;
+    if ($site_group == 'hounslow' || $site_group == 'islington' || $site_group == 'westminster' || $site_group == 'ipswich') return true;
     if ($body == 'elmbridge' || $body == 'woking') return true;
     return false;
 }
