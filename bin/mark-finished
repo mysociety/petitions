@@ -2,12 +2,11 @@
 <?php
 /* 
  * mark-finished:
- * Run from cron daily to detect petitions which have finished
+ * Run from cron daily to detect petitions which have finished, timed out, or
+ * need an extra email sending.
  *
- * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+ * Copyright (c) 2011 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
- *
- * $Id: mark-finished,v 1.13 2010-03-12 00:06:37 matthew Exp $
  *
  */
 

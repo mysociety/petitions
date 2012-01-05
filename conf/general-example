@@ -71,10 +71,6 @@ define('OPTION_MEMCACHE_HOST', '127.0.0.1');
 // Time for which we collect signup requests to batch insert.
 define('OPTION_MAX_SIGNUP_TIME', 0.25);
 
-// Base domain of the website. This is used to distinguish internal from
-// external referrers, for instance.
-define('OPTION_WEB_DOMAIN', 'www.---.com');
-
 // Top-level URL of current website
 define('OPTION_BASE_URL', 'http://www.---.com');
 define('OPTION_ADMIN_URL', 'https://secure.---.com');
@@ -117,11 +113,6 @@ define('OPTION_SMS_ALERTS', 0);
 define('OPTION_SMS_ALERT_FROM', 'xxx@xxx.xxx'); // optional, leave empty to test all emails for the subject below
 define('OPTION_SMS_ALERT_SUBJECT_SEARCH', 'urgent');
 define('OPTION_SMS_ALERT_NUMBER', ''); // can be a comma separated list of numbers.
-define('OPTION_SMS_ALERT_NUMBER_ANGIE', ''); 
-define('OPTION_SMS_ALERT_NUMBER_TOM', ''); 
-define('OPTION_SMS_ALERT_NUMBER_KEITH', ''); 
-define('OPTION_SMS_ALERT_NUMBER_ADAM', ''); 
-define('OPTION_SMS_ALERT_NUMBER_FRANCIS', '');
 
 define('OPTION_SMS_C360_OUTGOING_URL', 'http://www.c360uk.com/...blah...');
 
