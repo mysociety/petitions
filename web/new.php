@@ -45,9 +45,6 @@ if (get_http_var('toothercouncil')) {
         call_user_func('petition_form_' . $steps[1], $steps, 1, $data);
     } elseif (cobrand_creation_disabled()) {
         page_closed_message();
-    } elseif (OPTION_SITE_NAME == 'number10') {
-        # Special search for Number 10
-        petition_search_first();
     } else {
         call_user_func('petition_form_' . $steps[1], $steps, 1);
     }

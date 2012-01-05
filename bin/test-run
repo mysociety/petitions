@@ -128,6 +128,7 @@ foreach (@actions) {
     next unless $action->{$_};
     date_print($actions_desc{$_}) if $actions_desc{$_};
     do_main_test() if $_ eq 'main';
+    #do_council_test() if $_ eq 'council';
     do_rejection_test() if $_ eq 'rejection';
     do_timeout_test() if $_ eq 'timeout';
     do_resubmit_test() if $_ eq 'resubmit';
@@ -198,8 +199,6 @@ sub do_create_part {
     my ($fields1, $fields2) = @_;
     comment("Create a new petition");
     $wth->browser_follow_link(text_regex => qr/Create a petition/);
-    $wth->browser_check_contents("Before creating a new petition");
-    $wth->browser_get('/new?tostepmain=1'); # Search is external, so must be skipped
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => $fields1,
@@ -768,8 +767,6 @@ sub do_resubmit_test {
     comment("Create a new petition");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/Create a petition/);
-    $wth->browser_check_contents("Before creating a new petition");
-    $wth->browser_get('/new?tostepmain=1'); # Search is external, so must be skipped
     $wth->browser_check_contents("Part 1 of 3");
     $wth->browser_submit_form(form_name => 'newpetition',
             fields => {
@@ -1255,7 +1252,6 @@ sub do_disabled_test {
     $wth->browser_get($base_url);
     $wth->browser_check_no_contents('Create a petition');
     $wth->browser_get($base_url . '/new'); # XXX It's not linked anywhere!
-    $wth->browser_check_no_contents("Before creating a new petition");
     $wth->browser_check_contents("Petition creation is currently closed.");
 
     restore_config_file();
