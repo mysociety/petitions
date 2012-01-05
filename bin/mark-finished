@@ -142,9 +142,31 @@ function find_timed_out_rejected_petitions() {
     }
 }
 
+function find_finished_petitions_needing_admin_email() {
+    global $pet_today;
+
+    $timeout = cobrand_admin_email_post_finished();
+    if (!$timeout) return;
+
+    verbose("finding petitions needing an email");
+    $q = db_query("
+                select id, ref from petition
+                where '$pet_today' = deadline + interval '$timeout' + interval '1 day'
+                    and status = 'finished'");
+    while ($petition = db_fetch_array($q)) {
+        verbose("petition #${petition['id']} (${petition['ref']}) needs admin email");
+        pet_send_message($petition['id'], MSG_ADMIN, MSG_ADMIN, 'finished', 'admin-post-finished-petition', array(
+            'ago' => $timeout,
+        ));
+    }
+    db_commit();
+    verbose("finished sending admin emails");
+}
+
 // Main code
 $memcache = new Memcache;
 $memcache->connect('localhost', 11211);
 find_newly_finished_petitions();
 find_timed_out_rejected_petitions();
+find_finished_petitions_needing_admin_email();
 

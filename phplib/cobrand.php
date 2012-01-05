@@ -764,6 +764,24 @@ function cobrand_admin_email_finished($body) {
     return false;
 }
 
+function cobrand_admin_email_post_finished() {
+    global $site_group;
+    if ($site_group == 'westminster') return '1 month';
+    return '';
+}
+
+# Returns number of days you have to resubmit a rejected petition,
+# if different from normal. Runs from cron.
+# For multi-council arrays, make sure 'other' is always the numerically greatest timeout (if not: specificy them all, explicitly)
+function cobrand_rejected_petition_timeout() {
+    global $site_group; # No $site_name available
+    if ($site_group == 'westminster') return '8 days';
+    if ($site_group == 'nottinghamshire') return array('bassetlaw' => '20 days', 'rushcliffe' => '15 days', 'other' => '29 days');
+    if ($site_group == 'surreycc') return array('elmbridge' => '15 days', 'guildford' => '15 days', 'other' => '29 days');
+    // 29 days is 4 weeks, plus a day to allow a margin for the creator
+    return '29 days';
+}
+
 function cobrand_admin_is_site_user() {
     $sites = explode(',', OPTION_SITE_NAME);
     $user = http_auth_user();
@@ -1628,18 +1646,6 @@ function cobrand_allowed_responses() {
     if ($site_name == 'surrey' || $site_name == 'tandridge' || $site_name == 'number10')
         return 2;
     return 8;
-}
-
-# Returns number of days you have to resubmit a rejected petition,
-# if different from normal. Runs from cron.
-# For multi-council arrays, make sure 'other' is always the numerically greatest timeout (if not: specificy them all, explicitly)
-function cobrand_rejected_petition_timeout() {
-    global $site_group; # No $site_name available
-    if ($site_group == 'westminster') return '8 days';
-    if ($site_group == 'nottinghamshire') return array('bassetlaw' => '20 days', 'rushcliffe' => '15 days', 'other' => '29 days');
-    if ($site_group == 'surreycc') return array('elmbridge' => '15 days', 'guildford' => '15 days', 'other' => '29 days');
-    // 29 days is 4 weeks, plus a day to allow a margin for the creator
-    return '29 days';
 }
 
 function cobrand_fill_form_instructions(){
