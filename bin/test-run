@@ -447,11 +447,11 @@ the PM.",
 
     comment("Check everyone gets the response; non deleted signers, creator and admin");
     foreach my $signer_no (1488,1490) {
-        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
+        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Response%Thank you for your petition%');
     }
     # Pound can be encoded within ISO-8859-1, so that should be done here.
-    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Government response%Thank you for your petition% \xa3%");
-    $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
+    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Response%Thank you for your petition% \xa3%");
+    $wth->email_get_containing('%Subject: Response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check government response is displayed on petition page");
     $wth->browser_get($base_url);
@@ -499,11 +499,11 @@ Second bullet point'
 
     comment("Check everyone gets the 2nd response; non deleted signers, creator and admin");
     foreach my $signer_no (1488,1490) {
-        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%<body>%');
+        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Response%Thank you for your petition%<body>%');
     }
     # Apostrophe should manage to be encoded in win-1252
-    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Government response%Thank you for your petition%<body>%\x92%");
-    $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
+    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Response%Thank you for your petition%<body>%\x92%");
+    $wth->email_get_containing('%Subject: Response%To: '.$contact_email.'%Thank you for your petition%');
 
     comment("Check 2nd government response is displayed on petition page");
     $wth->browser_get($base_url);
@@ -1044,11 +1044,11 @@ sub do_early_response_test {
 
     comment("Check everyone gets the response; signers, creator and admin");
     foreach my $signer_no (512..514) {
-        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Government response%Thank you for your petition%');
+        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Response%Thank you for your petition%');
     }
     # Encoded in UTf-8.
-    $wth->email_get_containing('%To: '.email_n(511)."%Subject: Government response%Thank you for your petition%\xC5\x99\xC3\xA1k%");
-    $wth->email_get_containing('%Subject: Government response%To: '.$contact_email.'%Thank you for your petition%');
+    $wth->email_get_containing('%To: '.email_n(511)."%Subject: Response%Thank you for your petition%\xC5\x99\xC3\xA1k%");
+    $wth->email_get_containing('%Subject: Response%To: '.$contact_email.'%Thank you for your petition%');
     $wth->email_check_none_left();
 
     $wth->browser_get($partial_signup_confirm);
@@ -1056,7 +1056,7 @@ sub do_early_response_test {
     $c++;
     comment("Check person who signed up before pre-reply was written gets the email");
     call_send_messages();
-    $wth->email_get_containing('%Envelope-to: '.email_n(515).'%Subject: Government response%Thank you for your petition%');
+    $wth->email_get_containing('%Envelope-to: '.email_n(515).'%Subject: Response%Thank you for your petition%');
     $wth->email_check_none_left();
 
     comment("Check early response is now on the webpage");
