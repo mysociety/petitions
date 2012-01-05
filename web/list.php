@@ -29,10 +29,11 @@ if ($err) {
 
 $rss = get_http_var('rss') ? true : false;
 
-if (OPTION_SITE_NAME=='number10' && !$rss && $q_type == 'default' && $q_sort == 'default' && $q_cat == 'default') {
-    list_front();
-    exit;
-}
+# No special front page list needed currently.
+#if (OPTION_SITE_NAME=='number10' && !$rss && $q_type == 'default' && $q_sort == 'default' && $q_cat == 'default') {
+#    list_front();
+#    exit;
+#}
 
 // Strip any trailing '/'.
 $q_sort = preg_replace("#/$#", "", $q_sort);

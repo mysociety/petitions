@@ -413,7 +413,6 @@ sub do_main_test {
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_check_contents("None");
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_follow_link(text_regex => qr/Closed petitions/);
     $wth->browser_check_contents($petition_text);
@@ -457,7 +456,6 @@ the PM.",
     comment("Check government response is displayed on petition page");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_follow_link(text_regex => qr/Closed petitions/);
     $wth->browser_check_contents('with response');
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
@@ -466,7 +464,6 @@ the PM.",
     comment("Load the RSS feeds to check for basic errors in them");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_follow_link(text_regex => qr/RSS/);
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_back();
@@ -511,7 +508,6 @@ Second bullet point'
     comment("Check 2nd government response is displayed on petition page");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_follow_link(text_regex => qr/Closed petitions/);
     $wth->browser_check_contents('with response');
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
@@ -649,7 +645,6 @@ sub do_rejection_test {
     comment("Check appears on rejection page");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_follow_link(text_regex => qr/Rejected petitions/);
     $wth->browser_check_contents($petition_text_resubmitted);
     $wth->browser_follow_link(text_regex => qr/$petition_text_resubmitted/);
@@ -730,7 +725,6 @@ sub do_timeout_test {
     $wth->email_check_none_left();
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_follow_link(text_regex => qr/Rejected petitions/);
     $wth->browser_check_no_contents($petition_text);
     comment("Just after timeout");
@@ -742,7 +736,6 @@ sub do_timeout_test {
     comment("Check it is on rejection page, but text not shown (as offensive)");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_follow_link(text_regex => qr/Rejected petitions/);
     $wth->browser_check_contents("Petition details cannot be shown");
     $wth->browser_check_no_contents($petition_text);
@@ -1069,7 +1062,6 @@ sub do_early_response_test {
     comment("Check early response is now on the webpage");
     $wth->browser_get($base_url);
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_check_contents('with response');
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents('Thank you for your petition');
@@ -1119,7 +1111,6 @@ sub do_early_response_test {
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_check_contents("None");
     $wth->browser_follow_link(text_regex => qr/View petitions/);
-    $wth->browser_follow_link(text_regex => qr/By deadline/);
     $wth->browser_check_no_contents($petition_text);
     $wth->browser_follow_link(text_regex => qr/Closed petitions/);
     $wth->browser_check_contents($petition_text);
