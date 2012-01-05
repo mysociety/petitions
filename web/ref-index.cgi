@@ -131,8 +131,6 @@ sub main () {
         $html .=
             $q->div($attr,
                 $q->p("You are now signed up to this petition. Thank you."),
-                mySociety::Config::get('SITE_NAME') eq 'number10'
-                    ? $q->p("For news about the Prime Minister's work and agenda, and other features including films, interviews, a virtual tour and history of No.10, visit the ", $q->a({ -href => 'http://www.number10.gov.uk/' }, 'main Downing Street homepage')) : '',
                 $q->p("If you would like to tell your friends about this petition, its permanent web address is:",
                     $q->strong($q->a({ -href => $url }, ent($url))))
             );
@@ -163,27 +161,6 @@ sub main () {
             . Petitions::Cobrand::main_heading('Petition Rejected');
         $html .= Petitions::Page::reject_box($q, $p);
         $html .= $q->end_div();
-    }
-    if ($p->{status} eq 'live' && mySociety::Config::get('SITE_NAME') eq 'number10') {
-        my $url = uri_escape(mySociety::Config::get('BASE_URL') . "/$ref/");
-        my $share_title = URI::Escape::uri_escape_utf8(Petitions::sentence($p, 0, 1));
-        $html .= <<EOF;
-<div class="clear_all">
-    <div id='sharethisembed'>Share this:</div>
-    <div class='sharethisholdermain'>
-        <a href='http://del.icio.us/post?url=$url&amp;title=$share_title' class='sharethislink'>
-        <img src='http://www.number10.gov.uk/wp-content/themes/number10/images/add_delicious16.gif' class='shareimage' alt="" />delicious</a>
-    </div>
-    <div class='sharethisholdermain'>
-        <a href='http://digg.com/submit?phase=2&amp;url=$url&amp;title=$share_title' class='sharethislink'>
-        <img src='http://www.number10.gov.uk/wp-content/themes/number10/images/add_digg16.gif' class='shareimage' alt="" />digg</a>
-    </div>
-    <div class='sharethisholdermain'>
-        <a href='http://www.facebook.com/sharer.php?u=$url' class='sharethislink'>
-        <img src='http://www.number10.gov.uk/wp-content/themes/number10/images/add_facebook16.gif' class='shareimage' alt="" />facebook</a>
-    </div>
-</div>
-EOF
     }
 
     my $stat = 'View.' . $p->{ref};

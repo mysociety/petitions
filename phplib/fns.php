@@ -139,19 +139,10 @@ function pet_send_email_internal($to, $spec) {
     return $success;
 }
 
-/* This is for Number 10 petitions only at present */
+/* This is for example SBDC petitions only at present */
 function pet_search_form($params=array()) {
     $front = isset($params['front']) && $params['front'];
-    if (OPTION_SITE_NAME == 'number10') {
-?>
-<form<? if ($front) print ' id="search_front"'; ?> name="pet_search" method="get" action="http://search.petitions.number10.gov.uk/kbroker/number10/petitions/search.lsim">
-<input type="hidden" name="ha" value="1157" />
-<input type="hidden" name="sc" value="number10" />
-<p><label for="q">Search petitions:</label>
-<input type="text" name="qt" id="q" size="11" maxlength="1000" value="" />&nbsp;<input type="submit" value="Go" /></p>
-</form>
-<?
-    } elseif (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
+    if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
 ?>
 <form<?
         if (isset($params['float'])) print ' style="float:right"';

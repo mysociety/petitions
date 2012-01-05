@@ -16,11 +16,6 @@ require_once '../commonlib/phplib/importparams.php';
 $search = trim(get_http_var('q', true));
 if (!$search) $search = trim(get_http_var('s', true));
 
-if (OPTION_SITE_NAME == 'number10') {
-    header('Location: http://search.petitions.number10.gov.uk/kbroker/number10/petitions/search.lsim?ha=1157&sc=number10&qt=' . urlencode($search));
-    exit;
-}
-
 $rss = get_http_var('rss') ? true : false;
 $rss_items = array();
 $petitions_output = array();

@@ -31,7 +31,6 @@ sub main_heading($) {
     my $text = shift;
     my $site_name = Petitions::Page::site_name();
     return "<h2>$text</h2>" if $site_name eq 'surreycc';
-    return "<h3 class='page_title_border'>$text</h3>" if $site_name eq 'number10';
     return "<h3>$text</h3>";
 }
 
@@ -41,7 +40,7 @@ sub extra_heading($) {
     my $text = shift;
     my $site_name = Petitions::Page::site_name();
     return "<h2>$text</h2>"
-        if $site_name =~ /tandridge|molevalley|lichfielddc|number10|spelthorne|reigate-banstead|nottinghamshire/;
+        if $site_name =~ /tandridge|molevalley|lichfielddc|spelthorne|reigate-banstead|nottinghamshire/;
     return '';
 }
 

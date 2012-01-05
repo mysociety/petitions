@@ -44,7 +44,7 @@ you to click a link to confirm. Your proposed petition will then
 <?
     if (OPTION_SITE_APPROVAL) {
 ?>
-be delivered to <?=OPTION_SITE_NAME=='number10'?'the Downing Street':OPTION_SITE_PETITIONED?> inbox.</p>
+be delivered to <?=OPTION_SITE_PETITIONED?>.</p>
 <?
     } else {
 ?>
@@ -57,8 +57,8 @@ appear on the site.</p>
 
 <?=cobrand_create_heading('Step ' . ($n++) . ': Petition approval')?>
 
-<p>Officials <?=OPTION_SITE_NAME=='number10'?'at Downing Street':''?> will check your petition to make sure that it meets
-the basic requirements set out in our <a href="/terms">terms and conditions</a><?=OPTION_SITE_NAME=='number10'?' and the Civil Service code':''?>.</p>
+<p>Officials will check your petition to make sure that it meets
+the basic requirements set out in our <a href="/terms">terms and conditions</a>.</p>
 
 <p>If for any reason we cannot accept the petition, we will write to you to explain
 why. You will be able to edit and resubmit your petition if you wish.</p>

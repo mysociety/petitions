@@ -1183,11 +1183,7 @@ EOF;
             return;
         }
 
-        if (OPTION_SITE_NAME == 'number10') {
-            $email_subject = sprintf("Government response to petition '%s'", $p->ref());
-        } else {
-            $email_subject = sprintf("Response to petition '%s'", $p->ref());
-        }
+        $email_subject = sprintf("Response to petition '%s'", $p->ref());
         importparams(
             array('message_id', '/^[1-9]\d*$/',      '',     null),
             array('message_subject', '//', '', $email_subject),

@@ -35,7 +35,7 @@ sub site_name {
     if (mySociety::Config::get('SITE_NAME') =~ /,/) { 
         my @sites = split /,/, mySociety::Config::get('SITE_NAME');
         foreach (@sites) {
-            if ($ENV{HTTP_HOST} eq "petitions.$_.gov.uk" || $ENV{HTTP_HOST} eq "$_.petitions.mysociety.org") {
+            if ($ENV{HTTP_HOST} eq "petitions.$_.gov.uk" || $ENV{HTTP_HOST} eq "$_.petitions.mysociety.org" || $ENV{HTTP_HOST} eq "$_.petitions.test.mysociety.org") {
                 $site_name = $_;
                 last;
             }
@@ -102,10 +102,7 @@ sub header ($$%) {
 
     my $devwarning = '';;
     if (mySociety::Config::get('PET_STAGING')) {
-        my @d = (
-                'This is a test site for web developers only.',
-                q(You probably want <a href="http://www.number10.gov.uk">the Prime Minister's official site</a>.)
-            );
+        my @d = ( 'This is a test site for web developers only.' );
         my $today = Petitions::DB::today();
         push(@d, "Note: on this test site, the date is faked to be $today")
             if ($today ne POSIX::strftime('%Y-%m-%d', localtime()));
@@ -168,14 +165,6 @@ sub footer ($$) {
     my $site_name = site_name();
     my $out = read_file('../templates/' . $site_name . '/foot.html');
     utf8::decode($out);
-
-    if (mySociety::Config::get('SITE_NAME') eq 'number10' && !mySociety::Config::get('PET_STAGING')) {
-        $stat_code = $stat_code ? "Petitions.$stat_code" : 'Petitions';
-        my $site_stats = read_file("../templates/number10/site-stats.html");# || die "couldn't open site-stats.html: $!";
-        $site_stats =~ s/PARAM_STAT_CODE/$stat_code/g;
-        $out =~ s/PARAM_SITE_STATS/$site_stats/g;
-    }
-
     return $out;
 }
 
@@ -354,8 +343,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         );
     }
 
-    my $postcode_label = 'UK postcode:';
-    $postcode_label = 'Your postcode:' if mySociety::Config::get('SITE_NAME') ne 'number10';
+    my $postcode_label = 'Your postcode:';
 
     my $action = Petitions::url($p->{body_ref}, $p->{ref}) . "sign";
     my $body_ref = '';
@@ -450,12 +438,7 @@ sub reject_box ($$) {
     }
  
     # Must keep this synchronised with constraint in schema, and list in phplib/petition.php
-    my $remit = 'It was outside the remit or powers of ';
-    if (mySociety::Config::get('SITE_NAME') eq 'number10') {
-        $remit .= 'the Prime Minister and Government';
-    } else {
-        $remit .= mySociety::Config::get('SITE_PETITIONED');
-    }
+    my $remit = 'It was outside the remit or powers of ' . mySociety::Config::get('SITE_PETITIONED');
     my %categories = (
         1 => 'It contained party political material',
         2 => 'It contained potentially libellous, false, or defamatory statements',

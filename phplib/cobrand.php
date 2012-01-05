@@ -48,7 +48,7 @@ function cobrand_creation_sentence_help() {
         $out .= ', preferably starting with a verb,';
     }
     $out .= ' that describes what action you would like ';
-    $out .= OPTION_SITE_NAME=='number10' ? 'the Prime Minister or Government' : OPTION_SITE_PETITIONED;
+    $out .= OPTION_SITE_PETITIONED;
     $out .= ' to take';
     if ($site_name != 'spelthorne' && $site_name != 'salford')
         $out .= '.';
@@ -1422,8 +1422,7 @@ recognisable action.</li>
 
     }
 ?>
-<p>Petitioners may freely disagree with
-<?=OPTION_SITE_NAME=='number10'?'the Government':OPTION_SITE_PETITIONED?> or
+<p>Petitioners may freely disagree with <?=OPTION_SITE_PETITIONED?> or
 call for changes of policy. There will be no attempt to exclude critical views
 and decisions will not be made on a party political basis.</p>
 <?
@@ -1604,8 +1603,6 @@ function cobrand_main_heading($text) {
     global $site_name;
     if ($site_name == 'surreycc' || $site_name == 'suffolkcoastal' || $site_name == 'runnymede' || $site_name == 'surreyheath')
         return "<h2>$text</h2>";
-    elseif ($site_name == 'number10')
-        return "<h3 class='page_title_border'>$text</h3>";
     return "<h3>$text</h3>";
 }
 
@@ -1613,8 +1610,6 @@ function cobrand_create_heading($text) {
     global $site_name;
     if ($site_name == 'reigate-banstead' || $site_name == 'salford')
         return "<h3>$text</h3>";
-    elseif ($site_name == 'number10')
-        return "<h2 class='page_title_border'>$text</h2>";
     return "<h2>$text</h2>";
 }
 

@@ -25,12 +25,7 @@ if (OPTION_SITE_TYPE == 'one') {
 }
 
 /* Must keep this synchronised with constraint in schema. */
-$remit = 'Outside the remit or powers of ';
-if (OPTION_SITE_NAME == 'number10') {
-    $remit .= 'the Prime Minister and Government';
-} else {
-    $remit .= OPTION_SITE_PETITIONED;
-}
+$remit = 'Outside the remit or powers of ' . OPTION_SITE_PETITIONED;
 $global_rejection_categories = array(
     1 => 'Party political material',
     2 => 'Potentially libellous, false, or defamatory statements',

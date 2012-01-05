@@ -16,8 +16,8 @@ if (strpos(OPTION_SITE_NAME, ',')) {
     $sites = explode(',', OPTION_SITE_NAME);
     $site_group = $sites[0];
     foreach ($sites as $s) {
-        if ($_SERVER['HTTP_HOST'] == "petitions.$s.gov.uk" || $_SERVER['HTTP_HOST'] == "$s.petitions.mysociety.org") {
-            $site_name = $s;                
+        if (in_array($_SERVER['HTTP_HOST'], array("petitions.$s.gov.uk", "$s.petitions.mysociety.org", "$s.petitions.test.mysociety.org"))) {
+            $site_name = $s;
             break;
         }
     }
@@ -48,7 +48,6 @@ function page_header($title, $params = array()) {
     $devwarning = array();
     if (OPTION_PET_STAGING) {
         $devwarning[] = _('This is a test site for web developers only.');
-        $devwarning[] = _('You probably want <a href="http://www.number10.gov.uk">the Prime Minister\'s official site</a>.');
     }
     global $pet_today;
     if ($pet_today != date('Y-m-d')) {
@@ -74,17 +73,8 @@ function page_header($title, $params = array()) {
         $contents = file_get_contents('../templates/' . $site_name . '/head.html');
     }
 
-    if (OPTION_SITE_NAME == 'number10') {
-        $creator = '10 Downing Street, Web Team, admin&#64;number10.gov.uk';
-        $desc = 'Petitions to the Prime Minister, 10 Downing Street';
-        $contents = str_replace('PARAM_SUBJECTS', '<meta name="dc.subject" content="10 Downing Street" />
-<meta name="dc.subject" content="Petitions" />
-<meta name="dc.subject" content="Prime Minister" />
-<meta name="dc.subject" content="Gordon Brown" />', $contents);
-    } else {
-        $creator = OPTION_SITE_PETITIONED;
-        $desc = 'Petitions to ' . OPTION_SITE_PETITIONED;
-    }
+    $creator = OPTION_SITE_PETITIONED;
+    $desc = 'Petitions to ' . OPTION_SITE_PETITIONED;
 
     $extra = '';
     $contents = str_replace('PARAM_CREATOR', $creator, $contents);
@@ -118,15 +108,6 @@ function page_footer($stat_code = '') {
     }
 
     $contents = file_get_contents('../templates/' . $site_name . '/foot.html');
-    if (OPTION_SITE_NAME == 'number10') {
-        $site_stats = '';
-        if (!OPTION_PET_STAGING) {
-            $site_stats = file_get_contents('../templates/number10/site-stats.html');
-            $site_stats = str_replace("PARAM_STAT_CODE", $stat_code, $site_stats);
-        }
-        $contents = str_replace("PARAM_SITE_STATS", $site_stats, $contents);
-    }
-
     print $contents;
 }
 
@@ -187,12 +168,7 @@ function rss_header($title, $description, $params) {
     header('Content-Type: application/xml; charset=utf-8');
     header('Cache-Control: max-age=3600');
     print '<?xml version="1.0" encoding="UTF-8"?>';
-    if (OPTION_SITE_NAME == 'number10') {
-        $site_title = 'Number 10 E-petitions';
-        print '<?xml-stylesheet type="text/css" href="http://www.number10.gov.uk/rss/rss.css"?>';
-    } else {
-        $site_title = 'E-petitions';
-    }
+    $site_title = 'E-petitions';
 ?>
 
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">

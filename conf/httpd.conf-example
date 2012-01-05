@@ -36,9 +36,6 @@ RewriteEngine on
 #RewriteLog /var/log/apache/rewrite.log
 #RewriteLogLevel 3
 
-# Prevent errors from favicon.ico
-RewriteRule /favicon.ico http://www.number10.gov.uk/favicon.ico [R]
-
 # So all PHP scripts come through here twice, second time prefixed with /fcgi/php-bitter...
 # This messes things up, and they won't ever be rewritten
 RewriteRule ^/fcgi.*             - [L]

@@ -181,9 +181,6 @@ sub signup_page ($$) {
                     . $q->p({-class => 'noprint loudmessage'},
                         "Thank you. We have sent you an email. To add your signature to the petition, you need to click the link in this email."
                     );
-                $contents .= $q->p({-class => 'noprint loudmessage'},
-                        "For more news about the Prime Minister's work and agenda, and other information including speeches, web chats, history and a virtual tour of No.10, visit the ", $q->a({-href => 'http://www.number10.gov.uk/'}, 'main Downing Street homepage'))
-                    if mySociety::Config::get('SITE_NAME') eq 'number10';
                 $contents .=
                     $q->p({-class => 'noprint loudmessage'},
                     q(If you don't receive the email and you use web-based
@@ -249,9 +246,7 @@ sub confirm_page ($$$$) {
 
         if ($what eq 'p') {
             # Display message about petition creation.
-            my $message = mySociety::Config::get('SITE_NAME') eq 'number10'
-                ? 'the Number 10 team'
-                : 'the team';
+            my $message = 'the team';
             $html = Petitions::Page::header($q, "Petition created")
                     . $q->p({ -class => 'noprint loudmessage' },
                         "Thank you for creating your petition.");

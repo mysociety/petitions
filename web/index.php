@@ -98,12 +98,7 @@ function front_actions() {
 }
 
 function front_intro_text() {
-    if (OPTION_SITE_NAME == 'number10') {
-        echo '<p>Petitions have long been sent to the Prime Minister by post or delivered to
-the Number 10 door in person. You can now both create and sign petitions on
-this website too, giving you the opportunity to reach a potentially wider audience
-and to deliver your petition directly to Downing Street.</p>';
-    } elseif (OPTION_SITE_NAME == 'councils') {
+    if (OPTION_SITE_NAME == 'councils') {
         echo '<p><em>You can now both create and sign petitions to ' . str_replace('the ', 'your ', OPTION_SITE_PETITIONED) . ' on this website,
 giving you the opportunity to reach a potentially wider audience and to deliver your petition
 directly to ' . OPTION_SITE_PETITIONED . '.</em></p>';
