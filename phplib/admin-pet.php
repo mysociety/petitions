@@ -644,9 +644,11 @@ petitions.</p>';
 <p>
 <input type="hidden" name="petition_id" value="' . $pdata['id'] . '">
 <input type="submit" name="approve" value="Approve">
-<input type="submit" name="reject" value="Reject">
-</p>
-</form>';
+<input type="submit" name="reject" value="Reject">';
+            if (OPTION_SITE_TYPE == 'multiple') {
+                print ' <input type="submit" name="forward" value="Forward">';
+            }
+            print '</p></form>';
         } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
             print '<form name="petition_admin_go_respond" method="post" action="'
                 . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
