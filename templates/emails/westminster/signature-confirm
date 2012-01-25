@@ -11,7 +11,7 @@ The petition was created by <?=$values['creator_name']?> and reads:
 
 '<?=$values['sentence']?>'
 
-If you have any queries regarding this email, the petition or the Council’s
+If you have any queries regarding this email, the petition or the Council's
 Petition Scheme in general please contact the Petition Administrators on:
 Email: petition@westminster.gov.uk or 
 Telephone: 020 7641 3160/2341
