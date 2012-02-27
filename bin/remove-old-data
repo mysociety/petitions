@@ -30,8 +30,8 @@ if (!GetOptions( 'verbose=i' =>  \$verbose)) {
     exit(1);
 }
 
-my $date = dbh()->selectrow_array("select ms_current_date() - interval '1 year'");
-my $dateS = dbh()->selectrow_array("select ms_current_date() - interval '1 year' - interval '1 month'");
+my $date = dbh()->selectrow_array("select ms_current_date() - interval '2 years'");
+my $dateS = dbh()->selectrow_array("select ms_current_date() - interval '2 years' - interval '1 month'");
 
 # Get all petitions that closed over a year ago
 my $ids = dbh()->selectcol_arrayref("select id from petition where deadline < '$date' and deadline>='$dateS' and status='finished'");
