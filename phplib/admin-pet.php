@@ -1351,14 +1351,18 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         $new_wards = get_http_var('wards');
         $wards = cobrand_admin_wards_for_petition();
         db_query('delete from petition_area where petition_id = ?', $petition_id);
-        $ward_names = array();
-        foreach ($new_wards as $ward) {
-            if (!array_key_exists($ward, $wards)) continue;
-            $ward_names[] = $wards[$ward]['name'];
-            db_query('insert into petition_area (petition_id, area_id) values (?, ?)', $petition_id, $ward);
-        }
         $p = new Petition($petition_id);
-        $p->log_event("Admin updated wards to " . join(', ', $ward_names));
+        if (! $new_wards) {
+            $p->log_event("Admin updated wards to none (deleted existing wards, if any)");            
+        } else {
+            $ward_names = array();
+            foreach ($new_wards as $ward) {
+                if (!array_key_exists($ward, $wards)) continue;
+                $ward_names[] = $wards[$ward]['name'];
+                db_query('insert into petition_area (petition_id, area_id) values (?, ?)', $petition_id, $ward);
+            }
+            $p->log_event("Admin updated wards to " . join(', ', $ward_names));
+        } 
         db_commit();
         print '<p><em>Wards updated</em></p>';
     }
