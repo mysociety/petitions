@@ -737,15 +737,15 @@ function step_you_error_check($data) {
         }
     }
     if (($area = cobrand_creation_within_area_only()) && $data['postcode'] && validate_postcode($data['postcode'])) {
-        $areas = mapit_get_voting_areas($data['postcode']);
+        $areas = mapit_call('postcode', $data['postcode']);
         if (is_object($areas)) { # RABX Error
             $errors['postcode'] = 'Sorry, we did not recognise that postcode.';
         } elseif ($area[1]) {
-            if (!in_array($area[1], $areas)) {
+            if (!in_array($area[1], array_keys($areas['areas']))) {
                 $errors['postcode'] = sprintf("Sorry, that postcode is not within %s", $area[0]);
             }
         } else { # no area specified, check against the site's "body" data instead
-            $body = db_getRow('SELECT * FROM body WHERE area_id in (' . join(',', array_values($areas)) . ')');
+            $body = db_getRow('SELECT * FROM body WHERE area_id in (' . join(',', array_keys($areas['areas'])) . ')');
             if ($body) {
                 if (!OPTION_SITE_DOMAINS)
                     $data['body'] = $body['id'];
