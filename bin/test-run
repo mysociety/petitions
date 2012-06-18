@@ -523,14 +523,14 @@ Second bullet point'
     $wth->browser_check_contents('already sent 2 responses');
 
     comment("Check to see signatures are scrubbed");
-    set_pet_date('1989-12-31');
+    set_pet_date('1990-12-31');
     call_remove_old(); # Should do nothing
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
     $wth->browser_follow_link(text_regex => qr/Finished/);
     $wth->browser_follow_link(text => 'admin');
     $wth->browser_check_contents(quotemeta(email_n(1490)));
-    set_pet_date('1990-01-01');
+    set_pet_date('1991-01-01');
     call_remove_old(); # Should remove 1501 row completely, 1488-1490 scrubbed
     $wth->browser_get($admin_url);
     $wth->browser_follow_link(text_regex => qr/Petitions and signers/);
