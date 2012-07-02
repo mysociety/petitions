@@ -1,52 +1,81 @@
-h2 {
-    color: #0099cc;
-    font-size: 136%; /* Combined with 110% to match 150% of span.ycsubtitle(!) */
-}
-
-h3 {
-    color: #0099cc;
-    font-size: 136%;
-    margin-top: 1em;
-}
-
-small {
-    font-size: 100%;
-}
-
-/* From .text in main CSS file */
-#center_column_standard {
-    font: 110%/130% Arial,Verdana,Helvetica,sans-serif;
-}
-
 div#petition_actions {
     border: none;
-    font-size: 130%;
-    line-height: 1.2;
 }
 
-div#petition_actions ul li {
-    margin-bottom: 1em;
+div#most_recent {
+    float: right;
 }
 
-div#petition_actions, div#most_popular, div#most_recent {
-    float: none;
-    width: 99%;
-}
-
-/*
-form#signForm label {
-    width: 8em;
-}
-*/
-
-.loudmessage {
-    font-size: 100%;
+div#front_how {
+    float: left;
+    width: 45%;
 }
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #0099cc;
-}
-.petition_view_tabs span {
-    background-color: #0099cc;
+    border-bottom: solid 2px #0062AB;
+    margin-bottom:0em;
 }
 
+.petition_view_tabs span {
+    color: #fff;
+    background-color: #0062AB;
+    padding-bottom:0.7em;
+}
+
+#action_view a, #action_create a{
+    text-decoration: none;
+}
+
+#action_view a:hover, #action_create a:hover {
+    text-decoration: none;
+}
+
+h3 {
+  margin: 0.333em 0 ;
+}
+
+div#petition_actions {
+    margin-bottom: 1em;
+}
+
+p.petition_view_tabs {
+    margin-bottom: 0em;
+}
+
+#action_create a, #action_create a:active {
+    background-image: url('petition_button_create.png');
+}
+#action_view a, #action_view a:active {
+    background-image: url('petition_button_view.png');
+}
+#action_create a, #action_view a, 
+#action_create a:active, #action_view a:active  {
+    display: block;
+    text-align: center;
+    padding-top: 70px;
+    background-position: center top;
+    background-repeat: no-repeat;
+    line-height: 1.2em;
+}
+#action_create a:hover, #action_view a:hover {
+    background-position: center -300px;
+    background-color: #ffffff;
+    text-decoration: underline;
+}
+
+#action_create a img,  #action_view a img {
+    display: none;
+}
+
+h1 {
+    margin-bottom: 1em;
+}
+
+#most_popular ul, #most_recent ul{
+	padding-left: 2em;
+	margin-left: 0;
+}
+
+div.petition_box {
+    background-color: #ddeeff;
+}
