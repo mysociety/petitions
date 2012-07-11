@@ -843,6 +843,8 @@ map.setCenter(lonLat, 5);
                     group by area_id", $pdata['id']);
                 $other = 0; $unknown = 0;
                 $children = array();
+
+                $areas_info = json_decode(file_get_contents("http://mapit.mysociety.org/areas/DIS,LBO,MTD,UTA,LGD,COI"), true);
                 foreach ($summary as $area) {
                     $id = $area['area_id'];
                     if (!$id) {
@@ -857,8 +859,7 @@ map.setCenter(lonLat, 5);
                         }
                         continue;
                     }
-                    $area_info = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id"), true);
-                    if (in_array($area_info['type'], array('DIS', 'LBO', 'MTD', 'UTA', 'LGD', 'COI'))) {
+                    if (array_key_exists($id, $areas_info)) {
                         $other += $area['c'];
                         continue;
                     }
