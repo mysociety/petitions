@@ -417,7 +417,7 @@ sub response_box ($$) {
         (my $responsedate = $responsetimes[$i]) =~ s/ .*//;
         my $title = 'Petition update';
         $title .= ' ' . (@responses-$i) if @responses > 1;
-        $title .= ', ' . Petitions::pretty_date($responsedate);
+        $title .= ' by council, ' . Petitions::pretty_date($responsedate);
         $title .= ', while petition was still open' if ($responsedate lt $p->{deadline});
         $out .= Petitions::Cobrand::main_heading($title) .
             mySociety::HTMLUtil::nl2br(mySociety::HTMLUtil::ms_make_clickable(ent($response)));
