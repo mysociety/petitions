@@ -207,8 +207,7 @@ function page_closed_message($front = false) {
     if (is_string(cobrand_creation_disabled())) {
         echo cobrand_creation_disabled();
     } else {
-        echo '<p>Notice: Submission of new petitions is currently closed.
-You can still sign any petition during this time.</p>';
+        echo '<p>Submission of new petitions is closed.</p>';
     }
 }
 

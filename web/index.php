@@ -59,14 +59,16 @@ if (OPTION_SITE_NAME != 'number10') {
         echo '<h2>Make or sign petitions through this official Borsetshire District Council petitions website</h2>';
     front_actions();
     front_intro_text();
-    front_most_popular($most);
-    if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
-        print '<div style="float: left; text-align: center; padding-top:0.5em; width: 45%; padding: 5px;">';
-        pet_search_form(array('front'=>true));
-        print '</div>';
+    if (!cobrand_creation_disabled()) {
+        front_most_popular($most);
+        if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
+            print '<div style="float: left; text-align: center; padding-top:0.5em; width: 45%; padding: 5px;">';
+            pet_search_form(array('front'=>true));
+            print '</div>';
+        }
+        front_most_recent($recent);
+        front_how_it_works();
     }
-    front_most_recent($recent);
-    front_how_it_works();
 } else {
     echo '<div id="content_clipboard">';
     front_actions();
