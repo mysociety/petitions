@@ -28,8 +28,7 @@ $pages = array(
 if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') {
     page_header('Admin', array('admin'=>1));
     admin_page_display(str_replace("http://", "", OPTION_BASE_URL), $pages, new ADMIN_PAGE_PET_SUMMARY, array('headfoot'=>1));
-    $num = preg_replace('#44(....)#', '0\1 ', OPTION_SMS_ALERT_NUMBER_TOM);
-    echo '<p style="clear:both" align="right"><em>Got any questions? Call ' . $num . '.</em></p>';
+    echo '<p style="clear:both; margin-top:2em;" align="right"><em>Find out more <a href="http://www.mysociety.org/projects/epetitions/">about mySociety\'s petitions</a></em>.</p>';
     page_footer();
 } else {
     admin_header(cobrand_admin_title());
