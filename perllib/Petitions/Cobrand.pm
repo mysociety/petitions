@@ -65,6 +65,13 @@ sub within_area_only() {
     return;
 }
 
+sub postcode_exemptions($) {
+    my $pc = shift;
+    my $site_name = Petitions::Page::site_name();
+    return 1 if $site_name eq 'westminster' && uc($pc) eq 'W24LY';
+    return 0;
+}
+
 sub name_only_text() {
     my $site_name = Petitions::Page::site_name();
     return '<strong>Please enter your full name</strong>. Signatures containing

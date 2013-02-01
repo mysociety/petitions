@@ -127,7 +127,8 @@ sub signup_page ($$) {
         if ($mapit->{error}) {
             $errors{postcode} = 'Sorry, that postcode was not recognised.';
         } else {
-            unless (grep { $area_id == $_ } keys %{$mapit->{areas}}) {
+            my $in_mapit = grep { $area_id == $_ } keys %{$mapit->{areas}};
+            unless ($in_mapit || Petitions::Cobrand::postcode_exemptions($qp_postcode)) {
                 $errors{postcode} = "You must live, work or study within $area to sign a petition.";
             }
         }
