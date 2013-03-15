@@ -1697,7 +1697,20 @@ function cobrand_creation_disabled() {
         if (OPTION_SITE_TYPE == 'multiple') { # this is a multi-body installation, only disable if site_name is explicitly mentioned
             $disabled_bodies = preg_split("/[\s,]+/", OPTION_CREATION_DISABLED);
             if (in_array($site_name, $disabled_bodies)) {
-                return "<p>Submission of new petitions is closed.</p>"; # default message: customise here if needed
+		if ($site_name == 'surreycc') {
+			return <<<HTML
+<div style='background-color:#C9E0D8;padding:0.1em 1em;margin:0 0 1em 0;'>
+	<p>
+		<strong>New petitions are currently not being accepted.</strong>
+		In line with legislation around the use of council resources for publicity prior to the
+		County Council elections on Thursday 2 May 2013, the ePetition system will be temporarily suspended.
+		Surrey County Council will welcome receiving your petitions again from 3 May 2013.
+	</p>
+</div>
+HTML;
+		} else {
+                	return "<p>Submission of new petitions is closed.</p>"; # default message: customise here if needed
+		}
             } else {
                 return false;
             }
