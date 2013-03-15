@@ -54,6 +54,8 @@ page_header('Introduction to e-petitions', array(
     )
 ));
 
+page_closed_message(true);
+
 if (OPTION_SITE_NAME != 'number10') {
     if (OPTION_SITE_NAME == 'sbdc')
         echo '<h2>Make or sign petitions through this official Borsetshire District Council petitions website</h2>';
