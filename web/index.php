@@ -54,7 +54,9 @@ page_header('Introduction to e-petitions', array(
     )
 ));
 
-page_closed_message(true);
+if (cobrand_creation_disabled()) {
+	page_closed_message(true);
+};
 
 if (OPTION_SITE_NAME != 'number10') {
     if (OPTION_SITE_NAME == 'sbdc')
