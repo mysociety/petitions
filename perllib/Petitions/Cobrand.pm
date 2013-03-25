@@ -85,6 +85,8 @@ sub ask_for_address() {
     return '' if $site_name eq 'westminster';
     return 'Your home, work or study address (this must be a Salford address, this will not be published)'
         if $site_name eq 'salford';
+    return 'Your address (will not be published; this must be the address at which you live, work or study within the Royal Borough)'
+        if $site_name eq 'rbwm';
     return 'Your address (will not be published)';
 }
 

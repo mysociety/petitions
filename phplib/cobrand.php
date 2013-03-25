@@ -67,6 +67,10 @@ function cobrand_creation_address_help() {
     if ($site_name == 'spelthorne') {
         print '<br>(Please use the address where you live, work or study in Spelthorne)';
     }
+    elseif ($site_name == 'rbwm') {
+        print '<br>(Please use the address where you live, work or study within the Royal Borough)';
+    }
+
 }
 
 function cobrand_creation_email_request() {
