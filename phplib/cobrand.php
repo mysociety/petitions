@@ -922,7 +922,7 @@ function cobrand_admin_areas_of_interest() {
 function cobrand_admin_show_map() {
     global $site_group;
     if (in_array($site_group, array(
-        'hounslow', 'sbdc', 'surreycc',
+        'hounslow', 'sbdc', 'surreycc', 'rbwm'
     )))
         return true;
     if (get_http_var('test_map')) return true;
