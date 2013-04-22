@@ -350,7 +350,7 @@ function cobrand_postcode_label() {
   
 function cobrand_overseas_dropdown() {
     global $site_group;
-    if ($site_group ==  'runnymede' || $site_group == 'suffolkcoastal'){
+    if ($site_group == 'suffolkcoastal'){
         return '';
     }
     if ($site_group == 'surreycc') {
