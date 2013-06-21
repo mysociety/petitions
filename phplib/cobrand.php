@@ -224,6 +224,12 @@ function cobrand_creation_top_submit_button() {
     return true;
 }
 
+function cobrand_creation_detail_max_chars() {
+    global $site_name;
+    if ($site_name == 'hounslow') return 1500;
+    return 1000;    
+}
+
 # Allows 'red asterisk' (or similar) to mark mandatory fields
 # returns array of markers: 0 for optional input fields, 1 for mandatory, and a legend
 # the optional marker forces same-width span just to make layout easy on sites that use these

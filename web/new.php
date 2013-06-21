@@ -359,6 +359,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     $br = '';
     if (cobrand_creation_main_all_newlines()) $br = '<br />';
 
+    $details_max_chars = cobrand_creation_detail_max_chars();
     startform();
     print cobrand_create_heading('New petition &#8211; Part ' . $step . ' of ' . petition_form_steps() . ' &#8211; Your petition');
     errorlist($errors);
@@ -386,7 +387,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     echo cobrand_creation_sentence_help();
 ?>
 </p>
-<p><label for="detail">More details about your petition (do not use block capitals &ndash; 1,000 characters maximum):</label><br />
+<p><label for="detail">More details about your petition (do not use block capitals &ndash; <? echo $details_max_chars ?> characters maximum):</label><br />
     <?
     textarea('detail', $data['detail'], 70, 7, false, $errors);
     ?>
@@ -655,9 +656,10 @@ function step_main_error_check($data) {
     if (!$data['pet_content'])
         $errors['pet_content'] = _('Please enter the text of your petition');
 
+    $detail_max_chars = cobrand_creation_detail_max_chars();
     $ddd = preg_replace('#\s#', '', $data['detail']);
-    if (strlen($ddd) > 1000)
-        $errors['detail'] = _('Please make your more details a bit shorter (at most 1000 characters).');
+    if (strlen($ddd) > $detail_max_chars)
+        $errors['detail'] = _('Please make your more details a bit shorter (at most ' . $detail_max_chars . ' characters).');
 
     if (cobrand_display_category()) {
         if (!array_key_exists('category', $data)
