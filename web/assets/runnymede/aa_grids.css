@@ -1,0 +1,228 @@
+
+
+
+
+
+/*
+     FILE ARCHIVED ON 21:35:58 Jul 16, 2012 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 14:41:36 Jul 1, 2013.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/* Common css for Mozilla, Firefox & Navigator */
+/* aa_grids-IE7.css and aa_grids-IE6.css handle special cases for IE variants */
+html,body { 
+	margin:0; 
+	padding:0; 
+	height:100%;
+} 
+#accessibility {display:none;}
+/*div.vgn-main { width:1004px; height:50%; }*/
+div.vgn-main { width:808px; height:50%; }
+div.vgn-header { width:808px; }
+div.vgn-site-controls {width:808x;clear:both}
+div.vgn-system-controls {width:808px;clear:both}
+div.vgn-navigation-horizontal {width:808px;clear:both;}
+
+/* Navigator & Mozilla. Overriden for IE variants */
+div.vgn-navvirt-pagecontent {position:relative; height:auto; min-height:70%;  clear:both; display: inline; width: 100%;}
+div.vgn-navigation-vertical {height:auto; min-height:450px; width:150px; float:left; clear:both; }
+div.vgn-pagecontent {position:relative; vertical-align:text-top; width:auto; float:none; margin:0px 0px 0px 150px; padding:0px;} 
+div.vgn-pagecontent-wide {position:relative; clear:both; width:100%; height:auto; min-height:75%; vertical-align:text-top;}
+/* */
+
+div.vgn-footer {width:808px;clear:both}
+div#footer-block {width:808px; height:43px;}
+
+/* Navigator & Mozilla. Overriden for IE variants */
+div#footer-copyr {width:690px; height:30px; padding:12px 1px 1px 1px ;float:left;  }
+/* */
+div#footer-image {width:100px; height:39px; float:right; padding:3px 1px 1px 1px; text-align:right;}
+div#header-block {position:relative; width:100%}
+div#header-image {white-space:nowrap;}
+div.vgn-site-controls-block {width:808px;height:1.5em;}
+div#site_controls_welcome {white-space:nowrap;padding:1px; float:left}
+div#site_controls_menu UL {float:right;  margin: 0px; padding: 0px;	}
+div#site_controls_menu UL LI {display: inline;}
+div#site_controls_menu UL LI A {padding: 0px 10px 0px 10px; }
+span.icon-list {
+	background: no-repeat left center; 
+	padding-left: 16px; 
+	width: 16px; /* for ie */ 
+	}
+div.vgn-horz-nav-block {width:808px; height:2em; border-top:1px solid white; padding:4px 0px 4px 0px}
+div.vgn-horz-nav-block ul { margin: 0px; padding: 0px; }
+
+/* Navigator & Mozilla. Overriden for IE variants */
+div.vgn-horz-nav-block ul li { display: inline; white-space:nowrap; font-size: 88%;}
+div.vgn-horz-nav-block ul li a { padding: 4px 10px 4px 10px; font-size: white-space:nowrap; 88%;}
+/* */
+
+/* Navigator & Mozilla. Overriden for IE variants */
+div.vgn-virt-nav-block {min-width:150px;height:100%; margin: 0px; padding: 0px;}
+/* */
+div.vgn-virt-nav-block ul { margin: 0px; padding: 0px;}
+div.vgn-virt-nav-block ul li { border-top:1px; border-bottom:1px; border-collapse:collapse; vertical-align:text-top; margin: 0px; padding: 2px 0px 2px 0px;}
+div.vgn-virt-nav-block ul li span { vertical-align:text-top; margin: 0px; padding: 0px;}
+
+div.vgn-footer-form {padding-left:2em}
+div.vgn-display-title {position:relative; clear:both; width:100%;  white-space:nowrap;}
+
+div.vgn-props-padding {padding-left:2em}
+div.vgn-props-title {position:relative; clear:both; width:100%;  white-space:nowrap;}
+div.vgn-logonoff {position:relative; width:100%;padding-right: 20px; padding-top:1px; padding-bottom:1px;}
+div.vgn-logonoff-form {width:50%;float:left;}
+div.vgn-logonoff-form-label {white-space:nowrap; float:left; width:10em; clear:both;}
+div.vgn-logonoff-form-value {float:left}
+div.vgn-horiz-block {clear:both}
+div.vgn_future_visits_checkbox {white-space:nowrap;float:left}
+div.vgn_future_visits_msg {white-space:nowrap;float:left}
+
+div.vgn-vertical-break {float:left;width:1px; height:15em;}
+div.vgn-selfregister {position:relative; width:45%; float:left; padding-left:2em;}
+div.vgn-selfregister div {width:50%}
+div.vgn-horiz-line {width:100%; clear:both;}
+div.vgn-submit {clear:both; white-space:nowrap; padding-right: .5em; width:100%;}
+div.vgn-messageArea-icon {padding-right:.5em;vertical-align:top; clear:both; float:left;}
+div.vgn-messageArea-msgs {position:relative; float:left}
+div#epi-ok {width:100%; font-weight:bold; margin: 3px 0px 5px;}
+
+div.vgn-form-label {white-space:nowrap; float:left; width:15em; clear:both;}
+div.vgn-form-value {float:left}
+div.vgn-props-vert-padding {padding-top:.25em ; padding-bottom:.25em}
+div.vgn-props-button-outer-block {position:relative; clear:both; width:100%;}
+div.vgn-props-button-label {float:left; padding-top:.5em; padding-right: 1em}
+div.vgn-rest-props-buttons {position:relative; float:left}
+div.vgn-rest-props-buttons-input-left {clear:both; float:left}
+div.vgn-rest-props-buttons-padding {padding-right: 1em; }
+
+div.vgn-edit-props-title {clear:both; white-space:nowrap; float:left}
+div.vgn-mainview-link {float:right}
+div.raw {margin:1em 0em;clear:both;}
+div.raw-left {padding-right:.5em; clear:both; float:left;}
+div.raw-right {float:left;}
+div.system-controls-block {padding-left:1px; padding-bottom:1px}
+div.system-controls-welcome {width:100%; float:left}
+div.system-controls-logout {position:relative; float:right}
+div.system-controls-logout-image {clear:both; float:left}
+div.system-controls-logout-url {white-space:nowrap; float:left}
+div.system-controls-spacer {width:100%; padding-left:1px; padding-bottom:1px; }
+
+div.page_container_percentage_width {position:relative;width:100%; min-height:240px;}
+div.page_container_fixed_width {position:relative;min-height:240px;}
+
+#vgn-page-controls {position:relative; width:100%;height:26px; padding:0px;margin:0px;}
+#vgn-page-controls-title {height:26px; padding-left:9px; white-space:nowrap; clear:both; float:left; list-style-type: none; }
+#vgn-page-controls-links {float:right; padding-right:8px; height:26px;  text-align:right; list-style-type: none;}
+
+/* Navigator & Mozilla. Overriden for IE variants */
+div.vgn-chrome {position:relative; padding:0px; margin: 2px;}
+div.vgn-no-chrome {position:relative; padding:0px; margin: 2px;}
+/* */
+
+/* Navigator & Mozilla. Overriden for IE variants */
+div.vgn-chrome-header {position:relative; height:auto; min-height:18px; }
+/* */
+
+div.vgn-chrome-title {float:left; clear:both; padding-left:5px;}
+div.vgn-chrome-header ul {float:right; margin:0px; padding: 0px ;}
+div.vgn-chrome-header ul li  {display: inline; height:18px; margin:0px; padding: 0px ; text-align:right; white-space:nowrap;vertical-align:text-top; list-style-type: none;}
+div.vgn-chrome-portlet-content {clear:both;}
+
+.vgn-plain-horiz-list {display:inline; padding:0px; margin: 0px; list-style-type: none;}
+.vgn-clear-floatleft {float:left; clear:both;}
+.vgn-floatright {float:right}
+.vgn-padding-margin-off {padding:0px; margin: 0px;}
+
+.aa_page_row_divider {}
+.aa_page_row_panel {}
+.aa_page_column_divider {}
+.aa_page_column_panel {}
+
+div.vgn-inner-pagecontent { width: 100%; float: left; margin:0px; padding: 0px ;}
+
+/* templating styles*/
+#content {
+width:553px;
+border-left:1px dotted #A0A0A0;
+border-right:1px dotted #A0A0A0;
+background-color:white;
+position: relative;
+top: 16px;
+}
+
+#content p, #content h1, #content h2,  #content h3, .pic {
+margin-left: 13px ;
+margin-right: 13px;
+}
+
+#content p {
+margin-bottom: 15px;
+}
+
+#content p + p {
+margin-top: -8px;
+}
+
+#content {
+background-color:white;
+position: relative;
+top: 16px;
+}
+
+#view p, #content h1, #content h2,  #content h3, .pic {
+margin-left: 13px ;
+margin-right: 13px;
+}
+
+#view p {
+margin-bottom: 15px;
+}
+
+#view p + p {
+margin-top: -8px;
+}
+
+.hrcontent {
+display: block;
+border-top: 1px solid #A0A0A0;
+margin: 3px 13px 13px 13px;
+height: 1px;
+}
+
+.pic {
+float: left;
+position: relative; 
+display: inline; 
+width: 150px;
+}
+
+.plink {
+margin-top: -5px;
+}
+
+.column{
+/*display:block;
+width:180px;
+float:left;*/
+margin: 0 0 0 0;
+}
+
+.column ul {
+margin-left: 10px;
+}
+
+.column ul li {
+list-style-type:square;
+margin-bottom: 1px;
+}
+
+.column .hasChild {
+list-style-image: url(/web/20120716213558/http://www.runnymede.gov.uk/portal/templates/template0005/images/);
+list-style-position: 10% 0%;
+}
+
+#a-z_menu {font-size: small }
+#a-z_list {font-size: small}

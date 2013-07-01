@@ -1,0 +1,68 @@
+
+
+
+
+
+/*
+     FILE ARCHIVED ON 23:32:31 Apr 23, 2013 AND RETRIEVED FROM THE
+     INTERNET ARCHIVE ON 14:42:19 Jul 1, 2013.
+     JAVASCRIPT APPENDED BY WAYBACK MACHINE, COPYRIGHT INTERNET ARCHIVE.
+
+     ALL OTHER CONTENT MAY ALSO BE PROTECTED BY COPYRIGHT (17 U.S.C.
+     SECTION 108(a)(3)).
+*/
+/* IE7 overrides */
+
+div.vgn-main { width:808px; height:auto;min-height:100%;}
+
+/* */
+div.vgn-navvirt-pagecontent {position:relative; height:auto;  clear:both; display: block; width: 100%;}
+div.vgn-navigation-vertical {height:auto; min-height:450px; width:150px; float:left; clear:both; }
+div.vgn-pagecontent {position:relative; vertical-align:text-top; float:left;margin:0px;padding:0px;}
+div.vgn-pagecontent-wide {width:808px;min-height:450px;vertical-align:text-top;margin:0px;padding:0px;}
+/* */
+
+/* Navigator & Mozilla. Overriden for IE variants
+div.vgn-navvirt-pagecontent {position:relative; height:auto; min-height:70%;  clear:both; display: inline; width: 100%;}
+div.vgn-navigation-vertical {height:auto; min-height:450px; width:150px; float:left; clear:both; }
+div.vgn-pagecontent {position:relative; vertical-align:text-top; width:auto; float:none; margin:0px 0px 0px 150px; padding:0px;} 
+div.vgn-pagecontent-wide {position:relative; clear:both; width:100%; height:auto; min-height:75%; vertical-align:text-top;}
+/* */
+
+
+div#footer-copyr {width:690px; height:30px; padding:12px 1px 1px 1px ;float:left; }
+/* Navigator & Mozilla. IE6 ignores this
+html>body div#footer-copyr {width:690px; height:30px; padding:12px 1px 1px 1px ;float:left; font-size: smaller; }
+/* */
+
+
+div.vgn-horz-nav-block ul li { display: inline; white-space:nowrap}
+div.vgn-horz-nav-block ul li a { padding: 4px 10px 4px 10px;}
+/* Navigator & Mozilla. IE6 ignores this
+html>body div.vgn-horz-nav-block ul li { display: inline; white-space:nowrap; font-size: 88%;}
+html>body div.vgn-horz-nav-block ul li a { padding: 4px 10px 4px 10px; font-size: white-space:nowrap; 88%;}
+/* */
+
+/* div.vgn-virt-nav-block {width:150px;height:100%; margin: 0px; padding: 4px 0px 4px 0px;}
+/* Navigator & Mozilla. IE6 ignores this
+html>body .vgn-virt-nav-block {width:150px;height:100%; margin: 0px; padding: 0px;}
+/* */
+
+div.vgn-chrome {position:relative; padding:0px; margin: 2px;}
+div.vgn-no-chrome {position:relative; padding:0px; margin: 2px;}
+/* Navigator & Mozilla. IE6 ignores this
+html>body .vgn-chrome {position:relative; padding:0px; margin: 2px;}
+html>body .vgn-no-chrome {position:relative; padding:0px; margin: 2px;}
+/* */
+
+
+/* Add a margin for IE*/
+div.vgn-chrome-header {position:relative; height:18px; }
+/* */
+/* Navigator & Mozilla. IE6 ignores this
+html>body .vgn-chrome-header {position:relative; height:auto; min-height:18px; }
+/* */
+
+div.vgn-footer {width:808px;clear:both;}
+
+div#footer-copyr {width:690px; height:30px; padding:12px 1px 1px 1px ;float:left; }
