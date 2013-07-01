@@ -343,7 +343,7 @@ sub main () {
     if ($q->request_method() ne 'POST') {
         #warn "bad method";
         my $url = "/$qp_ref/";
-        $url = "/$qp_body$url" if $qp_body;
+        $url = "/$qp_body$url" if $qp_body && !mySociety::Config::get('SITE_DOMAINS');
         print $q->redirect($url);
         return;
     }
