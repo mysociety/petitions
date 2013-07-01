@@ -1215,16 +1215,29 @@ Log::print('noise', " ... and is routable");
         # equal preference, we should select one for which a new connection is
         # already being made. Not clear how important this is in practice.
 Log::print('debug', "  -> will attempt delivery of ", $msg->id());
-        # Iterate over MXs in order.
+
         my $max_per_session = MAX_PER_SESSION;
-        $max_per_session = 4 if $domain =~ /yahoo|btinternet|hotmail|live|msn|talktalk/i;
+        my $max_host_sessions = MAX_HOST_SESSIONS;
+        # Some hosts are more... paranoid than others. Yahoo! publish, for
+        # example, the very helpful: "You may open concurrent connections from
+        # the same server to facilitate efficient transmission of your messages.
+        # However, while we do not publish specific guidelines for the numbers
+        # of connections you can concurrently use" - so err on the side of 1.
+        # And whilst they say "Yahoo! Mail accepts a maximum of 20 messages per
+        # SMTP connection." it used to be 5 and they're very easily tripped, so...
+        if ( $domain =~ /yahoo|btinternet|hotmail|live|msn|talktalk|sky/i ) {
+            $max_per_session = 4;
+            $max_host_sessions = 1;
+        }
+
+        # Iterate over MXs in order.
         foreach my $mx (@{$r->mx()}) {
             my $name = $mx->exchange();
             foreach my $a (@{$r->a($name)}) {
                 my $h = $a->address();
                 $numsessions{$h} ||= 0;
 Log::print('debug', "      host is bad") if $self->host_bad($a->address);
-Log::print('debug', "      already have @{[$numsessions{$h}]} sessions to host") if $numsessions{$h} >= MAX_HOST_SESSIONS;
+Log::print('debug', "      already have @{[$numsessions{$h}]} sessions to host") if $numsessions{$h} >= $max_host_sessions;
 Log::print('debug', "      already queued up a full session for host") if exists($newsessions{$h}) && @{$newsessions{$h}} >= $max_per_session;
 
                         # conditions:
@@ -1232,7 +1245,7 @@ Log::print('debug', "      already queued up a full session for host") if exists
                 if (!$self->host_bad($a->address())
                         # and we don't have too many outstanding sessions to
                         # that host
-                    && $numsessions{$h} < MAX_HOST_SESSIONS
+                    && $numsessions{$h} < $max_host_sessions
                         # and we haven't already queued up too many messages
                         # for that host
                     && (!exists($newsessions{$h})
