@@ -27,3 +27,10 @@ div#most_recent ul li, div#most_popular ul li {
     padding: 2px;
 }
 
+div#signFormRight span.address-type-choices {
+    display: block;
+    margin: 0.5em 0;
+}
+div#signFormRight span.address-type-choices label {
+    margin-right: 2em;
+}
