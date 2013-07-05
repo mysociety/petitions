@@ -95,7 +95,7 @@ sub ask_for_address_type() {
 
 sub overseas_dropdown {
     my $site_group = Petitions::Page::site_group();
-    if ($site_group eq 'westminster' || $site_group eq 'islington' || $site_group eq 'rbwm' || $site_group eq 'runnymede' || $site_group eq 'stevenage' || $site_group eq 'salford') {
+    if (grep {$site_group eq $_} qw( islington rbwm runnymede stevenage salford westminster whypoll)) {
         return []; # No drop-down
     } elsif ($site_group eq 'surreycc') {
         return [

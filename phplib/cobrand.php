@@ -351,14 +351,14 @@ function cobrand_error_div_start() {
 
 function cobrand_postcode_label() {
     global $site_name;    
-    if ($site_name == 'suffolkcoastal')
+    if ($site_name == 'suffolkcoastal' || $site_name == 'whypoll')
         return 'Postcode';
     return _('UK postcode');
 }
   
 function cobrand_overseas_dropdown() {
     global $site_group;
-    if ($site_group ==  'runnymede' || $site_group == 'suffolkcoastal'){
+    if ($site_group ==  'runnymede' || $site_group == 'suffolkcoastal' || $site_group == 'whypoll'){
         return '';
     }
     if ($site_group == 'surreycc') {
