@@ -727,6 +727,10 @@ function step_you_error_check($data) {
     elseif (!preg_match('#01[2-9][^1]\d{6,7}|01[2-69]1\d{7}|011[3-8]\d{7}|02[03489]\d{8}|07[04-9]\d{8}|00#', $tel))
         $errors['telephone'] = 'Please enter a valid telephone number, including the area code';
 
+    if (!cobrand_overseas_dropdown()) {
+        $data['overseas'] = '';
+    }
+
     if (!cobrand_creation_postcode_optional()) {
         if (!$data['postcode'] && !$data['overseas']) {
             $errors['postcode'] = 'Please enter a valid postcode';
@@ -781,11 +785,7 @@ function step_you_error_check($data) {
         # Set it to blank string as no form field printed at all.
         $data['address'] = '';
     }
-    
-    if (!cobrand_overseas_dropdown()) {
-        $data['overseas'] = '';
-    }
-    
+        
     foreach ($vars as $var => $p_var) {
         if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
     }
