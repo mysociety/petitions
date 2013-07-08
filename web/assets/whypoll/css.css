@@ -90,6 +90,16 @@ h2, h3 {
     letter-spacing: normal;
 }
 
+
+table.petition-list-table {
+    width: 100%;
+    margin-bottom: 2em;
+}
+table.petition-list-table th {
+    text-align: left;
+    padding: 0.2em 0.5em 0.2em 0;
+}
+
 @media only screen and (max-width: 768px) {
     div#petition_actions, div#most_popular, div#most_recent, div#front_how {
         float: none;

@@ -249,7 +249,7 @@ if ($ntotal > 0) {
     if (!$rss) {
         $petitioned = (OPTION_SITE_TYPE == 'one') ? OPTION_SITE_PETITIONED : '';
 ?>
-<table cellpadding="3" cellspacing="0" border="0">
+<table class="petition-list-table" cellpadding="3" cellspacing="0" border="0">
 <tr><th class="long">We the undersigned petition <?=$petitioned ?> to&hellip;</th>
 <th>Submitted by</th>
 <?      if ($q_type != 'rejected') { ?>
