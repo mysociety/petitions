@@ -90,3 +90,17 @@ h2, h3 {
     letter-spacing: normal;
 }
 
+@media only screen and (max-width: 768px) {
+    div#petition_actions, div#most_popular, div#most_recent, div#front_how {
+        float: none;
+        width: 100%;
+        clear: both;
+        margin-top: 1em;
+    }
+    div#most_popular {
+        padding-top: 1.5em;
+    }
+    div#petition_actions {
+        margin-top: -0.5em;
+    }
+}
