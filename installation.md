@@ -81,7 +81,7 @@ A similar list of packages should work for other Debian-based distributions.
 (Please let us know if you would like to contribute such a package list or
 instructions for other distributions.)
 
-### 5. Set up general config
+### 4. Set up general config
 
 The settings for Petitions are defined in `conf/general`. This file does not
 exist in the repository -- because it contains your own settings -- but there
@@ -97,7 +97,7 @@ password for the user you created earlier.
 The `conf/general` file contains explanations and examples of the settings
 that you can provide.
 
-### 6. Set up webserver (httpd) config
+### 5. Set up webserver (httpd) config
 
 Some necessary Apache webserver configuration is in `conf/httpd.conf-example`.
 You need to put this file somewhere where your Apache webserver will read it.
@@ -120,7 +120,7 @@ Note that you may have to enable some Apache modules (for example,
 check your local installation to find out.
 
 
-### Restrict access to the admin
+### 6. Restrict access to the admin
 
 The Petitions admin interface is found at your `http://www.example.com/admin`.
 The Petitions code does not restrict access to this -- use a mechanism such as
@@ -129,7 +129,7 @@ prevent any direct access, and proxy the `/admin` URL through our secure
 `https` server.
 
 
-### Daemons
+### 7. Daemons
 
 There are two scripts that should be run as daemons:
 
@@ -143,7 +143,7 @@ especially on a national scale -- can have very heavy peak traffic.
 See `conf/petemaild-debian.ugly` and `conf/petsignupd-debian.ugly` for
 template files to put into your `/etc/init.d` directory.
 
-### Cron jobs
+### 8. Cron jobs
 
 Petitions uses cron jobs for a few non-urgent tasks, such as updating admin
 stats and so on. You *can* run Petitions without enabling these (just run the
