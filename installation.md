@@ -173,3 +173,10 @@ done -- copy the file to somewhere else, and:
 
 
 
+### More information
+
+The Petitions code is at https://github.com/mysociety/petitions
+
+Contact us at http://www.mysociety.org/contact
+
+
