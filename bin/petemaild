@@ -1194,6 +1194,7 @@ Log::print('debug', "  -> domain $domain not resolved, adding to resolver queue"
         if ($r->failed()) {
 Log::print('debug', "  -> resolution of $domain failed, holding off");
             push(@{$self->{baddomains}->{$domain}}, $now);
+            delete($self->r()->results()->{$domain});
             # have another go at the message later
             push(@messages_to_requeue, [$msg, $now + MIN_DOMAIN_BAD_INTERVAL]);
             next;
