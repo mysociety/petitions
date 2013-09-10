@@ -21,7 +21,8 @@ $err = importparams(
             array('offset', '/^(0|[1-9]\d*)$/', '', 0),
             array('sort', '/^(content|deadline|name|signers|creationtime|laststatuschange|date)\/?$/', '', 'default'),
             array('cat', '/^\d+$/', '', 'default'),
-            array('type', '/^[a-z_]*$/', '', 'default')
+            array('type', '/^[a-z_]*$/', '', 'default'),
+            array('body', '/^[a-z0-9_-]*$/i', '', '')
         );
 if ($err) {
     err(_('Illegal offset or sort parameter passed'), E_USER_NOTICE);
@@ -58,7 +59,13 @@ if (!array_key_exists($q_cat, cobrand_categories())) $q_cat = null;
 # count() is far too slow - many seconds for a count of live petitions :-/
 $key = $status;
 if ($q_type == 'archived') $key = 'archived';
-if (OPTION_SITE_TYPE=='multiple') $key .= "_$site_name";
+if (OPTION_SITE_TYPE == 'multiple') {
+    if (OPTION_SITE_DOMAINS) {
+        $key .= "_$site_name";
+    } elseif ($q_body) {
+        $key .= "_$q_body";
+    }
+}
 if ($q_cat) $key .= "_$q_cat";
 $ntotal = db_getOne("select value from stats where key='cached_petitions_$key'");
 
@@ -90,6 +97,9 @@ if (OPTION_SITE_TYPE == 'multiple') {
         # Only want to show ones for this body
         $qrows .= ' AND body.ref = ?';
         $sql_params[] = $site_name;
+    } elseif ($q_body) {
+        $qrows .= ' AND body.ref = ?';
+        $sql_params[] = $q_body;
     }
 } else {
     $qrows .= " FROM petition WHERE status = ? ";
