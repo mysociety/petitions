@@ -19,12 +19,19 @@ require_once '../commonlib/phplib/mapit.php';
 $page_title = 'Create a petition';
 ob_start();
 
-if (cobrand_creation_category_first())
+if (cobrand_creation_category_first()) {
     $steps = array('', 'category', 'main', 'you', 'preview');
-elseif (OPTION_SITE_TYPE == 'multiple')
-    $steps = array('', 'you', 'main', 'preview');
-elseif (OPTION_SITE_TYPE == 'one')
+} elseif (OPTION_SITE_TYPE == 'multiple') {
+    # XXX I think this could be main for domains too, it only needs to be this order
+    # for if the body is being derived from the postcode...
+    if (OPTION_SITE_DOMAINS) {
+        $steps = array('', 'you', 'main', 'preview');
+    } else {
+        $steps = array('', 'main', 'you', 'preview');
+    }
+} elseif (OPTION_SITE_TYPE == 'one') {
     $steps = array('', 'main', 'you', 'preview');
+}
 
 if (get_http_var('toothercouncil')) {
     if ($url = cobrand_category_wrong_action(intval(get_http_var('category')), get_http_var('council'))) {
@@ -374,13 +381,23 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     if (OPTION_SITE_TYPE == 'multiple') {
         if (OPTION_SITE_DOMAINS) {
             $body = db_getRow('select id, name from body where ref=?', $site_name);
+            print "<input type='hidden' name='body' value='$body[id]' />";
+            print $body['name'];
+            echo ' to';
         } else {
-            $body = db_getRow('select id, name from body where id=?', $data['body']);
+            $bodies = db_getAll('select id, name from body order by name');
+            echo '<select name="body" id="body">';
+            print "<option value=''>-- Please select --</option>";
+            foreach ($bodies as $body) {
+                print "<option value='$body[id]'";
+                if (isset($data['body']) && $body['id'] == $data['body'])
+                    print ' selected';
+                print ">$body[name]</option>";
+            }
+            echo '</select> to';
         }
-        print "<input type='hidden' name='body' value='$body[id]' />";
-        print $body['name'];
-        echo ' to';
     }
+
     echo '...</label></strong> <br />';
     textfield('pet_content', $data['pet_content'], 70, $errors);
     echo '<br />';
