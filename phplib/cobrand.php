@@ -276,7 +276,7 @@ function cobrand_perform_address_lookup($pc) {
 
 function cobrand_creation_postcode_optional() {
     global $site_name;
-    if ($site_name == 'suffolkcoastal') {
+    if ($site_name == 'suffolkcoastal' || $site_name == 'whypoll') {
         return true;
     }
     return false;    
@@ -284,7 +284,7 @@ function cobrand_creation_postcode_optional() {
 
 function cobrand_creation_phone_number_optional() {
     global $site_name;
-    if ($site_name == 'islington' || $site_name == 'suffolkcoastal') {
+    if ($site_name == 'islington' || $site_name == 'suffolkcoastal' || $site_name == 'whypoll') {
         return true;
     }
     return false;
