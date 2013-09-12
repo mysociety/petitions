@@ -176,6 +176,10 @@ if (!$rss) {
         }
         $b = true;
     }
+    
+    if (OPTION_SITE_TYPE == 'multiple') {
+        cobrand_show_body_selector($q_body);
+    }
 
     pet_search_form(array('float'=>true));
     if (OPTION_SITE_NAME == 'sbdc' || OPTION_SITE_NAME == 'sbdc1') print '<h2>View petitions</h2>';

@@ -1731,3 +1731,30 @@ HTML;
     return OPTION_CREATION_DISABLED;
 }
 
+# this section show body currently selected (if any) and offer select list to change it
+function cobrand_show_body_selector($body_ref) {
+    global $site_name;
+    if ($site_name=='whypoll') { # only used on whypoll so far
+        $body_name = '';
+        $body_rows = db_query("SELECT ref, name from body order by name");
+        $body_select_options = '<option value="">All bodies</a>';
+        while ($row = db_fetch_array($body_rows)) {
+            $selected = '';
+            if ($row['ref']==$body_ref) {
+                $body_name = $row['name']; # set this body name, if we've found it
+                $selected = 'selected="true"';
+            }
+            $body_select_options .= '<option value="' . $row['ref'] . "\" $selected>" . $row['name'] . "</option>\n";
+        }
+        ?>
+        <form action="/list" method="post" class="body-picker" style="float:right;">
+            <label for="body">Choose body: </label>
+            <select name="body">
+                <?= $body_select_options ?>
+            </select>
+            <input type="submit" value="Go">
+        </form>
+        <h3><?= $body_name ?></h3>
+        <?
+    }
+}
