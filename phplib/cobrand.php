@@ -274,6 +274,16 @@ function cobrand_perform_address_lookup($pc) {
     return $out;
 }
 
+# pass validate_postcode through here to allow override of the commonlib (UK) routine
+function cobrand_validate_postcode($postcode) {
+    global $site_name;
+    if ($site_name == 'whypoll') {
+        return true; # always validate (i.e., not checking (yet?) -- but could do vs. Indian PIN)
+    } else {
+        return validate_postcode($postcode); # from commonlib
+    }
+}
+
 function cobrand_creation_postcode_optional() {
     global $site_name;
     if ($site_name == 'suffolkcoastal' || $site_name == 'whypoll') {

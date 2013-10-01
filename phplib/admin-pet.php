@@ -319,7 +319,7 @@ class ADMIN_PAGE_PET_OFFLINE {
 
             if (!$data['postcode'])
                 $errors[] = 'Please give the creator postcode';
-            elseif (!validate_postcode($data['postcode']))
+            elseif (!cobrand_validate_postcode($data['postcode']))
                 $errors[] = 'Please give a valid postcode';
 
             if (!$errors) {

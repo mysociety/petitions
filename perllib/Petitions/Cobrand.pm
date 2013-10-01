@@ -72,6 +72,17 @@ sub postcode_exemptions($) {
     return 0;
 }
 
+# allow cobrand to override the commonlib postcode (UK) validator
+sub is_valid_postcode($) {
+    my $postcode = shift;
+    my $site_name = Petitions::Page::site_name();
+    if ($site_name eq 'whypoll') {
+        return 1; # always validate (i.e., not checking (yet?) -- but could do vs. Indian PIN)
+    } else {
+        return mySociety::PostcodeUtil::is_valid_postcode($postcode);
+    }
+}
+
 sub name_only_text() {
     my $site_name = Petitions::Page::site_name();
     return '<strong>Please enter your full name</strong>. Signatures containing

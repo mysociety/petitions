@@ -174,7 +174,7 @@ function petition_submitted_you($data) {
 
     $errors = array();
     if (cobrand_creation_do_address_lookup() && array_key_exists('postcode', $data)) {
-        if (!$data['postcode'] || !validate_postcode($data['postcode'])) {
+        if (!$data['postcode'] || !cobrand_validate_postcode($data['postcode'])) {
             $errors['postcode'] = _('Please enter a valid postcode');
         } else {
             $out = cobrand_perform_address_lookup($data['postcode']);
@@ -728,7 +728,7 @@ function step_you_error_check($data) {
     if (!validate_email($data['email'])) $errors['email'] = _('Please enter a valid email address');
     if (isset($data['email']) && isset($data['email2']) && $data['email'] != $data['email2'])
         $errors['email2'] = 'Please make sure your email addresses match';
-    if ($data['postcode'] && !validate_postcode($data['postcode']))
+    if ($data['postcode'] && !cobrand_validate_postcode($data['postcode']))
         $errors['postcode'] = _('Please enter a valid postcode');
 
     $tel = preg_replace('#[^0-9+]#', '', $data['telephone']);
@@ -759,7 +759,7 @@ function step_you_error_check($data) {
             $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
         }
     }
-    if (($area = cobrand_creation_within_area_only()) && $data['postcode'] && validate_postcode($data['postcode'])) {
+    if (($area = cobrand_creation_within_area_only()) && $data['postcode'] && cobrand_validate_postcode($data['postcode'])) {
         $areas = mapit_call('postcode', $data['postcode']);
         if (is_object($areas)) { # RABX Error
             $errors['postcode'] = 'Sorry, we did not recognise that postcode.';
