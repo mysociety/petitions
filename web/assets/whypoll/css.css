@@ -129,6 +129,10 @@ html,body {
     width: 100%;
     position: relative;
 }
+#whypoll-home-link {
+    float: right;
+    margin: 1em;
+}
 .whypoll-pet-nav ul {
     list-style-type: none;
     margin: 0;
