@@ -114,3 +114,50 @@ table.petition-list-table th {
         margin-top: -0.5em;
     }
 }
+html,body {
+    margin: 0;
+    padding: 0;
+}
+.whypoll-content {
+    margin:0;
+    padding: 1em;
+}
+.whypoll-pet-nav {
+    margin: 0;
+    padding: 0;
+    background: #272727;
+    width: 100%;
+    position: relative;
+}
+.whypoll-pet-nav ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+}
+.whypoll-pet-nav ul li {
+    color: #9c9c9c;
+    display: inline-block;
+    margin:0;
+    padding:0;
+    text-transform:uppercase;
+}
+.whypoll-pet-nav ul li span {
+    padding: 20px;
+}
+.whypoll-pet-nav ul li a {
+    color: white;
+    padding: 20px;
+    line-height:2em;
+    text-transform:uppercase;
+    text-decoration: none;   
+    display: inline-block; 
+    background: url(http://www.whypoll.org/templates/theme1038/images/menus/menu-border.png) no-repeat 0 center;
+    margin: 0;
+}
+.whypoll-pet-nav ul li a:hover {
+   background-color: black;
+}
+body a {
+    color: black;
+    text-decoration: none;
+}
