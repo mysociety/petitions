@@ -300,6 +300,15 @@ function cobrand_creation_phone_number_optional() {
     return false;
 }
 
+function cobrand_validate_phone_number($tel) {
+    global $site_name;
+    if ($site_name == 'whypoll') {
+        return true; # TODO not validating Indian phone numbers
+    } else {
+        return preg_match('#01[2-9][^1]\d{6,7}|01[2-69]1\d{7}|011[3-8]\d{7}|02[03489]\d{8}|07[04-9]\d{8}|00#', $tel);
+    }
+}
+
 function cobrand_creation_comments_label(){
     global $site_name;
     if ($site_name == 'westminster'){
