@@ -373,12 +373,19 @@ class ADMIN_PAGE_PET_MAIN {
         print '<table><tr>';
         $cols = array(
             'z'=>'Signers<br>(in last day)',
-            'r'=>'Petition reference', 
-            'a'=>'Petition title', 
-            's'=>'Signers', 
-            'd'=>'Deadline', 
-            'e'=>'Creator', 
-            'c'=>'Last Status Change', 
+            'r'=>'Petition reference'
+        );
+        if (cobrand_admin_show_body_in_petition()) {
+            $cols = array_merge($cols, array('b'=>'Body'));
+        }
+        $cols = array_merge(
+            $cols, array(
+                'a'=>'Petition title',
+                's'=>'Signers',
+                'd'=>'Deadline',
+                'e'=>'Creator',
+                'c'=>'Last Status Change',
+            )
         );
         if ($status == 'archived')
             $cols['m'] = 'Month of archiving';
@@ -470,6 +477,9 @@ class ADMIN_PAGE_PET_MAIN {
                 $row .= $r['ref'];
             $row .= '<br>(<a href="'.$this->self_link.'&amp;petition='.$r['ref'].'">admin</a>)';
             $row .= '</td>';
+            if (cobrand_admin_show_body_in_petition()) {
+                $row .= '<td>' . htmlspecialchars($p->body_name()) . '</td>';
+            }
             $row .= '<td>' . trim_characters(htmlspecialchars($r['content']),0,100);
             if ($this->cat_change) {
                 $disp_cat = preg_replace('#value="'.$r['category'].'"#', '$0 selected', $categories);
@@ -629,7 +639,11 @@ petitions.</p>';
         $petition_obj = new Petition($pdata);
 #        $petition_obj->render_box(array('showdetails' => true));
 
-        print '<h2>Petition &lsquo;<a href="' . $petition_obj->url_main()
+        print '<h2>Petition ';
+        if (cobrand_admin_show_body_in_petition()) {
+            print '(' . htmlspecialchars($pdata['body_name']) . ') ';
+        }
+        print '&lsquo;<a href="' . $petition_obj->url_main()
             . '">' . $pdata['ref'] . '</a>&rsquo;';
         if (cobrand_archive_admin() && $pdata['archived']) {
             print ' &ndash; Archived';
@@ -744,7 +758,10 @@ petitions.</p>';
         print '<li>Deadline: <b>';
         print trim(prettify($pdata['deadline']));
         print '</b> (user entered "' . htmlspecialchars($pdata['rawdeadline']) . '")';
-        print '<li>Petition title: <b>' . htmlspecialchars($pdata['content']) . '</b>';
+        if (cobrand_admin_show_body_in_petition()) {
+            print '<li>Body petitioned:  <b> '. htmlspecialchars($pdata['body_name']) . '</b>';
+        }
+        print '<li>Petition title:  <b>' . htmlspecialchars($pdata['content']) . '</b>';
         print '<li>Details of petition: ';
         print $pdata['detail'] ? htmlspecialchars($pdata['detail']) : 'None';
         if (cobrand_display_category()){

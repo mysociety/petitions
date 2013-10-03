@@ -982,6 +982,16 @@ function cobrand_admin_responsible_option() {
     return false;
 }
 
+# cobrand_admin_show_body_in_petition i.e., display the Body petitioned when inspecting it
+# Normally there's no need to show petition's body in admin because actually we deduce the body
+# from the admin user, and restrict the petitions that are displayed accordingly.
+# But Whypoll are the first that might need to see multiple bodies' petitions under a single login.
+function cobrand_admin_show_body_in_petition() {
+    global $site_group;
+    if ($site_group == 'whypoll') return true;
+    return false;
+}
+
 # Whether petitions can be archived or not (ie. response/closed from council
 # point of view). This can be just for admins, or display differently on list
 # pages as well.
