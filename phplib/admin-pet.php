@@ -370,7 +370,7 @@ class ADMIN_PAGE_PET_MAIN {
     }
 
     function petition_header($sort, $status) {
-        print '<table><tr>';
+        print '<table style="clear:both"><tr>';
         $cols = array(
             'z'=>'Signers<br>(in last day)',
             'r'=>'Petition reference'
