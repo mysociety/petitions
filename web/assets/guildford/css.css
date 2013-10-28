@@ -69,14 +69,6 @@ h1 {
     margin-bottom: 1em;
 }
 
-/* overriding http://www.guildford.gov.uk/guildford/template/home/css/home.css */
-#breadcrumb{
-    display: block;
-}
-#leftspace, #rightspace {
-    width: 20px;
-}
-
 #most_popular ul, #most_recent ul{
 	padding-left: 2em;
 	margin-left: 0;
@@ -85,3 +77,7 @@ h1 {
 	font-size: 1.3em;
 }
 
+/* overriding http://www.guildford.gov.uk/guildford/css/bootstrap.min.css */
+input, textarea {
+    width: auto;
+}
