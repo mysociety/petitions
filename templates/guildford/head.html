@@ -1,328 +1,134 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en-gb" lang="en-gb">
+.<!DOCTYPE html>
+<html>
 <head>
-  <title>Guildford Borough Council : PARAM_TITLE</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta http-equiv="Content-Script-Type" content="text/javascript" />
-  <meta name="generator" content="GOSS iCM - Intelligent Content Management" />
-  <meta name="DC.format.medium" content="html/text" />
-  <meta name="DC.date.created" scheme="W3CDTF" content="2007-01-31T17:09:55+00:00" />
-  <meta name="DC.date.issued" scheme="W3CDTF" content="2007-01-31T17:09:55+00:00" />
-  <meta name="DC.date.modified" content="PARAM_DATE" />
-  <meta name="DC.date.disposal.review" scheme="W3CDTF" content="2106-01-31T17:09:55+00:00" />
-  <meta name="eGMS.accessibility" scheme="eGMS.WCAG20" content="Double-A" />
-  <meta name="DC.title" content="PARAM_TITLE" />
-  <meta name="DC.description" content="PARAM_DESCRIPTION" />
-  <meta name="DC.identifier" scheme="DCTERMS.URI" content="PARAM_DC_IDENTIFIER" />
-  <meta name="DC.language" scheme="ISO 639-3/T" content="en" />
-  <meta name="DC.rights.copyright" content="Copyright 2010" />
-  <meta name="DC.type" scheme="eGMS.TES" content="Reference" />
-  <meta name="DC.contributor" content="Guildford Borough Council, Millmead House, Millmead, Guildford, Surrey, GU2 4BB, United Kingdom" />
-  <meta name="DC.creator" content="Guildford Borough Council, Millmead House, Millmead, Guildford, Surrey, GU2 4BB, United Kingdom" />
-  <meta name="DC.publisher" content="Guildford Borough Council, Millmead House, Millmead, Guildford, Surrey, GU2 4BB, United Kingdom" />
-  <!-- base href="http://www.guildford.gov.uk/" / -->
-  <script type="text/javascript" src="http://www.guildford.gov.uk/guildford/scripts/jsresizer.js"></script>
-  <script type="text/javascript" src="http://www.guildford.gov.uk/guildford/scripts/carousel.js"></script>
-  <script type="text/javascript" src="http://www.guildford.gov.uk/guildford/scripts/animatedcollapse.js"></script>
-  <script type="text/javascript" src="http://www.guildford.gov.uk/guildford/scripts/javascripts.js"></script>
-  <link href="http://www.guildford.gov.uk/guildford/css/editor.css" rel="stylesheet" type="text/css" media="all" />
-  <link href="http://www.guildford.gov.uk/guildford/css/style.css" rel="stylesheet" type="text/css" media="all" />
-  <link href="http://www.guildford.gov.uk/guildford/template/home/css/home.css" rel="stylesheet" type="text/css" media="all" />
-  <link href="http://www.guildford.gov.uk/guildford/css/styleprint.css" rel="stylesheet" type="text/css" media="print" />
-  <link href="/pet.css" rel="stylesheet" type="text/css" />
-  <link href="/assets/guildford/css.css" type="text/css" rel="stylesheet" />
-  PARAM_RSS_LINKS
-  PARAM_EXTRA
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>PARAM_TITLE : Guildford Borough Council</title>
+    <meta  name="generator" content="GOSS iCM - Intelligent Content Management" />
+    <meta  name="DC.format.medium" content="html/text" />
+    <meta  name="DC.date.created" content="2007-01-31T17:09:55+00:00" scheme="W3CDTF" />
+    <meta  name="DC.date.issued" content="2007-01-31T17:09:55+00:00" scheme="W3CDTF" />
+    <meta  name="DC.date.modified" content="PARAM_DATE" scheme="W3CDTF" />
+    <meta  name="DC.date.disposal.review" content="2106-01-31T17:09:55+00:00" scheme="W3CDTF" />
+    <meta  name="eGMS.accessibility" content="Double-A" scheme="eGMS.WCAG20" />
+    <meta name="DC.title" content="PARAM_TITLE" />
+    <meta name="DC.description" content="PARAM_DESCRIPTION" />
+    <meta name="DC.identifier" scheme="DCTERMS.URI" content="PARAM_DC_IDENTIFIER" />
+    <meta  name="DC.language" content="en" scheme="ISO 639-3/T" />
+    <meta  name="DC.rights.copyright" content="Copyright Guildford Borough Council 2013" />
+    <meta  name="DC.type" content="Reference" scheme="eGMS.TES" />
+    <meta  name="DC.coverage.spatial" content="Guildford" />
+    <meta  name="DC.contributor" content="Guildford Borough Council, Millmead House, Millmead, Guildford, GU2 4BB, United Kingdom" />
+    <meta  name="DC.creator" content="uildford Borough Council, Millmead House, Millmead, Guildford, GU2 4BB, United Kingdom" />
+    <meta  name="DC.publisher" content="Guildford Borough Council, Millmead House, Millmead, Guildford, GU2 4BB, United Kingdom" />
+    <!--[if ! lte IE 6]><!-->
+    <link href="http://www.guildford.gov.uk/guildford/css/bootstrap.min.css" rel="stylesheet" media="all">
+    <link href="http://www.guildford.gov.uk/guildford/css/modern.min.css" rel="stylesheet" media="all">
+    <!-- <![endif]-->
+    <!--[if lte IE 6]>
+    <link rel="stylesheet" href="http://www.guildford.gov.uk/guildford/css/ie6.min.css" media="all">
+    <![endif]-->
+    <script src="http://www.guildford.gov.uk/guildford/scripts/modernizr.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+    <script src="http://www.guildford.gov.uk/guildford/scripts/bootstrap.min.js"></script>
+    <script src="https://ssl.google-analytics.com/ga.js" async></script>
+    <script src="http://platform.twitter.com/widgets.js" async></script>
+    <script src="http://www.guildford.gov.uk/guildford/scripts/modern.min.js"></script>
+    <link href="/pet.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/guildford/css.css" type="text/css" rel="stylesheet" />
+    PARAM_RSS_LINKS
+    PARAM_EXTRA
 </head>
-<body onload="javascript:externalLinks();javascript:checkFontSize();javascript:checkHomeTab();" PARAM_BODYID>
-  <div id="bodyWrap">
-    <div id="header">
-      <a name="top" class="displaynone"></a>
-      <div class="headerContent">
-        <div class="skipLinks">
-          <ul>
-            <li class="first"><a href="#SkipNavigation"><span>Skip to Content</span></a></li>
-            <li><a href="#leftnavcontainer"><span>Skip Navigation</span></a></li>
-          </ul>
-        </div>
-        <ul id="toputilnav">
-          <li class="start">
-            <a href="http://www.guildford.gov.uk/index.aspx?articleid=1">Home</a>
-          </li>
-          <li>
-            <a href="http://www.guildford.gov.uk/index.aspx?articleid=6">My account</a>
-          </li>
-          <li>
-            <a accesskey="4" href="http://www.guildford.gov.uk/index.aspx?articleid=7">Search</a>
-          </li>
-          <li>
-            <a accesskey="3" href="http://www.guildford.gov.uk/index.aspx?articleid=8">Sitemap</a>
-          </li>
-          <!--Additional bits-->
-          <li class="last">
-            <ul class="accessibilityOptions displaynone" id="textresizer">
-              <li>Text Size</li>
-              <li class="size"><a href="#" class="small" onclick="smallFont();return false;" title="Display small font (Default)">A<span class="displaynone"> (Small)</span></a></li>
-              <li class="size"><a href="#" class="medium" onclick="medFont();return false;" title="Display medium font">A<span class="displaynone"> (Medium)</span></a></li>
-              <li class="size"><a href="#" class="large" onclick="largeFont();return false;" title="Display large font">A<span class="displaynone"> (Large)</span></a></li>
-            </ul>
-            <script type="text/javascript">//<![CDATA[
-            document.getElementById("textresizer").style.display = 'inline';
-            //]]></script>
-          </li>
-        </ul>
-        <a href="http://www.guildford.gov.uk/index.aspx?articleid=1" title="Link to Home">
-          <img title="Guildford Borough Council" alt="Guildford Borough Council logo" src="http://www.guildford.gov.uk/guildford/images/gbc_logo.gif" width="276" height="67" />
-        </a>
-        <div id="topsearchbox">
-          <div class="searchLinks">
-            <div class="left">
-              <div class="right">
-                <ul>
-                  <li class="active">
-                    <div>
-                      <div class="left">
-                        <div class="right">
-                          <span>Search website</span>
-                        </div>
-                      </div>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="searchContainer">
-            <div class="left">
-              <div class="right">
-                <form action="http://www.guildford.gov.uk/index.aspx?articleid=7" method="post">
-                  <div>
-                    <label for="kword">Search</label>
-                    <input type="text" name="keyword" value="Enter keyword or phrase" id="kword" size="20" onfocus="javascript:if (this.value == 'Enter keyword or phrase') this.value = ''"/>
-                    <input type="submit" name="go" value="Search" title="Search for entered keyword" class="btntext"/>
-                    <input type="hidden" name="returnarticleid" value="1" />
-                    <input type="hidden" name="articleaction" value="newsearch" />
-                    <input type="hidden" name="SearchOptions" value="Pages" />
-                    <input type="hidden" name="searchmethod" value="ANY" />
-                  </div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<body id="PARAM_BODY_ID">
+    <div class="skipLink">
+        <a accesskey="S" href="http://www.guildford.gov.uk/home#content"><span>Skip to Content</span></a>
     </div>
-    <div id="maintableContainer">    
-      <div class="printonly">Website URL : PARAM_DC_IDENTIFIER</div>  
-        <table id="maintable" border="0" cellpadding="0" cellspacing="0" summary="This table displays the main article, the left-hand navigation set, if applicable, and any right-hand navigation that may be related to the article">
-          <tr>
-            <td id="lefthandcolumn">
-              <script type="text/javascript">//<![CDATA[
-                document.write('<style type="text/css">#leftnavcontainer { display: none; }<\/style>');
-              //]]></script>
-              <div id="leftnavcontainer">
-                <div class="data" id="page_LeftNavigation_Accordion">
-                  <div id="page_LeftNavigation_services_tab" class="tab">
-                    <div class="tabtitle">
-                      Services
-                    </div>
-                    <div class="tabbody">
-                      <ul>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=4700" title="This links to Advice and benefits"><span class="displaynone">Navigate to </span>Advice and benefits</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=4798" title="This links to Business"><span class="displaynone">Navigate to </span>Business</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=4951" title="This links to Community and living"><span class="displaynone">Navigate to </span>Community and living</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5086" title="This links to Council and democracy"><span class="displaynone">Navigate to </span>Council and democracy</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5155" title="This links to Education and learning"><span class="displaynone">Navigate to </span>Education and learning</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5220" title="This links to Environment and planning"><span class="displaynone">Navigate to </span>Environment and planning</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5351" title="This links to Housing"><span class="displaynone">Navigate to </span>Housing</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5468" title="This links to Jobs and careers"><span class="displaynone">Navigate to </span>Jobs and careers</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5482" title="This links to Leisure and culture"><span class="displaynone">Navigate to </span>Leisure and culture</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5566" title="This links to Health and social care"><span class="displaynone">Navigate to </span>Health and social care</a>
-                        </li>
-                        <li class="level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5650" title="This links to Transport and streets"><span class="displaynone">Navigate to </span>Transport and streets</a>
-                        </li>
-                        <li class="bottomedge level0">
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=362" title="This links to Your Guildford"><span class="displaynone">Navigate to </span>Your Guildford</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div id="page_LeftNavigation_reportpayapply_tab" class="tab">
-                    <div class="tabtitle">
-                      Report, pay, apply
-                    </div>
-                    <div class="tabbody">
-                      <ul>
-                        <li>
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5985&amp;menuitem=1">Report</a>
-                        </li>
-                        <li>
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5986&amp;menuitem=1">Pay</a>
-                        </li>
-                        <li>
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=5987&amp;menuitem=1">Apply</a>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                  <div id="page_LeftNavigation_atoztab_tab" class="tab">
-                    <div class="tabtitle">
-                      A - Z of services
-                    </div>
-                    <div class="tabbody">
-                      <div>
-                        <ul class="atozlist">
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=260&amp;menuitem=2">A</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=261&amp;menuitem=2">B</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=262&amp;menuitem=2">C</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=263&amp;menuitem=2">D</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=280&amp;menuitem=2">E</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=281&amp;menuitem=2">F</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=282&amp;menuitem=2">G</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=283&amp;menuitem=2">H</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=284&amp;menuitem=2">I</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=285&amp;menuitem=2">J</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=286&amp;menuitem=2">K</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=287&amp;menuitem=2">L</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=288&amp;menuitem=2">M</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=289&amp;menuitem=2">N</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=290&amp;menuitem=2">O</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=291&amp;menuitem=2">P</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=292&amp;menuitem=2">Q</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=293&amp;menuitem=2">R</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=294&amp;menuitem=2">S</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=295&amp;menuitem=2">T</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=296&amp;menuitem=2">U</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=297&amp;menuitem=2">V</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=298&amp;menuitem=2">W</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=299&amp;menuitem=2">X</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=300&amp;menuitem=2">Y</a>
-                          </li>
-                          <li>
-                            <a href="http://www.guildford.gov.uk/index.aspx?articleid=301&amp;menuitem=2">Z</a>
-                          </li>
+    <nav class="navbar">
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container">
+                    <a href="http://www.guildford.gov.uk/home" title="Link to Home" class="brand">
+                        <img title="Guildford Borough Council" alt="Guildford Borough Council logo" src="http://www.guildford.gov.uk/guildford/images/gbc_logo.gif" width="276" height="67">
+                    </a>
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <ul class="nav pull-right dyslexia invisible">
+                        <li title="Switch to dyslexic font" class="on"><span>D<span class="hide"> Dyslexic Font</span></span></li>
+                        <li title="Switch to standard font" class="off"><span>D<span class="hide"> Standard Font</span></span></li>
+                    </ul>
+                    <ul class="nav pull-right contrast invisible">
+                        <li title="Switch to high contrast display" class="on"><span>A<span class="hide"> High Contrast</span></span></li>
+                        <li title="Switch to low contrast display" class="off"><span>A<span class="hide"> Low Contrast</span></span></li>
+                    </ul>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav pull-right">
+                            <li><span class="selected">Home</span></li>
+                            <li><a href="http://www.guildford.gov.uk/article/7849/Accessibility" accesskey="0">Accessibility</a></li>
+                            <li><a href="https://www.guildford.gov.uk/login">Login</a></li>
+                            <li><a href="http://www.guildford.gov.uk/sitemap" accesskey="3">Sitemap</a></li>
+                            <li><a href="http://www.guildford.gov.uk/article/10560/Contact-us">Contact us</a></li>
+                            <li><span><small><a href="https://twitter.com/GuildfordBC" rel="external" class="twitter-follow-button" data-show-count="false" data-dnt="true">Follow @GuildfordBC</a></small></span></li>
                         </ul>
-                      </div>
+                        <form method="get" action="http://www.guildford.gov.uk/search" class="navbar-form pull-right visible-phone">
+                            <input type="search" name="search" title="Enter keyword or phrase to search the Guildford Borough Council website" class="input-xlarge" placeholder="Enter keyword or phrase">
+                            <button type="submit" class="btn" value="Search" title="Search the Guildford Borough Council website for entered keyword">Search</button>
+                        </form>
+                        <form method="get" action="http://www.guildford.gov.uk/yourguildford" class="navbar-form pull-right hidden-desktop">
+                            <input name="postCode" type="search" class="input-xlarge" placeholder="Enter your postcode" title="Enter your postcode to search for your property and lookup information about it">
+                            <button type="submit" class="btn" title="Search for your information about your property by postcode">Find Property</button>
+                        </form>
                     </div>
-                  </div>
-                  <div id="page_LeftNavigation_contacttab_tab" class="tab">
-                    <div class="tabtitle">
-                    Contact us
-                  </div>
-                    <div class="tabbody">
-                      <!-- Contacts Block -->
-                      <div class="relatedContact">
-                        <div class="bold">
-                        <a href="http://www.guildford.gov.uk/index.aspx?articleid=10" class="title">Guildford Borough Council</a>
-                      </div>
-                        <div>
-                        Millmead House<br />Millmead<br />Guildford<br />Surrey<br />GU2 4BB<br />United Kingdom<br />
-                      </div>
-                        <div class="bottom">
-                        <div>Telephone: 01483 505050 </div>
-                        <div>Email:
-                          <a href="http://www.guildford.gov.uk/index.aspx?articleid=1&amp;sendtoid=10&amp;formid=996" title="Email Guildford Borough Council">
-                          enquiries@guild...                        </a>
-                        </div>
-                      </div>
-                      </div>
-                    </div>
-                  </div>
                 </div>
-              </div>
-            </td>
-            <td id="leftspace"></td>
-            <td id="centralcolumn">
-              
-              <div id="breadcrumb">
-                <strong>You are in:</strong>
-                <ol id="breadcrumbnav">
-                  <!--
-                  <li>
-                    <a href="http://www.guildford.gov.uk/index.aspx?articleid=1">Guildford Home Page</a>
-                  </li>
-                  -->
-                  <li> 
-                    <a href="/">e-Petitions</a>
-                  </li>
-                  <li>
-                    /
-                    PARAM_TITLE
-                  </li>
-                </ol>
-              </div>
-              <h1>
-                PARAM_H1
-              </h1>
-              
-              <!-- end of head -->
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <div class="row">
+            <div class="span12">
+                <div class="breadcrumb">
+                    <small><strong>You are in:</strong></small>
+                    <ol>
+                        <li>
+                            <small>
+                                <span><a href="http://www.guildford.gov.uk/home">Guildford Home Page</a></span>
+                                <span> / <a href="/">epetitions</a></span>
+                                <span> / PARAM_TITLE</span>
+                            </small>
+                        </li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span7">
+                <div class="lowlight hidden-phone form-search">
+                    <h4>Search our website</h4>
+                    <form action="http://www.guildford.gov.uk/search" method="get" class="form-inline">
+                        <input type="search" name="search" title="Enter keyword or phrase to search the Guildford Borough Council website" class="input-xlarge" placeholder="Enter keyword or phrase" autocomplete="off" id="googleQ">
+                        <button type="submit" class="btn" value="Search" title="Search the Guildford Borough Council website for entered keyword">Search</button>
+                    </form>
+                </div>
+                <div class="lowlight visible-desktop form-property">
+                    <h4>Where you live</h4>
+                    <form method="get" action="http://www.guildford.gov.uk/yourguildford" class="form-inline">
+                        <input name="postCode" type="search" class="input-xlarge" placeholder="Enter your postcode" title="Enter your postcode to search for your property and lookup information about it">
+                        <button type="submit" class="btn" title="Search for your information about your property by postcode">Find Property</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <a id="content"></a>
+        <div class="row">
+            <div class="span12">
+                <h3>
+                  PARAM_H1
+                </h3>
+            </div>
+        </div>
+        <div class="row">
+            <div class="span12">
+                <!-- end of head -->
