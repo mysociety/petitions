@@ -628,7 +628,16 @@ function step_main_error_check($data) {
         if (!array_key_exists('body', $data) || !$data['body']) {
             $errors['body'] = _('Please pick who you wish to petition');
         } else {
-            $q = db_query('SELECT ref FROM body WHERE id=?', array($data['body']));
+            /* 
+               By default, lookup is keyed on 'id', but use 'ref' (which is effectively the body's
+               slug, and also unique) if we have alphachars in it: the whypoll javascript may be
+               using ref instead of id.
+            */
+            $lookup_fieldname = 'id'; 
+            if (preg_match('/[a-z]/i', $data['body'])) {
+                $lookup_fieldname = 'ref'; 
+            }
+            $q = db_query("SELECT ref FROM body WHERE $lookup_fieldname=?", array($data['body']));
             if (!db_num_rows($q))
                 $errors['body'] = _('Please pick a valid body to petition');
         }
