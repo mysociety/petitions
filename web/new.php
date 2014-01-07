@@ -377,6 +377,10 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     <?= cobrand_creator_must_be() ?>
 </p>
 <p><?
+	# allow a body to be passed in explicitly (for the whypoll cobrand); note this may be body id or ref
+	if (get_http_var('body')) {
+		$data['body'] = get_http_var('body');
+	}
     echo '<strong><label for="pet_content">' . $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
         if (OPTION_SITE_DOMAINS) {
@@ -385,12 +389,12 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
             print $body['name'];
             echo ' to';
         } else {
-            $bodies = db_getAll('select id, name from body order by name');
+            $bodies = db_getAll('select id, ref, name from body order by name');
             echo '<select name="body" id="body">';
             print "<option value=''>-- Please select --</option>";
             foreach ($bodies as $body) {
                 print "<option value='$body[id]'";
-                if (isset($data['body']) && $body['id'] == $data['body'])
+                if (isset($data['body']) && ($body['id'] == $data['body'] || $body['ref'] == $data['body']))
                     print ' selected';
                 print ">$body[name]</option>";
             }
