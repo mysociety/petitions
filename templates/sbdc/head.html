@@ -10,16 +10,18 @@
 <!--[if LT IE 7]>
     <link rel="stylesheet" type="text/css" href="/assets/sbdc/ie6.css">
 <![endif]-->
-<script type="text/javascript" src="/assets/sbdc/jquery-1.4.1.min.js"></script>
+<script src="https://secure.mysociety.org/jslib/jquery-1.6.2.min.js"></script>
 <script type="text/javascript" src="/assets/sbdc/jquery.pngFix.js"></script>
 <script type="text/javascript" src="/assets/sbdc/js.js"></script>
-<script src="https://secure.mysociety.org/jslib/openlayers/OpenLayers.js"></script>
-<script src="https://secure.mysociety.org/jslib/jquery/jquery-1.5.2.min.js"></script>
-<script src="asmselect/jquery.asmselect.js"></script>
-<link rel="stylesheet" type="text/css" href="asmselect/jquery.asmselect.css" />
+<script src="https://secure.mysociety.org/jslib/OpenLayers-2.10/OpenLayers.js"></script>
+<script src="/admin/asmselect/jquery.asmselect.js"></script>
+<link rel="stylesheet" type="text/css" href="/admin/asmselect/jquery.asmselect.css" />
 <script type="text/javascript">
 $(document).ready(function(){
-    $('select[multiple]').asmSelect();
+    var m = $('select[multiple]');
+    if (m.asmSelect) {
+        m.asmSelect();
+    }
 });
 </script>
 PARAM_RSS_LINKS
