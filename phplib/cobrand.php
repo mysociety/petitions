@@ -1558,7 +1558,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'surreycc')
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
     if ($site_name == 'tandridge')
-        return 'http://www.tandridge.gov.uk/YourCouncil/CouncillorsMeetings/petitions/terms.htm';
+        return 'http://www.tandridge.gov.uk/LifeinTandridge/consultation/petitions/terms.htm';
     if ($site_name == 'waverley')
         return 'http://www.waverley.gov.uk/petitionsterms';
     if ($site_name == 'westminster')
