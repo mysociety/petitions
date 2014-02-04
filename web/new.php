@@ -379,7 +379,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
 <p><?
 	# allow a body to be passed in explicitly (for the whypoll cobrand); note this may be body id or ref
 	if (get_http_var('body')) {
-		$data['body'] = get_http_var('body');
+		$data['body'] = cobrand_convert_name_to_ref(get_http_var('body'));
 	}
     echo '<strong><label for="pet_content">' . $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {

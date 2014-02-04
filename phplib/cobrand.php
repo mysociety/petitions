@@ -992,6 +992,36 @@ function cobrand_admin_show_body_in_petition() {
     return false;
 }
 
+# whypoll are unhelpfully sending name not ref from their page
+# this won't cope with duplicate names but that is currently whypoll's decision
+# currently the ref (slug) in our db is firstname-i-n-i-t-i-a-l-s-lastname
+# note whypoll is sending name with punctuation and honorifics too :-( 
+function cobrand_convert_name_to_ref($name_or_ref) {
+    global $site_group;
+    if ($site_group == 'whypoll') {
+        $name = strtolower($name_or_ref);
+        $name = preg_replace("/^(shri( sk)?|dr|sk|smt|prof)(\.?-)/", "", $name); # remove honorifics
+        $name = preg_replace("/[^a-z-]/", "", $name); # remove all but alpha and hyphen
+        $name = preg_replace("/--+/", "-", $name); # remove dup hyphens
+        $names = explode("-", $name);
+        $firstname = array_shift($names);
+        $lastname = array_pop($names);
+        if (! function_exists('get_initial')) {
+            function get_initial($s) {
+                return substr($s, 0, 1);
+            }
+        }
+        $names = array_map("get_initial", $names);
+        array_unshift($names, $firstname);
+        if ($lastname) {
+            array_push($names, $lastname);
+        }
+        return implode("-", $names);
+    } else {
+        return $name_or_ref;
+    }
+}
+
 # Whether petitions can be archived or not (ie. response/closed from council
 # point of view). This can be just for admins, or display differently on list
 # pages as well.
