@@ -995,31 +995,35 @@ function cobrand_admin_show_body_in_petition() {
 # whypoll are unhelpfully sending name not ref from their page
 # this won't cope with duplicate names but that is currently whypoll's decision
 # currently the ref (slug) in our db is firstname-i-n-i-t-i-a-l-s-lastname
-# note whypoll is sending name with punctuation and honorifics too :-( 
+# note whypoll is sending name with punctuation and honorifics too :-(
 function cobrand_convert_name_to_ref($name_or_ref) {
     global $site_group;
+    $name = $name_or_ref;
     if ($site_group == 'whypoll') {
-        $name = strtolower($name_or_ref);
-        $name = preg_replace("/^(shri( sk)?|dr|sk|smt|prof)(\.?-)/", "", $name); # remove honorifics
-        $name = preg_replace("/[^a-z-]/", "", $name); # remove all but alpha and hyphen
-        $name = preg_replace("/--+/", "-", $name); # remove dup hyphens
-        $names = explode("-", $name);
-        $firstname = array_shift($names);
-        $lastname = array_pop($names);
-        if (! function_exists('get_initial')) {
-            function get_initial($s) {
-                return substr($s, 0, 1);
+        # names (not refs/ids) always feature capitalised words, so test for that first:
+        if (preg_match("/[A-Z][a-z]/", $name_or_ref)) {
+            $name = strtolower($name_or_ref);
+            $name = preg_replace("/\s+/", "-", $name); # force spaces to hyphen; seems to use either
+            $name = preg_replace("/^(shri(-sk)?|dr|sk|smt|prof)(\.?-)/", "", $name); # remove honorifics
+            $name = preg_replace("/[^a-z-]/", "", $name); # remove all but alpha and hyphen
+            $name = preg_replace("/--+/", "-", $name); # remove dup hyphens
+            $names = explode("-", $name);
+            $firstname = array_shift($names);
+            $lastname = array_pop($names);
+            if (! function_exists('get_initial')) {
+                function get_initial($s) {
+                    return substr($s, 0, 1);
+                }
             }
+            $names = array_map("get_initial", $names);
+            array_unshift($names, $firstname);
+            if ($lastname) {
+                array_push($names, $lastname);
+            }
+            $name =  implode("-", $names);
         }
-        $names = array_map("get_initial", $names);
-        array_unshift($names, $firstname);
-        if ($lastname) {
-            array_push($names, $lastname);
-        }
-        return implode("-", $names);
-    } else {
-        return $name_or_ref;
     }
+    return $name;
 }
 
 # Whether petitions can be archived or not (ie. response/closed from council
