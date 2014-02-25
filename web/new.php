@@ -19,12 +19,19 @@ require_once '../commonlib/phplib/mapit.php';
 $page_title = 'Create a petition';
 ob_start();
 
-if (cobrand_creation_category_first())
+if (cobrand_creation_category_first()) {
     $steps = array('', 'category', 'main', 'you', 'preview');
-elseif (OPTION_SITE_TYPE == 'multiple')
-    $steps = array('', 'you', 'main', 'preview');
-elseif (OPTION_SITE_TYPE == 'one')
+} elseif (OPTION_SITE_TYPE == 'multiple') {
+    # XXX I think this could be main for domains too, it only needs to be this order
+    # for if the body is being derived from the postcode...
+    if (OPTION_SITE_DOMAINS) {
+        $steps = array('', 'you', 'main', 'preview');
+    } else {
+        $steps = array('', 'main', 'you', 'preview');
+    }
+} elseif (OPTION_SITE_TYPE == 'one') {
     $steps = array('', 'main', 'you', 'preview');
+}
 
 if (get_http_var('toothercouncil')) {
     if ($url = cobrand_category_wrong_action(intval(get_http_var('category')), get_http_var('council'))) {
@@ -167,7 +174,7 @@ function petition_submitted_you($data) {
 
     $errors = array();
     if (cobrand_creation_do_address_lookup() && array_key_exists('postcode', $data)) {
-        if (!$data['postcode'] || !validate_postcode($data['postcode'])) {
+        if (!$data['postcode'] || !cobrand_validate_postcode($data['postcode'])) {
             $errors['postcode'] = _('Please enter a valid postcode');
         } else {
             $out = cobrand_perform_address_lookup($data['postcode']);
@@ -370,17 +377,31 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     <?= cobrand_creator_must_be() ?>
 </p>
 <p><?
+	# allow a body to be passed in explicitly (for the whypoll cobrand); note this may be body id or ref
+	if (get_http_var('body')) {
+		$data['body'] = cobrand_convert_name_to_ref(get_http_var('body'));
+	}
     echo '<strong><label for="pet_content">' . $petition_prefix;
     if (OPTION_SITE_TYPE == 'multiple') {
         if (OPTION_SITE_DOMAINS) {
             $body = db_getRow('select id, name from body where ref=?', $site_name);
+            print "<input type='hidden' name='body' value='$body[id]' />";
+            print $body['name'];
+            echo ' to';
         } else {
-            $body = db_getRow('select id, name from body where id=?', $data['body']);
+            $bodies = db_getAll('select id, ref, name from body order by name');
+            echo '<select name="body" id="body">';
+            print "<option value=''>-- Please select --</option>";
+            foreach ($bodies as $body) {
+                print "<option value='$body[id]'";
+                if (isset($data['body']) && ($body['id'] == $data['body'] || $body['ref'] == $data['body']))
+                    print ' selected';
+                print ">$body[name]</option>";
+            }
+            echo '</select> to';
         }
-        print "<input type='hidden' name='body' value='$body[id]' />";
-        print $body['name'];
-        echo ' to';
     }
+
     echo '...</label></strong> <br />';
     textfield('pet_content', $data['pet_content'], 70, $errors);
     echo '<br />';
@@ -611,7 +632,16 @@ function step_main_error_check($data) {
         if (!array_key_exists('body', $data) || !$data['body']) {
             $errors['body'] = _('Please pick who you wish to petition');
         } else {
-            $q = db_query('SELECT ref FROM body WHERE id=?', array($data['body']));
+            /* 
+               By default, lookup is keyed on 'id', but use 'ref' (which is effectively the body's
+               slug, and also unique) if we have alphachars in it: the whypoll javascript may be
+               using ref instead of id.
+            */
+            $lookup_fieldname = 'id'; 
+            if (preg_match('/[a-z]/i', $data['body'])) {
+                $lookup_fieldname = 'ref'; 
+            }
+            $q = db_query("SELECT ref FROM body WHERE $lookup_fieldname=?", array($data['body']));
             if (!db_num_rows($q))
                 $errors['body'] = _('Please pick a valid body to petition');
         }
@@ -711,7 +741,7 @@ function step_you_error_check($data) {
     if (!validate_email($data['email'])) $errors['email'] = _('Please enter a valid email address');
     if (isset($data['email']) && isset($data['email2']) && $data['email'] != $data['email2'])
         $errors['email2'] = 'Please make sure your email addresses match';
-    if ($data['postcode'] && !validate_postcode($data['postcode']))
+    if ($data['postcode'] && !cobrand_validate_postcode($data['postcode']))
         $errors['postcode'] = _('Please enter a valid postcode');
 
     $tel = preg_replace('#[^0-9+]#', '', $data['telephone']);
@@ -724,8 +754,12 @@ function step_you_error_check($data) {
         $errors['telephone'] = 'Please enter a telephone number, including the area code';
     elseif (strlen($data['telephone']) < 10)
         $errors['telephone'] = 'That seems a bit short - please specify your full telephone number, including the area code';
-    elseif (!preg_match('#01[2-9][^1]\d{6,7}|01[2-69]1\d{7}|011[3-8]\d{7}|02[03489]\d{8}|07[04-9]\d{8}|00#', $tel))
+    elseif (! cobrand_validate_phone_number($tel))
         $errors['telephone'] = 'Please enter a valid telephone number, including the area code';
+
+    if (!cobrand_overseas_dropdown()) {
+        $data['overseas'] = '';
+    }
 
     if (!cobrand_creation_postcode_optional()) {
         if (!$data['postcode'] && !$data['overseas']) {
@@ -738,7 +772,7 @@ function step_you_error_check($data) {
             $errors['postcode'] = 'You can\'t both put a postcode and pick an option from the drop-down.';
         }
     }
-    if (($area = cobrand_creation_within_area_only()) && $data['postcode'] && validate_postcode($data['postcode'])) {
+    if (($area = cobrand_creation_within_area_only()) && $data['postcode'] && cobrand_validate_postcode($data['postcode'])) {
         $areas = mapit_call('postcode', $data['postcode']);
         if (is_object($areas)) { # RABX Error
             $errors['postcode'] = 'Sorry, we did not recognise that postcode.';
@@ -781,11 +815,7 @@ function step_you_error_check($data) {
         # Set it to blank string as no form field printed at all.
         $data['address'] = '';
     }
-    
-    if (!cobrand_overseas_dropdown()) {
-        $data['overseas'] = '';
-    }
-    
+        
     foreach ($vars as $var => $p_var) {
         if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
     }

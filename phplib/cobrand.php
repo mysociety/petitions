@@ -274,9 +274,19 @@ function cobrand_perform_address_lookup($pc) {
     return $out;
 }
 
+# pass validate_postcode through here to allow override of the commonlib (UK) routine
+function cobrand_validate_postcode($postcode) {
+    global $site_name;
+    if ($site_name == 'whypoll') {
+        return true; # always validate (i.e., not checking (yet?) -- but could do vs. Indian PIN)
+    } else {
+        return validate_postcode($postcode); # from commonlib
+    }
+}
+
 function cobrand_creation_postcode_optional() {
     global $site_name;
-    if ($site_name == 'suffolkcoastal') {
+    if ($site_name == 'suffolkcoastal' || $site_name == 'whypoll') {
         return true;
     }
     return false;    
@@ -284,10 +294,19 @@ function cobrand_creation_postcode_optional() {
 
 function cobrand_creation_phone_number_optional() {
     global $site_name;
-    if ($site_name == 'islington' || $site_name == 'suffolkcoastal') {
+    if ($site_name == 'islington' || $site_name == 'suffolkcoastal' || $site_name == 'whypoll') {
         return true;
     }
     return false;
+}
+
+function cobrand_validate_phone_number($tel) {
+    global $site_name;
+    if ($site_name == 'whypoll') {
+        return true; # TODO not validating Indian phone numbers
+    } else {
+        return preg_match('#01[2-9][^1]\d{6,7}|01[2-69]1\d{7}|011[3-8]\d{7}|02[03489]\d{8}|07[04-9]\d{8}|00#', $tel);
+    }
 }
 
 function cobrand_creation_comments_label(){
@@ -351,14 +370,14 @@ function cobrand_error_div_start() {
 
 function cobrand_postcode_label() {
     global $site_name;    
-    if ($site_name == 'suffolkcoastal')
+    if ($site_name == 'suffolkcoastal' || $site_name == 'whypoll')
         return 'Postcode';
     return _('UK postcode');
 }
   
 function cobrand_overseas_dropdown() {
     global $site_group;
-    if ($site_group ==  'runnymede' || $site_group == 'suffolkcoastal'){
+    if ($site_group ==  'runnymede' || $site_group == 'suffolkcoastal' || $site_group == 'whypoll'){
         return '';
     }
     if ($site_group == 'surreycc') {
@@ -961,6 +980,50 @@ function cobrand_admin_responsible_option() {
     if ($site_group == 'hounslow') return true;
     if ($site_group == 'sbdc') return true;
     return false;
+}
+
+# cobrand_admin_show_body_in_petition i.e., display the Body petitioned when inspecting it
+# Normally there's no need to show petition's body in admin because actually we deduce the body
+# from the admin user, and restrict the petitions that are displayed accordingly.
+# But Whypoll are the first that might need to see multiple bodies' petitions under a single login.
+function cobrand_admin_show_body_in_petition() {
+    global $site_group;
+    if ($site_group == 'whypoll') return true;
+    return false;
+}
+
+# whypoll are unhelpfully sending name not ref from their page
+# this won't cope with duplicate names but that is currently whypoll's decision
+# currently the ref (slug) in our db is firstname-i-n-i-t-i-a-l-s-lastname
+# note whypoll is sending name with punctuation and honorifics too :-(
+function cobrand_convert_name_to_ref($name_or_ref) {
+    global $site_group;
+    $name = $name_or_ref;
+    if ($site_group == 'whypoll') {
+        # names (not refs/ids) always feature capitalised words, so test for that first:
+        if (preg_match("/[A-Z][a-z]/", $name_or_ref)) {
+            $name = strtolower($name_or_ref);
+            $name = preg_replace("/\s+/", "-", $name); # force spaces to hyphen; seems to use either
+            $name = preg_replace("/^(shri(-sk)?|dr|sk|smt|prof)(\.?-)/", "", $name); # remove honorifics
+            $name = preg_replace("/[^a-z-]/", "", $name); # remove all but alpha and hyphen
+            $name = preg_replace("/--+/", "-", $name); # remove dup hyphens
+            $names = explode("-", $name);
+            $firstname = array_shift($names);
+            $lastname = array_pop($names);
+            if (! function_exists('get_initial')) {
+                function get_initial($s) {
+                    return substr($s, 0, 1);
+                }
+            }
+            $names = array_map("get_initial", $names);
+            array_unshift($names, $firstname);
+            if ($lastname) {
+                array_push($names, $lastname);
+            }
+            $name =  implode("-", $names);
+        }
+    }
+    return $name;
 }
 
 # Whether petitions can be archived or not (ie. response/closed from council
@@ -1731,3 +1794,30 @@ HTML;
     return OPTION_CREATION_DISABLED;
 }
 
+# this section show body currently selected (if any) and offer select list to change it
+function cobrand_show_body_selector($body_ref) {
+    global $site_name;
+    if ($site_name=='whypoll') { # only used on whypoll so far
+        $body_name = '';
+        $body_rows = db_query("SELECT ref, name from body order by name");
+        $body_select_options = '<option value="">All bodies</a>';
+        while ($row = db_fetch_array($body_rows)) {
+            $selected = '';
+            if ($row['ref']==$body_ref) {
+                $body_name = $row['name']; # set this body name, if we've found it
+                $selected = 'selected="true"';
+            }
+            $body_select_options .= '<option value="' . $row['ref'] . "\" $selected>" . $row['name'] . "</option>\n";
+        }
+        ?>
+        <form action="/list" method="post" class="body-picker" style="float:right;">
+            <label for="body">Choose body: </label>
+            <select name="body">
+                <?= $body_select_options ?>
+            </select>
+            <input type="submit" value="Go">
+        </form>
+        <h3><?= $body_name ?></h3>
+        <?
+    }
+}

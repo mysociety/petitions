@@ -30,7 +30,9 @@ err_set_handler_display('pet_handle_error');
  * horribly.*/
 function ob_callback($s) {
     $s = cobrand_html_final_changes($s);
-    header('Content-Length: ' . strlen($s));
+    if ($s) {
+        header('Content-Length: ' . strlen($s));
+    }
     return $s;
 }
 ob_start('ob_callback');

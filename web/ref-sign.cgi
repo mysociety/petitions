@@ -91,7 +91,7 @@ sub signup_page ($$) {
     my $qp_address_type = $q->param('address_type') || '';
     my $qp_postcode = $q->param('postcode');
     $qp_postcode =~ s/[^a-z0-9]//ig;
-    $qp_postcode = undef unless mySociety::PostcodeUtil::is_valid_postcode($qp_postcode);
+    $qp_postcode = undef unless Petitions::Cobrand::is_valid_postcode($qp_postcode);
     my $qp_overseas = $q->param('overseas');
     $qp_overseas = undef if $qp_overseas && $qp_overseas eq '-- Select --';
 
