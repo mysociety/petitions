@@ -207,6 +207,8 @@ function cobrand_creator_must_be() {
         $creator_type = 'should live, work or study within Stevenage';
     } elseif ($area = cobrand_creation_within_area_only()) {
         $creator_type = 'must live, work or study within ' . $area[0];
+    } elseif ($site_name == 'whypoll'){
+        $creator_type = 'must be an Indian citizen or resident';
     } else {
         $creator_type = 'must be a British citizen or resident';
     }
