@@ -1,0 +1,107 @@
+
+/*****************~ Start of 'borchester' product ~*****************/
+body {
+	background: #fff;
+	color: #000;
+	font-size: 100%;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	color: #000;
+	font-weight: bold;
+	text-align: left;
+	padding: 0.5em 0;
+	margin : 0;
+}
+
+h1 {
+	font-size: 150%;
+}
+
+h2 {
+	font-size: 140%;
+}
+
+h3 {
+	font-size: 130%;
+}
+
+h4 {
+	font-size: 120%;
+}
+
+h5 {
+	font-size: 110%;
+}
+
+h6 {
+	font-size: 100%;
+}
+
+/*Hidden elements*/
+#toplevelsearch, #toplevel, #toputilnav, #leftcolumn, #rightcolumn, #contentlinks, #footer, .noprint, #readspeaker_button1, #runnymedeform {
+	display : none;
+}
+
+
+/*Breadcrumbs*/
+#breadcrumb {
+	background: none;
+	border: 0;
+}
+
+#breadcrumb ol {
+	margin: 0;
+}
+
+#breadcrumb li.bold {
+	margin-right: 0;
+}
+
+/*Remove layout*/
+#pagewrapper {
+	min-width: 0;
+}
+
+#maincolumnwrapper {
+	overflow: hidden;
+	width: 100%;
+	margin: 0;
+}
+
+#centrecolumn, #headingtext {
+	margin: 0;
+}
+
+#contentrightnav {
+	float: none;
+	width: 100%;
+}
+
+#contentrightnav .contentleft {
+	float: none;
+	width: 100%;
+	margin: 0;
+	right: 0;
+}
+
+#contentrightnav .contentbodywrap {
+	float: none;
+	width: 100%;
+	left: 0;
+}
+
+#contentfullwidth {
+	float: none;
+}
+#tabs ul li{
+    margin-left:0 !important;     
+}
+#tabs ul li a{
+    padding-left:0 !important;   
+}
+#atozbox{
+    display:none;
+}
+/*****************~ End of 'borchester' product ~*****************/
+

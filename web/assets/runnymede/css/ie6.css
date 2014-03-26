@@ -1,0 +1,11 @@
+
+/*****************~ Start of 'borchester' product ~*****************/
+/*
+For related images vertical thumbnail centring
+Issues with IE6 documented here http://haslayout.net/css-tuts/Vertical-Centering
+*/
+#relatedthumbs div.img span.verticalcentre span.outer {
+	font-size: 208px;/*This style is detrimental to all other browsers*/
+}
+/*****************~ End of 'borchester' product ~*****************/
+

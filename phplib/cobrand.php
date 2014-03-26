@@ -339,10 +339,7 @@ function cobrand_creation_extra_footer() {
     if ($site_name != 'runnymede') return;
 ?>
 <p class="banner">
-<a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/">Terms and conditions</a>
-| <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.eac7b227d6b697ef53d2dd85af8ca028/">Step by step guide</a>
-| <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.9e3786f0e4a5a623fa43a310af8ca028/">Questions about petitions</a>
-| <a href="http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.40b9386d6ff92926fa43a310af8ca028/">Petitions Scheme</a>
+<a href="http://www.runnymede.gov.uk/article/5592/Petitions-and-e-petitions-Frequently-Asked-Questions" target="_blank">Petitions frequently asked questions</a>
 </p>
 <?
 }
@@ -1611,7 +1608,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'reigate-banstead')
         return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
     if ($site_name == 'runnymede')
-        return 'http://www.runnymede.gov.uk/portal/site/runnymede/menuitem.12d3579a97fd8623fa43a310af8ca028/';
+        return 'http://www.runnymede.gov.uk/article/5592/Petitions-and-e-petitions-Frequently-Asked-Questions';
     if ($site_name == 'rushcliffe')
         return 'http://www.rushcliffe.gov.uk/councilanddemocracy/haveyoursay/petitions/'; # best guess
     if ($site_name == 'spelthorne')

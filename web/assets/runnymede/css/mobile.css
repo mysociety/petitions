@@ -1,0 +1,439 @@
+BODY {
+    FONT-SIZE: 80%
+}
+#pagewrapper {
+    WIDTH: 100%! important
+}
+#contentwrap {
+
+}
+#centrecolumn {
+    MARGIN: 0px 10px
+}
+#toplogo IMG {
+    DISPLAY: block
+}
+#toplevelsearch {
+    DISPLAY: block; BACKGROUND: none transparent scroll repeat 0% 0%
+}
+#contentrightnav .contentbodywrap {
+    LEFT: auto; FLOAT: none; WIDTH: auto; POSITION: static
+}
+#contentrightnav .contentleft {
+    RIGHT: auto; FLOAT: none; MARGIN-LEFT: 0px! important; WIDTH: auto
+}
+#breadcrumb {
+    BORDER-LEFT-WIDTH: 0px; FONT-SIZE: 80%; BACKGROUND-IMAGE: none; BORDER-RIGHT-WIDTH: 0px
+}
+.valignmiddle {
+    MARGIN-BOTTOM: 20px
+}
+.limage IMG {
+    DISPLAY: block
+}
+.rimage IMG {
+    DISPLAY: block
+}
+SPAN.positionleft IMG {
+    DISPLAY: block
+}
+SPAN.positionright IMG {
+    DISPLAY: block
+}
+#contentlinks LI {
+    FLOAT: none
+}
+#contentlinks LI.center {
+    CLEAR: left; FLOAT: none; MARGIN: 10px 0px 0px; WIDTH: auto; TEXT-ALIGN: left
+}
+#contentlinks LI.last {
+    MARGIN-TOP: 10px
+}
+#bottomutilnav UL LI.first {
+    PADDING-LEFT: 0px
+}
+#footer {
+    PADDING-LEFT: 10px; FONT-SIZE: 70%; TEXT-ALIGN: left
+}
+#copyright {
+    CLEAR: both; FLOAT: none; POSITION: static
+}
+#rightcolumn UL#utilitypages {
+    FLOAT: left
+}
+#rightcolumn .box {
+    CLEAR: left
+}
+#toplogo {
+    MARGIN: 0px auto
+}
+#toplogo IMG {
+    MARGIN: 0px auto
+}
+#toplevelsearch {
+    MARGIN: 0px auto
+}
+#headerutilnav {
+    MARGIN: 0px auto
+}
+.limage IMG {
+    MARGIN: 0px auto
+}
+.rimage IMG {
+    MARGIN: 0px auto
+}
+SPAN.positionleft IMG {
+    MARGIN: 0px auto
+}
+SPAN.positionright IMG {
+    MARGIN: 0px auto
+}
+#latestnews LI IMG {
+    MARGIN: 0px auto
+}
+#councillorrhs {
+    MARGIN: 0px auto
+}
+#calendar {
+    MARGIN: 0px auto
+}
+#left {
+    MARGIN: 0px auto
+}
+#toplevelnav {
+    MARGIN: 0px
+}
+#headerutilnav {
+    MARGIN: 0px
+}
+#breadcrumb OL {
+    MARGIN: 0px
+}
+#latestnews LI .container {
+    MARGIN: 0px
+}
+.forum {
+    MARGIN: 0px
+}
+.submitbutton {
+    MARGIN: 0px
+}
+.captcha SPAN {
+    MARGIN: 0px
+}
+#pagewrapper {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+#latestnews LI .container {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+#contactlist .pairwrap {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+#contentrightnav .contentbodywrap {
+    PADDING-RIGHT: 0px! important
+}
+#content .contentbodywrap {
+    FLOAT: none
+}
+#leftcolumn {
+    FLOAT: none
+}
+#toplogo {
+    FLOAT: none
+}
+#latestnews LI A.img {
+    FLOAT: none
+}
+.limage {
+    FLOAT: none
+}
+.rimage {
+    FLOAT: none
+}
+SPAN.positionleft {
+    FLOAT: none
+}
+SPAN.positionright {
+    FLOAT: none
+}
+IMG.positionleft {
+    FLOAT: none
+}
+IMG.positionright {
+    FLOAT: none
+}
+#left {
+    FLOAT: none
+}
+#toplevelsearch {
+    FLOAT: none
+}
+.limage {
+    DISPLAY: block; MARGIN: 0px auto
+}
+.rimage {
+    DISPLAY: block; MARGIN: 0px auto
+}
+SPAN.positionleft {
+    DISPLAY: block; MARGIN: 0px auto
+}
+SPAN.positionright {
+    DISPLAY: block; MARGIN: 0px auto
+}
+IMG.positionleft {
+    DISPLAY: block; MARGIN: 0px auto
+}
+IMG.positionright {
+    DISPLAY: block; MARGIN: 0px auto
+}
+#headerutilnav {
+    FLOAT: left
+}
+#latestnews LI .container {
+    FLOAT: left
+}
+.captcha SPAN {
+    FLOAT: left
+}
+#toplevelnav {
+    DISPLAY: none
+}
+#headerutilnav {
+    DISPLAY: none
+}
+#breadcrumb LI.bold {
+    DISPLAY: none
+}
+#toputilnav {
+    FONT-SIZE: 80%; WIDTH: 100%; MARGIN-RIGHT: 0px
+}
+#leftcolumn UL LI A {
+    WIDTH: 100%
+}
+#leftcolumn UL LI SPAN {
+    WIDTH: 100%
+}
+#toputilnav A {
+    TEXT-DECORATION: none
+}
+#toplevelsearch FIELDSET {
+    TEXT-ALIGN: center
+}
+#toplevelsearch .btntext {
+    BACKGROUND: url(../images/go_button.gif) no-repeat 5px 0px
+}
+#toplevelsearch #keyword {
+    FLOAT: left
+}
+#loginform .btntext {
+    MARGIN: 8px 0px
+}
+#maintanceform .btntext {
+    MARGIN: 8px 0px
+}
+#maintanceform .logout .btntext {
+    MARGIN: 3px 0px
+}
+#rightcolumn {
+    CLEAR: left; LEFT: auto; FLOAT: none; MARGIN: 0px 10px; WIDTH: auto
+}
+#rightcolumn .related {
+    WIDTH: 100%
+}
+#rightcolumn #relatedpolls FIELDSET {
+    BACKGROUND: none transparent scroll repeat 0% 0%
+}
+#rightcolumn .related DIV.btm {
+    BACKGROUND: none transparent scroll repeat 0% 0%
+}
+#rightcolumn .related DIV.top {
+    BACKGROUND: none transparent scroll repeat 0% 0%
+}
+#rightcolumn .related DIV.box {
+    BACKGROUND: none transparent scroll repeat 0% 0%
+}
+#relatedpolls FIELDSET {
+    BACKGROUND: #f8f8f8
+}
+#rightcolumn UL.contentbtm {
+    BACKGROUND: #f8f8f8
+}
+#latestnews .container {
+    CLEAR: both
+}
+#latestnews LI IMG {
+    DISPLAY: block; FLOAT: none; MARGIN: 0px auto
+}
+#featureaccordion LI.scripted {
+    CLEAR: both; MARGIN: 0px
+}
+#featureaccordion .textwrap {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+#featureaccordion LI#activeimage {
+    FLOAT: none
+}
+#featureaccordion .image IMG {
+    DISPLAY: block; MARGIN: 0px auto
+}
+#featureaccordion LI#activeimage IMG {
+    DISPLAY: block; MARGIN: 0px auto
+}
+#home .utilities {
+    MARGIN-BOTTOM: 10px; OVERFLOW: hidden
+}
+#home .utilities UL LI {
+    CLEAR: left; DISPLAY: block! important; WIDTH: 100%; PADDING-TOP: 10px
+}
+#home .utilities UL LI A {
+    PADDING-TOP: 10px
+}
+#home .utilities UL LI IMG {
+    PADDING-RIGHT: 10px; MARGIN-TOP: -10px; PADDING-LEFT: 0px! important; FLOAT: left
+}
+#home .toptasks UL.row {
+    MARGIN: 0px 10px 10px
+}
+#home .toptasks LI.panel {
+    FLOAT: none! important
+}
+#calendar .btntext {
+    PADDING-RIGHT: 2px; PADDING-LEFT: 2px; PADDING-BOTTOM: 0px; WIDTH: auto; PADDING-TOP: 0px
+}
+#calendar #day {
+    PADDING-RIGHT: 2px; PADDING-LEFT: 2px; PADDING-BOTTOM: 0px; WIDTH: auto; PADDING-TOP: 0px
+}
+#calendar #mth {
+    PADDING-RIGHT: 2px; PADDING-LEFT: 2px; PADDING-BOTTOM: 0px; WIDTH: auto; PADDING-TOP: 0px
+}
+#calendar #year {
+    PADDING-RIGHT: 2px; PADDING-LEFT: 2px; PADDING-BOTTOM: 0px; WIDTH: auto; PADDING-TOP: 0px
+}
+#forum {
+    BORDER-TOP-WIDTH: 0px; BORDER-LEFT-WIDTH: 0px; FONT-SIZE: 5%; BORDER-BOTTOM-WIDTH: 0px; BORDER-RIGHT-WIDTH: 0px
+}
+#contactlist .pairwrap .odd {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 15px; WIDTH: 100%; PADDING-TOP: 15px; BORDER-BOTTOM: #e9e9e9 1px solid
+}
+#contactlist .pairwrap .even {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 15px; WIDTH: 100%; PADDING-TOP: 15px; BORDER-BOTTOM: #e9e9e9 1px solid
+}
+#contactlist .pairwrap {
+    BORDER-BOTTOM-WIDTH: 0px
+}
+#contactlist .pairwrap DIV DIV {
+    CLEAR: left
+}
+#list UL LI {
+    WIDTH: auto! important
+}
+#searchMethod {
+    MARGIN: 0px 10px 20px 15px
+}
+.extralabel {
+    MARGIN: 10px 0px 0px
+}
+.leftlabel {
+    WIDTH: 100px
+}
+.logout P {
+    WIDTH: 100px
+}
+#rememberme {
+    MARGIN: 10px 0px 0px
+}
+#mainformsection .formrow {
+    MARGIN: 5px 0px
+}
+.icmform INPUT.icmtext {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform INPUT.icmpassword {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform .icmtextarea {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform INPUT.icmfile {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform INPUT.icmltext {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform INPUT.icmlpassword {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform .icmlselect {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform .icmltextarea {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform INPUT.icmlfile {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmltext {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmlpassword {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmlselect {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmltextarea {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmlfile {
+    CLEAR: left; FLOAT: left; MAX-WIDTH: 90%
+}
+.icmform INPUT.icmvstext {
+    CLEAR: left; FLOAT: left
+}
+.icmform INPUT.icmvspassword {
+    CLEAR: left; FLOAT: left
+}
+.icmform .icmvsselect {
+    CLEAR: left; FLOAT: left
+}
+.icmform .icmvstextarea {
+    CLEAR: left; FLOAT: left
+}
+.icmform INPUT.icmvsfile {
+    CLEAR: left; FLOAT: left
+}
+.icmform {
+    MARGIN: 0px
+}
+.icmformleft FIELDSET FIELDSET.icmbuttongroup OL {
+    MARGIN: 0px
+}
+.icmformleft LABEL {
+    WIDTH: 260px
+}
+.icmform FIELDSET {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 5px; MARGIN: 0px; WIDTH: 275px; PADDING-TOP: 0px
+}
+.icmform LI {
+    WIDTH: 98%
+}
+.icmform FIELDSET FIELDSET {
+    WIDTH: 94%
+}
+.icmltext {
+    WIDTH: 100%
+}
+.icmlpassword {
+    WIDTH: 100%
+}
+.icmlselect {
+    WIDTH: 100%
+}
+.icmltextarea {
+    WIDTH: 100%
+}
+.icmlfile {
+    WIDTH: 100%
+}
+

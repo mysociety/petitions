@@ -11,11 +11,24 @@ div#front_how {
     width: 45%;
 }
 
-p.petition_view_tabs {
-    border-bottom: solid 2px #0099cc;
+#defaultcontent p {
+    margin: 1em 0;
+}
+
+#defaultcontent #headingtext {
+    /* re-iterate this because Runnymede's stylesheet overrides it */
+    margin: auto;
+    height: 100%;
+}
+
+#defaultcontent p.petition_view_tabs {
+    border-bottom: solid 2px #003366;
+    /* re-iterate this because Runnymede's stylesheet overrides it */
+    padding: 1em 0 0.5em;
+    margin: 0;
 }
 .petition_view_tabs span {
-    background-color: #0099cc;
+    background-color: #003366;
 }
 
 div#most_recent ul, div#most_popular ul {

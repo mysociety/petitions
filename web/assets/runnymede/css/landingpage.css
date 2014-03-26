@@ -1,0 +1,76 @@
+#defaultcontent {
+    PADDING-RIGHT: 20px; PADDING-LEFT: 20px; PADDING-BOTTOM: 5px; PADDING-TOP: 5px
+}
+#defaultcontent #headingtext {
+    PADDING-BOTTOM: 0px; MARGIN: 5px 0px 0px; WIDTH: 100%; HEIGHT: auto
+}
+#defaultcontent #headingtext H1 {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px
+}
+#defaultcontent P {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 2px auto auto; WIDTH: 100%; PADDING-TOP: 0px
+}
+#defaultcontent #headingtext P {
+    FONT-SIZE: 120%; LINE-HEIGHT: 124%
+}
+#defaultcontent DIV#introtext {
+    MARGIN-BOTTOM: 10px
+}
+#list {
+    CLEAR: both; MARGIN: 20px 0px 0px; COLOR: #00336f
+}
+#list UL {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; LIST-STYLE-TYPE: none; POSITION: relative
+}
+#list UL LI {
+    OVERFLOW: hidden; HEIGHT: 100%
+}
+#list .text {
+    PADDING-RIGHT: 1em; DISPLAY: block; PADDING-LEFT: 1em; PADDING-BOTTOM: 0.5em; OVERFLOW: hidden; PADDING-TOP: 0.5em; HEIGHT: 100%
+}
+#list H2 {
+    FONT-WEIGHT: normal; FONT-SIZE: 110%; MARGIN: 0px
+}
+#list H2 A {
+    COLOR: #000; TEXT-DECORATION: none
+}
+#list H2 A:hover {
+    TEXT-DECORATION: underline
+}
+#altlist {
+    CLEAR: both; MARGIN: 20px 0px 0px
+}
+#altlist UL {
+    PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; MARGIN: 0px; PADDING-TOP: 0px; LIST-STYLE-TYPE: none; POSITION: relative
+}
+#altlist UL LI {
+    MARGIN-BOTTOM: 10px; OVERFLOW: hidden
+}
+#altlist UL LI.even {
+
+}
+#altlist .text {
+    PADDING-RIGHT: 10px; PADDING-LEFT: 0px; PADDING-BOTTOM: 10px; OVERFLOW: hidden; PADDING-TOP: 0px
+}
+#altlist A.img {
+    FLOAT: left; MARGIN: 0px 20px 0px 0px
+}
+#altlist A.img SPAN {
+    DISPLAY: none
+}
+#altlist IMG {
+    FLOAT: left
+}
+#altlist H2 {
+    FONT-SIZE: 120%; MARGIN: 0px
+}
+#altlist H2 A {
+    TEXT-DECORATION: none
+}
+#altlist H2 A:hover {
+    TEXT-DECORATION: underline
+}
+#altlist P.introtext {
+    FONT-SIZE: 100%; MARGIN: 0px; LINE-HEIGHT: 130%
+}
+

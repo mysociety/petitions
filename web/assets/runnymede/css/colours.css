@@ -1,0 +1,261 @@
+
+/*****************~ Start of 'borchester' product ~*****************/
+/* Commonly used styles */
+body{
+    background:#d7e7fe;
+}
+
+#pagewrapper{
+    background:#fff;
+}
+
+#toplevelnav a, #toplevelnav span, #leftcolumn ul li ul li.selected {
+	color: #fff;
+}
+
+/*Top utility navigation*/
+#toputilnav ul li {
+	border-right: 1px solid #fff;
+}
+
+#toputilnav a {
+	color: #fff;
+}
+
+/*Top banner*/
+#topbanner {
+    background: url(../images/topbanner_bg.jpg) center center no-repeat;    
+}
+
+#breadcrumb{
+  background:url('../images/corners/10px/TR.png') #00336f top right no-repeat;
+}
+#breadcrumblt{
+      background:url('../images/corners/10px/TLWhite.png') top left no-repeat;
+      padding-left:3px;
+      padding-right:3px;
+}
+
+#topbanner, #breadcrumb, #footer {
+}
+
+/*Top Menu*/
+#headerutilnav a {
+	color: #666;
+}
+
+#headerutilnav span {
+	color: #666;
+}
+
+#headerutilnav li {
+	border-left: solid 1px #fff;
+	border-right: solid 1px #cecece;
+}
+
+/*Top level navigation*/
+#toplevel {
+	background: #008356;
+	border-bottom: 8px solid #A6CE39;
+}
+
+.toplevelsearch{
+ 	background:#fff;
+}
+
+/*Left Navigation*/
+#leftnavigation li.selected{   
+   	background: #003366;  
+}
+#leftnavigation li.selected div {
+	background: #003366;
+	color:#fff;
+}
+
+#leftnavigation li.sibling div, #leftnavigation li.sibling a, #leftnavigation li.sibling a:visited {
+	color: #003366;
+}
+
+#leftnavigation li.selected.level0{
+    background:#003366;  
+}
+
+#leftnavigation li.selected.level0 div{
+	color:#fff;
+}
+
+#leftnavigation li.level1 div a{
+	color:#fff;
+}
+
+#leftnavigation li.firstselecteditem div span{
+	color:#fff;
+}
+
+#leftnavigation li.firstselecteditem div a{
+	color:#fff;
+}
+
+ #leftnavigation li.notselected.firstitem{
+    background:#707070;
+ }
+ 
+ #leftnavigation li.notselected{
+    background: #707070;
+ }
+
+ #leftnavigation li.notselected.lastitem{
+    background:#707070;  
+ }
+ 
+ #leftnavigation li.notselected.lastitem div{
+    background:#707070;  
+ }
+ 
+#leftnavigation li.selected.last{
+   background: #003366;
+}
+ 
+/*Related assets*/
+#rightcolumn .related h2 {
+	background:url('../images/corners/10px/TR.png') #00336f top right no-repeat;
+	color:#fff;	
+}
+#rightcolumn .related h2 span{
+	background:url('../images/corners/10px/TLwhite.png') no-repeat;
+	width:10px;
+	height:10px; 
+	position:absolute;
+	top:0;
+	left:0;
+}
+
+#rightcolumn .box .contenttop{
+    border:2px solid #00336f; 
+    color:#00336f;
+    
+     /*CSS3 borders */
+    border-bottom-left-radius:5px;
+    border-bottom-right-radius:5px;
+   -moz-border-bottom-left-radius:5px;
+   -moz-border-bottom-right-radius:5px;   
+   -webkit-border-bottom-left-radius:5px;
+   -webkit-border-bottom-right-radius:5px;
+}
+
+#rightcolumn .box fieldset{
+    border:2px solid #00336f; 
+    color:#00336f;
+    
+     /*CSS3 borders */
+    border-bottom-left-radius:5px;
+    border-bottom-right-radius:5px;
+   -moz-border-bottom-left-radius:5px;
+   -moz-border-bottom-right-radius:5px;   
+   -webkit-border-bottom-left-radius:5px;
+   -webkit-border-bottom-right-radius:5px;
+}
+
+#rightcolumn .box .contenttop a{
+    color:#00336f;
+}
+#rightcolumn .related #relatedfeatures h2 {
+    background:url('../images/corners/10px/TR.png') #00336f top right no-repeat;
+	color:#fff;
+}
+
+/*The footer*/
+#footer {
+	background: #003366;
+}
+
+/*Bottom utility navigation*/
+#bottomutilnav ul li {
+}
+
+#defaultcontent{
+   border:2px solid #003366;
+   color:#00336f;
+   
+   /*border radius*/   
+   border-bottom-left-radius:5px;
+   border-bottom-right-radius:5px;  
+   -moz-border-bottom-left-radius:5px;
+   -moz-border-bottom-right-radius:5px;   
+   -webkit-border-bottom-left-radius:5px;
+   -webkit-border-bottom-right-radius:5px;
+}
+#defaultcontent{
+   color:#00336f;
+}
+
+#defaultcontent a{
+   color:#00336f;
+}
+
+#contentlinks ul li a{
+    color:#00336f;
+}
+
+#atozboxcornertop {    
+    background:url('../images/corners/10px/TLWhite.png') top left no-repeat;
+    width:10px; 
+    height:10px;
+    position:absolute;
+    top:0;
+    left:0;
+}
+
+#atozboxbottom {    
+    background:url('../images/corners/10px/RB.png') bottom right no-repeat;
+}
+
+#atozcornerbtm{
+    background:url('../images/corners/10px/LB.png') top left no-repeat;
+    width:10px; 
+    height:10px;
+    position:absolute;
+    left:0;
+    bottom:0; 
+}
+
+#atozbox {
+    background:url('../images/corners/10px/TR.png') #003466 top right no-repeat;
+    color:#fff;
+}
+
+#atozbox ul li a{
+   color:#fff;
+}
+
+
+#myrunnymedetitle {
+  background:url('../images/corners/10px/TR.png') #003466 top right no-repeat;
+}
+
+#myrunnymede h2{
+  background:url('../images/corners/10px/TLwhite.png') top left no-repeat;
+  color:#fff;
+}
+
+#myrunnymede span{
+    display:block;
+    float:right;
+    width:10px; 
+    height:10px;
+}
+#myrunnymede .runnymedecontent{
+   color:#003466;
+   border:2px solid #003466; 
+   
+   border-bottom-left-radius:5px; 
+   border-bottom-right-radius:5px; 
+   -moz-border-bottom-left-radius:5px; 
+   -mox-border-bottom-right-radius:5px;
+   -webkit-border-bottom-left-radius:5px; 
+   -webkit-border-bottom-right-radius:5px;
+}
+
+
+/*****************~ End of 'borchester' product ~*****************/
+

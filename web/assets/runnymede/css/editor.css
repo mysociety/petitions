@@ -1,0 +1,520 @@
+
+/*****************~ Start of 'borchester' product ~*****************/
+/**
+ * This stylesheet is used by the iCM editor to determine which styles to
+ * provide in the iCM HTML editor. Refer to the accompanying iCM
+ * documentation for more details.
+ *
+ * The file is broken into 3 sections:
+ *    1/. "Base" defines the core structural styles which dictate the main HTML structural elements.
+ *    2/. "Editor" defines styles listed in iCM's HTML Editor (the "Styles" drop down").
+ *    3/. "Tables" defines table auto-format rules for iCM's HTML Editor
+ */
+
+/**
+ * Base styles
+ */
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family: Arial, Helvetica, Geneva, sans-serif;
+	font-weight: normal;
+	font-size: 75%;/*12px*/
+	color: #000;
+}
+
+h1, h2, h3, h4, h5, h6, p, blockquote, form, label, ul, ol, dl, address {
+	margin: 0.5em 0;
+	padding: 0;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	font-weight: bold;
+}
+
+h1 {
+	font-size: 150%;/*18px*/
+}
+
+h2 {
+	font-size: 141.667%;/*17px*/
+}
+
+h3 {
+	font-size: 133.333%;/*16px*/
+}
+
+h4 {
+	font-size: 125%/*15px*/;
+}
+
+h5 {
+	font-size: 116.667%;/*14px*/
+}
+
+h6 {
+	font-size: 100%;/*12px*/
+}
+
+p {
+	margin: 1em 0;
+	line-height: 1.5em/*18px*/
+}
+
+ol, ul, dd {
+	padding: 0 0 0 2.5em; /*extra 0.5em for IE7*/
+}
+
+
+
+a {
+	color: #000;
+	font-weight:bold;
+	text-decoration: none;
+}
+
+/*Note: a:hover MUST come after a:link and a:visited in the CSS definition in order to be effective*/
+a:hover, a:focus {
+	text-decoration: underline;
+}
+
+/*Note: a:active MUST come after a:hover in the CSS definition in order to be effective*/
+a:active {
+	text-decoration: none;
+}
+
+img {
+	border: none;
+}
+
+textarea, input, select, option, table {
+	font-family: Arial, Helvetica, Geneva, sans-serif;
+	font-size: 100%;
+}
+
+table {
+	margin-top:1em;
+}
+
+fieldset {
+	margin: 0;
+	padding: 0;
+}
+
+blockquote {
+	margin: 0;
+	padding: 2em 0 0 2.25em;
+	display: block;
+	overflow: hidden;
+	background: url(../images/blockquotestop.gif) no-repeat top left;
+	font-style: italic;
+}
+
+blockquote p {
+	margin: 0;
+	padding: 0 2.25em 2em 0;
+	background: url(../images/blockquotesbtm.gif) no-repeat bottom right;
+}
+
+q {
+	padding: 2em 2.25em;
+	font-style: italic;
+}
+
+.red, span.red {
+	color: #f00;
+}
+
+.ck_underline, span.ck_underline {
+	text-decoration: underline;
+}
+
+.ck_strike, span.ck_strike {
+	text-decoration: line-through;
+}
+
+/**
+ * iCM Editor Styles
+ */
+
+/*Inline positioning*/
+.limage, .rimage, span.positionleft, span.positionright, img.positionleft, img.positionright {
+	margin: 0.333em 1.833em 0.5em 0;
+	display: inline;
+	float: left;
+	clear: left;
+}
+
+div.limage {
+
+}
+
+.limage img, .rimage img, .remimage img, span.positionleft img, span.positionright img, img.positionleft, img.positionright, span.positionnone img, 
+span.positionleft object, span.positionright object {
+}
+
+.rimage, span.positionright, img.positionright {
+	float: right;
+	clear: right;
+	margin: 0.333em 0 0.5em 1.833em;
+}
+
+.limage a, .rimage a {
+	display: block;
+	line-height: 0;/*Removes incorrect space below image*/
+}
+
+span.remainder {
+	margin: 0.5em 0;
+}
+
+span.positionleft span, span.positionright span {
+	display: block;
+	font-style: italic;
+	color: #333;
+}
+
+.strongtitle {
+	font-weight: bold;
+}
+
+/* $name='Red Text' */
+.redtext a, .redtext {
+	color: #933;
+}
+
+/* $name='Blue Text' */
+.bluetext a, .bluetext {
+	color: #339;
+}
+
+/* $name='Serif' */
+.serif {
+	font-family: Georgia, "Times New Roman", Times, serif;
+}
+
+/* $name='Snippet' */
+.snippet {
+	display: block;
+	overflow: hidden;
+	padding: 1em 2em;
+	background: #eee;
+}
+
+/* $name='Align Centre' */
+.aligncentre {
+	margin: 0 auto;
+	text-align: center;
+}
+
+/**
+ * iCM Table Styles
+ */
+
+/*--------------------
+	GENERIC Table
+--------------------*/
+
+/* $style='Borchester Generic' $value='borchestergeneric' $cellpadding='0' $cellspacing='0' */
+/* $name='Borchester Generic' $type='table' */
+.borchestergenericgeneral {
+	text-align: left;
+	background-color: #fff;
+	border: solid 1px #cecece;
+	margin-top:1em;
+}
+
+/* $name='Borchester Generic Top Left' $type='table' */
+.borchestergenerictopleft {
+	padding: 0.5em 1em;
+	background-color: #eee;
+	font-weight: bold;
+	border-bottom: solid 1px #cecece;
+}
+
+/* $name='Borchester Generic Top Center' $type='table' */
+.borchestergenerictopcenter {
+	padding: 0.5em 1em;
+	background-color: #eee;
+	font-weight: bold;
+	border-left: solid 1px #e3e3e3;
+	border-bottom: solid 1px #cecece;
+}
+
+/* $name='Borchester Generic Top Right' $type='table' */
+.borchestergenerictopright {
+	padding: 0.5em 1em;
+	background-color: #eee;
+	font-weight: bold;
+	border-left: solid 1px #e3e3e3;
+	border-bottom: solid 1px #cecece;
+}
+
+/* $name='Borchester Generic Middle Left' $type='table' */
+.borchestergenericmiddleleft {
+	padding: 0.5em 1em;
+	border-bottom: solid 1px #e9e9e9;
+}
+
+/* $name='Borchester Generic Middle Center' $type='table' */
+.borchestergenericmiddlecenter {
+	padding: 0.5em 1em;
+	border-left: solid 1px #e9e9e9;
+	border-bottom: solid 1px #e9e9e9;
+}
+
+/* $name='Borchester Generic Middle Right' $type='table' */
+.borchestergenericmiddleright {
+	padding: 0.5em 1em;
+	border-left: solid 1px #e9e9e9;
+	border-bottom: solid 1px #e9e9e9;
+}
+
+/* $name='Borchester Generic Bottom Left' $type='table' */
+.borchestergenericbottomleft {
+	padding: 0.5em 1em;
+}
+
+/* $name='Borchester Generic Bottom Center' $type='table' */
+.borchestergenericbottomcenter {
+	padding: 0.5em 1em;
+	border-left: solid 1px #e9e9e9;
+}
+
+/* $name='Borchester Generic Bottom Right' $type='table' */
+.borchestergenericbottomright {
+	padding: 0.5em 1em;
+	border-left: solid 1px #e9e9e9;
+}
+
+/* $name='Borchester Generic Odd' $type='table' */
+.borchestergenericodd {
+	background-color: #fbfbfb;
+}
+
+/* $name='Borchester Generic Even' $type='table' */
+.borchestergenericeven {
+	background-color: #fff;
+}
+
+/* $name='Borchester Generic Odd Cell' $type='table' */
+.borchestergenericoddcell {
+	background-color: #fbfbfb;
+}
+
+/* $name='Borchester Generic Even Cell' $type='table' */
+.borchestergenericevencell {
+	background-color: #fff;
+}
+
+/*--------------------
+	BLUE Table
+	#305990
+--------------------*/
+
+/* $style='Blue' $value='blue' $cellpadding='0' $cellspacing='0' */
+/* $name='Blue General' $type='table' */
+.bluegeneral {
+	text-align: left;
+	background-color: #fff;
+	margin-top:1em;
+}
+
+/* $name='Blue Top Left' $type='table' */
+.bluetopleft {
+	padding: 0.75em 1em;
+	background-color: #dde3f1;
+	font-weight: bold;
+	border-top: solid 1px #0069A8;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Top Centre' $type='table' */
+.bluetopcenter {
+	padding: 0.75em 1em;
+	background-color: #dde3f1;
+	font-weight: bold;
+	border-top: solid 1px #0069A8;
+	border-left: solid 1px #0069A8;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Top Right' $type='table' */
+.bluetopright {
+	padding: 0.75em 1em;
+	background-color: #dde3f1;
+	font-weight: bold;
+	border-top: solid 1px #0069A8;
+	border-left: solid 1px #0069A8;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Middle Left' $type='table' */
+.bluemiddleleft {
+	padding: 0.75em 1em;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Middle Centre' $type='table' */
+.bluemiddlecenter {
+	padding: 0.75em 1em;
+	border-left: solid 1px #0069A8;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Middle Right' $type='table' */
+.bluemiddleright {
+	padding: 0.75em 1em;
+	border-left: solid 1px #0069A8;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Bottom Left' $type='table' */
+.bluebottomleft {
+	padding: 0.75em 1em;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Bottom Centre' $type='table' */
+.bluebottomcenter {
+	padding: 0.75em 1em;
+	border-left: solid 1px #0069A8;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Bottom Right' $type='table' */
+.bluebottomright {
+	padding: 0.75em 1em;
+	border-left: solid 1px #0069A8;
+	border-bottom: solid 1px #0069A8;
+}
+
+/* $name='Blue Odd' $type='table' */
+.blueodd {
+}
+
+/* $name='Blue Even' $type='table' */
+.blueeven {
+}
+
+/* $name='Blue Odd Cell' $type='table' */
+.blueoddcell {
+}
+
+/* $name='Blue Even Cell' $type='table' */
+.blueevencell {
+}
+
+/*--------------------
+	GREEN Table
+	#385c4a
+--------------------*/
+
+/* $style='Green' $value='green' $cellpadding='0' $cellspacing='0' */
+/* $name='Green General' $type='table' */
+.greengeneral {
+	text-align: left;
+	background-color: #fff;
+	border: solid 1px #2a4638;
+	margin-top:1em;
+}
+
+/* $name='Green Top Left' $type='table' */
+.greentopleft {
+	padding: 0.5em 1em;
+	color: #fff;
+	background-color: #385c4a;
+	font-weight: bold;
+	border-bottom: solid 1px #385c4a;
+}
+
+/* $name='Green Top Centre' $type='table' */
+.greentopcenter {
+	padding: 0.5em 1em;
+	color: #fff;
+	background-color: #385c4a;
+	font-weight: bold;
+	border-left: solid 1px #2a4638;
+	border-bottom: solid 1px #385c4a;
+}
+
+/* $name='Green Top Right' $type='table' */
+.greentopright {
+	padding: 0.5em 1em;
+	color: #fff;
+	background-color: #385c4a;
+	font-weight: bold;
+	border-left: solid 1px #2a4638;
+	border-bottom: solid 1px #385c4a;
+}
+
+/* $name='Green Middle Left' $type='table' */
+.greenmiddleleft {
+	padding: 0.5em 1em;
+	border-bottom: solid 1px #bbc7b1;
+}
+
+/* $name='Green Middle Centre' $type='table' */
+.greenmiddlecenter {
+	padding: 0.5em 1em;
+	border-left: solid 1px #dbe2de;
+	border-bottom: solid 1px #bbc7b1;
+}
+
+/* $name='Green Middle Right' $type='table' */
+.greenmiddleright {
+	padding: 0.5em 1em;
+	border-left: solid 1px #dbe2de;
+	border-bottom: solid 1px #bbc7b1;
+}
+
+/* $name='Green Bottom Left' $type='table' */
+.greenbottomleft {
+	padding: 0.5em 1em;
+}
+
+/* $name='Green Bottom Centre' $type='table' */
+.greenbottomcenter {
+	padding: 0.5em 1em;
+	border-left: solid 1px #dbe2de;
+}
+
+/* $name='Green Bottom Right' $type='table' */
+.greenbottomright {
+	padding: 0.5em 1em;
+	border-left: solid 1px #dbe2de;
+}
+
+/* $name='Green Odd' $type='table' */
+.greenodd {
+	background-color: #e8eeeb;
+}
+
+/* $name='Green Even' $type='table' */
+.greeneven {
+	background-color: #fff;
+}
+
+/* $name='Green Odd Cell' $type='table' */
+.greenoddcell {
+	background-color: #e8eeeb;
+}
+
+/* $name='Green Even Cell' $type='table' */
+.greenevencell {
+	background-color: #fff;
+}
+
+
+/* $name='Green Odd Cell' $type='table' */
+.greenoddcell {
+	background-color: #e8eeeb;
+}
+
+/* $name='Green Even Cell' $type='table' */
+.greenevencell {
+	background-color: #fff;
+}
+/*****************~ End of 'borchester' product ~*****************/
+

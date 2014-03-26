@@ -1,0 +1,222 @@
+﻿/*Wrap the page in a border shadow */
+#outerwrapper{
+    background:url('../images/backgroundshadow.png') repeat-y center top;
+    width:994px;
+    margin:auto;
+ }
+ #readspeaker_button1{
+    margin-left:8px;
+}
+#toplevelsearchholder{
+	width:311px; 
+}
+#toplevelsearch {
+    background:url('../images/boxwithshadow.png') center center no-repeat ;  
+    padding:5px;
+}
+#toplevelsearch #q{	
+   	    
+}
+#toplevelsearch .btntext{
+    position:relative;
+    left:1px;
+}
+/*Mainly Home Page Overrides for IE */
+#topbannershadow{
+    padding-bottom:5px;
+    background:url('../images/shadow.png') center bottom no-repeat;
+}
+#runnymedeform{
+    padding:10px;
+
+}
+#runnymedeform #atTxtStreet{
+    padding-top:3px !important;
+    background:none;
+}
+#tabs ul{
+    width:100%;
+    margin:2px 0 0 0 !important;
+    padding:0;    
+}
+#runnymedeform{
+   padding:10px; 
+   background:url('../images/boxwithshadow2.png') top left no-repeat ;   
+}
+#myrunnymede .runnymedecontent{
+  margin-bottom:10px;
+}
+#myrunnymede .runnymedecontent{
+  padding:2px 20px 10px 15px !important;
+}
+#myrunnymede .runnymedecontent #runnymedeform{
+   position:relative;
+   left:-8px;
+}
+/* Round some Corners */ 
+#home #myrunnymede .runnymedecontent{
+    position:relative;
+}
+
+.articleholder{
+    min-height:369px;
+}
+
+/* Position the default content so the corners work */ 
+#defaultcontent{
+    position:relative;
+}
+
+/*Overwrite the span style for the corners */
+span.btl{
+    /*For ie only */ 
+    background :url('../images/corners/10pxwhite/LB.png') center center no-repeat;  
+    position:absolute;
+    left:-2px;
+    bottom:-2px;
+    display:block;
+    height:10px; 
+    width:10px;
+    float:none;
+}
+
+span.btr{
+    /*For ie only */    
+    position:absolute;
+    right:-2px;
+    bottom:-2px;
+    display:block;
+    height:10px; 
+    width:10px;
+    float:none;   
+    background :url('../images/corners/10pxwhite/RB.png') center center no-repeat;  
+}
+
+/* Round the article holder corners */
+.articleholder{
+    position:relative;
+    overflow:visible !important;
+}
+.bx-wrapper{
+    width:215px !important;
+}
+
+/*Overwrite to ensure carousel controls work */
+#carouselwrap .bx-wrapper{
+    width:100% !important; 
+}
+.hprightcolumn{
+    left:6px;
+    width: 218px !important;
+}
+#rightcolumn .related h2#newstitle{
+ margin-top:4px;
+}
+
+/*Left Naviation items */
+.subnav{
+    padding:0 0 0  8px !important;
+    list-style:none;
+}
+#leftnavigation li.selected.level0 {
+    background:url('../images/corners/10px/TR.png') #003366 top right no-repeat;
+    border:none;
+}
+#leftnavigation li.selected.level0 div{
+	background:url('../images/corners/10px/TLWhite.png') top left no-repeat;
+}
+#leftnavigation li.notselected.firstitem{
+     margin-top:0;
+     padding-bottom:0px;  
+     background:url('../images/corners/10pxgrey/TR.png') #707070 top right no-repeat;
+     border:none;
+ }
+ #leftnavigation li.notselected.firstitem div{
+     padding-top:5px;
+     background:url('../images/corners/10pxgrey/TL.png') top left no-repeat;
+  } 
+  #leftnavigation li.notselected.lastitem{
+     padding-bottom:0px;
+     padding-top:5px;
+     background:url('../images/corners/10pxgrey/RB.png') #707070 bottom right no-repeat;
+          border:none;
+ }  
+ /*Reset Padding */ 
+ #leftnavigation li.notselected div{  
+    padding: 6px 8px;
+    background:none;
+ }
+   
+ /*Reset Padding */ 
+  #leftnavigation li.notselected.lastitem {  
+    background:url('../images/corners/10pxgrey/RB.png') #707070 bottom right no-repeat;   
+ }
+ #leftnavigation li.notselected.lastitem div{  
+    padding: 0px 8px 0px 8px;
+    background:url('../images/corners/10pxgrey/LB.png') bottom left no-repeat;   
+ }
+ /* last item is selected */ 
+#leftnavigation li.selected.last
+{
+   background:url('../images/corners/10px/LB.png') #003366 bottom left no-repeat;
+   border:none; 
+}
+#leftnavigation li.selected.last div
+{
+   background:url('../images/corners/10px/RB.png') bottom right no-repeat;
+}
+
+
+/* Edge Case for navigation */
+#leftnavigation li.selected.last.nocorners
+{
+	background:#003366;
+}
+#leftnavigation li.selected.last.nocorners div
+{
+	background:none;
+}
+
+/* Overrule on the contribute event Page */ 
+.addevent {
+	background: url(../images/corners/10pxblueongrey/TL.png) #00336f top left no-repeat;
+}
+.addevent .tr{
+	background: url(../images/corners/10pxblueongrey/TR.png) top right no-repeat;
+}
+.addevent .bl{
+	background: url(../images/corners/10pxblueongrey/LB.png) bottom left no-repeat;	
+}
+.addevent .bl .submitbutton {
+	background: url(../images/corners/10pxblueongrey/RB.png) bottom right no-repeat;
+} 
+
+/*Overrule Submit button styles */
+.searchbtn {
+	background: url(../images/corners/10px/TLWhite.png) #00336f top left no-repeat;	
+	float:left;
+	clear:right;
+	width:auto;
+
+}
+.searchbtn .tr{
+	background: url(../images/corners/10px/TR.png) top right no-repeat;
+}
+.searchbtn .bl{
+	background: url(../images/corners/10px/LB.png) bottom left no-repeat;	
+}
+.searchform input.button {
+  	background: url(../images/corners/10px/RB.png) bottom right no-repeat;
+}
+
+#searchform input.submit {
+	background: url(../images/corners/10px/RB.png) bottom right no-repeat !important;
+	padding:3px;
+}
+.buttons input.submit { 
+	background: url(../images/corners/10px/RB.png) bottom right no-repeat !important;
+    padding: 0.5em !important;
+    margin:0 !important;
+}
+
+
