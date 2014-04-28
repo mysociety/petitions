@@ -50,10 +50,10 @@ input.error, input[type=text].error, select.error, input[type=radio].error, text
 }
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #02614D;
+    border-bottom: solid 2px #07C;
 }
 .petition_view_tabs span {
-    background-color: #02614D;
+    background-color: #07C;
 }
 
 .list_sort_by {
