@@ -41,6 +41,14 @@ input.error, input[type=text].error, select.error, input[type=radio].error, text
     background-color: #ffefef;
 }
 
+.scc-error ul {
+    margin: 15px;
+}
+
+.button {
+    margin: 2px;
+}
+
 p.petition_view_tabs {
     border-bottom: solid 2px #02614D;
 }
