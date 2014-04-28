@@ -1615,7 +1615,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'rushcliffe')
         return 'http://www.rushcliffe.gov.uk/councilanddemocracy/haveyoursay/petitions/'; # best guess
     if ($site_name == 'spelthorne')
-        return 'http://www.spelthorne.gov.uk/petitions_terms';
+        return 'http://www.spelthorne.gov.uk/article/3194/Petitions-Scheme';
     if ($site_name == 'stevenage')
         return 'http://www.stevenage.gov.uk/councilanddemocracy/petitions/petitionscheme/epetitions';
     if ($site_name == 'suffolkcoastal')
@@ -1640,7 +1640,7 @@ function cobrand_steps_elsewhere() {
     if ($site_name == 'reigate-banstead')
         return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/stepbystep/index.asp';
     if ($site_name == 'spelthorne')
-        return 'http://www.spelthorne.gov.uk/petitions_guide';
+        return 'http://www.spelthorne.gov.uk/article/3194/Petitions-Scheme';
     if ($site_name == 'suffolkcoastal')
         return 'http://www.suffolkcoastal.gov.uk/yourcouncil/haveyoursay/petitions/petitionisstepbystep/';
     return null;
