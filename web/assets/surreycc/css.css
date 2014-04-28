@@ -7,12 +7,20 @@ div#petition_actions {
     font-size: 100%;
 }
 
+div#petition_actions ul {
+    list-style: none;
+}
+
 div#most_recent {
     float: right;
 }
 
 #most_popular h3 {
     margin-top: 0;
+}
+
+#most_popular li.a, #most_recent li.a {
+    padding-left: 5px;
 }
 
 div#front_how {
