@@ -324,13 +324,13 @@ function cobrand_creation_comments_label(){
 
 function cobrand_creation_previous_button_first() {
     global $site_name;
-    if ($site_name == 'ipswich') return true;
+    if ($site_name == 'ipswich' || $site_name == 'surreycc') return true;
     return false;
 }
 
 function cobrand_creation_button_separator() {
     global $site_name;
-    if ($site_name == 'salford') return ' &nbsp; ';
+    if ($site_name == 'salford' || $site_name == 'surreycc') return ' &nbsp; ';
     return '<br />';
 }
 
@@ -349,9 +349,10 @@ function cobrand_creation_input_class() {
     if ($site_name == 'salford') return array('input', 'largeField');
 }
 
-function cobrand_creation_submit_button_class() {
+function cobrand_creation_submit_button_class($previous = false) {
     global $site_name;
     if ($site_name == 'salford') return 'confirmButton';
+    if ($site_name == 'surreycc' && $previous) return 'button scc-btn-back';
 }
 
 function cobrand_creation_main_all_newlines() {
@@ -1693,6 +1694,12 @@ function cobrand_view_petitions_category_filter() {
     return false;
 }
 
+function cobrand_view_petitions_separator() {
+    global $site_name;
+    if ($site_name == 'surreycc') return "";
+    return " &nbsp; ";
+}
+
 function cobrand_main_heading($text) {
     global $site_name;
     if ($site_name == 'surreycc' || $site_name == 'suffolkcoastal' || $site_name == 'runnymede' || $site_name == 'surreyheath')
@@ -1819,4 +1826,36 @@ function cobrand_show_body_selector($body_ref) {
         <h3><?= $body_name ?></h3>
         <?
     }
+}
+
+function cobrand_petition_actions_class() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return "col-md-6 col-sm-12 col-xs-12";
+    }
+    return "relative_width_45";
+}
+
+function cobrand_most_recent_class() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return "col-md-6 col-sm-12 col-xs-12";
+    }
+    return "relative_width_45";
+}
+
+function cobrand_most_popular_class() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return "col-md-6 col-sm-12 col-xs-12";
+    }
+    return "relative_width_45";
+}
+
+function cobrand_front_how_class() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return "col-md-6 col-sm-12 col-xs-12";
+    }
+    return "";
 }

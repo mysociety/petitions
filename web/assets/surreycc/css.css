@@ -5,6 +5,11 @@ small {
 div#petition_actions {
     border: none;
     font-size: 100%;
+    margin-right: 0;
+}
+
+div#petition_actions ul {
+    list-style: none;
 }
 
 div#most_recent {
@@ -15,9 +20,12 @@ div#most_recent {
     margin-top: 0;
 }
 
+#most_popular li.a, #most_recent li.a {
+    padding-left: 5px;
+}
+
 div#front_how {
     float: left;
-    width: 45%;
 }
 
 form#signForm label {
@@ -33,14 +41,60 @@ input.error, input[type=text].error, select.error, input[type=radio].error, text
     background-color: #ffefef;
 }
 
-p.petition_view_tabs {
-    border-bottom: solid 2px #02614D;
+.scc-error ul {
+    margin: 15px;
 }
+
+.button {
+    margin: 2px;
+}
+
+p.petition_view_tabs {
+    border-bottom: solid 1px #CCC;
+    padding-bottom: 0;
+}
+
+.petition_view_tabs a, .petition_view_tabs span {
+    background: #E8E8E8;
+    border: 1px solid #B2B2B2;
+    border-bottom-width: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    color: #222;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 10px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+@media (max-width: 991px) {
+    .petition_view_tabs a, .petition_view_tabs span {
+        border-radius: 10px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        border-bottom-width: 1px;
+    }
+
+    p.petition_view_tabs {
+        text-align: center;
+    }
+}
+
+.petition_view_tabs a:hover {
+    background-color: #CCC;
+}
+
 .petition_view_tabs span {
-    background-color: #02614D;
+    background: #07C url(//www.surreycc.gov.uk/__data/assets/image/0007/677725/tab-selected-bg.png) left top repeat-x;
+    color: white;
 }
 
 .list_sort_by {
     text-align: left;
 }
 
+input[type=submit].scc-btn-back {
+    background-position: 0px -37px;
+    padding: 0px 10px 0px 30px;
+}

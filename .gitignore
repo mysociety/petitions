@@ -12,3 +12,5 @@ _Inline
 /conf/httpd.conf
 /web-admin/pet-live-signups*
 /web-admin/pet-live-creation*
+.vagrant
+Vagrantfile

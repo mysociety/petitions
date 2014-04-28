@@ -91,7 +91,7 @@ page_footer('Home');
 # --- 
 
 function front_actions() {
-    echo '<div id="petition_actions"> <ul>';
+    echo '<div id="petition_actions" class="' . cobrand_petition_actions_class() . '"> <ul>';
     if (! cobrand_creation_disabled()) {
         echo '<li id="action_create"><a href="/new"' . cobrand_create_button_title() . '><img src="/images/clipboard-add.gif" alt="" class="noborder"
 /><br />Create a petition</a></li>';
@@ -130,7 +130,7 @@ function petition_row($petition, $c) {
 }
 
 function front_most_recent($recent) {
-    echo "<div id='most_recent'>";
+    echo "<div id='most_recent' class='" . cobrand_most_recent_class() . "'>";
     echo cobrand_main_heading('Most recent petitions');
     # If cross-site in future, will need to display name within each row
     if (count($recent)) {
@@ -156,7 +156,7 @@ function front_most_recent($recent) {
 }
 
 function front_most_popular($most) {
-    echo '<div id="most_popular">';
+    echo '<div id="most_popular" class="' . cobrand_most_popular_class() . '">';
     echo cobrand_main_heading('Most popular open petitions');
     if (count($most)) {
         echo '<p>We the undersigned petition ' . OPTION_SITE_PETITIONED . ' to&hellip;</p>';
@@ -181,7 +181,7 @@ function front_most_popular($most) {
 }
 
 function front_how_it_works() {
-    echo '<div id="front_how">';
+    echo '<div id="front_how" class="' . cobrand_front_how_class() . '">';
     echo cobrand_main_heading('How it works');
     cobrand_how_it_works_start();
 ?>

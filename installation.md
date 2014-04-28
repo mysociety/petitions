@@ -1,7 +1,7 @@
 # Installing Petitions software
 
 If you're going to install Petitions on your own server, we recommend you do
-so on a system running Debian squeeze if possible; if not, some flavour of
+so on a system running Debian wheezy if possible; if not, some flavour of
 Ubuntu. Of course, other operating systems (even non-Unix ones) ought to be
 possible, but we don't have any direct experience of installing petitions on
 those.
@@ -36,11 +36,29 @@ that we handle customisation using a "cobrand" mechanism that lets all
 petitions sites run off the same core so you can update to future versions of
 the code without breaking your own installation.
 
-### 2. Create a new PostgreSQL database
 
-Petitions uses a PostgreSQL database, so install PostgreSQL first (e.g.
-`apt-get install postgresql-8.4` on Debian, or install from the PostgreSQL
-website).
+### 2. Install prerequisite packages
+
+#### On Debian / Linux
+
+If you're using Debian 7 ("wheezy") then the packages to install some
+required dependencies are listed in `conf/packages`. This includes at least
+one maintained by mySociety, so add the mySociety repository to apt (as root):
+
+    echo -n "deb http://debian.mysociety.org wheezy main" > /etc/apt/sources.list.d/mysociety.list
+    curl -s https://debian.mysociety.org/debian.mysociety.org.gpg.key | apt-key add -
+    apt-get update
+
+To install all of the required packages you can run:
+
+    sudo xargs -a conf/packages apt-get install
+
+A similar list of packages should work for other Debian-based distributions.
+(Please let us know if you would like to contribute such a package list or
+instructions for other distributions.)
+
+
+### 3. Create a new PostgreSQL database
 
 The default settings assume the database is called `pet` and the user is also
 called `pet`. You can change these if you like. Using the defaults, create a
@@ -67,19 +85,6 @@ functions, and so on. For example, run:
 
     $ psql -h localhost -U pet pet < db/schema.sql
 
-### 3. Install prerequisite packages
-
-#### On Debian / Linux
-
-If you're using Debian 6.0 ("squeeze") then the packages to install some
-required dependencies are listed in `conf/packages`. To install all of them
-you can run:
-
-    sudo xargs -a conf/packages apt-get install
-
-A similar list of packages should work for other Debian-based distributions.
-(Please let us know if you would like to contribute such a package list or
-instructions for other distributions.)
 
 ### 4. Set up general config
 
