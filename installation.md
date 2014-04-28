@@ -1,7 +1,7 @@
 # Installing Petitions software
 
 If you're going to install Petitions on your own server, we recommend you do
-so on a system running Debian squeeze if possible; if not, some flavour of
+so on a system running Debian wheezy if possible; if not, some flavour of
 Ubuntu. Of course, other operating systems (even non-Unix ones) ought to be
 possible, but we don't have any direct experience of installing petitions on
 those.
@@ -39,7 +39,7 @@ the code without breaking your own installation.
 ### 2. Create a new PostgreSQL database
 
 Petitions uses a PostgreSQL database, so install PostgreSQL first (e.g.
-`apt-get install postgresql-8.4` on Debian, or install from the PostgreSQL
+`apt-get install postgresql` on Debian, or install from the PostgreSQL
 website).
 
 The default settings assume the database is called `pet` and the user is also
@@ -71,7 +71,7 @@ functions, and so on. For example, run:
 
 #### On Debian / Linux
 
-If you're using Debian 6.0 ("squeeze") then the packages to install some
+If you're using Debian 7 ("wheezy") then the packages to install some
 required dependencies are listed in `conf/packages`. To install all of them
 you can run:
 
