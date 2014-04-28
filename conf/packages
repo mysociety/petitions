@@ -14,3 +14,9 @@ libcache-memcached-perl
 memcached
 php5-memcache
 ttf-bitstream-vera
+libdigest-hmac-perl
+liberror-perl
+libyaml-perl
+libdbd-pg-perl
+libregexp-common-perl
+libfile-slurp-perl
