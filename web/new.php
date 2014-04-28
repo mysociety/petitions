@@ -49,11 +49,13 @@ if (get_http_var('toothercouncil')) {
     if ($token && OPTION_SITE_APPROVAL) {
         $data = array('token' => $token);
         check_edited_petition($data);
-        call_user_func('petition_form_' . $steps[1], $steps, 1, $data);
+        $fn = 'petition_form_' . $steps[1];
+        $fn($steps, 1, $data);
     } elseif (cobrand_creation_disabled()) {
         page_closed_message();
     } else {
-        call_user_func('petition_form_' . $steps[1], $steps, 1);
+        $fn = 'petition_form_' . $steps[1];
+        $fn($steps, 1);
     }
 }
 $contents = ob_get_contents();
@@ -127,21 +129,25 @@ function petition_form_submitted($steps) {
 
     foreach ($steps as $i => $step) {
         if (!$step) continue;
-        $errors = call_user_func('petition_submitted_' . $step, &$data);
+        $fn = 'petition_submitted_' . $step;
+        $errors = $fn($data);
         if (get_http_var('tostep' . $step)) {
-            call_user_func('petition_form_' . $step, $steps, $i, $data, $errors);
+            $fn = 'petition_form_' . $step;
+            $fn($steps, $i, $data, $errors);
             return;
         }
-        $errors = call_user_func('step_' . $step . '_error_check', &$data);
+        $fn = 'step_' . $step . '_error_check';
+        $errors = $fn($data);
         if (sizeof($errors)) {
-            call_user_func('petition_form_' . $step, $steps, $i, $data, $errors);
+            $fn = 'petition_form_' . $step;
+            $fn($steps, $i, $data, $errors);
             return;
         }
     }
     petition_create($data);
 }
 
-function petition_submitted_category($data) {
+function petition_submitted_category(&$data) {
     return array(); # Dummy function for loop, doesn't do anything
 }
 
@@ -149,7 +155,7 @@ function petition_submitted_category($data) {
  * Functions to tidy up incoming data
  */
 
-function petition_submitted_main($data) {
+function petition_submitted_main(&$data) {
     global $pet_time;
     if (!array_key_exists('rawdeadline', $data)) $data['rawdeadline'] = '';
     $rawdeadline = $data['rawdeadline'];
@@ -164,8 +170,8 @@ function petition_submitted_main($data) {
     return array();
 }
 
-function petition_submitted_you($data) {
-    if (array_key_exists('name', $data) && $data['name']==_('<Enter your name>')) 
+function petition_submitted_you(&$data) {
+    if (array_key_exists('name', $data) && $data['name']==_('<Enter your name>'))
         $data['name'] = '';
     if (array_key_exists('overseas', $data) && $data['overseas']=='-- Select --') 
         $data['overseas'] = '';
@@ -187,7 +193,7 @@ function petition_submitted_you($data) {
     return $errors;
 }
 
-function petition_submitted_preview($data) {
+function petition_submitted_preview(&$data) {
     if (!array_key_exists('comments', $data))
         $data['comments'] = '';
     return array();
@@ -606,7 +612,7 @@ the Armed Forces without a postcode, please select from this list:</label>
     endform($data);
 }
 
-function step_category_error_check($data) {
+function step_category_error_check(&$data) {
     $errors = array();
     if (cobrand_display_category()) {
         if (!array_key_exists('category', $data)
@@ -622,7 +628,7 @@ function step_category_error_check($data) {
 
 /* step_main_error_check DATA
  * */
-function step_main_error_check($data) {
+function step_main_error_check(&$data) {
     global $pet_today;
 
     $errors = array();
@@ -731,7 +737,7 @@ function step_main_error_check($data) {
 
 /* step_you_error_check DATA
  * */
-function step_you_error_check($data) {
+function step_you_error_check(&$data) {
     global $pet_today;
     $errors = array();
 
@@ -815,14 +821,18 @@ function step_you_error_check($data) {
         # Set it to blank string as no form field printed at all.
         $data['address'] = '';
     }
-        
+
+    if (!cobrand_overseas_dropdown()) {
+        $data['overseas'] = '';
+    }
+
     foreach ($vars as $var => $p_var) {
         if (!$data[$var]) $errors[$var] = 'Please enter your ' . $p_var;
     }
     return $errors;
 }
 
-function step_preview_error_check($data) {
+function step_preview_error_check(&$data) {
     $errors = array();
     return $errors;
 }
