@@ -67,10 +67,6 @@ div#petition_actions {
     padding: 5px;
 }
 
-div#petition_actions.relative_width_45 {
-    width: 45%;
-}
-
 div#petition_actions a {
     font-weight: bold;
 }
@@ -95,6 +91,10 @@ div#petition_actions ul li#action_view {
     float: right;
 }
 
+div.relative_width_45 {
+    width: 45%;
+}
+
 #search_front {
 }
 div#content_clipboard #search_front p {
@@ -106,12 +106,10 @@ div#content_clipboard #search_front p {
 
 div#most_recent {
     float: left;
-    width: 45%;
     clear: both;
 }
 div#most_popular {
     float: right;
-    width: 45%;
 }
 
 .leading {

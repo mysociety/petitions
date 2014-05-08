@@ -5,6 +5,7 @@ small {
 div#petition_actions {
     border: none;
     font-size: 100%;
+    margin-right: 0;
 }
 
 div#petition_actions ul {
@@ -25,7 +26,6 @@ div#most_recent {
 
 div#front_how {
     float: left;
-    width: 45%;
 }
 
 form#signForm label {

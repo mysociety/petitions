@@ -1828,3 +1828,27 @@ function cobrand_petition_actions_class() {
     }
     return "relative_width_45";
 }
+
+function cobrand_most_recent_class() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return "col-md-6 col-sm-12 col-xs-12";
+    }
+    return "relative_width_45";
+}
+
+function cobrand_most_popular_class() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return "col-md-6 col-sm-12 col-xs-12";
+    }
+    return "relative_width_45";
+}
+
+function cobrand_front_how_class() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return "col-md-6 col-sm-12 col-xs-12";
+    }
+    return "";
+}
