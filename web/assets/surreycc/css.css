@@ -60,13 +60,11 @@ p.petition_view_tabs {
     border-bottom-width: 0;
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
-    margin-bottom: -1px;
     color: #222;
     text-align: center;
     font-weight: bold;
     padding: 10px 10px;
     text-decoration: none;
-    margin-right: -18px;
 }
 
 .petition_view_tabs a:hover {

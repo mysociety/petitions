@@ -168,7 +168,7 @@ if (!$rss) {
     $views = '';
     $b = false;
     foreach ($viewsarray as $s => $desc) {
-        if ($b) $views .= ' &nbsp; ';
+        if ($b) $views .= cobrand_view_petitions_separator();
         if ($q_type == $s) {
             $views .= '<span>' . $desc . '</span>';
         } else {

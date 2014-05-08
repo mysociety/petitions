@@ -1693,6 +1693,12 @@ function cobrand_view_petitions_category_filter() {
     return false;
 }
 
+function cobrand_view_petitions_separator() {
+    global $site_name;
+    if ($site_name == 'surreycc') return "";
+    return " &nbsp; ";
+}
+
 function cobrand_main_heading($text) {
     global $site_name;
     if ($site_name == 'surreycc' || $site_name == 'suffolkcoastal' || $site_name == 'runnymede' || $site_name == 'surreyheath')
