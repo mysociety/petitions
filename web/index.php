@@ -91,7 +91,7 @@ page_footer('Home');
 # --- 
 
 function front_actions() {
-    echo '<div id="petition_actions"> <ul>';
+    echo '<div id="petition_actions" class="' . cobrand_petition_actions_class() . '"> <ul>';
     if (! cobrand_creation_disabled()) {
         echo '<li id="action_create"><a href="/new"' . cobrand_create_button_title() . '><img src="/images/clipboard-add.gif" alt="" class="noborder"
 /><br />Create a petition</a></li>';

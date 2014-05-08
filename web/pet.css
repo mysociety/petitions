@@ -60,13 +60,15 @@ div#content_clipboard blockquote {
 
 div#petition_actions {
     float: left;
-    width: 45%;
-    /* width: 150px; */
     background-color: #ffffff;
     border: solid 1px #cccccc;
     font-size: 150%;
     margin: 0 1em 0 0;
     padding: 5px;
+}
+
+div#petition_actions.relative_width_45 {
+    width: 45%;
 }
 
 div#petition_actions a {

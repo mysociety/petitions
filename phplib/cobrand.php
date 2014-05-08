@@ -1820,3 +1820,11 @@ function cobrand_show_body_selector($body_ref) {
         <?
     }
 }
+
+function cobrand_petition_actions_class() {
+    global $site_name;
+    if ($site_name == 'surreycc') {
+        return "col-md-6 col-sm-12 col-xs-12";
+    }
+    return "relative_width_45";
+}
