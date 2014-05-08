@@ -50,10 +50,32 @@ input.error, input[type=text].error, select.error, input[type=radio].error, text
 }
 
 p.petition_view_tabs {
-    border-bottom: solid 2px #07C;
+    border-bottom: solid 1px #CCC;
+    padding-bottom: 7px;
 }
+
+.petition_view_tabs a, .petition_view_tabs span {
+    background: #E8E8E8;
+    border: 1px solid #B2B2B2;
+    border-bottom-width: 0;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    margin-bottom: -1px;
+    color: #222;
+    text-align: center;
+    font-weight: bold;
+    padding: 10px 10px;
+    text-decoration: none;
+    margin-right: -18px;
+}
+
+.petition_view_tabs a:hover {
+    background-color: #CCC;
+}
+
 .petition_view_tabs span {
-    background-color: #07C;
+    background: #07C url(//www.surreycc.gov.uk/__data/assets/image/0007/677725/tab-selected-bg.png) left top repeat-x;
+    color: white;
 }
 
 .list_sort_by {
