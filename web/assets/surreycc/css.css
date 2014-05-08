@@ -51,7 +51,7 @@ input.error, input[type=text].error, select.error, input[type=radio].error, text
 
 p.petition_view_tabs {
     border-bottom: solid 1px #CCC;
-    padding-bottom: 7px;
+    padding-bottom: 0;
 }
 
 .petition_view_tabs a, .petition_view_tabs span {
@@ -65,6 +65,20 @@ p.petition_view_tabs {
     font-weight: bold;
     padding: 10px 10px;
     text-decoration: none;
+    display: inline-block;
+}
+
+@media (max-width: 991px) {
+    .petition_view_tabs a, .petition_view_tabs span {
+        border-radius: 10px;
+        margin-right: 8px;
+        margin-bottom: 8px;
+        border-bottom-width: 1px;
+    }
+
+    p.petition_view_tabs {
+        text-align: center;
+    }
 }
 
 .petition_view_tabs a:hover {
