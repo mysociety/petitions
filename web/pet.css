@@ -95,6 +95,14 @@ div.relative_width_45 {
     width: 45%;
 }
 
+div.relative_width_50 {
+    width: 50%;
+}
+
+div.relative_width_47 {
+    width: 47%;
+}
+
 #search_front {
 }
 div#content_clipboard #search_front p {
@@ -251,12 +259,10 @@ form#signForm label.wide {
 
 div#signFormLeft {
     float: left;
-    width: 50%;
     border: none;
 }
 div#signFormRight {
     float: right;
-    width: 47%;
     border: none;
 }
 #signatureSubmit {
@@ -265,13 +271,11 @@ div#signFormRight {
 
 div#signatories {
    float: left;
-   width: 47%;
    margin-bottom: 1em;
 }
 
 #more_detail {
     float: right;
-    width: 47%;
     clear: both;
     margin-bottom: 1em;
 }

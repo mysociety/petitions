@@ -152,6 +152,30 @@ sub button_class() {
     return 'button';
 }
 
+sub more_detail_class() {
+    my $site_name = Petitions::Page::site_name();
+    return 'col-md-6 col-sm-12 col-xs-12' if $site_name eq 'surreycc';
+    return 'relative_width_47';
+}
+
+sub signatories_class() {
+    my $site_name = Petitions::Page::site_name();
+    return 'col-md-6 col-sm-12 col-xs-12' if $site_name eq 'surreycc';
+    return 'relative_width_47';
+}
+
+sub signFormRight_class() {
+    my $site_name = Petitions::Page::site_name();
+    return 'col-md-6 col-sm-12 col-xs-12' if $site_name eq 'surreycc';
+    return 'relative_width_47';
+}
+
+sub signFormLeft_class() {
+    my $site_name = Petitions::Page::site_name();
+    return 'col-md-6 col-sm-12 col-xs-12' if $site_name eq 'surreycc';
+    return 'relative_width_50';
+}
+
 sub do_address_lookup() {
     my $site_name = Petitions::Page::site_name();
     return 1 if $site_name eq 'islington';

@@ -361,6 +361,8 @@ the Armed Forces without a postcode, please select from this list:</label>',
     }
 
     my $button_class = Petitions::Cobrand::button_class();
+    my $signFormLeft_class = Petitions::Cobrand::signFormLeft_class();
+    my $signFormRight_class = Petitions::Cobrand::signFormRight_class();
 
     my $name_only = Petitions::Cobrand::name_only_text()
         || 'Please enter your name only; signatures containing other text may be removed by the petitions team.';
@@ -371,7 +373,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
         . qq(<input type="hidden" name="ref" value="@{[ ent($p->{ref}) ]}" />)
         . $body_ref
         . qq(<input type="hidden" name="ser" value="@{[ ent($ser) ]}" />)
-        . $q->div({ -id => 'signFormLeft' }, 
+        . $q->div({ -id => 'signFormLeft', -class => $signFormLeft_class },
           $q->p( $must . $name_only ),
           $q->p("I, ",
                 $q->textfield(
@@ -385,7 +387,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
                 $q->textfield(-name => 'email2', -size => 20, -id => 'email2', -aria_required => 'true', -autocomplete => 'off'))
         . $q->p({ -id => 'ms-email2-note-signup'}, $q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
         )
-        . $q->div({-id => 'signFormRight' },
+        . $q->div({-id => 'signFormRight', -class => $signFormRight_class },
           $address,
           $q->p( '<label for="postcode">' . $postcode_label . '</label>', 
                 $q->textfield(-name => 'postcode', -size => 10, -id => 'postcode')
@@ -489,8 +491,9 @@ sub signatories_box ($$) {
             or croak "bad ref '$ref' in signatories_box";
     }
 
+    my $signatories_class = Petitions::Cobrand::signatories_class();
     my $html =
-        $q->start_div({-id => 'signatories'})
+        $q->start_div({-id => 'signatories', -class => $signatories_class })
             . Petitions::Cobrand::main_heading('<a name="signers"></a>Current signatories');
 
     if ($p->{signers} == 1 && !$q->param('signed')) {
