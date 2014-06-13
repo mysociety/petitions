@@ -1,0 +1,90 @@
+# Apache configuration for petitions.
+#
+# Add lines something like this to your main /etc/apache/httpd.conf:
+#
+# # ePetitions
+# <VirtualHost *:80>
+#     ServerName pet.owl
+#     DocumentRoot /home/francis/devel/petitions/web/
+#     <Directory /home/francis/devel/petitions/web>
+#         Include /home/francis/devel/petitions/conf/httpd.conf
+#     </Directory>
+#     Alias /admin/ /home/francis/devel/petitions/web-admin/
+# </VirtualHost>
+#
+# You also need to enable .php files and .cgi files to run as PHP
+# scripts and CGI scripts respectively.  For example:
+#
+#  Options +ExecCGI
+#  AddHandler cgi-script .cgi
+#
+# 
+# Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
+# Email: matthew@mysociety.org; WWW: http://www.mysociety.org
+# 
+# $Id: httpd.conf-example,v 1.1 2009-12-08 12:24:35 matthew Exp $
+
+<VirtualHost *:80>
+    ServerName petitions.127.0.0.1.xip.io
+
+    DocumentRoot /vagrant/web/
+    Alias /admin/ /vagrant/web-admin/
+
+    <Location /fcgi>
+        Options +ExecCGI
+        SetHandler fcgid-script
+    </Location>
+
+
+    DirectoryIndex index.php
+
+    Options +ExecCGI
+    AddHandler cgi-script .cgi
+
+    RewriteEngine on
+    #RewriteLog /var/log/apache/rewrite.log
+    #RewriteLogLevel 3
+
+    # So all PHP scripts come through here twice, second time prefixed with /fcgi/php-bitter...
+    # This messes things up, and they won't ever be rewritten
+    RewriteRule ^/fcgi.*             - [L]
+
+    # PHP files can be referred without PHP
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}.php -f
+    RewriteRule /(.+) /$1.php
+    # CGI files can be referred without CGI
+    RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI}.cgi -f
+    RewriteRule /(.+) /$1.cgi
+
+    RewriteRule ^/list/?$                           /list.php [QSA]
+    RewriteRule ^/list/([a-z_]+)/?$                 /list.php?type=$1 [QSA]
+    RewriteRule ^/rss/?$                            /rss/list [R]
+    RewriteRule ^/rss/list/?$                       /list.php?rss=1 [QSA]
+    RewriteRule ^/rss/list/([a-z_]+)/?$             /list.php?type=$1&rss=1 [QSA]
+    RewriteRule ^/rss/search/?$ /search.php?rss=1 [QSA]
+
+    # Rules for petition ref URL and URLs beneath it
+
+    # Signup form.
+    RewriteRule ^/([a-zA-Z0-9-]+)/sign              /ref-sign.cgi?ref=$1 [QSA]
+
+    # Confirmation token.
+    RewriteRule ^/([a-zA-Z0-9-]+)/([0-9a-zA-Z_$'/-]+)$                   /ref-sign.cgi?ref=$1;token=$2 [QSA]
+    RewriteRule ^/([a-zA-Z0-9-]+)/([0-9a-zA-Z_$'/-]+)[").,';\\<>\ ]+$    /$1/$2 [R=permanent]
+    RewriteRule ^/([a-zA-Z0-9-]+)/([0-9a-zA-Z_$'/-]+)</.*$               /$1/$2 [R=permanent]
+    RewriteRule ^/([a-zA-Z0-9-]+)/([0-9a-zA-Z_$'/-]+)">                  /$1/$2 [R=permanent]
+
+    # This must come before petition page rewrite which it matches
+    RewriteRule ^/admin/$                           - [L]
+
+    # Petition page itself.
+    RewriteRule ^/([a-zA-Z0-9-]+)/$                 /ref-index.cgi?ref=$1 [QSA]
+    RewriteRule ^/([a-zA-Z0-9-]+)$                  /$1/ [R=permanent]
+
+    # Rubbish after URLs.
+    RewriteRule ^/([a-zA-Z0-9-]+)/?[").,';\\<>\ ]+$    /$1/ [R=permanent]
+    RewriteRule ^/([a-zA-Z0-9-]+)/?</.*$               /$1/ [R=permanent]
+
+    ErrorDocument 404 /404.php
+    ErrorDocument 500 /too-busy.html
+</VirtualHost>

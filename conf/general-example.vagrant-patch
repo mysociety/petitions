@@ -1,0 +1,15 @@
+--- general-example	2014-04-28 09:06:26.000000000 +0100
++++ general	2014-06-12 17:48:57.000000000 +0100
+@@ -80,9 +80,9 @@
+ // HOST and PORT will use the system defaults if set to null
+ define('OPTION_PET_DB_NAME', 'pet');
+ define('OPTION_PET_DB_USER', 'pet');
+-define('OPTION_PET_DB_PASS', '');
+-define('OPTION_PET_DB_HOST', null);
+-define('OPTION_PET_DB_PORT', null);
++define('OPTION_PET_DB_PASS', 'somepassword');
++define('OPTION_PET_DB_HOST', 'localhost');
++define('OPTION_PET_DB_PORT', 5432);
+ define('OPTION_PHP_MAINDB', 'PET');
+ 
+ // Is this a staging site?  Affects how errors are displayed.
