@@ -28,8 +28,8 @@ my ($header, $footer);
 my $template_root = "$FindBin::Bin/../templates";
 
 # Surrey
-my $header1 = get_page('http://build.surreycc.gov.uk/web-templates/e-petitions?SQ_DESIGN_NAME=head');
-my $header2 = get_page('http://build.surreycc.gov.uk/web-templates/e-petitions?SQ_DESIGN_NAME=body_head');
+my $header1 = get_page('http://www.surreycc.gov.uk/do-it-online/web-templates/e-petitions?SQ_DESIGN_NAME=head');
+my $header2 = get_page('http://www.surreycc.gov.uk/do-it-online/web-templates/e-petitions?SQ_DESIGN_NAME=body_header');
 
 if ($header1 && $header2) {
     $header = $header1;
@@ -45,7 +45,7 @@ EOF
     $header .= "\n<h1>PARAM_H1</h1>\n";
 }
 
-$footer = get_page('http://build.surreycc.gov.uk/web-templates/e-petitions?SQ_DESIGN_NAME=body_footer');
+$footer = get_page('http://www.surreycc.gov.uk/do-it-online/web-templates/e-petitions?SQ_DESIGN_NAME=body_footer');
 output('surreycc', $header, $footer);
 
 # Surrey Heath
