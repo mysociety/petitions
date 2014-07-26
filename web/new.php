@@ -211,7 +211,7 @@ function nextprevbuttons($steps, $i) {
     if (cobrand_creation_previous_button_first()) {
         print '<p class="leading">';
         if ($i > 1) {
-            submit_button('tostep' . $steps[$i-1], 'Previous');
+            submit_button('tostep' . $steps[$i-1], 'Previous', true);
             if ($i < count($steps)) print ' ';
         }
         if ($i < count($steps)) {
@@ -227,7 +227,7 @@ function nextprevbuttons($steps, $i) {
         if ($i > 1) print cobrand_creation_button_separator();
     }
     if ($i > 1) {
-        submit_button('tostep' . $steps[$i-1], 'Previous');
+        submit_button('tostep' . $steps[$i-1], 'Previous', true);
     }
     print '</p>';
 }
@@ -282,8 +282,8 @@ function textfield($name, $val, $size, $errors, $after = '') {
         print ' <small>' . $after . '</small>';
 }
 
-function submit_button($name, $value) {
-    $c = cobrand_creation_submit_button_class();
+function submit_button($name, $value, $previous = false) {
+    $c = cobrand_creation_submit_button_class($previous);
     $class = $c ? $c : 'button';
     printf('<input type="submit" name="%s" value="%s" class="%s" />', $name, $value, $class);
 }

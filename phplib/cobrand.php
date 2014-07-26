@@ -349,7 +349,7 @@ function cobrand_creation_input_class() {
     if ($site_name == 'salford') return array('input', 'largeField');
 }
 
-function cobrand_creation_submit_button_class() {
+function cobrand_creation_submit_button_class($previous = false) {
     global $site_name;
     if ($site_name == 'salford') return 'confirmButton';
 }
