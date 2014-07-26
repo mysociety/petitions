@@ -94,3 +94,7 @@ p.petition_view_tabs {
     text-align: left;
 }
 
+input[type=submit].scc-btn-back {
+    background-position: 0px -37px;
+    padding: 0px 10px 0px 30px;
+}

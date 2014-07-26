@@ -352,6 +352,7 @@ function cobrand_creation_input_class() {
 function cobrand_creation_submit_button_class($previous = false) {
     global $site_name;
     if ($site_name == 'salford') return 'confirmButton';
+    if ($site_name == 'surreycc' && $previous) return 'button scc-btn-back';
 }
 
 function cobrand_creation_main_all_newlines() {
