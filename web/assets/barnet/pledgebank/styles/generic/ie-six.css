@@ -1,0 +1,22 @@
+img {-ms-interpolation-mode: bicubic;}
+#mast form input.field {padding-top: 5px; padding-bottom: 1px;}
+#mast form input.button {height: 22px;}
+#mast .goog-te-gadget {overflow: hidden; height: 24px; width: 150px;}
+#mast .goog-te-gadget div {height: 24px; background: none;}
+#mast .goog-te-gadget .goog-te-combo {margin: 2px 0; height: 27px;}
+#column_nav .services ul {margin: 0 0 0 2px;}
+#column_nav .services ul.openChildren li.focus ul.active {margin: -2px 0 0 3px;}
+#footer p.assocLinks {overflow: hidden;}
+#content .smallCarouselWidget ul.items li h2 {filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#5000AAAB,endColorstr=#5000AAAB);}
+#content .smallCarouselWidget ul.controls li.pages ul li a, 
+#content .largeCarouselWidget ul.controls li.pages ul li a {background: url(../css_img/sml-crsl-button.gif) center center no-repeat;}
+#content .smallCarouselWidget ul.controls li.pages ul li a.selected, 
+#content .largeCarouselWidget ul.controls li.pages ul li a.selected {background: url(../css_img/sml-crsl-buttonHighlight.gif) center center no-repeat;}
+#content .wheresMyNearestWidget select {margin: 2px 0 3px;}
+#content .wheresMyNearestWidget input.button, #content .directoryWidget form input.button {padding: 1px 0 2px;}
+#column_nav .services ul.openChildren li.focus div.focusHeading, 
+#column_nav .services ul.openChildren li.focus ul.openChildren li.focus div, 
+#column_nav .services ul.openChildren li.focus ul.openChildren li.focus ul.active li.focus div {height: 1%;}
+
+#content, #content.fullWidth, #content.withWidth {overflow: visible;}
+#content .new_widget {margin-left: -1px;}

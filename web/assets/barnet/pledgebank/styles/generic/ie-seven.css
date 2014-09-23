@@ -1,0 +1,12 @@
+img {-ms-interpolation-mode: bicubic;}
+#mast form input.field {padding-top: 5px; padding-bottom: 1px;}
+#mast form input.button {padding-top: 4px; min-height: 22px;}
+#mast .goog-te-gadget {overflow: hidden; height: 24px; width: 150px;}
+#mast .goog-te-gadget div {height: 24px; background: none;}
+#mast .goog-te-gadget .goog-te-combo {margin: 2px 0; height: 27px;}
+#content .smallCarouselWidget ul.items li h2 {filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#5000AAAB,endColorstr=#5000AAAB);}
+#content .wheresMyNearestWidget select {margin: 2px 0 3px;}
+#content .wheresMyNearestWidget input.button, #content .directoryWidget form input.button {padding: 1px 0 2px;}
+
+#content, #content.fullWidth, #content.withWidth {overflow: visible;}
+#content .new_widget {margin-left: -1px;}

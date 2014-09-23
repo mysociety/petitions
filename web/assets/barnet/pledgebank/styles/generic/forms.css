@@ -1,0 +1,85 @@
+@import url(datepicker.css); 
+
+#content .basic_form, #content .xform {margin: 0 0 18px; clear: both;}
+
+#content h2.warning {color: #f00;}
+#content h2.warning strong {}
+
+#content .basic_form h2, #content legend {font-size: 1.3em; font-weight: bold; font-family: Helvetica, Verdana, Arial, sans-serif; background: #E1E3E4; padding: 10px 15px 15px; margin: 20px 0 0; border-top: 6px solid #BDDADC; display: block; width: 416px;}
+#content.fullWidth .basic_form h2, #content.fullWidth legend {width: 648px;}
+#content .basic_form h2.page-title {background: none; border: 0; padding: 0; margin: 0 0 10px;}
+#content fieldset {border: none;}
+
+#content .basic_form p, #content .basic_form div.p {clear: both; background: #E1E3E4; padding: 4px 15px 15px; margin: 0;}
+#content .basic_form h2 ~ p:last-child {border-radius: 0 0 3px 3px;}
+#content .basic_form p.center {text-align: center; margin-top: 20px; border-top: 6px solid #BDDADC; border-radius: 0 0 3px 3px; padding-top: 10px;}
+#content .xform p.center {text-align: right;}
+#content .xform p.center .previous {float: left;}
+
+#content label, #content span.label {display: block; font-weight: bold; cursor: pointer;}
+#content span.label {cursor:default;}
+#content form label strong, #content span.label strong {color: #f00;}
+#content label em, #content .label em {font-style: italic; font-weight: normal; font-size: .9em; color: #328080;}
+span.help {font-size: .9em; display: block; color: #a67410;}
+#content .xform_group {display: block; margin: 3px 0 0;}
+#content .xform_group label {font-weight: normal;}
+
+#mast input.field, #content input.field, select, textarea, #content input.xfields, #right_column form input.field {font-family: Arial, sans-serif; border: 0; border-top: 1px solid #c5c5c5; border-bottom: 1px solid #ececec; padding: 3px; color: #92959a; font-weight: bold; border-radius: 3px; width: 55%; font-size: 1em;}
+#right_column form input.field {border: 1px solid #c5c5c5;}
+#content input, #right_column form input {vertical-align: middle;}
+#right_column form input {margin: 5px 0 0;}
+#content .xform input.checkbox, #content .xform input.radio {width: auto;}
+
+#mast input.button, #content input.button, #right_column form input.button {font-family: Arial, sans-serif; font-weight: bold; background: #5d6167; border-radius: 3px; padding: 4px 12px; border: 0; color: #fff; cursor: pointer;}
+#mast input.button:hover, #content input.button:hover, #right_column form input.button:hover {background: #767b83;}
+
+#content form.signin fieldset {padding: 0;}
+
+#content .basic_form #search_checkbox label {text-align: left;}
+
+#content .xform table {background: #E1E3E4; margin: 0; padding: 0; border: 20px solid #E1E3E4; border-top: 0; width: 100%;}
+#content .xform table th {background: #5D6167; font-size: 1em; font-weight: bold; padding: 5px; border: 0; color: #fff;}
+#content .xform table tr, #content .xform table td {background: none;}
+
+/* used in directories submission */
+#content .basic_form div.googleMap {margin: 0 auto;}
+#content .basic_form div.googleMap table img {vertical-align: top}
+#content .basic_form div.googleMap table {margin: 0;}
+
+/* multioption form elements - radio/checkbox */
+#content .basic_form span.radioButtons {display: block;} 
+#content .basic_form span.radioButtons label {float: none; margin: 0; clear: both; text-align: left; width: auto;}
+#content .basic_form span.radioButtons label input {float: none; width: auto; border: none; margin: 0; padding: 0;}
+
+#content .basic_form .dob {width: 20%;}
+.userSettings span {border: 1px solid #fff; display: inline; float: left; width: 300px; background: #fff; margin: 0 9px 9px 0; border-radius: 3px;}
+#content .basic_form fieldset.userSettings span label {text-align: left; float: none; width: auto; margin: 0; font-size: 1.1em; padding: 5px; border-radius: 3px;}
+#content .basic_form fieldset.userSettings span input {margin-top: 0;}
+
+fieldset.userSettings span.clear {border: none; padding: 0; display: block; float: none; width: auto; background: none;}
+
+#content .basic_form p input.checkbox, #content .basic_form p input.radio {margin: 5px 3px 6px 5px; vertical-align: middle;}
+#content .basic_form p span.radioQuestion {width: 25%; display: block; float: left; text-align: right; margin-left: 15px;}
+#content .basic_form p span.radioAnswers, #content .basic_form p span.dobAnswers {width: auto; display: block; float: left; margin-left: 15px;}
+#content .basic_form p span label.radio {width: auto; clear: left; margin-left: 0; margin-bottom: 2px;}
+#content .basic_form p span label.radio input {margin: 0 2px 2px 0;}
+#content .basic_form p span.dobAnswers label.dobLabel {text-align: left; width: auto; margin: 0 20px 3px 0;}
+#content .basic_form p span.dobAnswers label.dobLabel input {width: auto; clear: none; float: left; margin: 0 5px 0 0;}
+#content .basic_form p span.appTip {clear: both; font-style: italic; float: left; padding-left: 25%; margin-left: 30px;}
+#content .basic_form p label.dob_short, #content .basic_form p label.dob_medium {float: left; display: inline; margin: 0 10px 0 0; width: 10%; color: #777;}
+#content .basic_form p label.dob_medium {width: 15%;}
+#content .basic_form p label.dob_short input.field {width: 40%;}
+#content .basic_form p label.dob_medium input.field {width: 45%;}
+#content .basic_form p label.dob_short input, #content .basic_form p label.dob_medium input {margin: 0 0 0 5px;}
+#content .basic_form .button.smallButton {font-size: .9em; float: right;}
+#content div.ref_column {margin-bottom: 15px;}
+#content div.ref_column strong {font-weight: bold;}
+
+/* xforms styles */
+#content .xform p br {display: none;}
+#content .xform table td {overflow: hidden;}
+#content .xform table input,
+#content .xform table textarea,
+#content .xform table select {margin: 0; width: 90%;}
+
+#content p.progress {padding: 7px 7px 6px 29px; background: url(../css_img/icon_tip.gif) 7px 7px no-repeat #fffdeb; margin: 0 0 20px; border-radius: 3px;}

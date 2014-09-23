@@ -1,0 +1,26 @@
+.text_align_left {text-align:left;}
+.text_align_right {text-align:right;}
+.text_align_center {text-align:center;}
+.indent {margin-left:20px;}
+.indent2 {margin-left:40px;}
+.byEditor strong {font-weight:bold;}
+.byEditor em {font-style:italic;}
+.underline_text {text-decoration:underline;}
+.strikethrough_text {text-decoration:line-through;}
+.underline_and_strikethrough_text {text-decoration:line-through underline;}
+.byEditor sup, .superscript_text {vertical-align:super;}
+.byEditor sub, .subscript_text {vertical-align:sub;}
+.float_left {float:left; margin: 0 10px 10px 0; display: inline;}
+.float_right {float:right; margin: 0 0 10px 10px; display: inline;}
+.image_centre { margin:0 auto; display:block; }
+
+td.highlightCell {background:#cfc;}
+tr.highlightRow td {background:#cfc;}
+tr.zebra {background:#ffc;}
+
+.byEditor abbr { border-bottom: 1px dashed #007685; cursor: help;}
+
+div.placeholder { background: #eee; border: 1px solid #ccc; color: #000; padding: 2em; color: #333;}
+div#editable { border: 2px dashed #999; padding: 10px; }
+div#editable:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+div#toolbar { border: 1px solid #ddd; background-color: #eee; padding: 0.5em; }

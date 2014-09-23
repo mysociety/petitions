@@ -1,0 +1,54 @@
+body, td, form, div, p, h1, h2, h3, h4, a:link, a:visited, a:hover, a, #mobile_name,  dl, dd, dt {	margin: 0;	padding: 0;	font-family: Arial, Verdana, Geneva, Helvetica, sans-serif;	font-size: small; font-style: normal;}
+
+ul {padding:0; margin:0 0 0 1.5em;}
+img {width:2em; margin:0.5em 1em;}
+
+a {text-decoration: underline;}
+a:link, a:visited, a:active {color: #A2A2A2; font-weight: normal;}
+a:hover {color: red;}
+
+body {margin:0; padding:0;}
+
+.pseudoH1 {display:none;}
+div#mobile_name {margin:0;padding:0;background:#F5F5F5;border:none; font-weight:bold; font-size: large; padding:0.5em 0; }
+
+#mast {background-color: #fff; border-top: 1px solid #868686; border-bottom: 1px solid #868686; font-size: small;}
+#mast {background-color: #eee; padding:0; margin:0;}
+#mast ul{list-style:none;margin:0;padding:0; display:inline;}
+#mast p {display:none;}
+#mast li {margin:0;padding:0;display:inline; background-color: #fff;}
+#mast li a:link, #mast li a:visited {padding:0 0.5em; margin:0; border-right:1px solid #ccc; border-top:1px solid #ccc; border-left:1px solid #ccc; border-bottom:1px solid #ccc; font-size:smaller; color:#000; text-decoration:none;}
+#mast li a:hover, #mast li a:active {padding:0 0.5em; margin:0; border-right:1px solid #ccc; border-top:1px solid #ccc; border-left:1px solid #ccc; border-bottom:1px solid #ccc; font-size:smaller; color:red; text-decoration:none;}
+#mast form, #mast form label, #mast form input { font-size: x-small; }
+#mast img {display:none;}
+#column_nav { margin-top:1em; border-top: 2px solid #868686;}
+#column_nav img, #related_nav img { display:none;}
+#column_nav, #related_nav {padding: 4px;font-size: small; background-color: #f5f5f5;}
+#column_nav a, #related_nav a, #footer a {color:#000; text-decoration:none;font-weight:bold;}
+#column_nav li, #related_nav li {font-size: small; border-bottom: 1px dashed #A2A2A2; margin: 0 0 4px 0; display:block; font-weight:bold;}
+#footer {border-bottom: 20px solid #A2A2A2;margin-bottom:1em;}
+
+#breadcrumb, h1 {font-size:x-small; padding: 4px; background-color: #f5f5f5; display:block;}
+#breadcrumb ul li a:link, #breadcrumb ul li a:visited {color:#000; text-decoration:none;font-weight:bold; font-size:x-small;}
+#breadcrumb ul li a:hover, #breadcrumb ul li a:active {color:red; text-decoration:none;font-weight:bold; font-size:x-small;}
+#breadcrumb {border-bottom: 2px solid #868686;}
+
+.new_widget img {height:2em; width:2em; margin:0.5em 1em;}
+.new_widget {clear:both;}
+#sign_in {margin-bottom:1em;}
+
+.widget_heading {font-weight:bold;}
+
+#footer {font-size: x-small; font-weight: normal; color: #666;padding-top: 8px;padding-bottom: 4px;border-top: 1px solid #868686;border-bottom: 1px solid #868686; background-color: #ebebeb;}
+#footer_box img {display:none;}
+#related, .infobox, .contactbox, #navbox {clear:both;margin-top:1em;}
+
+label {display: block; width: 120px; font-weight: normal; color: #000; margin: 4px 0 0 0;}
+form input, form textarea, form select { width: 120px; border: 1px solid #A2A2A2; margin: 0 0 4px 0; }
+fieldset {border:none;}
+legend {display:none;}
+.errorbox, .kind_warning, .star {color:red;}
+form input.button, form .questionone input, form #dataProtection {width:auto;}
+
+.print_hide {display: none;}
+.hidekey {display: none;}

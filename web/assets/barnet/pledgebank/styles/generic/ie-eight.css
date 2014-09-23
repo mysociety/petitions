@@ -1,0 +1,5 @@
+.row_divider {overflow: visible;}
+#mast form input.field {padding-top: 5px; padding-bottom: 1px;}
+#mast form input.button {padding-top: 0; padding-bottom: 0; min-height: 22px;}
+#mast .goog-te-gadget .goog-te-combo {padding: 0 1px 0 6px; height: 18px; margin: 2px 0 0;}
+#content .smallCarouselWidget ul.items li h2 {filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#5000AAAB,endColorstr=#5000AAAB);}

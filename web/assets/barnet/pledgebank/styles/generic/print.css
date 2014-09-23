@@ -1,0 +1,57 @@
+@import url(homepages.css);
+@import url(editor.css);
+@import url(forms.css);
+
+body {font-size: 75%;}
+
+h1, h2, h3, h4, h5, h6, #mobile_name {font-weight:bold; font-family: helvetica, verdana, arial, san-serif; }
+
+#content img.contentimage, #content img.main_image, #content .lead_item img { float: right; margin: 0 0 15px 15px; height: 130px;  border: 1px solid #ccc; padding: 1px;}
+#content img.salesBoard {float:left; margin: 0 15px 15px 0; height:50px;}
+
+#content { margin: 0 5px; font-family: verdana, arial, helvetica, san-serif;  }
+#column_nav, #breadcrumb, #mast, #footer, #related, .sociable, #content #calendarcontainer { display:none;}
+#wrapper {width: auto;}
+#mobile_name {display:block; font-size: 1.5em; padding: 20px 15px; background: #eee; font-weight:bold; border-bottom: 1px solid #ccc}
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, font, img, ins, kbd, q, 
+s, samp, small, strike, strong, sub, sup, tt, var, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td,
+#page_wrap, #mast, #mast #azbar, #mast .mast_links, #mast #primary_nav li, #mast #primary_nav li.lastItem a:link, #mast #primary_nav li.lastItem a:visited, 
+#mast #primary_nav li.lastItem a:hover, #mast #primary_nav li.lastItem a:active, #content p.page_down, #content table, #content table tr, #content table td, 
+#content table th, #content #az_index, #content #az_index li span, #column_nav ul.navWidget li, #content p.date, #content strong, #content #breadcrumb, 
+#content #breadcrumb ul li span, #content #az_index li span, #footer, #content .basic_form p, #content label, #content .xform label
+{background: #FFf; color: #000}
+
+#content #calendarcontainer table#calendar td.today, #content h2.signin, #column_nav h2.navWidget, #content #progressbar
+{background: #000; color: #FFf;}
+
+#mast .mast_links form input.field, #content table, #content table tr, #content table td, #content table th, #content .lead_item img, #content .poll_box, #content .poll_box img,
+#content .listed_item, #content .listed_item, #content .download_box, #content div.cate_info, #content #related, #content #breadcrumb, 
+#content .sitemap, #content #az_index, #content .person_box img, #content .personBorder, #column_nav h2.navWidget, #column_nav ul.navWidget li, #footer,
+#content .basic_form p
+{border-color: #000;}
+
+a:link, a:visited, #mast .mast_links a:link, #mast .mast_links a:visited, #mast #primary_nav li a:link, #mast #primary_nav li a:visited,
+#content table th a:link, #content table th a:visited, #content #calendarcontainer #calendar td a:link, #content #calendarcontainer #calendar td a:visited, 
+#content #az_index li a:link, #content #az_index li a:visited, #column_nav ul.navWidget li a:link, #column_nav ul.navWidget li a:visited, 
+#content div.cate_info h2 a:link, #content div.cate_info h2 a:visited, #content div.doc_info h2 a:link, #content div.doc_info h2 a:visited,
+#content #breadcrumb ul li a:link, #content #breadcrumb ul li a:visited
+{background: #FFf; color: #000080}
+
+a:hover, a:active, #mast .mast_links a:hover, #mast .mast_links a:active, #mast #primary_nav li a:hover, #mast #primary_nav li a:active, 
+#content table th a:hover, #content table th a:active, #content #calendarcontainer #calendar td a:hover, #content #calendarcontainer #calendar td a:active,
+#content #az_index li a:hover, #content #az_index li a:active, #column_nav ul.navWidget li a:hover, #column_nav ul.navWidget li a:active,
+#content div.cate_info h2 a:hover, #content div.cate_info h2 a:active, #content div.doc_info h2 a:hover, #content div.doc_info h2 a:active,
+#content #breadcrumb ul li a:hover, #content #breadcrumb ul li a:active
+{background: #FFf; color: #008000}
+
+
+#content .row_divider .new_widget, #content  .row_divider .new_widget p, #content .row_divider .new_widget h2, #content .row_divider .new_widget h3, 
+#content .row_divider .new_widget div, #content .row_divider .new_widget span, #content .row_divider .new_widget dt, #content .row_divider .new_widget ul,
+#content .row_divider .new_widget li, #content .row_divider .new_widget dd
+{background:#FFf; color: #000 ; border:none;}
+
+#content .row_divider .new_widget a:link, 
+#content .row_divider .new_widget a:visited {background:#FFf; color: #000080; border:none;}
+#content .row_divider .new_widget a:hover, 
+#content .row_divider .new_widget a:active {background:#FFf; color: #008000; border:none;}
