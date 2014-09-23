@@ -13,6 +13,7 @@ libtie-cache-perl
 libcache-memcached-perl
 memcached
 php5-memcache
+php5-curl
 ttf-bitstream-vera
 libdigest-hmac-perl
 liberror-perl
