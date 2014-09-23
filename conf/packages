@@ -21,3 +21,4 @@ libyaml-perl
 libdbd-pg-perl
 libregexp-common-perl
 libfile-slurp-perl
+libproc-processtable-perl
