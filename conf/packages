@@ -22,3 +22,4 @@ libdbd-pg-perl
 libregexp-common-perl
 libfile-slurp-perl
 libproc-processtable-perl
+php5-mcrypt
