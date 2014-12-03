@@ -1406,17 +1406,17 @@ sign the petition.</p>
 <p>In order to help you avoid common problems, we've produced this list:</p>
 
 <ul>
-<li>We don't accept petitions on individual legal cases such as
+<li>We do not accept petitions on individual legal cases such as
 deportations because we can never ascertain whether the individual
 involved has given permission for their details to be made publicly
 known. We advise petitioners to take their concerns on such matters
 directly to the Home Office.</li>
 
-<li>Please don't use 'shouting' capital letters excessively as they
+<li>Please do not use 'shouting' capital letters excessively as they
 can make petitions fall foul of our 'impossible to read' criteria.</li>
 
-<li>We cannot accept petitions which call upon <?=OPTION_SITE_PETITIONED?> to "recognise" or
-"acknowledge" something, as they do not clearly call for a
+<li>We cannot accept petitions which call upon <?=OPTION_SITE_PETITIONED?> to 'recognise' or
+'acknowledge' something, as they do not clearly call for a
 recognisable action.</li>
 
 </ul>
