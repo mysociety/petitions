@@ -1,107 +1,323 @@
-<!DOCTYPE html
-  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en-gb">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<meta name="eGMS.accessibility" scheme="WAI" content="Double-A">
-<meta name="DC.title" content="Ashfield District Council: PARAM_TITLE">
-<meta name="dc.identifier" content="PARAM_DC_IDENTIFIER">
-<meta name="dateToday" content="PARAM_DATE">
-<meta name="description" content="PARAM_DESCRIPTION">
-<title>Ashfield District Council: PARAM_TITLE</title>
-<link rel="stylesheet" href="http://www.ashfield-dc.gov.uk/ccm-ldn-theme/__ccm__/themes-prod/adcweb-theme/css/main.css" type="text/css" media="all">
-<link rel="stylesheet" href="http://www.ashfield-dc.gov.uk/ccm-ldn-theme/__ccm__/themes-prod/adcweb-theme/css/wysiwyg.css" type="text/css" media="all">
-<script src="http://www.ashfield-dc.gov.uk/ccm-ldn-theme/__ccm__/themes-prod/adcweb-theme/javascript/adc.js" language="javascript" type="text/javascript"></script>
-<script language="javascript" type="text/javascript">
-	
-<!-- hide from old browsers
-var fontSize=100 // sets variable 'fontsize' for default 100%
-// alert(document.cookie) for testing. Un-comment it out if you want to see what cookies have been set
-thisCookie = document.cookie.split("; ") // if there is a cookie here set by this server it will be extracted
-for (i=0; i<thisCookie.length; i++) {
-if (thisCookie[i].split("=")[0] == 'fontsize') { // checks if a variable 'fontsize' has been previously set
-fontSize=parseInt(thisCookie[i].split("=")[1])  // if it has, the page font size is set later to the preferred size
-    }
-  }
-  
-function clearSearch(){
-	 document.forms[0].terms.value = "";
-}
-// end hiding -->
-	
-	</script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" type="text/css" href="http://www.ashfield-dc.gov.uk/less/bootstrap.less" />
+  <link rel="stylesheet" type="text/css" href="http://www.ashfield-dc.gov.uk/less/responsive.less" />
+  <link rel="stylesheet" type="text/css" href="http://www.ashfield-dc.gov.uk/css/slides.css" />
+  <link rel="stylesheet" type="text/css" href="http://www.ashfield-dc.gov.uk/less/style.less" />
 
-	<link href="/pet.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/ashfield-dc/css.css" type="text/css" rel="stylesheet" />
+  PARAM_RSS_LINKS
+  PARAM_EXTRA
 
-    PARAM_RSS_LINKS
-    PARAM_EXTRA
+  <!--  ==================== javascript library for slider ========================= -->
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="http://www.ashfield-dc.gov.uk/Scripts/jquery.slides.js"></script>
+  <script>
+      var cookie_optin_name = "_cookie_optin_name";
+      var cookie_optin_message = "We require the use of cookies. ";
+      var cookie_optin_more_info_url = "http://www.ashfield-dc.gov.uk/site-info/disclaimer-and-privacy-statement.aspx";
+      var cookie_optin_more_info_text = "More information";
+      var cookie_optin_accept_button_text = "accept";
+      var cookie_optin_close_button_text = "x";
+      var cookie_template = "{message}{link} {accept}{close}";
+      var cookie_optin_body_css_name = cookie_optin_name;
+      var cookie_optin_mode = 'implicit';
+      var _gaq = _gaq || [];//required to make GA auto inject, if you don't want to use google analytics then skip this
+
+      _gaq.push(['_setAccount', 'UA-XXXXXXX-X']);
+      _gaq.push(['_trackPageview']);
+  </script>
+  <script src="http://ice-creates.github.com/CookieOptIn/v/Current.min.js"></script>
+
+  <title>PARAM_TITLE - Ashfield District Council</title>
+
+  <!--[if IE 6]>
+  <link rel="stylesheet" type="text/css" href="http://www.ashfield-dc.gov.uk/Content/css/ie6.css" />
+  <![endif]-->
+
+    <!--[if gt IE 6]>
+  <link rel="stylesheet" type="text/css" href="http://www.ashfield-dc.gov.uk/css/ie7-and-up.css" />
+    <![endif]-->
+
+  <!--[if lt IE 9]>
+    <link rel="stylesheet" type="text/css" href="http://www.ashfield-dc.gov.uk/Content/css/ie.css" />
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://www.ashfield-dc.gov.uk/Scripts/selectivizr-min.js"></script>
+  <![endif]-->
+
+  <link href="/pet.css" rel="stylesheet" type="text/css" />
+  <link href="/assets/ashfield-dc/css.css" type="text/css" rel="stylesheet" />
+
 </head>
-<body PARAM_BODYID onLoad="javascript:adc_cse();">
-<script type="text/javascript" language="javascript">
-      function dcp_hide(e) { }
-	
-	<!-- hide from old browsers
-	document.body.style.fontSize=fontSize+"%" // set fontsize for accessibility
-	// end hiding -->
-	
-    </script>
-<a class="navHide" href="#top" title="Go directly to main content" accesskey="S">Skip over navigation</a><span class="hide">|</span>
-<div id="header">
-  <div id="utils-local"><span class="hide">|</span><a href="http://www.ashfield-dc.gov.uk/ccm/portal/" title="Home" accesskey="1">Home</a>&nbsp;|&nbsp; <a href="http://www.ashfield-dc.gov.uk/cgi-bin/betsie/parser.pl" title="Text Only">Text Only</a>&nbsp;|&nbsp; <a href="#" title="Select to make the characters on the screen larger" onclick="changeFontSize('bigger')" onKeyPress="changeFontSize('bigger')">Bigger Text</a>&nbsp;|&nbsp; <a href="#" title="Select to make the characters on the screen smaller" onclick="changeFontSize('smaller')" onKeyPress="changeFontSize('smaller')">Smaller Text</a>&nbsp;|&nbsp; <a href="#" title="Select to reset the size of screen characters" onclick="changeFontSize('default')" onKeyPress="changeFontSize('default')">Default Text</a>&nbsp;&nbsp; </div>
-  <div id="utils"><span class="hide">|</span><a href="http://www.ashfield-dc.gov.uk/ccm/atoz" title="a-z" class="white">A-Z</a>&nbsp;|&nbsp; <a href="http://www.ashfield-dc.gov.uk/ccm/navigation/useful-links/contact-us/" title="contact us" accesskey="9" class="white">Contact us</a>&nbsp;|&nbsp; <a href="http://www.ashfield-dc.gov.uk/ccm/navigation/useful-links/news-press-releases/" title="news" class="white">News</a>&nbsp;|&nbsp; <a href="http://www.ashfield-dc.gov.uk/cfusion/events/index.cfm" title="events" class="white">Events</a>&nbsp;|&nbsp; <a href="http://www.ashfield-dc.gov.uk/ccm/navigation/jobs-and-careers/" title="jobs" class="white">Jobs</a>&nbsp; </div>
-  <div id="searcher">
-    <label for="topSearch" accesskey="4"><span class="hide">Search: </span></label>
-    <form action="http://www.google.co.uk/search" id="searchForm">
-      <div>
-        <input name="q" type="hidden" value="site:ashfield-dc.gov.uk">
-        <input class="searchBox" type="text" id="topSearch" name="q" size="19">
-        <input name="sa" type="submit" value=" Go " class="go">
-      </div>
-    </form>
-  </div>
-</div>
 
-<div id="tlcNav">
-  <div id="facebook"><a
-href="http://www.facebook.com/pages/Kirkby-in-Ashfield-United-Kingdom/Ashfield-District-Council/151965718172261"><img width="150" height="71" alt="Join us on Facebook!" title="Join us on Facebook!" src="http://www.ashfield-dc.gov.uk/g_lib/logos/facebook.jpg"></a>
-  </div>
-  <span class="hide">|</span><a href="/ccm/portal/"><img width="200" height="73" alt="Ashfield District Council logo" src="http://www.ashfield-dc.gov.uk/ccm-ldn-theme/__ccm__/themes-prod/adcweb-theme/images/logo.jpg" id="adc_logo"></a><span class="hide">|</span>
-</div>
+<body class="no_js">
+  <div class="container" id="top">
 
-<div id="navigation"><span class="hide">|</span>
-  <p><span class="hide">|</span><span class="bold">Menu</span><a href="http://www.ashfield-dc.gov.uk/ccm/navigation/advice-and-benefits/" title="Advice and benefits">Advice &amp; Benefits</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/business/" title="Business">Business</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/community-and-living/" title="Community and living">Community &amp; Living</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/council--government-and-democracy/" title="My Council">My Council</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/education-and-learning/" title="Education">Education</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/environment/" title="Environment and Planning">Environment & Planning</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/health-and-social-care/" title="Health and Social Care">Health &amp; Social Care</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/housing/" title="housing">Housing</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/jobs-and-careers/" title="Jobs">Jobs</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/leisure-and-culture/" title="Leisure">Leisure</a>&nbsp;|&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/navigation/transport-and-streets/" title="Transport and Streets">Transport &amp; Streets</a></p>
-</div>
-<span class="hide">|</span>
-<div id="bread">
-    <strong>You are here:</strong>&nbsp;<a href="http://www.ashfield-dc.gov.uk/ccm/portal/" title="home">Home</a>&nbsp;&gt;&nbsp; <span class="hide">|</span>
-    <a href="http://www.ashfield-dc.gov.uk/ccm/navigation/council--government-and-democracy/" title="">My Council</a>
-    <span class="hide">|</span>&nbsp;<span class="breadArrow">&gt;</span>&nbsp; <span class="hide">|</span><a href="http://www.ashfield-dc.gov.uk/ccm/navigation/council--government-and-democracy/petition-scheme/" title="">Petition Scheme</a><span class="hide">|</span>&nbsp;<span class="breadArrow">&gt;</span>&nbsp; 
-    <span class="breadHi">PARAM_H1</span><span class="hide">|</span>
-</div>
-<div class="LHS-nav">
-    <div class="sideboxnavbox">
-        <div class="boxheadnavbox">
-            <div id="left_nav_head_custom">&nbsp;</div>
+    <header>
+      <div class="row-fluid">
+        <div class="span3">
+          <h1><a href="http://www.ashfield-dc.gov.uk" class="site_logo"><img src="http://www.ashfield-dc.gov.uk/media/images/Ashfield-logo.png" alt="Ashfield District Council" /></a></h1>
         </div>
-        <div class="boxbodynavbox">
-            <div id="nav">
-                <div class="navUp">
-                    <a href="http://www.ashfield-dc.gov.uk/ccm/navigation/council--government-and-democracy/" title="up to My Council"><img src="http://www.ashfield-dc.gov.uk/ccm-ldn-theme/__ccm__/themes-prod/adcweb-theme/g-lib/navbarrowup.gif" border="0" alt="" width="20" height="16">My Council</a><span class="hide">|</span>
+
+        <div class="span9">
+          <div>
+
+            <nav class="accessibility">
+              <ul>
+                    <li style="width: 20px;"><a href="#A_to_Z">A-Z</a></li>
+                <li style="width: 50px;"><a href="http://www.ashfield-dc.gov.uk/site-info/accessibility.aspx">accessibility</a></li>
+                <li style="width: 40px;"><a href="http://www.ashfield-dc.gov.uk/site-info/disclaimer-and-privacy-statement.aspx">privacy</a></li>
+                <li style="width: 40px;"><a href="http://www.ashfield-dc.gov.uk/sitemap.aspx">sitemap</a></li>
+                <li style="width: 50px;">
+                  <div>
+                    <script type="text/javascript">var _baLocale = 'uk', _baUseCookies = true, _baHiddenMode = false, _baHideOnLoad = true;</script>
+                    <script type="text/javascript" src="//www.browsealoud.com/plus/scripts/ba.js"></script>
+                  </div>
+                </li>
+              </ul>
+            </nav>
+
+            <div class="search">
+              <label for="topSearch"><span>Search: </span></label>
+              <form action="/search.aspx" method="get">
+                <div>
+                  <input type="text" name="search" id="search_query" placeholder="Search" class="searchBox" style="border: background: url(&quot;http://www.google.com/cse/intl/en/images/google_custom_search_watermark.gif&quot;) no-repeat scroll left center rgb(255, 255, 255);">
+                  <input type="submit" id="submit_button" value="GO" name="sa"/>
                 </div>
-                <div class="navHere">
-                    <p><a href="http://www.ashfield-dc.gov.uk/ccm/navigation/council--government-and-democracy/petition-scheme/" title="Petition Scheme"><img src="http://www.ashfield-dc.gov.uk/ccm-ldn-theme/__ccm__/themes-prod/adcweb-theme/g-lib/navbarrow.gif" border="0" alt="" width="20" height="16">Petition Scheme</a></p>
-                    <span class="hide">|</span>
-                </div>
-                <a href="/" class="navChild" title="Introduction to e-Petitions">Introduction</a><span class="hide">|</span>
-                <a href="/new" class="navChild" title="Create a petition online">Create a petition</a><span class="hide">|</span>
-                <a href="/list" class="navChild" title="View petitions">View petitions</a><span class="hide">|</span>
-                <a href="/terms" class="navChild" title="Petition terms and conditions">Terms &amp; Conditions</a>          
+              </form>
             </div>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
+      <div class="row-fluid">
+        <div class="span12">
 
-<div id="content">
-<h1>PARAM_H1</h1>
+
+
+          <nav>
+            <ul id="main_nav">
+                   <li class="residents">
+
+                    <a href="http://www.ashfield-dc.gov.uk/residents.aspx">Residents</a>
+
+
+                  <ul class="dropdown">
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/residents/waste-and-environment.aspx">Waste and Environment</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/residents/democracy,-elections-and-legal.aspx">Democracy, Elections and Legal</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/residents/planning,-property-and-housing.aspx">Planning, Property and Housing</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/residents/community,-living-and-leisure.aspx">Community, Living and Leisure</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/residents/safety-and-enforcement.aspx">Safety and Enforcement</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/residents/revenues-and-support.aspx">Revenues and Support</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/residents/sustainability.aspx">Sustainability</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/residents/environmental-health.aspx">Environmental Health</a>
+                        </li>
+                  </ul>
+               </li>
+                   <li class="business">
+
+                    <a href="http://www.ashfield-dc.gov.uk/business.aspx">Business</a>
+
+
+                  <ul class="dropdown">
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/business/business-and-street-trading-licences.aspx">Business and street trading licences</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/business/national-non-domestic-rates.aspx">National Non Domestic Rates</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/business/estates-management.aspx">Estates Management</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/business/health-and-safety-at-work.aspx">Health and safety at work</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/business/regeneration.aspx">Regeneration</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/business/environmental-health.aspx">Environmental Health</a>
+                        </li>
+                  </ul>
+               </li>
+                   <li class="about ashfield">
+
+                    <a href="http://www.ashfield-dc.gov.uk/about-ashfield.aspx">About Ashfield</a>
+
+
+                  <ul class="dropdown">
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/about-ashfield/the-district-in-context.aspx">The District in context</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/about-ashfield/the-organisation.aspx">The Organisation</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/about-ashfield/working-together-in-partnership.aspx">Working together in partnership</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/about-ashfield/spending.aspx"> Spending</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/about-ashfield/media-centre.aspx">Media centre</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/about-ashfield/parking-in-ashfield.aspx">Parking in Ashfield</a>
+                        </li>
+                  </ul>
+               </li>
+                   <li class="job and careers">
+
+                    <a href="http://www.ashfield-dc.gov.uk/job-and-careers.aspx">Jobs and careers</a>
+
+
+                  <ul class="dropdown">
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/job-and-careers/current-vacancies.aspx">Current vacancies</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/job-and-careers/jobcentres-in-ashfield.aspx">Jobcentres in Ashfield</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/job-and-careers/2014-pay-policy-statement.aspx">2014 Pay Policy Statement</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/job-and-careers/njc-pay-scales.aspx">NJC pay scales</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/job-and-careers/recruitment-and-selection-policy.aspx">Recruitment and Selection Policy</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/job-and-careers/volunteering-opportunities.aspx">Volunteering Opportunities</a>
+                        </li>
+                  </ul>
+               </li>
+                   <li class="contact">
+
+                    <a href="http://www.ashfield-dc.gov.uk/contact.aspx">Contact us</a>
+
+
+                  <ul class="dropdown">
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/corporate-communications.aspx">Corporate Communications</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/district-councillors.aspx">District Councillors</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/environment.aspx">Environment</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/estate-management.aspx">Estate Management</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/food-safety-team.aspx">Food Safety Team</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/forward-plans.aspx">Forward Plans</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/licensing.aspx">Licensing</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/local-land-charges.aspx">Local Land Charges</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/planning.aspx">Planning</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/revenues.aspx">Revenues</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/right-to-buy.aspx">Right to Buy</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/waste-services.aspx">Waste Services</a>
+                        </li>
+                        <li >
+
+                                <a href="http://www.ashfield-dc.gov.uk/contact/your-comments.aspx">Your comments</a>
+                        </li>
+                  </ul>
+               </li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+    </header>
+
+    <section id="main_content" class="wrapper">
+      <div class="row-fluid">
+        <div class="span12">
+          <nav>
+            <ul id="breadcrumbs">
+              <li>You are here: </li>
+              <li><a href="http://www.ashfield-dc.gov.uk">Home</a></li>
+              <li><a href="http://www.ashfield-dc.gov.uk/residents.aspx">Residents</a></li>
+              <li><a href="http://www.ashfield-dc.gov.uk/residents/democracy,-elections-and-legal.aspx">Democracy, Elections and Legal</a></li>
+              <li>PARAM_H1</li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+
+      <div class="row-fluid">
+        <div class="span12">
+          <img src="http://www.ashfield-dc.gov.uk/media/449905/new_banner_2.jpg" alt="Default category banner" />
+          <h2>PARAM_H1</h2>
+
 <!-- end of head -->
