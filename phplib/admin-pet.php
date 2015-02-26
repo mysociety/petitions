@@ -831,7 +831,11 @@ petitions.</p>';
 <div id="signer_map"></div>
 <script>
 var map = new OpenLayers.Map("signer_map");
-var wms = new OpenLayers.Layer.OSM();
+var wms = new OpenLayers.Layer.OSM("OpenStreetMap", [
+    "//a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+    "//b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+    "//c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+]);
 var pois = new OpenLayers.Layer.Text("Signatures", {
     location: "?page=pet&petition=<?=$pdata['ref']?>&locations=1"
 });
@@ -1709,7 +1713,11 @@ arrowed modify tool.</p>
 <script>
 var map = new OpenLayers.Map("signer_map_large");
 var polygonLayer = new OpenLayers.Layer.Vector("Polygon Layer");
-var wms = new OpenLayers.Layer.OSM();
+var wms = new OpenLayers.Layer.OSM("OpenStreetMap", [
+    "//a.tile.openstreetmap.org/${z}/${x}/${y}.png",
+    "//b.tile.openstreetmap.org/${z}/${x}/${y}.png",
+    "//c.tile.openstreetmap.org/${z}/${x}/${y}.png"
+]);
 var pois = new OpenLayers.Layer.Text("Signatures", {
     location: "?page=pet&petition=<?=$ref?>&locations=1"
 });
