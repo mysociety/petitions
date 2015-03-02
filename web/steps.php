@@ -23,6 +23,23 @@ page_footer('Step-by-step_guide');
 
 function petition_form_intro() {
     global $site_name;
+    // Get a nice string to print for the maximum deadline from the cobrand if
+    // one's setup
+    $deadline_limits = cobrand_creation_deadline_limit();
+    $maximum = 'for up to 12 months';
+    if (array_key_exists('date', $deadline_limits)) {
+        $maximum = 'until ' + date('jS F Y', strtotime($deadline_limits['date']));
+    } elseif ($deadline_limits['years'] && $deadline_limits['months']) {
+        $maximum = sprintf('for up to %d year, %d months', $deadline_limits['years'], $deadline_limits['months']);
+    } elseif ($deadline_limits['years']) {
+        $maximum = sprintf('for up to %d year', $deadline_limits['years']);
+    } elseif ($deadline_limits['months']) {
+        if ($deadline_limits['months'] == 1) {
+            $maximum = 'for up to 1 month';
+        } else {
+            $maximum = sprintf('for up to %d months', $deadline_limits['months']);
+        }
+    }
     $n = 1;
     echo cobrand_create_heading('Step ' . ($n++) . ': Create your petition');
 
@@ -35,7 +52,7 @@ give your petition a unique URL (website address) that you can use to publicise
 your petition if you wish.</p>
 
 <p>You will be able to specify a start and finish date for your petition, and we
-can host your petition for up to 12 months.</p>
+can host your petition <?=$maximum ?>.</p>
 
 <?=cobrand_create_heading('Step ' . ($n++) . ': Submit your petition')?>
 
@@ -106,6 +123,6 @@ display the names of signatories, unless they have opted not to be shown.</p>
 <p class="leading">
 <input type="submit" value="Create a petition" class="addButton" /></p>
 </form>
-<? 
+<?
 }
 
