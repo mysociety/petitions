@@ -2,10 +2,10 @@
 /*
  * cobrand.php:
  * Functions for different brandings of the petitions code.
- * 
+ *
  * Copyright (c) 2010 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org; WWW: http://www.mysociety.org
- * 
+ *
  */
 
 function cobrand_page_title($title) {
@@ -140,8 +140,8 @@ function cobrand_creation_address_type_label() {
 
 function cobrand_creation_ask_for_address_type() { # by default: don't ask for address type unless it's within a specified area
     global $site_name;
-    if ($site_name == 'barrowbc') return false; 
-    if ($site_name == 'suffolkcoastal') return false; 
+    if ($site_name == 'barrowbc') return false;
+    if ($site_name == 'suffolkcoastal') return false;
     if (cobrand_creation_within_area_only()) return true;
     if ($site_name == 'ipswich') return true;
     if ($site_name == 'newforest') return true;
@@ -195,7 +195,7 @@ function cobrand_creation_within_area_only() {
 function cobrand_creator_must_be() {
     global $site_name;
     if ($site_name == 'suffolkcoastal')
-        return ''; 
+        return '';
     $creator_type = '';
     if ($site_name == 'surreycc' || $site_name == 'reigate-banstead'){
         $creator_type = 'must live, work or study at a Surrey registered address';
@@ -231,13 +231,13 @@ function cobrand_creation_top_submit_button() {
 function cobrand_creation_detail_max_chars() {
     global $site_name;
     if ($site_name == 'hounslow') return 1500;
-    return 1000;    
+    return 1000;
 }
 
 # Allows 'red asterisk' (or similar) to mark mandatory fields
 # returns array of markers: 0 for optional input fields, 1 for mandatory, and a legend
 # the optional marker forces same-width span just to make layout easy on sites that use these
-function cobrand_input_field_mandatory_markers() { 
+function cobrand_input_field_mandatory_markers() {
     global $site_name;
     if ($site_name == 'suffolkcoastal' || $site_name == 'bassetlaw')
         return array('<span class="mandatory">&nbsp;</span>', '<span class="mandatory">*</span>', '<span class="mandatory_legend">Fields marked <span class="mandatory">*</span> are mandatory.</span>');
@@ -291,7 +291,7 @@ function cobrand_creation_postcode_optional() {
     if ($site_name == 'suffolkcoastal' || $site_name == 'whypoll') {
         return true;
     }
-    return false;    
+    return false;
 }
 
 function cobrand_creation_phone_number_optional() {
@@ -318,7 +318,7 @@ function cobrand_creation_comments_label(){
          to know that you do not wish to be public, please include them here:"; # them [sic]
     }
     return "If you have any special requests concerning your
-        petition, or information about your petition you would like us 
+        petition, or information about your petition you would like us
         to know that you do not wish to be public, please include them here:";
 }
 
@@ -369,12 +369,12 @@ function cobrand_error_div_start() {
 }
 
 function cobrand_postcode_label() {
-    global $site_name;    
+    global $site_name;
     if ($site_name == 'suffolkcoastal' || $site_name == 'whypoll')
         return 'Postcode';
     return _('UK postcode');
 }
-  
+
 function cobrand_overseas_dropdown() {
     global $site_group;
     if ($site_group ==  'runnymede' || $site_group == 'suffolkcoastal' || $site_group == 'whypoll'){
@@ -415,7 +415,7 @@ function cobrand_click_create_instuction() {
     global $site_name;
     if ($site_name == 'suffolkcoastal')
         return 'click <strong>Create</strong>';
-    return '<strong>click "Create"</strong>'; 
+    return '<strong>click "Create"</strong>';
 }
 
 # note: numbers here are category numbers, defined in cobrand_categories()
@@ -479,7 +479,7 @@ process for planning representations</a>.";
                 return "You are petitioning about something which isn't the
 responsibility of your district council, but instead of Surrey County Council.
 <a href='$url'>Go to Surrey County Council's petition website to create a
-petition in this category</a>."; 
+petition in this category</a>.";
             }
         }
         if ($area) {
@@ -489,7 +489,7 @@ petition in this category</a>.";
             return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
         } else {
             return '
-            <input type="hidden" name="category" value="' . $category_id . '"> 
+            <input type="hidden" name="category" value="' . $category_id . '">
             You are petitioning about something which isn\'t the responsibility of Surrey Council Council,
             but instead of your district council. <label for="council_pick">Please
             pick your district council in order to be taken to their petition site:</label>
@@ -498,19 +498,19 @@ petition in this category</a>.";
             <option value="epsom-ewell">Epsom and Ewell Borough Council</option>
             <option value="guildford">Guildford Borough Council</option>
             <option value="molevalley">Mole Valley District Council</option>
-            <option value="reigate-banstead">Reigate &amp; Banstead Borough Council</option> 
+            <option value="reigate-banstead">Reigate &amp; Banstead Borough Council</option>
             <option value="runnymede">Runnymede Borough Council</option>
             <option value="spelthorne">Spelthorne Borough Council</option>
-            <option value="surreyheath">Surrey Heath Borough Council</option> 
-            <option value="tandridge">Tandridge District Council</option> 
-            <option value="waverley">Waverley Borough Council</option> 
-            <option value="woking">Woking Borough Council</option> 
-            </select> 
+            <option value="surreyheath">Surrey Heath Borough Council</option>
+            <option value="tandridge">Tandridge District Council</option>
+            <option value="waverley">Waverley Borough Council</option>
+            <option value="woking">Woking Borough Council</option>
+            </select>
             <input type="submit" name="toothercouncil" value="Go" class="button">
-            '; 
+            ';
         }
     }
-    
+
     if ($site_group == 'nottinghamshire') {
         if ($site_name != 'nottinghamshire') {
            # check for specific council+category exceptions?
@@ -518,7 +518,7 @@ petition in this category</a>.";
            return "You are petitioning about something which isn't the
 responsibility of your district council, but instead of Nottinghamshire County Council.
 <a href='$url'>Go to Nottinghamshire County Council's petition website to create a
-petition in this category</a>."; 
+petition in this category</a>.";
         }
         if ($category_id == 6) { # Fire
             return 'The fire service is the responsibility of the
@@ -548,7 +548,7 @@ Nottinghamshire and City of Nottingham Fire Authority. For more information see
                 return 'http://www.nottinghamcity.gov.uk/index.aspx?articleid=12595'; # e-petitions page
         } else {
             return '
-            <input type="hidden" name="category" value="' . $category_id . '"> 
+            <input type="hidden" name="category" value="' . $category_id . '">
             You are petitioning about something which isn\'t the responsibility of Nottinghamshire Council Council,
             but instead of your district council. <label for="council_pick">Please
             pick your district council in order to be taken to their site:</label>
@@ -561,9 +561,9 @@ Nottinghamshire and City of Nottingham Fire Authority. For more information see
             <option value="nottingham">Nottingham City Council</option>
             <option value="newark-sherwooddc">Newark and Sherwood District Council</option>
             <option value="rushcliffe">Rushcliffe Borough Council</option>
-            </select> 
+            </select>
             <input type="submit" name="toothercouncil" value="Go" class="button">
-            '; 
+            ';
         }
     }
 
@@ -1051,14 +1051,14 @@ function cobrand_petition_guidelines() {
     if ($site_name == 'stevenage') {
 ?>
 
-<p>In order for the Council to deal with your petition you must not 
-include anything which could be considered to be vexatious, abusive or 
+<p>In order for the Council to deal with your petition you must not
+include anything which could be considered to be vexatious, abusive or
 otherwise inappropriate.</p>
 
-<p>We reserve the right to reject petitions that are similar to and/or 
-overlap with an existing petition or petitions or which ask for things 
+<p>We reserve the right to reject petitions that are similar to and/or
+overlap with an existing petition or petitions or which ask for things
 outside the remit or powers of Stevenage Borough Council.</p>
- 
+
 <p>For further details please see the Stevenage Borough Council
 <a href="http://www.stevenage.gov.uk/councilanddemocracy/petitions/petitionscheme">Petition Scheme</a>.</p>
 
@@ -1173,7 +1173,7 @@ you must not include: </p>
 
 <ul>
 <li>Party political material.
-Please note, this does not mean it is not permissible to petition on controversial issues.  
+Please note, this does not mean it is not permissible to petition on controversial issues.
 <?=$party_political_example?>
 </li>
 <li>potentially libellous, false, or defamatory statements;</li>
@@ -1216,7 +1216,7 @@ found at <a href="<?=$foi_link?>" target="_blank"><?=$foi_text?> <small>(new win
 <p>We will strive to ensure that petitions that do not meet our
 criteria are not accepted, but where a petition is accepted which
 contains misleading information we reserve the right to post an
-interim response to highlight this point to anyone visiting to 
+interim response to highlight this point to anyone visiting to
 sign the petition.</p>
 
 <h2>Common causes for rejection</h2>
@@ -1298,7 +1298,7 @@ nominations for Honours can be made directly to the appropriate department.</li>
 <p>We will strive to ensure that petitions that do not meet our
 criteria are not accepted, but where a petition is accepted which
 contains misleading information we reserve the right to post an
-interim response to highlight this point to anyone visiting to 
+interim response to highlight this point to anyone visiting to
 sign the petition.</p>
 
 <h3>Common causes for rejection</h3>
@@ -1398,7 +1398,7 @@ for further information.</li>
 <p>We will strive to ensure that petitions that do not meet our
 criteria are not accepted, but where a petition is accepted which
 contains misleading information we reserve the right to post an
-interim response to highlight this point to anyone visiting to 
+interim response to highlight this point to anyone visiting to
 sign the petition.</p>
 
 <h3>Common causes for rejection</h3>
@@ -1485,7 +1485,7 @@ found at <a href="http://www.ico.gov.uk/" target="_blank">http://www.ico.gov.uk/
 <p>We will strive to ensure that petitions that do not meet our
 criteria are not accepted, but where a petition is accepted which
 contains misleading information we reserve the right to post an
-interim response to highlight this point to anyone visiting to 
+interim response to highlight this point to anyone visiting to
 sign the petition.</p>
 
 <h3>Common causes for rejection</h3>
@@ -1619,7 +1619,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'suffolkcoastal')
         return 'http://www.suffolkcoastal.gov.uk/yourcouncil/haveyoursay/petitions/petitionsterms/';
     if ($site_name == 'surreycc')
-        return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Terms+and+conditions+for+petitions?opendocument';
+        return 'http://www.surreycc.gov.uk/get-involved/shape-our-services/petitions/terms-and-conditions-for-petitions';
     if ($site_name == 'tandridge')
         return 'http://www.tandridge.gov.uk/LifeinTandridge/consultation/petitions/terms.htm';
     if ($site_name == 'waverley')
@@ -1734,9 +1734,9 @@ function cobrand_allowed_responses() {
 function cobrand_fill_form_instructions(){
     global $site_name;
     if ($site_name == 'east-northamptonshire') {
-        return '<p>Please make sure you have read the 
-            <a href="http://www.east-northamptonshire.gov.uk/petitions">petitions&nbsp;scheme</a> and 
-            <a href="/terms">terms&nbsp;and&nbsp;conditions</a> before you create a petition. 
+        return '<p>Please make sure you have read the
+            <a href="http://www.east-northamptonshire.gov.uk/petitions">petitions&nbsp;scheme</a> and
+            <a href="/terms">terms&nbsp;and&nbsp;conditions</a> before you create a petition.
             Your petition will need at least 50 signatures for the council to take any action.</p>
             Please fill in all the fields below.';
     }
@@ -1758,11 +1758,11 @@ function cobrand_html_final_changes($s) {
     return $s;
 }
 
-# allow specific councils to completely override normal domain settings: 
+# allow specific councils to completely override normal domain settings:
 # this is rare (currently only applies if SITE_DOMAINS is true)
 function cobrand_custom_domain($body) {
   if ($body == 'bassetlaw') {
-      return 'http://bassetlaw.petitions.mysociety.org'; 
+      return 'http://bassetlaw.petitions.mysociety.org';
   } else {
       return 'http://petitions.' . $body . '.gov.uk';
   }
@@ -1770,7 +1770,7 @@ function cobrand_custom_domain($body) {
 
 # returns OPTION_CREATION_DISABLED value
 # if this is a multi-body site, can't just return OPTION_CREATION_DISABLED but must inspect it first
-#   (Note: OPTION_CREATION_DISABLED may be pure HTML (for a single site), but for multi-body 
+#   (Note: OPTION_CREATION_DISABLED may be pure HTML (for a single site), but for multi-body
 #          sites it's a list of sitenames that gets returned as a short HTML notice here)
 function cobrand_creation_disabled() {
     global $site_name;
@@ -1796,7 +1796,7 @@ HTML;
                 return false;
             }
         }
-    } 
+    }
     return OPTION_CREATION_DISABLED;
 }
 
