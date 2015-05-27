@@ -1,0 +1,12 @@
+/* Re-arrange the blocks on the homepage so that they form a grid */
+div#petition_actions {
+    border: none;
+}
+div#most_recent {
+    float: right;
+}
+div#front_how {
+    width: 45%;
+    margin-top: 1em;
+    float:left;
+}
