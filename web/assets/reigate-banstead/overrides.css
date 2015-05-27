@@ -7,6 +7,41 @@ div#most_recent {
 }
 div#front_how {
     width: 45%;
-    margin-top: 1em;
+    margin-top: 1.5em;
     float:left;
+}
+
+/* Reigate's design is responsive, so do a little to make ours too */
+@media screen and (max-width: 32em) {
+    div#petition_actions,
+    div#most_popular,
+    div#most_recent,
+    div#front_how {
+        width: 100%;
+    }
+
+    div#most_popular {
+        margin-top: 1.5em;
+    }
+
+    div#front_how {
+        margin-top: 0;
+    }
+}
+/* Reigate's design is responsive, so do a little to make ours too */
+@media screen and (max-width: 32em) {
+    div#petition_actions,
+    div#most_popular,
+    div#most_recent,
+    div#front_how {
+        width: 100%;
+    }
+
+    div#most_popular {
+        margin-top: 1em;
+    }
+
+    div#front_how {
+        margin-top: 0;
+    }
 }
