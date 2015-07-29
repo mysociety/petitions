@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
-# 
+#
 # surrey-cache-templates
-# 
+#
 # This script will run daily overnight to fetch and cache various
 # council headers and footers to be used for the Surrey petitions website.
 
@@ -14,15 +14,15 @@ use LWP::Simple;
 
 use lib "$FindBin::Bin/../perllib";
 use lib "$FindBin::Bin/../commonlib/perllib";
- 
+
 use mySociety::Config;
 BEGIN {
     mySociety::Config::set_file("$FindBin::Bin/../conf/general");
 }
-use mySociety::DBHandle qw(dbh);
-use mySociety::Memcached;
-mySociety::Memcached::set_config(mySociety::Config::get('MEMCACHE_HOST'), mySociety::Config::get('PET_DB_NAME'));
-use Petitions;
+# use mySociety::DBHandle qw(dbh);
+# use mySociety::Memcached;
+# mySociety::Memcached::set_config(mySociety::Config::get('MEMCACHE_HOST'), mySociety::Config::get('PET_DB_NAME'));
+# use Petitions;
 
 my ($header, $footer);
 my $template_root = "$FindBin::Bin/../templates";
@@ -49,14 +49,35 @@ $footer = get_page('http://www.surreycc.gov.uk/web-templates/e-petitions?SQ_DESI
 output('surreycc', $header, $footer);
 
 # Surrey Heath
-$header = get_page('http://www.surreyheath.gov.uk/general_header.asp');
-$header =~ s/<title>/<title>PARAM_TITLE - /;
-$header =~ s/<\*\*page_title\*\*>/PARAM_H1/;
-$header =~ s{<span class="current">Home: </span>}{<a title="Breadcrumb link: Home" href="http://www.surreyheath.gov.uk/default.htm">Home</a> &gt; <a title="Breadcrumb link: Council &amp; Democracy" href="http://www.surreyheath.gov.uk/council/default.htm">Council &amp; Democracy</a> &gt; <a href="/">Petitions</a> &gt; <span class="current">PARAM_H1</span>};
+# File is provided as one single file, so we need to split it up
+my $surrey_heath_template = get_page('http://www.surreyheath.gov.uk/introduction-e-petitions');
+my @surrey_heath_parts = split(/<p><strong>Petition stuff goes here<\/strong><\/p>/, $surrey_heath_template);
+$header = $surrey_heath_parts[0];
+$header =~ s/<title>Introduction to e-petitions/<title>PARAM_TITLE/;
+$header =~ s{<h1 id="page-title">.*</h1>}{<h1 id="page-title">PARAM_H1</h1>};
+$header =~ s{<ol id="crumbs" class="clearfix">.*</ol>}{<ol id="crumbs" class="clearfix">
+<li class="crumb crumb-first">
+    <span typeof="v:Breadcrumb">
+        <a rel="v:url" property="v:title" href="/">Introduction to e-petitions</a>
+    </span>
+</li>
+<li class="crumb crumb-last">
+    <span class="crumb-separator"> » </span>
+    <span typeof="v:Breadcrumb">
+        <span property="v:title">PARAM_H1</span>
+    </span>
+</li></ol>};
+# Surrey heath's template has lots of relative urls we need to fix, but also
+# protocol relative urls that we don't want to fix
+$header =~ s/href="(\/[^"^\/]{1}[^"]+)"/href="http:\/\/www.surreyheath.gov.uk$1"/g;
+$header =~ s/src="(\/[^"^\/]{1}[^"]+)"/src="http:\/\/www.surreyheath.gov.uk$1"/g;
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css" />
 <link rel="stylesheet" type="text/css" href="/assets/surreyheath/css.css" />
 </head>};
-$footer = get_page('http://www.surreyheath.gov.uk/general_footer.asp');
+
+$footer = $surrey_heath_parts[1];
+$footer =~ s/href="(\/[^"^\/]{1}[^"]+)"/href="http:\/\/www.surreyheath.gov.uk$1"/g;
+$footer =~ s/src="(\/[^"^\/]{1}[^"]+)"/src="http:\/\/www.surreyheath.gov.uk$1"/g;
 output('surreyheath', $header, $footer);
 
 # Elmbridge
@@ -106,12 +127,12 @@ sub output {
         }
     }
 
-    if ($flush) {
-        my $ids = dbh()->selectcol_arrayref('select id from petition where body_id=(select id from body where ref=?)', {}, $dir);
-        foreach (@$ids) {
-            mySociety::Memcached::set("lastupdate:$_", time());
-        }
-    }
+    # if ($flush) {
+    #     my $ids = dbh()->selectcol_arrayref('select id from petition where body_id=(select id from body where ref=?)', {}, $dir);
+    #     foreach (@$ids) {
+    #         mySociety::Memcached::set("lastupdate:$_", time());
+    #     }
+    # }
 }
 
 sub get_page {
