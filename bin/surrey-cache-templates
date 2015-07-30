@@ -19,10 +19,10 @@ use mySociety::Config;
 BEGIN {
     mySociety::Config::set_file("$FindBin::Bin/../conf/general");
 }
-# use mySociety::DBHandle qw(dbh);
-# use mySociety::Memcached;
-# mySociety::Memcached::set_config(mySociety::Config::get('MEMCACHE_HOST'), mySociety::Config::get('PET_DB_NAME'));
-# use Petitions;
+use mySociety::DBHandle qw(dbh);
+use mySociety::Memcached;
+mySociety::Memcached::set_config(mySociety::Config::get('MEMCACHE_HOST'), mySociety::Config::get('PET_DB_NAME'));
+use Petitions;
 
 my ($header, $footer);
 my $template_root = "$FindBin::Bin/../templates";
@@ -127,12 +127,12 @@ sub output {
         }
     }
 
-    # if ($flush) {
-    #     my $ids = dbh()->selectcol_arrayref('select id from petition where body_id=(select id from body where ref=?)', {}, $dir);
-    #     foreach (@$ids) {
-    #         mySociety::Memcached::set("lastupdate:$_", time());
-    #     }
-    # }
+    if ($flush) {
+        my $ids = dbh()->selectcol_arrayref('select id from petition where body_id=(select id from body where ref=?)', {}, $dir);
+        foreach (@$ids) {
+            mySociety::Memcached::set("lastupdate:$_", time());
+        }
+    }
 }
 
 sub get_page {
