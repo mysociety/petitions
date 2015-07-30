@@ -62,7 +62,7 @@ $header =~ s{<ol id="crumbs" class="clearfix">.*</ol>}{<ol id="crumbs" class="cl
     </span>
 </li>
 <li class="crumb crumb-last">
-    <span class="crumb-separator"> » </span>
+    <span class="crumb-separator"> &raquo </span>
     <span typeof="v:Breadcrumb">
         <span property="v:title">PARAM_H1</span>
     </span>
@@ -115,14 +115,14 @@ sub output {
     if ($header) {
         my $current_header = read_file("$template_dir/head.html", err_mode => 'quiet');
         if ($current_header ne $header) {
-            write_file("$template_dir/head.html", { atomic => 1 }, \$header);
+            write_file("$template_dir/head.html", { atomic => 1, binmode => ':utf8' }, \$header);
             $flush = 1;
         }
     }
     if ($footer) {
         my $current_footer = read_file("$template_dir/foot.html", err_mode => 'quiet');
         if ($current_footer ne $footer) {
-            write_file("$template_dir/foot.html", { atomic => 1 }, \$footer);
+            write_file("$template_dir/foot.html", { atomic => 1, binmode => ':utf8' }, \$footer);
             $flush = 1;
         }
     }
