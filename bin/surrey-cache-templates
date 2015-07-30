@@ -62,7 +62,7 @@ $header =~ s{<ol id="crumbs" class="clearfix">.*</ol>}{<ol id="crumbs" class="cl
     </span>
 </li>
 <li class="crumb crumb-last">
-    <span class="crumb-separator"> &raquo </span>
+    <span class="crumb-separator"> &raquo; </span>
     <span typeof="v:Breadcrumb">
         <span property="v:title">PARAM_H1</span>
     </span>
