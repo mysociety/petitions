@@ -66,6 +66,17 @@ div#petition_actions {
     border: none;
 }
 
+/* We turn off the bullet points for lists in pet.css, so that these action
+   elements don't get them, however, Westminster's CSS has a crazy ::before
+   that adds them back in for god knows what reason.
+   This cancels that out.
+*/
+#petition_actions ul li:before,
+#most_popular ul li:before,
+#most_recent ul li:before {
+  content: none;
+}
+
 div#most_recent {
     float: right;
 }
@@ -120,7 +131,7 @@ p.petition_view_tabs {
 #action_view a {
     background-image: url('/assets/westminster/petition_button_view.png');
 }
-#action_create a, #action_view a, 
+#action_create a, #action_view a,
 #action_create a:active, #action_view a:active  {
     margin-top: 10px;
     display: block;
@@ -155,4 +166,10 @@ a:hover {
 }
 #article-content input, #article-content textarea {
   border: 1px solid #666666;
+}
+
+/* Westminster limit their tables to 540px wide, which seems odd and makes
+   ours look rubbish, so undo that. */
+table.petition-list-table {
+  max-width: none;
 }
