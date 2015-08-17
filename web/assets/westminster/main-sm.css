@@ -3,22 +3,22 @@
 
 @font-face {
     font-family: 'city';
-    src:url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/city.eot?-cf2a11');
-    src:url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/city.eot?#iefix-cf2a11') format('embedded-opentype'),
-        url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/city.woff?-cf2a11') format('woff'),
-        url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/city.ttf?-cf2a11') format('truetype'),
-        url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/city.svg?-cf2a11#city') format('svg');
+    src:url('fonts/city.eot?-cf2a11');
+    src:url('fonts/city.eot?#iefix-cf2a11') format('embedded-opentype'),
+        url('fonts/city.woff?-cf2a11') format('woff'),
+        url('fonts/city.ttf?-cf2a11') format('truetype'),
+        url('fonts/city.svg?-cf2a11#city') format('svg');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
   font-family: 'young_wcc';
-  src: url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/young_wcc/font/young_wcc.eot?60215879');
-  src: url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/young_wcc/font/young_wcc.eot?60215879#iefix') format('embedded-opentype'),
-       url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/young_wcc/font/young_wcc.woff?60215879') format('woff'),
-       url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/young_wcc/font/young_wcc.ttf?60215879') format('truetype'),
-       url('https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/young_wcc/font/young_wcc.svg?60215879#young_wcc') format('svg');
+  src: url('fonts/young_wcc.eot?60215879');
+  src: url('fonts/young_wcc.eot?60215879#iefix') format('embedded-opentype'),
+       url('fonts/young_wcc.woff?60215879') format('woff'),
+       url('fonts/young_wcc.ttf?60215879') format('truetype'),
+       url('fonts/young_wcc.svg?60215879#young_wcc') format('svg');
   font-weight: normal;
   font-style: normal;
 }
@@ -106,11 +106,11 @@ textarea {
 
 @font-face {
     font-family: 'wcc';
-    src:  url("https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/wcc.eot");
-    src:  url("https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/wcc.eot?#iefix") format("embedded-opentype"),
-          url("https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/wcc.ttf") format("truetype"),
-          url("https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/wcc.woff") format("woff"),
-          url("https://www.westminster.gov.uk/sites/www.westminster.gov.uk/themes/wcc/css/fonts/wcc.svg#wcc") format("svg");
+    src:  url("fonts/wcc.eot");
+    src:  url("fonts/wcc.eot?#iefix") format("embedded-opentype"),
+          url("fonts/wcc.ttf") format("truetype"),
+          url("fonts/wcc.woff") format("woff"),
+          url("fonts/wcc.svg#wcc") format("svg");
     font-weight: normal;
     font-style: normal;
 }
