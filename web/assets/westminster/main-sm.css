@@ -1,28 +1,6 @@
 /* content styles (quick answers & co.) */
 @import url("content-sm.css");
 
-@font-face {
-    font-family: 'city';
-    src:url('fonts/city.eot?-cf2a11');
-    src:url('fonts/city.eot?#iefix-cf2a11') format('embedded-opentype'),
-        url('fonts/city.woff?-cf2a11') format('woff'),
-        url('fonts/city.ttf?-cf2a11') format('truetype'),
-        url('fonts/city.svg?-cf2a11#city') format('svg');
-    font-weight: normal;
-    font-style: normal;
-}
-
-@font-face {
-  font-family: 'young_wcc';
-  src: url('fonts/young_wcc.eot?60215879');
-  src: url('fonts/young_wcc.eot?60215879#iefix') format('embedded-opentype'),
-       url('fonts/young_wcc.woff?60215879') format('woff'),
-       url('fonts/young_wcc.ttf?60215879') format('truetype'),
-       url('fonts/young_wcc.svg?60215879#young_wcc') format('svg');
-  font-weight: normal;
-  font-style: normal;
-}
-
 /* --- start boilerplate */
 
 .flex-video {
@@ -78,7 +56,6 @@ hr {
 }
 img {
     vertical-align: middle;
-    max-width: 100%;
 }
 fieldset {
     border: 0;
@@ -202,8 +179,6 @@ textarea {
 }
 .icon-information:before {
     content: "\e61e";
-    top: 50%;
-    margin-top: -28px;
 }
 .icon-form-validation:before {
     content: "\e61f";
@@ -653,10 +628,6 @@ html.js .form-autocomplete.throbbing {
 #autocomplete li:before {
     display: none;
 }
-.apachesolr_autocomplete {
-    font-size:16px;
-    padding:5px !important;
-}
 .ac_results li {
   font-family: "Open Sans", sans-serif;
 }
@@ -771,11 +742,11 @@ html.js .form-autocomplete.throbbing {
       line-height: 42px;
       text-align: center;
   }
-/*  header[role="banner"] {
+  header[role="banner"] {
       margin-top: 50px;
-  }*/
+  }
   .top-bar {
-    position: fixed;
+    /*position: fixed;*/
     width: 100%;
     top: 0;
     left: 0;
@@ -796,7 +767,6 @@ html.js .form-autocomplete.throbbing {
 .search-main {
     background: url(../img/bg-small.jpg) no-repeat center center #0a2a42;
     background-size: cover;
-    margin-top: 50px;
 }
 .page-customerror-404 .search-main {
     background: none;
@@ -1757,9 +1727,6 @@ input.webform-calendar:active {
 .node-webform label {
     display: block;
 }
-.node-webform label.option {
-    display: inline-block;
-}
 .node-webform .form-text,
 .node-webform textarea,
 .node-webform select {
@@ -1972,7 +1939,7 @@ div.error {
 }
 div.warning {
     border-left: 5px solid #fdc725;
-    color: #0B2265;
+    color: #fdc725;
 }
 div.status {
     border-left: 5px solid #009876;
@@ -2090,16 +2057,16 @@ footer[role="contentinfo"].sticky-feedback {
   position: relative;
   font-size: 22px;
   color: #404352;
-  /*min-height: 120px;*/
+  min-height: 120px;
 }
 .beta-wrapper:before {
   position: absolute;
   content: "";
   top: 0;
   left: 0;
-  /*background: url(../img/ribbon-alert.png) no-repeat 0 0;*/
+  background: url(../img/ribbon-alert.png) no-repeat 0 0;
   width: 113px;
-  /*height: 112px;*/
+  height: 112px;
 }
 .beta-wrapper .info {
   position: relative;
@@ -2110,19 +2077,10 @@ footer[role="contentinfo"].sticky-feedback {
 .beta-wrapper .info:before {
   content: "";
   display: block;
-  /*background: url(../img/icon-alert.png) no-repeat center 0;*/
+  background: url(../img/icon-alert.png) no-repeat center 0;
   width: 100%;
-  /*height: 80px;*/
-  /*margin-bottom: 10px;*/
-}
-
-@media (max-width: 720px) {
-    .beta-wrapper {
-        padding-top: 50px;
-    }
-    header[role="banner"] {
-        margin-top: 50px;
-    }
+  height: 80px;
+  margin-bottom: 10px;
 }
 
 .item-list .pager li {
@@ -2171,315 +2129,16 @@ span.ext {
     margin: 10px;
 }
 
-/*#wcc_emergency {display: none; top: 50px;}*/
-#wcc_emergency a,
-#wcc_emergency a:visited,
-#wcc_emergency a:hover,
-#wcc_emergency a:active {
-  text-decoration: underline;
+#wcc_emergency {display: none; top: 50px;}
+
+img.mainlogo {
+  height: 45px;
+  padding: 10px 0 10px 0;
+}
+
+img.footerlogo {
+  height: 58px;
+  padding: 5px 0 10px 0;
+  margin: 0;
 }
 /* --- end SMALL breakpoint */
-
-/* ==========================================================================
-   Contrib module overrides
-   ========================================================================== */
-span.mailto {
-    padding-right: 0px !important;
-}
-
-
-
-/* --- CCK Blocks --- */
-
-.block-cck-blocks,
-.block-webform {
-  margin: 0 auto;
-  max-width: 58.75rem;
-}
-
-.block-webform {
-  clear: both;
-}
-
-.block-cck-blocks .content {
-  margin-left: 0.625rem;
-  margin-right: 0.625rem;
-  padding-left: 80px;
-  padding-right: 80px;
-  padding-bottom: 10px;
-  position: relative;
-  background: none repeat scroll 0 0 #fff;
-}
-
-.block-webform .content {
-  /*margin-left: 0.625rem;*/
-  margin-right: 0.625rem;
-  /*padding-left: 80px;*/
-  padding-right: 80px;
-  padding-bottom: 10px;
-  position: relative;
-  background: none repeat scroll 0 0 #fff;
-}
-
-/*
- * Non-node and non-taxonomy pages and node pages have different containers
- * so we adjust accordingly
- */
-.region-content .block-webform .content {
-  margin-left: 0;
-  padding-left: 0;
-}
-
-@media (max-width: 960px) {
-    .page-node .region-content .block-webform .content,
-    .page-taxonomy .region-content .block-webform .content {
-      margin-left: 0.625rem;
-      padding-left: 80px;
-    }
-}
-
-@media (max-width: 720px) {
-    .page-node .region-content .block-webform .content,
-    .page-taxonomy .region-content .block-webform .content {
-      padding-left: 0;
-    }
-}
-
-/* End page margin adjustments */
-
-@media (max-width: 720px) {
-    .block-cck-blocks .content,
-    .block-webform .content {
-        padding-left: 0;
-        padding-right: 0;
-    }
-}
-
-.block-webform .content .form-item {
-  /*float: left;*/
-  margin-top: 0;
-}
-
-.block-webform h2 {
-  color: #2457b5;
-  font-weight: 400;
-  font-size: 24px;
-  margin-top: 0;
-  padding-top: 1em;
-  /*display: none;*/
-}
-
-.block-webform .content .form-text {
-    border: 1px solid #b9bcce;
-    border-radius: 0;
-    color: #292b36;
-
-}
-
-.block-webform label {
-  font-weight: normal;
-}
-
-/* Fivestar module customisations */
-
-.field-type-fivestar .field-label {
-  font-weight: normal;
-}
-
-.field-type-fivestar .field-items {
-  padding-top: 3px;
-}
-
-.node-type-unbranded-page .block-webform {
-  display: none;
-}
-
-fieldset.collapsible a {
-  background: none;
-}
-
-
-
-/* City4all */
-.alt-title {
-  background: rgba(0, 0, 0, 0.3);
-}
-
-.column-content {
-  overflow: hidden;
-  background: #fff;
-}
-
-.column-content-inner {
-  padding: 50px 0;
-
-}
-
-.landing-callout {
-  margin-top: 40px;
-}
-
-.landing-callout h3,
-.landing-callout p {
-  padding: 5px;
-}
-
-.landing-callout h3 {
-  background: red;
-  text-transform: uppercase;
-  color: #fff;
-  font-size: 1.5em;
-  line-height: 100%;
-  margin: 0.5em 0;
-  padding-left: 30px;
-}
-
-.landing-callout p {
-  background: pink;
-  color: rgb(34, 34, 34);
-  padding: 10px 10px 20px 10px;
-}
-
-.landing-callout img {
-  width: 60px;
-  position: absolute;
-  top: -10px;
-  left: -10px;
-}
-
-/* Colour Options */
-
-.landing-callout.yellow h3 {
-  background: #ffba00;
-}
-.landing-callout.yellow p {
-  background: #f9d58d;
-}
-
-.landing-callout.green h3 {
-  background: #78c73b;
-}
-.landing-callout.green p {
-  background: #bbe099;
-}
-
-.landing-callout.blue h3 {
-  background: #00bae8;
-}
-.landing-callout.blue p {
-  background: #8fdaf4;
-}
-
-/* Make the first paragraph a 'lead' */
-.city-body h2+p+p {
-  font-size: 1.5em;
-  font-weight: 100;
-}
-
-.city-body h2 {
-  font-size: 3em;
-  font-weight: 100;
-}
-
-.city-body img {
-  float: left;
-  margin-right: 10px;
-  margin-top: 0.3em;
-}
-
-.city-intro {
-  font-size: 1.2em;
-  color: #fff;
-  font-weight: 100;
-  margin-left: 100px;
-  margin-right: 10px;
-}
-
-.city-intro img {
-  position: absolute;
-  left: 0px;
-  top: 0;
-  width: 110px;
-}
-
-.city-buttons img {
-    margin: 0 auto;
-    display: block;
-}
-
-.page-taxonomy-term .icon-city-for-all:before {
-    color: #FFF !important;
-}
-
-.icon-city-for-all:before {
-  font-family: 'city' !important;
-}
-
-/* Young Westminster Icons */
-.icon-young-basketball:before,
-.icon-young-books:before,
-.icon-young-briefcase:before,
-.icon-young-fish:before,
-.icon-young-flag:before,
-.icon-young-football:before,
-.icon-young-like:before,
-.icon-young-medical-case:before,
-.icon-young-news:before,
-.icon-young-pencil:before,
-.icon-young-people:before,
-.icon-young-rake-scoop:before,
-.icon-young-sign:before,
-.icon-young-stop-watch:before,
-.icon-young-study:before,
-.icon-young-ten-pin:before,
-.icon-young-tickets:before,
-.icon-young-university:before {
-  font-family: 'young_wcc' !important;
-}
-
-/* Collapsible text areas*/
-
-.sp-content form .collapse-text-text h3 {
-    color: #2457b5;
-}
-
-/* Waste and Recycling schedule style overrides */
-
-div.waste-schedule-header {
-  margin-top: 30px;
-  width: 100%;
-}
-
-div.waste-schedule-header img.waste-icon {
-  width: 70px;
-  float: left;
-}
-
-div.waste-schedule-header h2 {
-  float: left;
-}
-
-div.waste-schedule-content {
-  width: 100%;
-  padding-left: 10px;
-  padding-right: 5px;
-  float: left;
-}
-
-body.page-env-schedule table {
-    width: 100%;
-    float: left;
-    min-width: 0;
-}
-
-@media (max-width: 720px) {
-    body.page-env-schedule .icon-arrow-left:before,
-    body.page-env-schedule .icon-arrow-right:before {
-        content: none;
-    }
-  }
-
-  #google_translate_element {
-        text-align: right;
-}
-
