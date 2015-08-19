@@ -10,8 +10,8 @@
 
 function cobrand_page_title($title) {
     global $site_name;
-    if ($site_name == 'westminster' && $title = 'Introduction to e-petitions')
-        return 'Introduction to petitions';
+    if ($site_name == 'westminster' && $title == 'Introduction to e-petitions')
+        return 'Create or view petitions';
     if ($site_name != 'islington')
         return $title;
     return str_replace('petition', 'Petition', $title);
