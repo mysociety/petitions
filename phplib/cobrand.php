@@ -1546,7 +1546,8 @@ you have signed a petition that has reached more than
 <?=cobrand_signature_threshold() ?> signatures by the time it closes, you will
 be sent a response from the Government by email.
 </p>
-<?
+<?  } elseif ($site_name == 'westminster') {
+        // Westminster don't want this bit of intro text at all
     } else {
 ?>
 <p>You can view and sign any <a href="/list">current petitions</a>, and see our
