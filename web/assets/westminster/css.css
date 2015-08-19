@@ -173,3 +173,12 @@ a:hover {
 table.petition-list-table {
   max-width: none;
 }
+
+/* Westminster limit buttons to 220px wide, but one of ours is bigger, so fix
+   that.
+   Also, something about the button styling causes them to stack up horribly
+   close together, so space them out a bit with a bottom-margin */
+.sp-content .leading input[type="submit"] {
+  max-width: none;
+  margin-bottom: 1em;
+}
