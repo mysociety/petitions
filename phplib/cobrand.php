@@ -326,13 +326,13 @@ function cobrand_creation_comments_label(){
 
 function cobrand_creation_previous_button_first() {
     global $site_name;
-    if ($site_name == 'ipswich' || $site_name == 'surreycc') return true;
+    if ($site_name == 'ipswich' || $site_name == 'surreycc' || $site_name == 'rbwm') return true;
     return false;
 }
 
 function cobrand_creation_button_separator() {
     global $site_name;
-    if ($site_name == 'salford' || $site_name == 'surreycc') return ' &nbsp; ';
+    if ($site_name == 'salford' || $site_name == 'surreycc' || $site_name == 'rbwm') return ' &nbsp; ';
     return '<br />';
 }
 
