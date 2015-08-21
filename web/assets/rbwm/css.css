@@ -98,3 +98,28 @@ h3 {
     margin-left: 0;
     width: auto;
 }
+
+@media screen and (max-width: 500px){
+    /* Stack the homepage content in a single column (not two) on narrow screens */
+    div#most_popular, div#most_recent, div#petition_actions, div#front_how {
+        float: none;
+        width: 100%;
+    }
+
+    /* Do the same for the 'sign petition' page */
+    form#signForm .relative_width_50, form#signForm .relative_width_47, #signatories, #more_detail {
+        float: none;
+        width: 100%;
+    }
+
+    /* Put a bit of vertical space underneath homepage create/view links */
+    div#petition_actions {
+        margin-bottom: 7em;
+    }
+
+    /* Make sure open/closed/rejected petition links don't overlap on narrow screens */
+    .petition_view_tabs a, .petition_view_tabs span {
+        display: inline-block;
+        margin-bottom: 12px;
+    }
+}
