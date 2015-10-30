@@ -1618,7 +1618,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'spelthorne')
         return 'http://www.spelthorne.gov.uk/article/3194/Petitions-Scheme';
     if ($site_name == 'stevenage')
-        return 'http://www.stevenage.gov.uk/councilanddemocracy/petitions/petitionscheme/epetitions';
+        return 'http://www.stevenage.gov.uk/about-the-council/councillors-and-democracy/24184/';
     if ($site_name == 'suffolkcoastal')
         return 'http://www.suffolkcoastal.gov.uk/yourcouncil/haveyoursay/petitions/petitionsterms/';
     if ($site_name == 'surreycc')
