@@ -1550,7 +1550,7 @@ sub post_select ($$$) {
                 }
             },
             $rds, $wrs)) {
-        Log::print('error', "connection to child process closed");
+        Log::print('err', "connection to child process closed");
         $self->{failed} = 1;
     }
 }
@@ -1624,7 +1624,7 @@ sub do_ipc ($$$$$;$$) {
                     my $what = $is_db_child
                                 ? 'database process'
                                 : 'parent process';
-                    Log::print('error', "reading from socket in $what: $!");
+                    Log::print('err', "reading from socket in $what: $!");
                     $didclose = 1;
                     last;
                 }
@@ -1651,7 +1651,7 @@ sub do_ipc ($$$$$;$$) {
                     my $what = $is_db_child
                                 ? 'parent process'
                                 : 'database process';
-                    my $prio = $!{EPIPE} ? 'warning' : 'error';
+                    my $prio = $!{EPIPE} ? 'warning' : 'err';
                     Log::print($prio, "while sending data to $what: $!");
                     $didclose = 1;
                 }
@@ -2691,7 +2691,7 @@ while (!$foad) {
     $S->post_select($rds, $wrs);
 
     if ($S->failed()) {
-        Log::print('error', "database child process failed; starting another");
+        Log::print('err', "database child process failed; starting another");
         undef $S;
         $S = new Source($Q);
     }
