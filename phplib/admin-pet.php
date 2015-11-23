@@ -573,13 +573,13 @@ petitions.</p>';
 
         print '<p>';
         if ($page > 0) {
-            print '<a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page-1).'">Previous '.$page_limit.'</a>';
+            print '<a href="'.$this->self_link.'&amp;s='.$sort.'&amp;o='.$status.'&amp;p='.($page-1).'">Previous '.$page_limit.'</a>';
         }
         if ($page > 0 && $page < floor($count/$page_limit)) {
             print ' | ';
         }
         if ($page < floor($count/$page_limit)) {
-            print '<a href="'.$this->self_link.';s='.$sort.';o='.$status.';p='.($page+1).'">Next '.$page_limit.'</a>';
+            print '<a href="'.$this->self_link.'&amp;s='.$sort.'&amp;o='.$status.'&amp;p='.($page+1).'">Next '.$page_limit.'</a>';
         }
         print '</p>';
         $this->petition_header($sort, $status);
