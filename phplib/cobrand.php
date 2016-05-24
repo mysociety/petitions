@@ -816,8 +816,12 @@ function cobrand_rejected_petition_timeout() {
 }
 
 function cobrand_admin_is_site_user() {
+    global $site_group;
     $sites = explode(',', OPTION_SITE_NAME);
     $user = http_auth_user();
+    if ($site_group == 'surreycc' && $user == 'surreycpt') {
+        $user = 'surreycc';
+    }
     if (preg_match('#@([^.]*)\.#', $user, $m))
         $user = $m[1];
     if (in_array($user, $sites))
