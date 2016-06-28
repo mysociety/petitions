@@ -33,14 +33,52 @@ div#front_how {
     }
 }
 
+/* Give tabs the brand colours */
 p.petition_view_tabs {
-    border-bottom: solid 2px #2F6749;
+    border-bottom: solid 2px #6caa3d;
 }
 .petition_view_tabs span {
-    background-color: #2F6749;
+    background-color: #6caa3d;
 }
 
-/* Helpers */
+/* Make our buttons look like Elmbridge's */
+.button {
+    background: #6caa3d;
+    border-radius: 5px;
+    border: 1px solid #6caa3d;
+    padding: 10px;
+    color: #fff;
+    font-size: 1.05em;
+    font-weight: bold;
+    /*
+     * When there's > 1 button, petitions separates them with a <br>, make
+     * that not look so bad
+     */
+    margin-bottom: 1em;
+
+
+}
+
+/*
+ * Override cols/size setting on some form elements because it's too big
+ * for small screens.
+ */
+#pet_content,
+textarea {
+    max-width: 100%;
+}
+
+/* Make sure help text on fields looks ok on small screens too */
+@media screen and (max-width: 800px) {
+    #address,
+    #new_you p small {
+        display: block;
+        clear: both;
+        margin-left: 10px;
+    }
+}
+
+/* Clearfix Helpers */
 div#petition_actions:before,
 div#petition_actions:after,
 .clearfix:before,
