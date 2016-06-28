@@ -1,7 +1,7 @@
 #mysociety {
-    float: right;
-    width: 100%;
-    margin-top: 1em;
+    /* This is what Elmbridge's CSS gives their top level containers */
+    margin: 1em;
+    padding: 20px;
 }
 
 div#petition_actions {
@@ -28,4 +28,16 @@ p.petition_view_tabs {
 .petition_view_tabs span {
     background-color: #2F6749;
 }
+
+/* Helpers */
+.clearfix:before,
+.clearfix:after {
+  content: " ";
+  display: table; }
+
+.clearfix:after {
+  clear: both; }
+
+.clearfix {
+  *zoom: 1; }
 
