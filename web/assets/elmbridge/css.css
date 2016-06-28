@@ -22,6 +22,17 @@ div#front_how {
     width: 45%;
 }
 
+/* Go single column on smaller screens */
+@media screen and (max-width: 800px) {
+    div#most_recent,
+    div#most_popular,
+    div#front_how,
+    div#petition_actions {
+        float: none;
+        width: 100%;
+    }
+}
+
 p.petition_view_tabs {
     border-bottom: solid 2px #2F6749;
 }
@@ -30,14 +41,20 @@ p.petition_view_tabs {
 }
 
 /* Helpers */
+div#petition_actions:before,
+div#petition_actions:after,
 .clearfix:before,
 .clearfix:after {
-  content: " ";
-  display: table; }
+    content: " ";
+    display: table;
+}
 
+div#petition_actions:after,
 .clearfix:after {
-  clear: both; }
+    clear: both; }
 
+div#petition_actions,
 .clearfix {
-  *zoom: 1; }
+    *zoom: 1;
+}
 
