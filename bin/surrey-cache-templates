@@ -81,16 +81,17 @@ $footer =~ s/src="(\/[^"^\/]{1}[^"]+)"/src="http:\/\/www.surreyheath.gov.uk$1"/g
 output('surreyheath', $header, $footer);
 
 # Elmbridge
-$header = get_page('http://www.elmbridge.gov.uk/website_header.asp');
+$header = get_page('http://emaps.elmbridge.gov.uk/ebc_header_new.htm');
 $header =~ s/<title>/<title>PARAM_TITLE - /;
-$header =~ s/iso-8859-1/utf-8/; # Sigh
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css" />
 <link rel="stylesheet" type="text/css" href="/assets/elmbridge/css.css" />
 </head>};
 $header .= '&gt; <a href="/">E-petitions</a> &gt; PARAM_H1';
-$header .= "\n<div id='mysociety'>\n";
-$footer = "</div>\n";
-$footer .= get_page('http://www.elmbridge.gov.uk/website_footer.asp');
+# Have to close off all the <div>s their page opens for the breadcrumb
+$header .= "\n</div>\n</div>\n</div>\n</div>\n</div>\n"; # Yep, five divs deep!
+$header .= "\n<div id='mysociety' class='clearfix'>\n";
+$footer = "\n</div>\n";
+$footer .= get_page('http://emaps.elmbridge.gov.uk/ebc_footer_new.htm');
 output('elmbridge', $header, $footer);
 
 # Tandridge
