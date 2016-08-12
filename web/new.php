@@ -427,6 +427,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
         $example_string = '1 week';
         $maximum = date('jS F Y', strtotime($deadline_limits['date']));
     } elseif (array_key_exists('weeks', $deadline_limits)) {
+        $example_string = "4 weeks";
         $maximum = sprintf('%d weeks', $deadline_limits['weeks']);
     } elseif ($deadline_limits['years'] && $deadline_limits['months']) {
         $maximum = sprintf('%d year, %d months', $deadline_limits['years'], $deadline_limits['months']);
