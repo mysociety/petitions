@@ -734,8 +734,7 @@ function step_main_error_check(&$data) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year.'), $deadline_limits['years']);
         } elseif ($deadline_limits['months']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d months.'), $deadline_limits['months']);
-        }
-    } elseif ($deadline_limits['weeks']) {
+        } elseif ($deadline_limits['weeks']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d weeks.'), $deadline_limits['weeks']);
         }
     }
