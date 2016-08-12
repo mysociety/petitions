@@ -29,6 +29,8 @@ function petition_form_intro() {
     $maximum = 'for up to 12 months';
     if (array_key_exists('date', $deadline_limits)) {
         $maximum = 'until ' + date('jS F Y', strtotime($deadline_limits['date']));
+    if (array_key_exists('weeks', $deadline_limits)) {
+        $maximum = sprintf('for up to %d weeks', $deadline_limits['weeks']);
     } elseif ($deadline_limits['years'] && $deadline_limits['months']) {
         $maximum = sprintf('for up to %d year, %d months', $deadline_limits['years'], $deadline_limits['months']);
     } elseif ($deadline_limits['years']) {
@@ -39,8 +41,6 @@ function petition_form_intro() {
         } else {
             $maximum = sprintf('for up to %d months', $deadline_limits['months']);
         }
-    } elseif ($deadline_limits['weeks']) {
-        $maximum = sprintf('for up to %d weeks', $deadline_limits['weeks']);
     }
     $n = 1;
     echo cobrand_create_heading('Step ' . ($n++) . ': Create your petition');

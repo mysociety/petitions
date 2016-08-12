@@ -426,6 +426,8 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     if (array_key_exists('date', $deadline_limits)) {
         $example_string = '1 week';
         $maximum = date('jS F Y', strtotime($deadline_limits['date']));
+    } elseif (array_key_exists('weeks', $deadline_limits)) {
+        $maximum = sprintf('%d weeks', $deadline_limits['weeks']);
     } elseif ($deadline_limits['years'] && $deadline_limits['months']) {
         $maximum = sprintf('%d year, %d months', $deadline_limits['years'], $deadline_limits['months']);
     } elseif ($deadline_limits['years']) {
@@ -437,8 +439,6 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
         } else {
             $maximum = sprintf('%d months', $deadline_limits['months']);
         }
-    } elseif ($deadline_limits['weeks']) {
-        $maximum = sprintf('%d weeks', $deadline_limits['weeks']);
     }
     $after = "(e.g. &ldquo;$example_string&rdquo;; maximum $maximum";
     $after .= cobrand_creation_duration_help() . ')';
@@ -728,14 +728,14 @@ function step_main_error_check(&$data) {
     elseif ($deadline_limit < $data['deadline']) {
         if (array_key_exists('date', $deadline_limits)) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is before %s.'), date('jS F Y', strtotime($deadline_limits['date'])));
+        } elseif (array_key_exists('weeks', $deadline_limits)) {
+            $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d weeks.'), $deadline_limits['weeks']);
         } elseif ($deadline_limits['years'] && $deadline_limits['months']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year, %d months.'), $deadline_limits['years'], $deadline_limits['months']);
         } elseif ($deadline_limits['years']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year.'), $deadline_limits['years']);
         } elseif ($deadline_limits['months']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d months.'), $deadline_limits['months']);
-        } elseif ($deadline_limits['weeks']) {
-            $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d weeks.'), $deadline_limits['weeks']);
         }
     }
 
