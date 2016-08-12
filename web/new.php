@@ -85,7 +85,7 @@ function check_edited_petition(&$data) {
 
     if ($petition['status'] != 'rejectedonce')
         err("Sorry, you cannot edit a petition in status \"${petition['status']}\"", E_USER_NOTICE);
- 
+
     /* Fill out data with data from database. */
     $petition['pet_content'] = $petition['content'];
     foreach (array_keys($petition) as $field) {
@@ -105,7 +105,7 @@ function petition_form_submitted($steps) {
 
     if (!array_key_exists('token', $data) && get_http_var('token'))
         $data['token'] = get_http_var('token');
-    
+
     if (isset($_GET['category'])) {
         $data['category'] = intval($_GET['category']);
     }
@@ -173,7 +173,7 @@ function petition_submitted_main(&$data) {
 function petition_submitted_you(&$data) {
     if (array_key_exists('name', $data) && $data['name']==_('<Enter your name>'))
         $data['name'] = '';
-    if (array_key_exists('overseas', $data) && $data['overseas']=='-- Select --') 
+    if (array_key_exists('overseas', $data) && $data['overseas']=='-- Select --')
         $data['overseas'] = '';
     if (!array_key_exists('address', $data) || $data['address'] == '-- Select --')
         $data['address'] = '';
@@ -199,7 +199,7 @@ function petition_submitted_preview(&$data) {
     return array();
 }
 
-/* 
+/*
  * Various HTML utilities for these forms
  */
 
@@ -435,8 +435,10 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
             $maximum = '1 month';
             $example_string = '2 weeks';
         } else {
-            $maximum = sprintf('%d months', $deadline_limits['months']); 
-        } 
+            $maximum = sprintf('%d months', $deadline_limits['months']);
+        }
+    } elseif ($deadline_limits['weeks']) {
+        $maximum = sprintf('%d weeks', $deadline_limits['weeks']);
     }
     $after = "(e.g. &ldquo;$example_string&rdquo;; maximum $maximum";
     $after .= cobrand_creation_duration_help() . ')';
@@ -500,7 +502,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
 
     if (!array_key_exists('token', $data)) {
         $fields['email'] = _('Your email');
-        $fields['email2'] = _('Confirm email'); 
+        $fields['email2'] = _('Confirm email');
     }
 
     list ($optional, $mandatory, $mandatory_legend) = cobrand_input_field_mandatory_markers();
@@ -508,10 +510,10 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
     foreach ($fields as $name => $desc) {
         if ($name == 'address' && ! cobrand_creation_ask_for_address() )
           continue; # skip loop: thereby suppressing address label as well as textarea input
-          
+
         if ($name == 'address' && cobrand_creation_do_address_lookup() && !array_key_exists('address_lookup', $data))
             continue;
-        
+
         if ($name == 'overseas' && ! $desc) {
             continue; # council has suppressed the overseas dropdown (e.g., Sufffolk Coastal)
         }
@@ -524,14 +526,14 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
             if ($name == 'org_url' || $name == 'organisation' || ($name == 'postcode' && cobrand_creation_postcode_optional()) || ($name == 'telephone' && cobrand_creation_phone_number_optional())) {
                 $mandatory_mark = $optional;
             } else {
-                $mandatory_mark = $mandatory;            
+                $mandatory_mark = $mandatory;
             }
             printf('<p><label for="%s">%s:</label> %s', $name, htmlspecialchars($desc), $mandatory_mark );
         }
-        
+
         if (!array_key_exists($name, $data))
             $data[$name] = '';
-        
+
         if ($name == 'address') {
             if (!cobrand_creation_do_address_lookup()) {
                 textarea($name, $data[$name], 30, 4, true, $errors);
@@ -549,7 +551,7 @@ function petition_form_you($steps, $step, $data = array(), $errors = array()) {
 </select>
 <?
             }
-        } elseif ($name == 'overseas') {  
+        } elseif ($name == 'overseas') {
             if ($desc && !cobrand_creation_within_area_only() ) { /* desc is empty if council wants to suppress this */
 ?>
 <p><label class="long" for="overseas">Or, if you're an
@@ -638,14 +640,14 @@ function step_main_error_check(&$data) {
         if (!array_key_exists('body', $data) || !$data['body']) {
             $errors['body'] = _('Please pick who you wish to petition');
         } else {
-            /* 
+            /*
                By default, lookup is keyed on 'id', but use 'ref' (which is effectively the body's
                slug, and also unique) if we have alphachars in it: the whypoll javascript may be
                using ref instead of id.
             */
-            $lookup_fieldname = 'id'; 
+            $lookup_fieldname = 'id';
             if (preg_match('/[a-z]/i', $data['body'])) {
-                $lookup_fieldname = 'ref'; 
+                $lookup_fieldname = 'ref';
             }
             $q = db_query("SELECT ref FROM body WHERE $lookup_fieldname=?", array($data['body']));
             if (!db_num_rows($q))
@@ -680,13 +682,13 @@ function step_main_error_check(&$data) {
         else
             $check_ref = false;
     }
-    
+
     if ($check_ref) {
         $dupe = db_getOne('select id from petition where lower(ref) = ?', strtolower($data['ref']));
         if ($dupe)
             $errors['ref'] = _('That short name is already taken');
     }
-    
+
 #    if (!$data['detail'])
 #        $errors['detail'] = _('Please enter more details');
     if (!$data['pet_content'])
@@ -710,6 +712,9 @@ function step_main_error_check(&$data) {
     $deadline_limits = cobrand_creation_deadline_limit();
     if (array_key_exists('date', $deadline_limits)) {
         $deadline_limit = $deadline_limits['date'];
+    } elseif (array_key_exists('weeks', $deadline_limits)) {
+        $relative_limit = sprintf('+ %d weeks', $deadline_limits['weeks']);
+        $deadline_limit = date('Y-m-d', strtotime($relative_limit, strtotime($pet_today)));
     } else {
         $pet_today_arr = explode('-', $pet_today);
         $deadline_limit = date('Y-m-d', mktime(12, 0, 0, $pet_today_arr[1] + $deadline_limits['months'], $pet_today_arr[2], $pet_today_arr[0] + $deadline_limits['years']));
@@ -729,6 +734,9 @@ function step_main_error_check(&$data) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d year.'), $deadline_limits['years']);
         } elseif ($deadline_limits['months']) {
             $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d months.'), $deadline_limits['months']);
+        }
+    } elseif ($deadline_limits['weeks']) {
+            $errors['rawdeadline'] = sprintf(_('Please change your duration so it is less than %d weeks.'), $deadline_limits['weeks']);
         }
     }
 
@@ -795,7 +803,7 @@ function step_you_error_check(&$data) {
                 $errors['postcode'] = sprintf("Sorry, that postcode is not within %s", $area[0]);
             }
         }
-    } 
+    }
 
     if (cobrand_creation_ask_for_address_type()) {
         if (!isset($data['address_type']) || !in_array($data['address_type'], array('home','work','study'))) {
@@ -812,7 +820,7 @@ function step_you_error_check(&$data) {
     if (!cobrand_creation_phone_number_optional()) {
         $vars['telephone'] = 'phone number';
     }
-    
+
     if (cobrand_creation_do_address_lookup()) {
         if (!$data['address']) $errors['address'] = 'Please pick an address';
     } elseif (cobrand_creation_ask_for_address()) {
@@ -870,7 +878,7 @@ your name and organisation:</p>
 <li>Organisation: <strong><?=$data['organisation'] ?></strong></li>
 <? if (cobrand_creation_ask_for_address()) {
       echo '<li>Address: <strong>' . $data['address'] . '</strong></li>';
-    } 
+    }
 ?>
 <? if ($data['postcode']) { ?>
     <li>Postcode: <strong><?=$data['postcode'] ?></strong></li>
@@ -950,7 +958,7 @@ function petition_create($data) {
     $data['pet_content'] = str_replace("\t", ' ', $data['pet_content']);
 
     if (! cobrand_display_category()) $data['category'] = 0;
-    
+
     if (OPTION_SITE_APPROVAL && array_key_exists('token', $data)) {
         /* Resubmitted petition. */
         list($what, $id) = token_check($data['token']);
@@ -980,7 +988,7 @@ function petition_create($data) {
         global $page_title;
         $page_title = _("Thank you for resubmitting your petition");
 ?>
-    <p class="noprint loudmessage">We have resubmitted your petition for approval. 
+    <p class="noprint loudmessage">We have resubmitted your petition for approval.
     You'll be notified shortly with the results.</p>
     <p class="noprint loudmessage"><a href="/">Petitions home</a>
 <?
@@ -997,7 +1005,7 @@ function petition_create($data) {
                     insert into petition (
                         id, body_id, detail, content,
                         deadline, rawdeadline,
-                        email, name, ref, 
+                        email, name, ref,
                         organisation, address, address_type,
                         postcode, overseas, telephone, org_url,
                         comments, creationtime, category,
@@ -1005,7 +1013,7 @@ function petition_create($data) {
                     ) values (
                         ?, ?, ?, ?,
                         ?, ?,
-                        ?, ?, ?, 
+                        ?, ?, ?,
                         ?, ?, ?,
                         ?, ?, ?, ?,
                         ?, ms_current_timestamp(), ?,

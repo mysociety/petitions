@@ -2,12 +2,12 @@
 /*
  * admin-pet.php:
  * Petition admin pages.
- * 
+ *
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
  * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
  *
  * $Id: admin-pet.php,v 1.136 2010-05-06 12:30:59 matthew Exp $
- * 
+ *
  */
 
 require_once "../phplib/pet.php";
@@ -90,7 +90,7 @@ EOF;
         global $pet_time;
         $from = get_http_var('from');
         $to = get_http_var('to');
-        
+
         $multiple = '';
         if (OPTION_SITE_TYPE == 'multiple' && ($site = cobrand_admin_is_site_user()))
             $multiple = "_$site";
@@ -124,7 +124,7 @@ EOF;
         if ($petitions['live'] || $petitions['finished'])
             $average_sigs_per_petition = round($signatures['total'] / ($petitions['live'] + $petitions['finished']), 2);
 
-        # Responses 
+        # Responses
         $responses = db_getOne("select count(*) from message where circumstance = 'government-response'");
         $unique_responses = db_getOne("select count(distinct petition_id) from message where circumstance = 'government-response'");
 
@@ -175,7 +175,7 @@ EOF;
         #while ($r = db_fetch_array($q)) {
         #    $cats = str_replace('rejection_', '', $r[0]);
         #    $counts = $r[1];
-        #    $rejection_table .= "<tr><td>".prettify_categories($cats, false)."</td><td>$counts</td></tr>"; 
+        #    $rejection_table .= "<tr><td>".prettify_categories($cats, false)."</td><td>$counts</td></tr>";
         #}
         #print <<<EOF
 #<h2>Petition rejection reasons</h2>
@@ -337,7 +337,7 @@ class ADMIN_PAGE_PET_OFFLINE {
                     ) values (
                         ?, ?, ?, ?,
                         ?, ?,
-                        ?, ?, ?, 
+                        ?, ?, ?,
                         ?, ?,
                         ?, ?,
                         ?, ?, ?,
@@ -442,7 +442,7 @@ class ADMIN_PAGE_PET_MAIN {
             $status_query = "(status = 'finished' and archived is null)";
         elseif ($status == 'archived')
             $status_query = "(status = 'finished' and archived is not null)";
-        
+
         $status_query .= cobrand_admin_site_restriction();
 
         $surge = '';
@@ -452,7 +452,7 @@ class ADMIN_PAGE_PET_MAIN {
         $q = db_query("
             SELECT petition.*, body.name as body_name, body.ref as body_ref,
                 date_trunc('second',laststatuschange) AS laststatuschange,
-                (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late, 
+                (ms_current_timestamp() - interval '7 days' > laststatuschange) AS late,
                 (deadline + interval '2 years' >= ms_current_date()) AS response_possible,
                 cached_signers AS signers,
                 $surge
@@ -525,7 +525,7 @@ class ADMIN_PAGE_PET_MAIN {
                 elseif ($r['message_count'])
                     $row .= 'Response sent';
                 else {
-                    $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] . 
+                    $row .= '<form name="petition_admin_go_respond" method="post" action="'.$this->self_link.'"><input type="hidden" name="petition_id" value="' . $r['id'] .
                         '">';
                     if ($r['response_possible'] == 't' && !OPTION_RESPONSE_DISABLED) {
                         $row .= '<input type="submit" name="respond" value="Write response">';
@@ -665,7 +665,7 @@ petitions.</p>';
             print '</p></form>';
         } elseif ($pdata['status'] == 'finished' || $pdata['status'] == 'live') {
             print '<form name="petition_admin_go_respond" method="post" action="'
-                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] .
                 '">';
             if ($pdata['response_possible'] == 't' && !OPTION_RESPONSE_DISABLED) {
                 print '<input type="submit" name="respond" value="Write response">';
@@ -678,7 +678,7 @@ petitions.</p>';
             print '</form>';
         } elseif ($pdata['status'] == 'rejected') {
             print '<form name="petition_admin_go_respond" method="post" action="'
-                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] . 
+                . $this->self_link . '"><input type="hidden" name="petition_id" value="' . $pdata['id'] .
                 '"><input type="submit" name="remove" value="Remove petition">';
             print '</form>';
         }
@@ -795,7 +795,7 @@ petitions.</p>';
             . '"><label for="add_note">Add note:</label> <input id="add_note" type="text" name="note" value="" size="50">
             <input type="submit" value="Add"></form>';
 
-        $q = db_query('select * from petition_log 
+        $q = db_query('select * from petition_log
                 where petition_id = ? order by order_id', $pdata['id']);
 
         print '<table cellpadding=4 cellspacing=0 border=0>';
@@ -918,7 +918,7 @@ map.setCenter(lonLat, 5);
                 $query .= " AND showname='t'";
             if ($sort=='t') $query .= ' ORDER BY signtime DESC';
             else $query .= ' ORDER BY signname DESC';
-            if ($list_limit) 
+            if ($list_limit)
                 $query .= " LIMIT $list_limit";
             $q = db_query($query, $pdata['id']);
             $out = array();
@@ -983,7 +983,7 @@ map.setCenter(lonLat, 5);
                     echo '<p><input type="hidden" name="delete_all" value="1">
 <input type="submit" value="Remove all ticked"></p></form>';
                 if ($list_limit && $c >= $list_limit) {
-                    print "<p>... only $list_limit signers shown, "; 
+                    print "<p>... only $list_limit signers shown, ";
                     print "<a href='" . $this->self_link . "&amp;petition=$petition&amp;s=$sort&amp;l=-1'>show all</a>";
                     print '</p>';
                 }
@@ -1260,7 +1260,7 @@ EOF;
         } else {
             if ($q_n > 0) {
                 if (sizeof($errors))
-                    print '<div id="errors"><ul><li>' . 
+                    print '<div id="errors"><ul><li>' .
                         join('</li><li>' , $errors) . '</li></ul></div>';
                 print '<h2>Preview</h2>';
                 $out = pet_create_response_email($q_html_mail ? 'html' : 'plain',
@@ -1375,7 +1375,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
         db_query('delete from petition_area where petition_id = ?', $petition_id);
         $p = new Petition($petition_id);
         if (! $new_wards) {
-            $p->log_event("Admin updated wards to none (deleted existing wards, if any)");            
+            $p->log_event("Admin updated wards to none (deleted existing wards, if any)");
         } else {
             $ward_names = array();
             foreach ($new_wards as $ward) {
@@ -1384,7 +1384,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
                 db_query('insert into petition_area (petition_id, area_id) values (?, ?)', $petition_id, $ward);
             }
             $p->log_event("Admin updated wards to " . join(', ', $ward_names));
-        } 
+        }
         db_commit();
         print '<p><em>Wards updated</em></p>';
     }
@@ -1491,7 +1491,7 @@ To email the creator, you can directly email <a href="mailto:<?=privacy($p->crea
             print "<p><em>$message</em></p>";
         } else {
             if (get_http_var('submit') && sizeof($errors))
-                print '<div id="errors"><ul><li>' . 
+                print '<div id="errors"><ul><li>' .
                     join('</li><li>' , $errors) . '</li></ul></div>';
 ?>
 <form name="petition_admin_redraft" action="<?=$this->self_link?>" accept-charset="utf-8" method="post"
@@ -1563,7 +1563,7 @@ can be rejected properly.</p>
             print '<p><em>Petition criteria changed</em></p>';
         } else {
             if (get_http_var('submit') && sizeof($errors))
-                print '<div id="errors"><ul><li>' . 
+                print '<div id="errors"><ul><li>' .
                     join('</li><li>' , $errors) . '</li></ul></div>';
 ?>
 <form method="post" name="admin_change_rejection_criteria" action="<?=$this->self_link?>">
@@ -1634,9 +1634,9 @@ can be rejected properly.</p>
                     print "<div id='errors'><ul>";
                     print "<li>You must select at least one category in order to reject the petition.</li>";
                     if (! get_http_var('reject_reason')) {
-                        print "<li>Please also supply a reason for the rejection &mdash; this will give the petition 
-                            creator some guidance if they decide to resubmit, so be as helpful as 
-                            possible about what is wrong with this petition.</li>";                        
+                        print "<li>Please also supply a reason for the rejection &mdash; this will give the petition
+                            creator some guidance if they decide to resubmit, so be as helpful as
+                            possible about what is wrong with this petition.</li>";
                     }
                     print "</ul></div>";
                 }
@@ -1780,13 +1780,13 @@ class ADMIN_PAGE_PET_HELP {
         $this->noindex = true;
         $this->navname = 'Admin help';
     }
-    
+
     # the order of pages here is the order in which they are presented
     # use 'separator' => 'yes' to push the topic a little apart in the contents
     # topic *must* match the filename in web-admin/help/<topic>.php
-    
-    private static $all_help_pages = array( 
-        
+
+    private static $all_help_pages = array(
+
         array('topic' => "overview",           'title' => "Overview: draft &rarr; live &rarr; finished (or draft &rarr; rejected)"),
         array('topic' => "approve",            'title' => "Approving a petition"),
         array('topic' => "undo_approve",       'title' => "Undoing the approval of a petition"),
@@ -1807,7 +1807,7 @@ class ADMIN_PAGE_PET_HELP {
         array('topic' => "faq",                'title' => "Frequently Asked Questions (common worries or clarifications)", 'separator' => 'yes'),
 
     );
-        
+
     function display() {
         $this_topic = get_http_var('topic');
         $previous_topic = "&nbsp;";
@@ -1837,7 +1837,7 @@ class ADMIN_PAGE_PET_HELP {
                 $topic = $page['topic'];
                 $title = $page['title'];
                 $next_topic = "<a href='?page=help&amp;topic=$topic'>next &raquo;<br/>$title</a>";
-            }            
+            }
             $nav = <<<HTML
                 <div class="doc_header">
                   <ul class="pet-help-nav">
@@ -1861,7 +1861,7 @@ HTML;
         }
         $support_email = str_replace('@', '&#64;', OPTION_SUPPORT_EMAIL);
         $mailto_support_email = "<a href='mailto:$support_email'>$support_email</a>";
-        
+
         print "<div id='content'>\n  <div class='doc_header'>$nav\n</div><div class='pet-help'>\n";
         include("help/$this_topic.php");
         print "</div><div class='help-footer'>$nav<a href='http://www.mysociety.org/'><img src='help/images/mysociety_logo.png' style='border:0;'></a></div></div>";

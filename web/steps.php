@@ -39,6 +39,8 @@ function petition_form_intro() {
         } else {
             $maximum = sprintf('for up to %d months', $deadline_limits['months']);
         }
+    } elseif ($deadline_limits['weeks']) {
+        $maximum = sprintf('for up to %d weeks', $deadline_limits['weeks']);
     }
     $n = 1;
     echo cobrand_create_heading('Step ' . ($n++) . ': Create your petition');
