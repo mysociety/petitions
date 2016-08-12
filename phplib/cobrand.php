@@ -97,7 +97,7 @@ function cobrand_creation_deadline_limit($body='') {
         return array('years' => 0, 'months' => 6);
     if ($body == 'wellingborough')
         return array('years' => 0, 'months' => 4);
-    if ($body == 'eastcambs' || $body == 'stedmundsbury' || $body == 'westminster')
+    if ($body == 'eastcambs' || $body == 'stedmundsbury')
         return array('years' => 0, 'months' => 3);
     if ($body == 'westminster')
         return array('weeks' => 6);
