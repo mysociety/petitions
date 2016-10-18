@@ -489,7 +489,11 @@ petition in this category</a>.";
         if ($area) {
             # $area is set if we're being called as a result of the form below
             if ($area == 'epsom-ewell')
-                return 'http://www.epsom-ewell.gov.uk/EEBC/Council/E-petitions.htm';
+                return 'https://democracy.epsom-ewell.gov.uk/mgEPetitionListDisplay.aspx?bcr=1';
+            if ($area == 'waverley')
+                return 'https://www.waverley.gov.uk/info/200033/councillors_and_meetings/955/petitions';
+            if ($area == 'spelthorne')
+                return 'https://democracy.spelthorne.gov.uk/mgEPetitionListDisplay.aspx?bcr=1';
             return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
         } else {
             return '
