@@ -1,5 +1,6 @@
 div#petition_actions {
     border: none;
+    margin-bottom: 1em;
 }
 
 div#most_recent {
@@ -30,10 +31,6 @@ p.petition_view_tabs {
 
 h3 {
   margin: 0.333em 0 ;
-}
-
-div#petition_actions {
-    margin-bottom: 1em;
 }
 
 p.petition_view_tabs {
@@ -94,4 +91,19 @@ form .label {
     color: #333333;
     background-color: transparent;
     text-shadow: none;
+}
+
+.cf:before,
+.cf:after {
+    content: " ";
+    display: block;
+}
+
+.cf:after {
+    clear: both;
+}
+
+#content {
+    margin-bottom: 3em;
+    padding: 1em;
 }
