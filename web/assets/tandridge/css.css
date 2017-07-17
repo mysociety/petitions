@@ -1,6 +1,7 @@
 #mysociety {
     float: right;
     width: 100%;
+    padding: 2em;
 }
 
 div#petition_actions {
@@ -24,3 +25,7 @@ p.petition_view_tabs {
     background-color: #009778;
 }
 
+
+header .search-button-wrapper .main-search .search-button {
+    display: none;
+}

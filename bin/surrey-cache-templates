@@ -95,14 +95,16 @@ $footer .= get_page('http://emaps.elmbridge.gov.uk/ebc_footer_new.htm');
 output('elmbridge', $header, $footer);
 
 # Tandridge
-$header = get_page('http://www.tandridge.gov.uk/petitions_header.asp');
+$header = get_page('http://www.tandridge.gov.uk/Portals/0/HtmlTemplates/Header.html');
 $header =~ s/<title>/<title>PARAM_TITLE - Tandridge District Council/;
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css" />
 <link rel="stylesheet" type="text/css" href="/assets/tandridge/css.css" />
 </head>};
+$header =~ s{</body> </html>}{};
 $header .= "<div id='mysociety'>\n";
 $footer = "</div>\n";
-$footer .= get_page('http://www.tandridge.gov.uk/petitions_footer.asp');
+$footer .= get_page('http://www.tandridge.gov.uk/Portals/0/HtmlTemplates/Footer.html');
+$footer =~ s/<html>.*<body>//s;
 output('tandridge', $header, $footer);
 
 sub output {
