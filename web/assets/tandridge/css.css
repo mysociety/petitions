@@ -24,8 +24,3 @@ p.petition_view_tabs {
 .petition_view_tabs span {
     background-color: #009778;
 }
-
-
-header .search-button-wrapper .main-search .search-button {
-    display: none;
-}
