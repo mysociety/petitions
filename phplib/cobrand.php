@@ -1610,7 +1610,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'forest-heath')
         return 'http://www.forest-heath.gov.uk/info/100004/council_and_democracy/286/petitions/2';
     if ($site_name == 'hounslow')
-        return 'http://www.hounslow.gov.uk/petitions_scheme_dec11.pdf';
+        return 'https://www.hounslow.gov.uk/downloads/file/1226/terms_and_conditions_-_epetitions';
     if ($site_name == 'ipswich')
         return 'http://www.ipswich.gov.uk/site/scripts/documents_info.php?documentID=1145';
     if ($site_name == 'lichfielddc')
