@@ -5,6 +5,10 @@ h3 {
 	font-size: 120%;
 }
 
+.address-type-choices input {
+    margin-left: 0.5em;
+}
+
 div#petition_actions {
     border: none;
     margin-bottom: 1em;
@@ -34,11 +38,9 @@ div#front_how {
     width: 45%;
 }
 
-/*
 form#signForm label {
     width: 8em;
 }
-*/
 
 p.petition_view_tabs {
     border-bottom: solid 2px #660066;
