@@ -99,7 +99,7 @@ sub signup_page ($$) {
     $errors{name} = 'Please enter your name'
         if (!$qp_name || $qp_name eq '<Enter your name>');
     $errors{name} = 'Your name is too long' if (length($qp_name) > 100);
-    $errors{name} = 'Your name cannot contain a web address' if ($qp_name =~ m#http://|www\.#);
+    $errors{name} = 'Your name cannot contain a web address' if ($qp_name =~ m#https?://|www\.#);
     if (!$qp_email) {
         $errors{email} = 'Please enter a valid email address';
     } elsif (!$qp_email2) {

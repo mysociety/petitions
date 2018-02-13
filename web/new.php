@@ -451,7 +451,7 @@ function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     <?
     textfield('ref', $data['ref'], 16, $errors);
     ?>
-<br /><small>This gives your petition an easy web address. e.g. http://<?=$_SERVER['HTTP_HOST'] ?>/<?=cobrand_creation_example_ref()?></small>
+<br /><small>This gives your petition an easy web address. e.g. https://<?=$_SERVER['HTTP_HOST'] ?>/<?=cobrand_creation_example_ref()?></small>
 </p>
 
 <?
