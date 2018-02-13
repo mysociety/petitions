@@ -46,7 +46,7 @@ p.petition_view_tabs {
 #breadcrumb li {
     display: inline;
     padding: 0 10px 0 18px;
-    background: transparent url(http://www.woking.gov.uk/res/frameworks/default/chrome/breadcrumb_separator.gif) 0 50% no-repeat;
+    background: transparent url(https://www.woking.gov.uk/res/frameworks/default/chrome/breadcrumb_separator.gif) 0 50% no-repeat;
 }
 
 #breadcrumb li.first {
