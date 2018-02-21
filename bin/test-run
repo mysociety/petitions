@@ -557,7 +557,7 @@ sub do_council_test {
     do_create_part({
         pet_content => $petition_text,
         detail => "",
-        rawdeadline => 'Apr 30th', # TODO Add test for duration >3 months later
+        rawdeadline => 'Apr 10th', # TODO Add test for duration >6 weeks later
         ref => 'rightemails',
         category => 521
     }, {
@@ -600,24 +600,24 @@ sub do_council_test {
     $wth->browser_check_contents("1 signature");
     $wth->browser_follow_link(text_regex => qr/$petition_text/);
     $wth->browser_check_contents($petition_text);
-    $wth->browser_check_contents("30 April 1994");
+    $wth->browser_check_contents("10 April 1994");
     $wth->browser_check_contents('signForm');
 
     comment("Go forward in time to day that deadline expires at end of, and make sure that nothing happens.");
-    set_pet_date('1994-04-30');
+    set_pet_date('1994-04-10');
     call_mark_finished();
     $wth->browser_get($base_url);
     $wth->browser_check_contents($petition_text);
     $wth->email_check_none_left();
 
     comment("Go forward one more day, get petition to mark itself as finished");
-    set_pet_date('1994-05-01');
+    set_pet_date('1994-04-11');
     call_mark_finished();
     call_send_messages();
     my $admin_finished_email = $wth->email_get_containing('%Subject: Petition%finished%To: '.$contact_email.'%');
 
     comment("Go forward a month, check follow-up email is sent");
-    set_pet_date('1994-05-31');
+    set_pet_date('1994-05-11');
     call_mark_finished();
     call_send_messages();
     $admin_finished_email = $wth->email_get_containing('%Subject: Petition%finished 1 month ago%To: '.$contact_email.'%');
