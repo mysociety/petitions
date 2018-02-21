@@ -143,7 +143,6 @@ define('OPTION_EMAIL_HELO_DOMAIN', 'mail.example.com');
 define('OPTION_PHP_DEBUG_LEVEL', 0);
 
 // Where web services used are
-define('OPTION_EVEL_URL', 'http://services.mysociety.org/evel');
 define('OPTION_MAPIT_URL', '');
 
 // Test harness parameters

@@ -17,11 +17,6 @@
  * To be explicit, this script does not send messages from the creator
  * since we currently don't do that. This feature should be simple to add.
  *
- * Copyright (c) 2007 UK Citizens Online Democracy. All rights reserved.
- * Email: keith@mysociety.org. WWW: http://www.mysociety.org/
- *
- * $Id: response-send,v 1.17 2009-12-08 12:21:09 matthew Exp $
- *
  */
 
 # TODO
