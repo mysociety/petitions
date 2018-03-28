@@ -1632,7 +1632,7 @@ function cobrand_terms_elsewhere() {
     if ($site_name == 'suffolkcoastal')
         return 'http://www.suffolkcoastal.gov.uk/yourcouncil/haveyoursay/petitions/petitionsterms/';
     if ($site_name == 'surreycc')
-        return 'http://www.surreycc.gov.uk/get-involved/shape-our-services/petitions/terms-and-conditions-for-petitions';
+        return 'https://www.surreycc.gov.uk/people-and-community/get-involved/shape-our-services/petitions/terms-and-conditions';
     if ($site_name == 'tandridge')
         return 'http://www.tandridge.gov.uk/LifeinTandridge/consultation/petitions/terms.htm';
     if ($site_name == 'waverley')
