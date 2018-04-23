@@ -1,13 +1,8 @@
 <?  
 // fns.php:
 // General functions for Petiitons
-//
-// Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
-// Email: francis@mysociety.org. WWW: http://www.mysociety.org
-//
-// $Id: fns.php,v 1.20 2010-04-27 13:31:20 matthew Exp $
 
-require_once "../commonlib/phplib/evel.php";
+require_once 'libphp-phpmailer/class.phpmailer.php';
 require_once '../commonlib/phplib/utility.php';
 
 define('MSG_ADMIN', 1);
@@ -64,7 +59,7 @@ function pet_send_message($petition_id, $sender, $recips, $circumstance, $templa
 }
 
 // $to can be one recipient address in a string, or an array of addresses
-function pet_send_email_template($to, $template_name, $values, $headers = array()) {
+function pet_send_email_template($to, $template_name, $values, $from) {
     if (array_key_exists('creationtime', $values))
         $values['creationtime'] = prettify(substr($values['creationtime'], 0, 19), false);    
     if (array_key_exists('deadline', $values))
@@ -88,53 +83,46 @@ function pet_send_email_template($to, $template_name, $values, $headers = array(
     }
 
     global $site_group;
+    ob_start();
     if ($site_name && file_exists("../templates/emails/$site_name/$template_name")) {
-        $template = file_get_contents("../templates/emails/$site_name/$template_name");
+        require "../templates/emails/$site_name/$template_name";
     } elseif (file_exists("../templates/emails/$site_group/$template_name")) {
-        $template = file_get_contents("../templates/emails/$site_group/$template_name");
+        require "../templates/emails/$site_group/$template_name";
     } else {
-        $template = file_get_contents("../templates/emails/$template_name");
+        require "../templates/emails/$template_name";
     }
-    $template = _($template);
+    $body = ob_get_contents();
+    ob_end_clean();
 
-    $spec = array(
-        '_template_' => $template,
-        '_parameters_' => $values
-    );
-    $spec = array_merge($spec, $headers);
-    return pet_send_email_internal($to, $spec);
+    # First line is "Subject: SUBJECT", second line blank
+    $lines = explode("\n", $body);
+    $subject = substr($lines[0], 9);
+    $body = join("\n", array_slice($lines, 2));
+
+    return pet_send_email_internal($to, $subject, $body, $from);
 }
 
-// $to can be one recipient address in a string, or an array of addresses
-function pet_send_email($to, $subject, $message, $headers = array()) {
-    $spec = array(
-        '_unwrapped_body_' => $message,
-        'Subject' => $subject,
-    );
-    $spec = array_merge($spec, $headers);
-    return pet_send_email_internal($to, $spec);
+function pet_send_email($to, $subject, $message, $from) {
+    return pet_send_email_internal($to, $subject, $message, $from);
 }
 
-function pet_send_email_internal($to, $spec) {
-    // Construct parameters
-
-    // Add standard header
-    if (!array_key_exists("From", $spec)) {
-        $spec['From'] = '"' . OPTION_CONTACT_NAME . '" <' . OPTION_CONTACT_EMAIL . ">";
+function pet_send_email_internal($to, $subject, $body, $from) {
+    $mail = new PHPMailer;
+    $mail->CharSet = 'utf-8';
+    $mail->setFrom($from['email'], $from['name']);
+    $mail->addAddress($to);
+    $mail->Subject = $subject;
+    if (is_array($body)) {
+        $mail->isHTML(true);
+        $mail->Body = $body['html'];
+        $mail->AltBody = $body['plain'];
+    } else {
+        $mail->Body = $body;
     }
-
-    // With one recipient, put in header.  Otherwise default to undisclosed recip.
-    if (!is_array($to)) {
-        $spec['To'] = $to;
-        $to = array($to);
+    $success = $mail->send();
+    if (!$success) {
+        error_log("pet_send_email_internal failed");
     }
-
-    // Send the message
-    $result = evel_send($spec, $to);
-    $error = evel_get_error($result);
-    if ($error) 
-        error_log("pet_send_email_internal: " . $error);
-    $success = $error ? FALSE : TRUE;
 
     return $success;
 }

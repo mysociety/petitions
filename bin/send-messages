@@ -5,11 +5,6 @@
  * Run from cron regularly to send out Government responses to petitions
  * so forth, and take appropriate action.
  *
- * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
- * Email: matthew@mysociety.org. WWW: http://www.mysociety.org/
- *
- * $Id: send-messages,v 1.47 2009-12-08 14:53:57 matthew Exp $
- *
  */
 
 $short_opts = '';
@@ -102,15 +97,13 @@ function send_pending_messages() {
         
         $f = false;
         $to = $petition->admin_email();
-        $headers = array(
-             'From' => '"' . $petition->from_name() . '" <' . $to . '>',
-        );
+        $from = array('email' => $to, 'name' => $petition->from_name());
         if (isset($msg['emailtemplatename'])) {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
-            $f = pet_send_email_template($to, $msg['emailtemplatename'], $data, $headers);
+            $f = pet_send_email_template($to, $msg['emailtemplatename'], $data, $from);
         } else {
             verbose("sending message #${msg['id']} as raw email, subject '${msg['emailsubject']}'");
-            $f = pet_send_email($to, $msg['emailsubject'], $msg['emailbody'], $headers);
+            $f = pet_send_email($to, $msg['emailsubject'], $msg['emailbody'], $from);
         }
 
         if ($f)
@@ -186,9 +179,7 @@ function send_pending_messages() {
         if ($vars) $data = array_merge($data, $vars);
 
         // Make any extra headers
-        $headers = array(
-             'From' => '"' . $petition->from_name() . '" <' . $petition->admin_email() . '>',
-        );
+        $from = array('email' => $petition->admin_email(), 'name' => $petition->from_name());
 
         // Send with template or raw appropriately
         $f = false;
@@ -197,29 +188,20 @@ function send_pending_messages() {
             $f = true;
         } elseif (isset($msg['emailtemplatename'])) {
             verbose("sending message #${msg['id']} using email template '${msg['emailtemplatename']}'");
-            $f = pet_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $headers);
+            $f = pet_send_email_template($petition->creator_email(), $msg['emailtemplatename'], $data, $from);
         } else {
             // We assume that this is now a government response
+            $plain = pet_create_response_email('plain', $petition->url_main(), $msg['emailsubject'], $msg['emailbody']);
             if ($msg['fromaddress'] == 'admin-html') {
-                $type = 'email-html';
-            } else {   
-                $type = 'email-plain';
+                $html = pet_create_response_email('html', $petition->url_main(), $msg['emailsubject'], $msg['emailbody']);
+                $body = array('plain' => $plain, 'html' => $html);
+            } else {
+                $body = $plain;
             }
-            $out = pet_create_response_email($type, $petition->url_main(), $msg['emailsubject'], $msg['emailbody']);
 
-            verbose("sending message #${msg['id']} as raw $type to evel_send, subject '${msg['emailsubject']}'");
-
-            # Doing this manually since this will be the only case where it happens.
-            # All other HTML email cases are shifted by the response-send script which
-            # goes direct to exim instead of through EvEl.
-
-            $date = "Date: " . date("r") . "\n";
-            $from = 'From: "' . $petition->from_name() . '" <' . $petition->admin_email() . ">\n";
-            $to = "To: " . $petition->creator_email() . "\n";
-            $precedence = "Precedence: bulk\n";
-
-            $out = $from . $to . $date . $precedence . $out;
-            $f = evel_send($out, $petition->creator_email());
+            # All other HTML email cases are shifted by the response-send script which goes direct to exim.
+            verbose("sending message #${msg['id']} as raw, subject '${msg['emailsubject']}'");
+            $f = pet_send_email($petition->creator_email(), $msg['emailsubject'], $body, $from);
         }
 
         // Store success
