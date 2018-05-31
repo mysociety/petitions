@@ -1582,6 +1582,11 @@ function cobrand_how_it_works_extra() {
         <a href="http://petitions.surreycc.gov.uk/">petitions to Surrey County
         Council</a> on their website.';
     }
+    if ($site_name == 'rbwm') {
+        echo '</p> <p>To see RBWM’s data processing Privacy Notice in relation
+        to e-petitions, please go to the link below:</p>
+        <p><a href="https://www3.rbwm.gov.uk/downloads/200409/data_protection">https://www3.rbwm.gov.uk/downloads/200409/data_protection</a>';
+    }
 }
 
 function cobrand_extra_terms_link() {
