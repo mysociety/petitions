@@ -4,7 +4,7 @@ libcrypt-blowfish-perl
 libio-string-perl
 php-pear
 libmailtools-perl
-libmime-perl
+libmime-perl | libmime-tools-perl
 libjson-perl
 libmath-bigint-gmp-perl
 libheap-perl
@@ -12,8 +12,8 @@ libheap-priority-perl
 libtie-cache-perl
 libcache-memcached-perl
 memcached
-php5-memcache
-php5-curl
+php5-memcache | php-memcache
+php5-curl | php-curl
 ttf-bitstream-vera
 libdigest-hmac-perl
 liberror-perl
@@ -22,5 +22,5 @@ libdbd-pg-perl
 libregexp-common-perl
 libfile-slurp-perl
 libproc-processtable-perl
-php5-mcrypt
+php5-mcrypt | php-mcrypt
 libphp-phpmailer
