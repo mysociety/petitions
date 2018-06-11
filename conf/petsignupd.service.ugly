@@ -1,0 +1,15 @@
+#
+# systemd service unit for petsignupd
+#
+[Unit]
+Description=!!(*= $daemon_name *)!!
+After=syslog.target network.target
+
+[Service]
+Type=forking
+PIDFile=/data/vhost/!!(*= $vhost *)!!/petsignupd.pid
+ExecStart=/data/vhost/!!(*= $vhost *)!!/petitions/bin/petsignupd
+User=!!(*= $user *)!!
+
+[Install]
+WantedBy=multi-user.target

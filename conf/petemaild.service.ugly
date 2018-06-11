@@ -1,0 +1,16 @@
+#
+# systemd service unit for petemaild
+#
+[Unit]
+Description=!!(*= $daemon_name *)!!
+After=syslog.target network.target
+
+[Service]
+Type=forking
+LimitNOFILE=10240
+PIDFile=/data/vhost/!!(*= $vhost *)!!/petemaild.pid
+ExecStart=/data/vhost/!!(*= $vhost *)!!/petitions/bin/petemaild
+User=!!(*= $user *)!!
+
+[Install]
+WantedBy=multi-user.target
