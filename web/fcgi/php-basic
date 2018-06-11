@@ -1,3 +1,8 @@
 #!/bin/sh
-PHP_FCGI_CHILDREN=1 PHPRC=/etc/php5/fcgi exec /usr/bin/php5-cgi
+if [ -e "/etc/php5" ]; then
+    PHP_FCGI_CHILDREN=1 PHPRC=/etc/php5/fcgi exec /usr/bin/php5-cgi
+elif [ -e "/etc/php/7.0" ]; then
+    PHP_FCGI_CHILDREN=0 PHPRC=/etc/php/7.0/fcgi exec /usr/bin/php-cgi
+fi
+
 
