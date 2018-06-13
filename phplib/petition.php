@@ -101,7 +101,7 @@ class Petition {
     // - string, the short name of a petition
     // - integer, the internal id from the petition table
     // - array, a dictionary of data about the petition
-    function Petition($ref) {
+    function __construct($ref) {
         global $pet_today;
         $main_query_part = 'SELECT petition.*, ';
         if (OPTION_SITE_TYPE == 'multiple') {
