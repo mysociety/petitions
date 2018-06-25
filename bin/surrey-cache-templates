@@ -50,11 +50,11 @@ output('surreycc', $header, $footer);
 
 # Surrey Heath
 # File is provided as one single file, so we need to split it up
-my $surrey_heath_template = get_page('http://www.surreyheath.gov.uk/introduction-e-petitions');
+my $surrey_heath_template = get_page('https://www.surreyheath.gov.uk/introduction-e-petitions');
 my @surrey_heath_parts = split(/<p><strong>Petition stuff goes here<\/strong><\/p>/, $surrey_heath_template);
 $header = $surrey_heath_parts[0];
 $header =~ s/<title>Introduction to e-petitions/<title>PARAM_TITLE/;
-$header =~ s{<h1 id="page-title">.*</h1>}{<h1 id="page-title">PARAM_H1</h1>};
+$header =~ s{<h1 id="page-title">.*</h1>}{<h1 id="page-title">PARAM_H1</h1>}s;
 $header =~ s{<ol id="crumbs" class="clearfix">.*</ol>}{<ol id="crumbs" class="clearfix">
 <li class="crumb crumb-first">
     <span typeof="v:Breadcrumb">
@@ -69,15 +69,15 @@ $header =~ s{<ol id="crumbs" class="clearfix">.*</ol>}{<ol id="crumbs" class="cl
 </li></ol>};
 # Surrey heath's template has lots of relative urls we need to fix, but also
 # protocol relative urls that we don't want to fix
-$header =~ s/href="(\/[^"^\/]{1}[^"]+)"/href="http:\/\/www.surreyheath.gov.uk$1"/g;
-$header =~ s/src="(\/[^"^\/]{1}[^"]+)"/src="http:\/\/www.surreyheath.gov.uk$1"/g;
+$header =~ s/href="(\/[^"^\/]{1}[^"]+)"/href="https:\/\/www.surreyheath.gov.uk$1"/g;
+$header =~ s/src="(\/[^"^\/]{1}[^"]+)"/src="https:\/\/www.surreyheath.gov.uk$1"/g;
 $header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css" />
 <link rel="stylesheet" type="text/css" href="/assets/surreyheath/css.css" />
 </head>};
 
 $footer = $surrey_heath_parts[1];
-$footer =~ s/href="(\/[^"^\/]{1}[^"]+)"/href="http:\/\/www.surreyheath.gov.uk$1"/g;
-$footer =~ s/src="(\/[^"^\/]{1}[^"]+)"/src="http:\/\/www.surreyheath.gov.uk$1"/g;
+$footer =~ s/href="(\/[^"^\/]{1}[^"]+)"/href="https:\/\/www.surreyheath.gov.uk$1"/g;
+$footer =~ s/src="(\/[^"^\/]{1}[^"]+)"/src="https:\/\/www.surreyheath.gov.uk$1"/g;
 output('surreyheath', $header, $footer);
 
 # Elmbridge
