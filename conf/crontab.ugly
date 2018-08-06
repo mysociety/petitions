@@ -19,7 +19,7 @@ MAILTO=cron-!!(*= $site *)!!@mysociety.org
 10,25,40,55 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-areas.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/update-areas || echo "stalled?"
 !!(* } *)!!
 6,18,30,42,54 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/response-send.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/response-send || echo "stalled?"
-1 0 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/petitions/bin/mark-finished
+1 1 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/petitions/bin/mark-finished
 
 # Every hour restart petemaild to work around obtuse bug XXX
 # 23 * * * * root /etc/init.d/petemaild stop && /etc/init.d/petemaild start
