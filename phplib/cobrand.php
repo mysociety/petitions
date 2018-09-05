@@ -494,6 +494,10 @@ petition in this category</a>.";
                 return 'https://www.waverley.gov.uk/info/200033/councillors_and_meetings/955/petitions';
             if ($area == 'spelthorne')
                 return 'https://democracy.spelthorne.gov.uk/mgEPetitionListDisplay.aspx?bcr=1';
+            if ($area == 'elmbridge')
+                return 'http://mygov.elmbridge.gov.uk/mgEPetitionListDisplay.aspx?bcr=1';
+            if ($area == 'guildford')
+                return 'https://www2.guildford.gov.uk/councilmeetings/mgEPetitionListDisplay.aspx?bcr=1';
             return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
         } else {
             return '
