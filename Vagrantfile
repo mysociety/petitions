@@ -21,4 +21,11 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     export DEBIAN_FRONTEND=noninteractive
     sh /vagrant/bin/vagrant-install.sh
   EOS
+
+  # It's likely the shared folder wasn't available when Apache started.
+  # So restart Apache again once the machine has started up.
+  config.vm.provision :shell, :run => "always", :inline => <<-EOS
+    sudo service apache2 restart
+    echo "Petitions is up and running, you can view it at http://petitions.127.0.0.1.xip.io:8080/"
+  EOS
 end
