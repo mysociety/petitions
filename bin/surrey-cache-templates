@@ -80,6 +80,28 @@ $footer =~ s/href="(\/[^"^\/]{1}[^"]+)"/href="https:\/\/www.surreyheath.gov.uk$1
 $footer =~ s/src="(\/[^"^\/]{1}[^"]+)"/src="https:\/\/www.surreyheath.gov.uk$1"/g;
 output('surreyheath', $header, $footer);
 
+# Woking
+my $woking_template = get_page('https://www.woking.gov.uk/external/e-petitions');
+my @woking_parts = split(/<p>e-petitions content to be displayed here.<\/p>/, $woking_template);
+$header = $woking_parts[0];
+$header =~ s/<title>e-Petitions/<title>PARAM_TITLE/;
+$header =~ s{<h1>\s*e-Petitions\s*</h1>}{<h1>PARAM_H1</h1>}g;
+$header =~ s{<span class="crumb-title">e-Petitions</span>}{<span class="crumb-title"><a href="/">e-Petitions</a></span>}g;
+# Woking's template has lots of relative urls we need to fix
+$header =~ s/href="(\/[^"]*)"/href="https:\/\/www.woking.gov.uk$1"/g;
+$header =~ s/action="(\/[^"]*)"/action="https:\/\/www.woking.gov.uk$1"/g;
+$header =~ s/src="(\/[^"]*)"/src="https:\/\/www.woking.gov.uk$1"/g;
+
+$header =~ s{</head>}{<link rel="stylesheet" type="text/css" href="/pet.css" />
+<link rel="stylesheet" type="text/css" href="/assets/woking/css.css" />
+</head>};
+
+$footer = $woking_parts[1];
+$footer =~ s/href="(\/[^"]*)"/href="https:\/\/www.woking.gov.uk$1"/g;
+$footer =~ s/src="(\/[^"]*)"/src="https:\/\/www.woking.gov.uk$1"/g;
+output('woking', $header, $footer);
+
+
 # Elmbridge
 $header = get_page('http://emaps.elmbridge.gov.uk/ebc_header_new.htm');
 $header =~ s/<title>/<title>PARAM_TITLE - /;

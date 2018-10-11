@@ -1,3 +1,7 @@
+#content {
+    overflow: auto; /* clearfix */
+}
+
 div#errors {
     margin-top: 20px;
 }
@@ -24,48 +28,27 @@ p.petition_view_tabs {
     background-color: #990000;
 }
 
-/* Copied from back_to_top style */
-#footer_links {
-    margin-left: 30px;
-    float: left;
-    padding: 5px 0;
-}
-#footer_links a {
-    padding: 0 3px;
-}
-#footer_links a:link, #footer_links a:visited {
-    color: #333333;
-}
-
-/* Breadcrumb CSS from official site */
-#wbc_content ol#breadcrumb {
-    margin: 0;
-    font-size: 90%;
-}
-
-#breadcrumb li {
-    display: inline;
-    padding: 0 10px 0 18px;
-    background: transparent url(https://www.woking.gov.uk/res/frameworks/default/chrome/breadcrumb_separator.gif) 0 50% no-repeat;
-}
-
-#breadcrumb li.first {
-    padding-left: 0;
-    background: transparent;
-}
-
-#breadcrumb a:link,
-#breadcrumb a:visited {
-    color: #333;
-    text-decoration: none;
-}
-
-#breadcrumb a:hover,
-#breadcrumb a:focus,
-#breadcrumb a:active {
-    color: #000;
-    text-decoration: none;
-    background: #eee;
+/* Everything is considered 'external' by the JS, so remove the arrows. */
+a.ext:after {
+    display: none !important;
 }
 
 
+.main > div > div {
+    width: 100% !important;
+}
+
+/* list-style isn't used for the bullet points, for some reason... */
+.main li:before {
+    display: none !important;
+}
+
+@media (max-width: 767px) {
+    div#front_how, div.relative_width_45 {
+        width: 100%;
+    }
+
+    textarea, input[type=text] {
+        max-width: 99%;
+    }
+}
