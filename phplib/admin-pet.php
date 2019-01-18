@@ -4,9 +4,7 @@
  * Petition admin pages.
  *
  * Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
- * Email: matthew@mysociety.org. WWW: http://www.mysociety.org
- *
- * $Id: admin-pet.php,v 1.136 2010-05-06 12:30:59 matthew Exp $
+ * Email: matthew@mysociety.org. WWW: https://www.mysociety.org
  *
  */
 
@@ -864,7 +862,7 @@ map.setCenter(lonLat, 5);
                 $other = 0; $unknown = 0;
                 $children = array();
 
-                $areas_info = json_decode(file_get_contents("http://mapit.mysociety.org/areas/DIS,LBO,MTD,UTA,LGD,COI"), true);
+                $areas_info = json_decode(file_get_contents("https://mapit.mysociety.org/areas/DIS,LBO,MTD,UTA,LGD,COI"), true);
                 foreach ($summary as $area) {
                     $id = $area['area_id'];
                     if (!$id) {
@@ -886,6 +884,9 @@ map.setCenter(lonLat, 5);
                 }
 
                 function recurse($id, $level, $children) {
+                    if (!array_key_exists($id, $children)) {
+                        return;
+                    }
                     usort($children[$id], 'sort_by_name');
                     foreach ($children[$id] as $area) {
                         print '<tr><td>' . str_repeat('&nbsp;', $level*2) . $area['name'] . '</td><td>' . $area['c'] . "</td></tr>\n";
@@ -1863,7 +1864,7 @@ HTML;
 
         print "<div id='content'>\n  <div class='doc_header'>$nav\n</div><div class='pet-help'>\n";
         include("help/$this_topic.php");
-        print "</div><div class='help-footer'>$nav<a href='http://www.mysociety.org/'><img src='help/images/mysociety_logo.png' style='border:0;'></a></div></div>";
+        print "</div><div class='help-footer'>$nav<a href='https://www.mysociety.org/'><img src='help/images/mysociety_logo.png' style='border:0;'></a></div></div>";
     }
 }
 
