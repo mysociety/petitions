@@ -210,6 +210,7 @@ create table signer (
     latitude float,
     longitude float,
     overseas text,
+    receive_updates boolean not null default true,
 
     -- whether this signer is included in the petition or not
     -- (should really be called "notdeleted" or something)

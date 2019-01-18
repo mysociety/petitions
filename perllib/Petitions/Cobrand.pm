@@ -85,6 +85,11 @@ sub ask_for_address_type() {
     return 1 if $site_name eq 'runnymede' || $site_name eq 'westminster' || $site_name eq 'rbwm';
 }
 
+sub signing_checkbox() {
+    my $site_name = Petitions::Page::site_name();
+    return 1 if $site_name eq 'rbwm';
+}
+
 sub overseas_dropdown {
     my $site_group = Petitions::Page::site_group();
     if (grep {$site_group eq $_} qw( rbwm runnymede stevenage westminster)) {

@@ -367,6 +367,11 @@ the Armed Forces without a postcode, please select from this list:</label>',
     my $name_only = Petitions::Cobrand::name_only_text()
         || 'Please enter your name only; signatures containing other text may be removed by the petitions team.';
 
+    my $email_text = $q->p({ -id => 'ms-email2-note-signup'}, $q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.');
+    if (Petitions::Cobrand::signing_checkbox()) {
+        $email_text .= $q->p('<label class="wide"><input type="checkbox" name="receive_updates"> Please tick this box if you wish to receive any response to this petition.</label>');
+    }
+
     return
         $q->start_form(-id => 'signForm', -name => 'signForm', -method => 'POST', -action => $action)
         . qq(<input type="hidden" name="add_signatory" value="1" />)
@@ -385,7 +390,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
                 $q->textfield(-name => 'email', -size => 20, -id => 'email', -aria_required => 'true'))
         . $q->p( '<label for="email2">Confirm email:</label>',
                 $q->textfield(-name => 'email2', -size => 20, -id => 'email2', -aria_required => 'true', -autocomplete => 'off'))
-        . $q->p({ -id => 'ms-email2-note-signup'}, $q->strong('Your email will not be published,'), 'and is collected only to confirm your account and to keep you informed of response to this petition.')
+        . $email_text
         )
         . $q->div({-id => 'signFormRight', -class => $signFormRight_class },
           $address,

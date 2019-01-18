@@ -119,6 +119,7 @@ function do_signer_query() {
         WHERE sendtosigners = 't'
             AND message.petition_id = signer.petition_id
             AND signer.signtime < message.whencreated
+            AND signer.receive_updates = 't'
             AND sendtolatesigners = 'f'
             AND (select signer_id
                 FROM message_signer_recipient

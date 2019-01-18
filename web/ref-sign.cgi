@@ -150,6 +150,13 @@ sub signup_page ($$) {
             if (!$qp_address && Petitions::Cobrand::ask_for_address());
     }
 
+    my $receive_updates;
+    if (Petitions::Cobrand::signing_checkbox()) {
+        $receive_updates = $q->param('receive_updates') ? 1 : 0;
+    } else {
+        $receive_updates = 1;
+    }
+
     my $title = 'Signature addition';
     my $contents = '';
     if (!keys(%errors)) {
@@ -173,6 +180,7 @@ sub signup_page ($$) {
                             address => $qp_address,
                             address_type => $qp_address_type,
                             postcode => $qp_postcode,
+                            receive_updates => $receive_updates,
                             overseas => $qp_overseas
                         })) {
                 $title = Petitions::Cobrand::signing_check_heading();

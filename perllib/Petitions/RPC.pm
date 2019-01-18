@@ -125,15 +125,15 @@ sub sign_petition_db ($) {
                     petition_id,
                     email, name, address, postcode,
                     address_type, overseas,
-                    showname,
+                    showname, receive_updates,
                     signtime
                 ) values (
                     (select id from petition where ref = ?),
                     ?, ?, ?, ?, ?, ?,
-                    true,
+                    true, ?,
                     ms_current_timestamp()
                 )', {},
-                map { $r->{$_} } qw(ref email name address postcode address_type overseas));
+                map { $r->{$_} } qw(ref email name address postcode address_type overseas receive_updates));
     }
 }
 
