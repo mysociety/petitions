@@ -357,11 +357,6 @@ appropriate place.</p>
  * Display the first stage of the petitions form. */
 function petition_form_main($steps, $step, $data = array(), $errors = array()) {
     global $petition_prefix, $site_name;
-    if (OPTION_SITE_NAME == 'number10') {
-        echo 'There are 5 stages to the petition process:';
-        echo petition_breadcrumbs(0);
-        echo '<p><a href="/steps">More detailed description of these steps</a></p>';
-    }
     foreach (array('pet_content', 'detail', 'rawdeadline', 'ref') as $x)
         if (!array_key_exists($x, $data)) $data[$x] = '';
 

@@ -1709,7 +1709,6 @@ sub get_template($$) {
     } else {
         $e = File::Slurp::read_file("$FindBin::Bin/../templates/emails/$template");
     }
-    $e =~ s/email/e-mail/ if $p->{body_ref} && $p->{body_ref} eq 'spelthorne';
     return $e;
 }
 

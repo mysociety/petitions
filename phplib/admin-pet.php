@@ -565,8 +565,7 @@ petitions.</p>';
 <input type="hidden" name="cats" value="1"><input type="hidden" name="o" value="<?=$status ?>">
 <p><input type="submit" value="Update all categories">
 <a href="<?=$this->self_link ?>;o=<?=$status ?>">Back to normal screen</a></p>
-<?      } elseif (OPTION_SITE_NAME == 'number10') {
-            print '<p><a href="'.$this->self_link.';o='.$status.';cats=1">Update categories</a></p>';
+<?php
         }
 
         $count = db_getOne("SELECT value FROM stats WHERE key = 'petitions_$status' order by id desc limit 1") - 1;

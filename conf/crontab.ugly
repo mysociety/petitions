@@ -15,9 +15,7 @@ MAILTO=cron-!!(*= $site *)!!@mysociety.org
 
 # Frequently, on one machine only as not concurrent. I think, haven't checked.
 */15 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/send-messages.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/send-messages || echo "stalled?"
-!!(* if ($vhost !~ /number10/) { *)!!
 10,25,40,55 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/update-areas.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/update-areas || echo "stalled?"
-!!(* } *)!!
 6,18,30,42,54 * * * * !!(*= $user *)!! run-with-lockfile -n /data/vhost/!!(*= $vhost *)!!/response-send.lock /data/vhost/!!(*= $vhost *)!!/petitions/bin/response-send || echo "stalled?"
 1 1 * * * !!(*= $user *)!! /data/vhost/!!(*= $vhost *)!!/petitions/bin/mark-finished
 
