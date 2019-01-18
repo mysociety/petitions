@@ -539,7 +539,7 @@ Second bullet point'
 
 sub do_council_test {
 
-    change_config_file("SITE_NAME', 'number10'", "SITE_NAME', 'westminster'");
+    change_config_file("SITE_NAME', 'sbdc'", "SITE_NAME', 'westminster'");
     change_config_file("CONTACT_NAME', 'HM Government'", "CONTACT_NAME', 'Westminster City Council'");
     change_config_file("SITE_PETITIONED', 'the Prime Minister'", "SITE_PETITIONED', 'Westminster City Council'");
 
@@ -1325,7 +1325,7 @@ sub do_disabled_test {
 
     comment("Try and create a new petition");
     $wth->browser_get($base_url);
-    $wth->browser_check_no_contents('Create a petition');
+    $wth->browser_check_no_contents('action_create');
     $wth->browser_get($base_url . '/new'); # XXX It's not linked anywhere!
     $wth->browser_check_contents("Petition creation is currently closed.");
 

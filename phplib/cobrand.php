@@ -567,6 +567,9 @@ function cobrand_admin_site_restriction() {
 
 function cobrand_admin_allow_html_response() {
     global $site_group;
+    if ($site_group == 'sbdc') {
+        return true;
+    }
     return false;
 }
 
@@ -575,12 +578,12 @@ function cobrand_admin_areas_of_interest() {
     global $site_group;
 
     if ($site_group == 'sbdc' || $site_group == 'sbdc1') {
-        return json_decode(file_get_contents('http://mapit.mysociety.org/areas/LBO,MTD,LGD,DIS,UTA,COI'), true);
+        return json_decode(file_get_contents('https://mapit.mysociety.org/areas/LBO,MTD,LGD,DIS,UTA,COI'), true);
     }
 
     if ($site_group == 'hounslow') {
-        $wards = json_decode(file_get_contents('http://mapit.mysociety.org/area/2483/children'), true);
-        $soas = json_decode(file_get_contents('http://mapit.mysociety.org/areas/Hounslow?type=OLF'), true);
+        $wards = json_decode(file_get_contents('https://mapit.mysociety.org/area/2483/children'), true);
+        $soas = json_decode(file_get_contents('https://mapit.mysociety.org/areas/Hounslow?type=OLF'), true);
         foreach ($soas as $k => $v) {
             $soas[$k]['parent_area'] = 2483;
         }
@@ -600,13 +603,13 @@ function cobrand_admin_areas_of_interest() {
         'tandridge' => 2448,
         'woking' => 2449,
     );
-    $out = json_decode(file_get_contents("http://mapit.mysociety.org/areas/" . join(',', array_values($user_to_area_id))), true);
+    $out = json_decode(file_get_contents("https://mapit.mysociety.org/areas/" . join(',', array_values($user_to_area_id))), true);
     foreach ($out as $k => $v) {
         if ($v['id'] == 2242) continue;
         $out[$k]['parent_area'] = 2242;
     }
     if ($user = cobrand_admin_is_site_user()) {
-        $wards = json_decode(file_get_contents("http://mapit.mysociety.org/area/$user_to_area_id[$user]/children"), true);
+        $wards = json_decode(file_get_contents("https://mapit.mysociety.org/area/$user_to_area_id[$user]/children"), true);
         $out += $wards;
     }
     return $out;
@@ -634,7 +637,7 @@ function cobrand_admin_wards_for_petition() {
     if ($site_group == 'hounslow' || $site_group == 'sbdc') {
         if ($site_group == 'hounslow') $id = 2483;
         if ($site_group == 'sbdc') $id = 2246;
-        $out = json_decode(file_get_contents("http://mapit.mysociety.org/area/$id/children"), true);
+        $out = json_decode(file_get_contents("https://mapit.mysociety.org/area/$id/children"), true);
         uasort($out, 'sort_by_name');
         $out = array( -1 => array( 'id' => -1, 'name' => 'All wards' ) ) + $out;
         return $out;
@@ -1097,7 +1100,7 @@ function cobrand_allowed_responses() {
     global $site_name;
     if ($site_name == 'hounslow')
         return 12;
-    if ($site_name == 'surrey' || $site_name == 'tandridge')
+    if ($site_name == 'surrey' || $site_name == 'tandridge' || $site_name == 'sbdc')
         return 2;
     return 8;
 }
