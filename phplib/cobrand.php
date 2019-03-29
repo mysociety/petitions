@@ -74,7 +74,7 @@ function cobrand_creation_deadline_limit($body='') {
     global $site_name;
     if (!$body) $body = $site_name;
 
-    if ($body == 'tandridge' || $body == 'surreycc' || $body == 'rbwm' || $body == 'stevenage')
+    if ($body == 'surreycc' || $body == 'rbwm' || $body == 'stevenage')
         return array('years' => 0, 'months' => 6);
     if ($body == 'westminster')
         return array('weeks' => 6);
@@ -115,7 +115,6 @@ function cobrand_creation_ask_for_address_type() { # by default: don't ask for a
     if (cobrand_creation_within_area_only()) return true;
     if ($site_name == 'stevenage') return true;
     if ($site_name == 'surreyheath') return true;
-    if ($site_name == 'tandridge') return true;
     return false;
 }
 
@@ -322,7 +321,7 @@ function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
     if ($site_group == 'surreycc') {
         $county_only = array(4, 6, 7, 10, 12, 13, 16);
-        if ($site_name == 'tandridge' || $site_name == 'surreyheath')
+        if ($site_name == 'surreyheath')
             $county_only[] = 11; # Planning not okay
         if ($site_name != 'surreycc' && in_array($category_id, $county_only))
             return false;
@@ -337,13 +336,7 @@ function cobrand_category_wrong_action($category_id, $area='') {
     global $site_name, $site_group;
     if ($site_group == 'surreycc') {
         if ($site_name != 'surreycc') {
-            if ($site_name == 'tandridge' && $category_id == 11) { # Planning
-                return "You cannot create a petition about a planning
-application. For further information on the Council's procedures and how you
-can express your views, see the
-<a href='http://www.tandridge.gov.uk/Planning/planninginteractive/default.htm'>planning
-applications</a> section.";
-            } elseif ($site_name == 'surreyheath' && $category_id == 11) { # Planning
+            if ($site_name == 'surreyheath' && $category_id == 11) { # Planning
                 return "You cannot create a petition about a planning
 application. For further information on the Council's procedures and how you
 can express your views, see the
@@ -351,7 +344,7 @@ can express your views, see the
 applications</a> section.";
             } else {
                 $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
-                return "You are petitioning about something which isn't the
+                return "You are petitioning about something which isn’t the
 responsibility of your district council, but instead of Surrey County Council.
 <a href='$url'>Go to Surrey County Council's petition website to create a
 petition in this category</a>.";
@@ -371,11 +364,13 @@ petition in this category</a>.";
                 return 'https://www2.guildford.gov.uk/councilmeetings/mgEPetitionListDisplay.aspx?bcr=1';
             if ($area == 'reigate-banstead')
                 return 'http://www.reigate-banstead.gov.uk/info/20384/petitions';
+            if ($area == 'tandridge')
+                return 'https://www.tandridge.gov.uk/Your-council/Voting-and-elections';
             return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
         } else {
             return '
             <input type="hidden" name="category" value="' . $category_id . '">
-            You are petitioning about something which isn\'t the responsibility of Surrey Council Council,
+            You are petitioning about something which isn’t the responsibility of Surrey Council Council,
             but instead of your district council. <label for="council_pick">Please
             pick your district council in order to be taken to their petition site:</label>
             <select name="council" id="council_pick">
@@ -454,7 +449,7 @@ function cobrand_display_category() {
 function cobrand_signature_threshold() {
     global $site_name;
     if ($site_name == 'surreycc') return 100;
-    if (in_array($site_name, array('woking', 'tandridge'))) return 10;
+    if (in_array($site_name, array('woking'))) return 10;
     if (in_array($site_name, array('surreyheath', 'runnymede'))) return 50;
     return 100;
 }
@@ -594,7 +589,6 @@ function cobrand_admin_areas_of_interest() {
         'molevalley' => 2454,
         'runnymede' => 2451,
         'surreyheath' => 2450,
-        'tandridge' => 2448,
         'woking' => 2449,
     );
     $out = json_decode(file_get_contents("https://mapit.mysociety.org/areas/" . join(',', array_values($user_to_area_id))), true);
@@ -702,71 +696,7 @@ outside the remit or powers of Stevenage Borough Council.</p>
     }
 
     echo '<h3 class="page_title_border">Petition Guidelines</h3>';
-    if ($site_name == 'tandridge') {
-?>
-
-<p>The petition must refer to a matter that is relevant to the functions of a district council. Petitions submitted to the council must include: </p>
-
-<ul>
-<li>The title or subject of the petition. </li>
-<li>A clear and concise statement covering the subject of the petition. </li>
-<li>It should state what action the petitioner wishes the council to take. The petition will be returned to you to edit if it is unclear what action is being sought.</li>
-<li>The petition author's contact address (this will not be placed on the website); </li>
-<li>A duration for the petition ie the deadline you want people to sign by (maximum of six months).</li>
-<li>10 signatures or more for a petition to be referred to the committee or council meeting (if less than 10 signatures, please see <a href="http://www.tandridge.gov.uk/faq/faq.htm?mode=20&amp;pk_faq=478">What if my petitions does not have 10 signatures).</a></li>
-</ul>
-
-<h4>What is not allowed?</h4>
-<p>A petition will not be accepted where: </p>
-
-<ul>
-<li>It is considered to be vexatious, abusive or otherwise inappropriate. </li>
-<li>It does not follow the guidelines set out above.</li>
-<li>It refers to a development plan, or specific planning matter, including planning applicants.</li>
-<li>It refers to a decision for which there is an existing right of appeal. </li>
-<li>It is a duplicate or near duplicate of a similar petition received or submitted within the previous 12 months. </li>
-<li>It refers to a specific licensing application.</li>
-</ul>
-
-<p>The information in a petition must be submitted in good faith. For the petition service to comply with the law, you must not include: </p>
-<ul>
-<li>Party political material. This does not mean it is not permissible to petition on controversial issues. For example, this party political petition would not be permitted: &quot;we petition the council to change the conservative administration's policy on housing&quot;, but this non-party political version would be: &quot;we petition the council to change its policy on housing&quot;. </li>
-<li>Potentially libellous, false, or defamatory statements. </li>
-<li>Information which may be protected by an injunction or court order (for example, the identities of children in custody disputes).</li>
-<li>Material which is potentially confidential, commercially sensitive, or which may cause personal distress or loss.</li>
-<li>Any commercial endorsement, promotion of any product, service or publication.</li>
-<li>The names of individual officials of public bodies, unless they are part of the senior management of those organisations.</li>
-<li>The names of family members of elected representatives or officials of public bodies.</li>
-<li>The names of individuals, or information where they may be identified, in relation to criminal accusations.</li>
-<li>Language which is offensive, intemperate, or provocative. This not only includes swear words and insults, but any language which people could reasonably take offence to. </li>
-</ul>
-
-<p>Further information on the Council's procedures and how you can express your views are available here: </p>
-<ul>
-<li><a href="http://www.tandridge.gov.uk/Planning/planninginteractive/default.htm" title="Planning online">Planning applications</a></li>
-<li><a href="http://www.tandridge.gov.uk/YourCouncil/consultation.htm" title="Consultation">Consultation</a></li>
-</ul>
-
-<h4>Why might we reject your petition?</h4>
-<p>Petitions which do not follow the guidelines above cannot be accepted. In these cases, you will be informed in writing of the reason(s) your petition has been refused. If this happens, we will give you the option of altering and resubmitting the petition so it can be accepted.</p>
-<p>If you decide not to resubmit your petition, or if the second one is also rejected, we will list your petition and the reason(s) for not accepting it on this website. We will publish the full text of your petition, unless the content is illegal or offensive. </p>
-<p>We reserve the right to reject: </p>
-
-<ul>
-<li>Petitions similar to and/or overlap with an existing petition or petitions.</li>
-<li>Petitions which ask for things outside the remit or powers of the council. </li>
-<li>Statements that don't request any action. We cannot accept petitions which call upon the council to &quot;recognise&quot; or &quot;acknowledge&quot; something, as they do not call for a recognisable action. </li>
-<li>Wording that needs amending, or is impossible to understand. Please don't use capital letters excessively as they can make petitions hard to read. </li>
-<li>Statements that amount to advertisements.</li>
-<li>Petitions intended to be humorous, or which have no point about council policy.</li>
-<li>Issues for which an e-petition is not the appropriate channel (for example, correspondence about a personal issue).</li>
-<li>Freedom of Information requests. This is not the right channel for FOI requests - <a href="http://www.tandridge.gov.uk/YourCouncil/DataProtectionFreedomofInformation/freedom_of_information.htm" title="Freedom of information ">Freedom of information.</a></li>
-</ul>
-
-<p><a href="/terms">Full terms and conditions</a></p>
-
-<?
-    } elseif ($site_group == 'surreycc' || $site_name == 'westminster') {
+    if ($site_group == 'surreycc' || $site_name == 'westminster') {
 
         $foi_link = 'http://www.ico.gov.uk/';
         $foi_text = $foi_link;
@@ -1006,8 +936,6 @@ function cobrand_terms_elsewhere() {
         return 'http://www.stevenage.gov.uk/about-the-council/councillors-and-democracy/24184/';
     if ($site_name == 'surreycc')
         return 'https://www.surreycc.gov.uk/people-and-community/get-involved/shape-our-services/petitions/terms-and-conditions';
-    if ($site_name == 'tandridge')
-        return 'http://www.tandridge.gov.uk/LifeinTandridge/consultation/petitions/terms.htm';
     if ($site_name == 'westminster')
         return 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/westminster-petitions/the-city-councils-petition-scheme/';
     if ($site_name == 'woking')
@@ -1076,7 +1004,7 @@ function cobrand_create_heading($text) {
 # main heading that one council asked for.
 function cobrand_extra_heading($text) {
     global $site_name;
-    if ($site_name == 'tandridge' || $site_name == 'molevalley')
+    if ($site_name == 'molevalley')
         print "<h1>$text</h1>";
 }
 
@@ -1084,7 +1012,7 @@ function cobrand_allowed_responses() {
     global $site_name;
     if ($site_name == 'hounslow')
         return 12;
-    if ($site_name == 'surrey' || $site_name == 'tandridge' || $site_name == 'sbdc')
+    if ($site_name == 'surrey' || $site_name == 'sbdc')
         return 2;
     return 8;
 }

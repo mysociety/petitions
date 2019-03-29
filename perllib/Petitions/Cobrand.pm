@@ -33,7 +33,7 @@ sub extra_heading($) {
     my $text = shift;
     my $site_name = Petitions::Page::site_name();
     return "<h2>$text</h2>"
-        if $site_name =~ /tandridge|molevalley/;
+        if $site_name =~ /molevalley/;
     return '';
 }
 
