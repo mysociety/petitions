@@ -128,7 +128,6 @@ function cobrand_creation_within_area_only() {
     global $site_name;
     if ($site_name == 'hounslow') return array('Hounslow', 2483);
     if ($site_name == 'molevalley') return array('Mole Valley', 2454);
-    if ($site_name == 'reigate-banstead') return array('Surrey', null);
     if ($site_name == 'runnymede') return array('Runnymede', 2451);
     if ($site_name == 'rbwm') return array('the Royal Borough of Windsor and Maidenhead', 2622);
     if ($site_name == 'surreycc') return array('Surrey', null);
@@ -140,7 +139,7 @@ function cobrand_creation_within_area_only() {
 function cobrand_creator_must_be() {
     global $site_name;
     $creator_type = '';
-    if ($site_name == 'surreycc' || $site_name == 'reigate-banstead'){
+    if ($site_name == 'surreycc') {
         $creator_type = 'must live, work or study at a Surrey registered address';
     } elseif ($site_name == 'woking'){
         $creator_type = 'must live, work or study in the Borough of Woking';
@@ -323,7 +322,7 @@ function cobrand_category_okay($category_id) {
     global $site_name, $site_group;
     if ($site_group == 'surreycc') {
         $county_only = array(4, 6, 7, 10, 12, 13, 16);
-        if ($site_name == 'tandridge' || $site_name == 'reigate-banstead' || $site_name == 'surreyheath')
+        if ($site_name == 'tandridge' || $site_name == 'surreyheath')
             $county_only[] = 11; # Planning not okay
         if ($site_name != 'surreycc' && in_array($category_id, $county_only))
             return false;
@@ -350,12 +349,6 @@ application. For further information on the Council's procedures and how you
 can express your views, see the
 <a href='http://www.surreyheath.gov.uk/planning/default.htm'>planning
 applications</a> section.";
-            } elseif ($site_name == 'reigate-banstead' && $category_id == 11) { # Planning
-                return "You cannot create a petition about a planning
-application. For further information on the Council's procedures and how you
-can express your views, see the
-<a href='http://www.reigate-banstead.gov.uk/planning/'>planning
-applications</a> section.";
             } else {
                 $url = 'http://petitions.surreycc.gov.uk/new?tostepmain=1&category=' . $category_id;
                 return "You are petitioning about something which isn't the
@@ -376,6 +369,8 @@ petition in this category</a>.";
                 return 'http://mygov.elmbridge.gov.uk/mgEPetitionListDisplay.aspx?bcr=1';
             if ($area == 'guildford')
                 return 'https://www2.guildford.gov.uk/councilmeetings/mgEPetitionListDisplay.aspx?bcr=1';
+            if ($area == 'reigate-banstead')
+                return 'http://www.reigate-banstead.gov.uk/info/20384/petitions';
             return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
         } else {
             return '
@@ -597,7 +592,6 @@ function cobrand_admin_areas_of_interest() {
     $user_to_area_id = array(
         'surreycc' => 2242,
         'molevalley' => 2454,
-        'reigate-banstead' => 2453,
         'runnymede' => 2451,
         'surreyheath' => 2450,
         'tandridge' => 2448,
@@ -783,10 +777,7 @@ outside the remit or powers of Stevenage Borough Council.</p>
         political version would be: "We petition the council to change their
         policy on education".';
 
-        if ($site_name == 'reigate-banstead') {
-            $foi_link = 'http://www.reigate-banstead.gov.uk/council_and_democracy/about_the_council/access_to_information/freedom_of_information_act_2000/';
-            $foi_text = 'Freedom Of Information Act 2000';
-        } elseif ($site_name == 'westminster') {
+        if ($site_name == 'westminster') {
             $foi_link = 'http://www.westminster.gov.uk/services/councilgovernmentanddemocracy/dataprotectionandfreedomofinformation/foi/';
             $foi_text = 'our Freedom of Information section';
             $party_political_example = '';
@@ -1009,8 +1000,6 @@ function cobrand_terms_elsewhere() {
         return 'https://www.hounslow.gov.uk/downloads/file/1226/terms_and_conditions_-_epetitions';
     if ($site_name == 'molevalley')
         return 'http://www.molevalley.gov.uk/index.cfm?articleid=11411';
-    if ($site_name == 'reigate-banstead')
-        return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/tcpetitions/index.asp';
     if ($site_name == 'runnymede')
         return 'https://www.runnymede.gov.uk/article/14687/Petitions';
     if ($site_name == 'stevenage')
@@ -1030,8 +1019,6 @@ function cobrand_steps_elsewhere() {
     global $site_name;
     if ($site_name == 'surreycc')
         return 'http://www.surreycc.gov.uk/sccwebsite/sccwspages.nsf/LookupWebPagesByTITLE_RTF/Step+by+step+guide+to+e-petitions?opendocument';
-    if ($site_name == 'reigate-banstead')
-        return 'http://www.reigate-banstead.gov.uk/council_and_democracy/local_democracy/petitions/stepbystep/index.asp';
     return null;
 }
 
@@ -1082,9 +1069,6 @@ function cobrand_main_heading($text) {
 }
 
 function cobrand_create_heading($text) {
-    global $site_name;
-    if ($site_name == 'reigate-banstead')
-        return "<h3>$text</h3>";
     return "<h2>$text</h2>";
 }
 
