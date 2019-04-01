@@ -10,6 +10,7 @@
 package Petitions::Cobrand;
 
 use strict;
+use utf8;
 use mySociety::Config;
 use Petitions::Page;
 
@@ -47,6 +48,12 @@ sub approval_word() {
     return 'acceptance' if $site_name eq 'westminster';
 }
 
+sub post_signup_text {
+    my $site_name = Petitions::Page::site_name();
+    return '(Your name will be published to the petition page under ‘current signatories’)' if $site_name eq 'rbwm';
+    return '';
+}
+
 sub within_area_only() {
     my $site_name = Petitions::Page::site_name();
     return ('the Royal Borough of Windsor and Maidenhead', 2622) if $site_name eq 'rbwm';
@@ -77,6 +84,7 @@ sub name_only_text() {
 sub ask_for_address() {
     my $site_name = Petitions::Page::site_name();
     return '' if $site_name eq 'westminster';
+    return 'Your address (<strong>will not be published</strong> and is only collected to confirm the address is within the borough boundary)' if $site_name eq 'rbwm';
     return 'Your address (will not be published)';
 }
 
@@ -87,7 +95,7 @@ sub ask_for_address_type() {
 
 sub signing_checkbox() {
     my $site_name = Petitions::Page::site_name();
-    return 1 if $site_name eq 'rbwm';
+    return 'To see RBWM’s data processing Privacy Notice in relation to e-petitions, please go to the following link: <a href="https://www3.rbwm.gov.uk/downloads/200409/data_protection">https://www3.rbwm.gov.uk/downloads/200409/data_protection</a>' if $site_name eq 'rbwm';
 }
 
 sub overseas_dropdown {
