@@ -991,7 +991,7 @@ function cobrand_view_petitions_separator() {
 
 function cobrand_main_heading($text) {
     global $site_name;
-    if ($site_name == 'surreycc' || $site_name == 'runnymede' || $site_name == 'surreyheath')
+    if ($site_name == 'surreycc' || $site_name == 'runnymede' || $site_name == 'surreyheath' || $site_name == 'stevenage')
         return "<h2>$text</h2>";
     return "<h3>$text</h3>";
 }
