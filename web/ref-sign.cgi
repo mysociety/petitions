@@ -129,7 +129,7 @@ sub signup_page ($$) {
         } else {
             my $in_mapit = grep { $area_id == $_ } keys %{$mapit->{areas}};
             unless ($in_mapit || Petitions::Cobrand::postcode_exemptions($qp_postcode)) {
-                $errors{postcode} = "You must live, work or study within $area to sign a petition.";
+                $errors{postcode} = Petitions::Cobrand::signer_must_be($p);
             }
         }
     }

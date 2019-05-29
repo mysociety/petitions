@@ -55,7 +55,7 @@ function cobrand_creation_default_deadline() {
 function cobrand_creation_address_help() {
     global $site_name;
     if ($site_name == 'rbwm') {
-        print '<br>(Please use the address where you live, work or study within the Royal Borough)';
+        print '<br>(Please use the address where you live within the Royal Borough)';
     }
 
 }
@@ -112,6 +112,7 @@ function cobrand_creation_address_type_label() {
 
 function cobrand_creation_ask_for_address_type() { # by default: don't ask for address type unless it's within a specified area
     global $site_name;
+    if ($site_name == 'rbwm') return false;
     if (cobrand_creation_within_area_only()) return true;
     if ($site_name == 'stevenage') return true;
     if ($site_name == 'surreyheath') return true;
@@ -144,6 +145,8 @@ function cobrand_creator_must_be() {
         $creator_type = 'must live, work or study in the Borough of Woking';
     } elseif ($site_name == 'stevenage'){
         $creator_type = 'should live, work or study within Stevenage';
+    } elseif ($site_name == 'rbwm') {
+        $creator_type = 'should live within the Royal Borough of Windsor and Maidenhead';
     } elseif ($area = cobrand_creation_within_area_only()) {
         $creator_type = 'must live, work or study within ' . $area[0];
     } else {

@@ -54,6 +54,20 @@ sub post_signup_text {
     return '';
 }
 
+sub signer_must_be {
+    my $p = shift;
+    my $site_name = Petitions::Page::site_name();
+    if ($site_name eq 'rbwm') {
+        return 'You must live within the Royal Borough to sign a petition. ';
+    } elsif (my @area = within_area_only()) {
+        return "You must live, work or study within $area[0] to sign a petition. ";
+    } elsif ($p->{body_area_id} || ($p->{body_name} && $p->{body_name} =~ /council/i) || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
+        return '';
+        #'You need to live, work or study within the council area to sign the petition. ';
+    }
+    return 'You must be a British citizen or resident to sign the petition. ';
+}
+
 sub within_area_only() {
     my $site_name = Petitions::Page::site_name();
     return ('the Royal Borough of Windsor and Maidenhead', 2622) if $site_name eq 'rbwm';
@@ -90,7 +104,7 @@ sub ask_for_address() {
 
 sub ask_for_address_type() {
     my $site_name = Petitions::Page::site_name();
-    return 1 if $site_name eq 'runnymede' || $site_name eq 'westminster' || $site_name eq 'rbwm';
+    return 1 if $site_name eq 'runnymede' || $site_name eq 'westminster';
 }
 
 sub signing_checkbox() {

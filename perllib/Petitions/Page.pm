@@ -293,15 +293,7 @@ sub sign_box ($$) {
     my $ser = encode_base64($buf . hmac_sha1($buf, Petitions::DB::secret()), '');
     delete($safe_p->{salt});
 
-    my $must;
-    if (my @area = Petitions::Cobrand::within_area_only()) {
-        $must = "You must live, work or study within $area[0] to sign a petition. ";
-    } elsif ($p->{body_area_id} || ($p->{body_name} && $p->{body_name} =~ /council/i) || mySociety::Config::get('SITE_PETITIONED') =~ /council/i) {
-        $must = '';
-        #$must = 'You need to live, work or study within the council area to sign the petition. ';
-    } else {
-        $must = 'You must be a British citizen or resident to sign the petition. ';
-    }
+    my $must = Petitions::Cobrand::signer_must_be($p);
 
     my $overseas = Petitions::Cobrand::overseas_dropdown();
     my $expat = '';
