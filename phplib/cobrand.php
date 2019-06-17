@@ -368,7 +368,7 @@ petition in this category</a>.";
             if ($area == 'reigate-banstead')
                 return 'http://www.reigate-banstead.gov.uk/info/20384/petitions';
             if ($area == 'tandridge')
-                return 'https://www.tandridge.gov.uk/Your-council/Voting-and-elections';
+                return 'https://www.tandridge.gov.uk/Contact?TID=209';
             return 'http://petitions.' . $area . '.gov.uk/new?tostepmain=1&category=' . $category_id;
         } else {
             return '
