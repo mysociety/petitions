@@ -31,26 +31,25 @@ if (!GetOptions( 'verbose=i' =>  \$verbose)) {
 }
 
 my $date = dbh()->selectrow_array("select ms_current_date() - interval '2 years'");
-my $dateS = dbh()->selectrow_array("select ms_current_date() - interval '2 years' - interval '1 month'");
 
-# Get all petitions that closed over a year ago
-my $ids = dbh()->selectcol_arrayref("select id from petition where deadline < '$date' and deadline>='$dateS' and status='finished'");
+# Get all petitions that closed over 2 years ago
+my $ids = dbh()->selectcol_arrayref("select id from petition where deadline < '$date' and status='finished'");
 my ($unconfirmed, $confirmed) = (0,0);
 foreach my $id (@$ids) {
     # Remove all unconfirmed signatures
     my $un = dbh()->do("delete from signer
-        where petition_id = ? and signtime < ? and emailsent in ('failed', 'sent')",
-        undef, $id, $date);
+        where petition_id = ? and emailsent in ('failed', 'sent')",
+        undef, $id);
 
     # Remove personal information except name from confirmed signatures
     my $c = dbh()->do("update signer set address='', email='', postcode=''
-        where petition_id = ? and email != '' and signtime < ?
+        where petition_id = ? and email != ''
             and emailsent = 'confirmed' and overseas is null",
-        undef, $id, $date);
+        undef, $id);
     $c += dbh()->do("update signer set address='', email='', overseas=''
-        where petition_id = ? and email != '' and signtime < ?
+        where petition_id = ? and email != ''
             and emailsent = 'confirmed' and postcode is null",
-        undef, $id, $date);
+        undef, $id);
     dbh()->commit();
     print "Petition id $id, $un unconfirmed deleted, $c scrubbed\n"
         if $verbose>0 && ($un>0 || $c>0);
