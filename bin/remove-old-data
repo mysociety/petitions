@@ -60,3 +60,28 @@ foreach my $id (@$ids) {
 print "\n$unconfirmed deleted from database, $confirmed scrubbed\n"
     if $verbose>0;
 
+
+# Special RBWM handling
+exit unless mySociety::Config::get('SITE_NAME') eq 'rbwm';
+
+$date = dbh()->selectrow_array("select ms_current_date() - interval '5 years'");
+$ids = dbh()->selectcol_arrayref("select id from petition where deadline < '$date' and status='finished'");
+my $names = 0;
+foreach my $id (@$ids) {
+    dbh()->do("update petition
+        set lastupdate = ms_current_timestamp(),
+            cached_signers = 1,
+            offline_signers = coalesce(offline_signers, 0) +
+            (select count(*) from signer where petition_id = ? and showname = 't' and emailsent = 'confirmed')",
+        undef, $id);
+    my $c = dbh()->do('delete from signer where petition_id = ?', undef, $id);
+
+    dbh()->commit();
+    mySociety::Memcached::set("lastupdate:$id", time());
+    print "Petition id $id, $c names scrubbed\n"
+        if $verbose>0 && $c>0;
+    $names += $c;
+}
+
+print "\n$names names scrubbed\n"
+    if $verbose>0;
