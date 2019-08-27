@@ -240,7 +240,7 @@ sub do_main_test {
     });
 
     comment("Confirm petition");
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(99).'" <'.email_n(99).'>%');
+    my $confirm_email = $wth->email_get_containing([ -and => '%Subject: Confirm your new petition%', '%To: "'.name_n(99).'" <'.email_n(99).'>%' ]);
     die "Confirm petition email link not found\n" if ($confirm_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
@@ -250,7 +250,7 @@ sub do_main_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: New petition submitted%');
+    my $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: New petition submitted%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -264,7 +264,7 @@ sub do_main_test {
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'approve') or die "Failed to submit approve petition button";
     call_send_messages();
-    my $petition_approved_email = $wth->email_get_containing('%To: '.email_n(99).'%Subject: Your petition to the Prime Minister has been approved%');
+    my $petition_approved_email = $wth->email_get_containing([ -and => '%To: '.email_n(99).'%', '%Subject: Your petition to the Prime Minister has been approved%' ]);
     $wth->browser_check_contents('Petition approved!');
 
     comment("Check that petition is on the front page, and has its own page");
@@ -292,7 +292,7 @@ sub do_main_test {
         $wth->browser_check_contents("We have sent you an email");
 
         comment("Find confirmation email");
-        my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
+        my $confirm_signature_email = $wth->email_get_containing([ -and => '%Subject: Signing up to ask the Prime Minister%', '%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%', '%Please click on the link below to confirm your signature%' ]);
         die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m{^\s*(https?://.*)$}m);
         my $confirm_signature_link = $1;
         if ($signer_no == 1490) {
@@ -339,7 +339,7 @@ sub do_main_test {
     $wth->browser_check_contents("We have sent you an email");
 
     comment("Find duplicate email");
-    $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1489).'" <'.email_n(1489).'>%already signed up%');
+    $wth->email_get_containing([ -and => '%Subject: Signing up to ask the Prime Minister%', '%To: "'.name_n(1489).'" <'.email_n(1489).'>%already signed up%' ]);
 
     comment("Delete a signer from the administration interface");
     $wth->browser_get($admin_approve_link);
@@ -368,7 +368,7 @@ sub do_main_test {
                 postcode => "EH99 1SP",
                 }, button => 'submit') or die "Failed to submit sign petition";
     $wth->browser_check_contents("We have sent you an email");
-    my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1501).'" <'.email_n(1501).'>%Please click on the link below to confirm your signature%');
+    my $confirm_signature_email = $wth->email_get_containing([ -and => '%Subject: Signing up to ask the Prime Minister%', '%To: "'.name_n(1501).'" <'.email_n(1501).'>%', '%Please click on the link below to confirm your signature%' ]);
     die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m{^\s*(https?://.*)$}m);
     my $partial_signup_confirm = $1;
     comment("Partial signup confirm link: $partial_signup_confirm");
@@ -447,10 +447,10 @@ the PM.",
 
     comment("Check everyone gets the response; non deleted signers, creator and admin");
     foreach my $signer_no (1488,1490) {
-        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Response%Thank you for your petition%');
+        $wth->email_get_containing([ -and => '%Envelope-to: '.email_n($signer_no).'%', '%Subject: Response%', '%Thank you for your petition%' ]);
     }
-    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Response%Thank you for your petition%");
-    $wth->email_get_containing('%To: '.$contact_email.'%Subject: Response%Thank you for your petition%');
+    $wth->email_get_containing([ -and => '%To: '.email_n(99).'%', '%Subject: Response%', '%Thank you for your petition%' ]);
+    $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: Response%', '%Thank you for your petition%' ]);
 
     comment("Check government response is displayed on petition page");
     $wth->browser_get($base_url);
@@ -498,10 +498,10 @@ Second bullet point'
 
     comment("Check everyone gets the 2nd response; non deleted signers, creator and admin");
     foreach my $signer_no (1488,1490) {
-        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Response%Thank you for your petition%<body>%');
+        $wth->email_get_containing([ -and => '%Envelope-to: '.email_n($signer_no).'%', '%Subject: Response%', '%Thank you for your petition%<body>%' ]);
     }
-    $wth->email_get_containing('%To: '.email_n(99)."%Subject: Response%Thank you for your petition%<body>%");
-    $wth->email_get_containing('%To: '.$contact_email.'%Subject: Response%Thank you for your petition%');
+    $wth->email_get_containing([ -and => '%To: '.email_n(99).'%', '%Subject: Response%', '%Thank you for your petition%<body>%' ]);
+    $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: Response%', '%Thank you for your petition%' ]);
 
     comment("Check 2nd government response is displayed on petition page");
     $wth->browser_get($base_url);
@@ -565,7 +565,7 @@ sub do_council_test {
     });
 
     comment("Confirm petition");
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(1).'" <'.email_n(1).'>%');
+    my $confirm_email = $wth->email_get_containing([ -and => '%Subject: Confirm your new petition%', '%To: "'.name_n(1).'" <'.email_n(1).'>%' ]);
     die "Confirm petition email link not found\n" if ($confirm_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
@@ -575,7 +575,7 @@ sub do_council_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: Please Action%');
+    my $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: Please Action%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -589,7 +589,7 @@ sub do_council_test {
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'approve') or die "Failed to submit approve petition button";
     call_send_messages();
-    my $petition_approved_email = $wth->email_get_containing('%To: '.email_n(1).'%Subject: Your petition to Westminster City Council has been accepted%');
+    my $petition_approved_email = $wth->email_get_containing([ -and => '%To: '.email_n(1).'%', '%Subject: Your petition to Westminster City Council has been accepted%' ]);
     $wth->browser_check_contents('Petition approved!');
 
     comment("Check that petition is on the front page, and has its own page");
@@ -612,13 +612,13 @@ sub do_council_test {
     set_pet_date('1994-04-11');
     call_mark_finished();
     call_send_messages();
-    my $admin_finished_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: Petition%finished%');
+    my $admin_finished_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: Petition%finished%' ]);
 
     comment("Go forward a month, check follow-up email is sent");
     set_pet_date('1994-05-11');
     call_mark_finished();
     call_send_messages();
-    $admin_finished_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: Petition%finished 1 month ago%');
+    $admin_finished_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: Petition%finished 1 month ago%' ]);
 
     restore_config_file();
 }
@@ -649,7 +649,7 @@ sub do_rejection_test {
     });
 
     comment("Confirm petition");
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(44).'" <'.email_n(44).'>%');
+    my $confirm_email = $wth->email_get_containing([ -and => '%Subject: Confirm your new petition%', '%To: "'.name_n(44).'" <'.email_n(44).'>%' ]);
     die "Confirm petition email link not found\n" if ($confirm_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
@@ -659,7 +659,7 @@ sub do_rejection_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: New petition submitted%');
+    my $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: New petition submitted%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -680,7 +680,7 @@ sub do_rejection_test {
 
     comment("Get rejection message to creator");
     call_send_messages();
-    my $rejection_email = $wth->email_get_containing('%To: '.email_n(44).'%Subject: Your petition has been rejected%Outside the remit or powers%');
+    my $rejection_email = $wth->email_get_containing([ -and => '%To: '.email_n(44).'%', '%Subject: Your petition has been rejected%', '%Outside the remit or powers%' ]);
     die "Rejection email link not found\n" if ($rejection_email !~ m{^\s*(https?://.*)$}m);
     my $rejection_email_link = $1;
     comment("Rejection resubmit link: $rejection_email_link");
@@ -703,7 +703,7 @@ sub do_rejection_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: Resubmitted petition to the Prime Minister%');
+    $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: Resubmitted petition to the Prime Minister%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -723,7 +723,7 @@ sub do_rejection_test {
                 'rejection_cats[]' => ['256', 9], # the 9th checkbox has value 256, and means "Wording that is impossible to understand"
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
-    $rejection_email = $wth->email_get_containing('%To: '.email_n(44).'%Subject: Your petition has been rejected%impossible%understand%');
+    $rejection_email = $wth->email_get_containing([ -and => '%To: '.email_n(44).'%', '%Subject: Your petition has been rejected%impossible%understand%' ]);
     die "Rejection email link found when it should not have been\n" if ($rejection_email =~ m{^\s*(https?://.*)$}m);
 
     comment("Check appears on rejection page");
@@ -761,7 +761,7 @@ sub do_timeout_test {
     });
 
     comment("Confirm petition");
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(55).'" <'.email_n(55).'>%');
+    my $confirm_email = $wth->email_get_containing([ -and => '%Subject: Confirm your new petition%', '%To: "'.name_n(55).'" <'.email_n(55).'>%' ]);
     die "Confirm petition email link not found\n" if ($confirm_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
@@ -771,7 +771,7 @@ sub do_timeout_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: New petition submitted%');
+    my $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: New petition submitted%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -795,7 +795,7 @@ sub do_timeout_test {
 #                'categories[]' => ['1024', 11], 
             }, button => 'reject_submit') or die "Failed to submit reject details form";
     call_send_messages();
-    my $rejection_email = $wth->email_get_containing('%To: '.email_n(55).'%Subject: Your petition has been rejected%Language which is offensive%');
+    my $rejection_email = $wth->email_get_containing([ -and => '%To: '.email_n(55).'%', '%Subject: Your petition has been rejected%', '%Language which is offensive%' ]);
     die "Rejection email link not found\n" if ($rejection_email !~ m{^\s*(https?://.*)$}m);
     my $rejection_email_link = $1;
     comment("Rejection resubmit link: $rejection_email_link");
@@ -815,7 +815,7 @@ sub do_timeout_test {
     set_pet_date('1990-06-30'); 
     call_mark_finished();
     call_send_messages();
-    $wth->email_get_containing('%To: '.email_n(55).'%%Subject: Your chance to revise your petition has expired%');
+    $wth->email_get_containing([ -and => '%To: '.email_n(55).'%', '%Subject: Your chance to revise your petition has expired%' ]);
 
     comment("Check it is on rejection page, but text not shown (as offensive)");
     $wth->browser_get($base_url);
@@ -877,7 +877,7 @@ sub do_resubmit_test {
     $wth->browser_check_contents("We have sent you an email to confirm");
 
     comment("Confirm petition");
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(504).'" <'.email_n(504).'>%');
+    my $confirm_email = $wth->email_get_containing([ -and => '%Subject: Confirm your new petition%', '%To: "'.name_n(504).'" <'.email_n(504).'>%' ]);
     die "Confirm petition email link not found\n" if ($confirm_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
@@ -887,7 +887,7 @@ sub do_resubmit_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: New petition submitted%');
+    my $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%','%Subject: New petition submitted%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -908,7 +908,7 @@ sub do_resubmit_test {
 
     comment("Get rejection message to creator");
     call_send_messages();
-    my $rejection_email = $wth->email_get_containing('%To: '.email_n(504).'%Subject: Your petition has been rejected%Outside the remit or powers%');
+    my $rejection_email = $wth->email_get_containing([ -and => '%To: '.email_n(504).'%', '%Subject: Your petition has been rejected%', '%Outside the remit or powers%' ]);
     die "Rejection email link not found\n" if ($rejection_email !~ m{^\s*(https?://.*)$}m);
     my $rejection_email_link = $1;
     comment("Rejection resubmit link: $rejection_email_link");
@@ -931,7 +931,7 @@ sub do_resubmit_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: Resubmitted petition to the Prime Minister%');
+    $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: Resubmitted petition to the Prime Minister%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -946,7 +946,7 @@ sub do_resubmit_test {
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'approve') or die "Failed to submit approve petition button";
     call_send_messages();
-    my $petition_approved_email = $wth->email_get_containing('%To: '.email_n(504).'%Subject: Your petition to the Prime Minister has been approved%');
+    my $petition_approved_email = $wth->email_get_containing([ -and => '%To: '.email_n(504).'%', '%Subject: Your petition to the Prime Minister has been approved%' ]);
     $wth->browser_check_contents('Petition approved!');
 
     comment("Check that petition is on the front page, and has its own page");
@@ -1019,7 +1019,7 @@ sub do_early_response_test {
     });
 
     comment("Confirm petition");
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(511).'" <'.email_n(511).'>%');
+    my $confirm_email = $wth->email_get_containing([ -and => '%Subject: Confirm your new petition%', '%To: "'.name_n(511).'" <'.email_n(511).'>%' ]);
     die "Confirm petition email link not found\n" if ($confirm_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
@@ -1029,7 +1029,7 @@ sub do_early_response_test {
 
     comment("Get the email to the administrator");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: New petition submitted%');
+    my $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: New petition submitted%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     my $admin_approve_link = $1;
     comment("Admin approve link: $admin_approve_link");
@@ -1043,7 +1043,7 @@ sub do_early_response_test {
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'approve') or die "Failed to submit approve petition button";
     call_send_messages();
-    my $petition_approved_email = $wth->email_get_containing('%To: '.email_n(511).'%Subject: Your petition to the Prime Minister has been approved%');
+    my $petition_approved_email = $wth->email_get_containing([ -and => '%To: '.email_n(511).'%', '%Subject: Your petition to the Prime Minister has been approved%' ]);
     $wth->browser_check_contents('Petition approved!');
 
     comment("Check that petition is on the front page, and has its own page");
@@ -1071,7 +1071,7 @@ sub do_early_response_test {
         $wth->browser_check_contents("We have sent you an email");
 
         comment("Find confirmation email");
-        my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
+        my $confirm_signature_email = $wth->email_get_containing([ -and => '%Subject: Signing up to ask the Prime Minister%', '%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%', '%Please click on the link below to confirm your signature%' ]);
         die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m{^\s*(https?://.*)$}m);
         my $confirm_signature_link = $1;
         comment("Confirm signature by user clicking link");
@@ -1099,7 +1099,7 @@ sub do_early_response_test {
                 postcode => "EH99 1SP",
                 }, button => 'submit') or die "Failed to submit sign petition";
     $wth->browser_check_contents("We have sent you an email");
-    my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(515).'" <'.email_n(515).'>%Please click on the link below to confirm your signature%');
+    my $confirm_signature_email = $wth->email_get_containing([ -and => '%Subject: Signing up to ask the Prime Minister%', '%To: "'.name_n(515).'" <'.email_n(515).'>%', '%Please click on the link below to confirm your signature%' ]);
     die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m{^\s*(https?://.*)$}m);
     my $partial_signup_confirm = $1;
     comment("Partial signup confirm link: $partial_signup_confirm");
@@ -1128,11 +1128,11 @@ sub do_early_response_test {
 
     comment("Check everyone gets the response; signers, creator and admin");
     foreach my $signer_no (512..514) {
-        $wth->email_get_containing('%Envelope-to: '.email_n($signer_no).'%Subject: Response%Thank you for your petition%');
+        $wth->email_get_containing([ -and => '%Envelope-to: '.email_n($signer_no).'%', '%Subject: Response%Thank you for your petition%' ]);
     }
     # Encoded in UTf-8.
-    $wth->email_get_containing('%To: '.email_n(511)."%Subject: Response%Thank you for your petition%");
-    $wth->email_get_containing('%To: '.$contact_email.'%Subject: Response%Thank you for your petition%');
+    $wth->email_get_containing([ -and => '%To: '.email_n(511).'%', '%Subject: Response%Thank you for your petition%' ]);
+    $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: Response%Thank you for your petition%' ]);
     $wth->email_check_none_left();
 
     $wth->browser_get($partial_signup_confirm);
@@ -1140,7 +1140,7 @@ sub do_early_response_test {
     $c++;
     comment("Check person who signed up before pre-reply was written gets the email");
     call_send_messages();
-    $wth->email_get_containing('%Envelope-to: '.email_n(515).'%Subject: Response%Thank you for your petition%');
+    $wth->email_get_containing([ -and => '%Envelope-to: '.email_n(515).'%', '%Subject: Response%Thank you for your petition%' ]);
     $wth->email_check_none_left();
 
     comment("Check early response is now on the webpage");
@@ -1166,7 +1166,7 @@ sub do_early_response_test {
         $wth->browser_check_contents("We have sent you an email");
 
         comment("Find confirmation email");
-        my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%Please click on the link below to confirm your signature%');
+        my $confirm_signature_email = $wth->email_get_containing([ -and => '%Subject: Signing up to ask the Prime Minister%', '%To: "'.name_n($signer_no).'" <'.email_n($signer_no).'>%', '%Please click on the link below to confirm your signature%' ]);
         die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m{^\s*(https?://.*)$}m);
         my $confirm_signature_link = $1;
         comment("Confirm signature by user clicking link");
@@ -1252,7 +1252,7 @@ sub do_disabled_test {
     });
 
     comment("Confirm petition");
-    my $confirm_email = $wth->email_get_containing('%Subject: Confirm your new petition%To: "'.name_n(99).'" <'.email_n(99).'>%');
+    my $confirm_email = $wth->email_get_containing([ -and => '%Subject: Confirm your new petition%', '%To: "'.name_n(99).'" <'.email_n(99).'>%' ]);
     die "Confirm petition email link not found\n" if ($confirm_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_petition_link = $1;
     comment("Confirmation link: $confirm_petition_link");
@@ -1262,7 +1262,7 @@ sub do_disabled_test {
 
     comment("Approve petition");
     call_send_messages();
-    my $admin_approve_email = $wth->email_get_containing('%To: '.$contact_email.'%Subject: New petition submitted%');
+    my $admin_approve_email = $wth->email_get_containing([ -and => '%To: '.$contact_email.'%', '%Subject: New petition submitted%' ]);
     die "Admin approve email link not found\n" if ($admin_approve_email !~ m{^\s*(http://.*$)}m);
     my $admin_approve_link = $1;
     $wth->browser_get($admin_approve_link);
@@ -1271,7 +1271,7 @@ sub do_disabled_test {
     $wth->browser_submit_form(form_name => 'petition_admin_approve',
             fields => { }, button => 'approve') or die "Failed to submit approve petition button";
     call_send_messages();
-    my $petition_approved_email = $wth->email_get_containing('%To: '.email_n(99).'%Subject: Your petition to the Prime Minister has been approved%');
+    my $petition_approved_email = $wth->email_get_containing([ -and => '%To: '.email_n(99).'%', '%Subject: Your petition to the Prime Minister has been approved%' ]);
     $wth->browser_check_contents('Petition approved!');
 
     $wth->browser_get($base_url);
@@ -1291,7 +1291,7 @@ sub do_disabled_test {
                 }, button => 'submit') or die "Failed to submit sign petition";
     $wth->browser_check_contents("We have sent you an email");
 
-    my $confirm_signature_email = $wth->email_get_containing('%Subject: Signing up to ask the Prime Minister%To: "'.name_n(1201).'" <'.email_n(1201).'>%Please click on the link below to confirm your signature%');
+    my $confirm_signature_email = $wth->email_get_containing([ -and => '%Subject: Signing up to ask the Prime Minister%', '%To: "'.name_n(1201).'" <'.email_n(1201).'>%', '%Please click on the link below to confirm your signature%' ]);
     die "Confirm signature email link not found\n" if ($confirm_signature_email !~ m{^\s*(https?://.*)$}m);
     my $confirm_signature_link = $1;
     $wth->browser_get($confirm_signature_link);
