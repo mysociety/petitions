@@ -47,7 +47,9 @@ if (OPTION_SITE_TYPE == 'multiple') {
 
 // Lame: send last-modified now to encourage cacheing.
 cond_headers(time());
-header('Cache-Control: max-age=5');
+if (OPTION_SITE_NAME != 'sbdc' && OPTION_SITE_NAME != 'sbdc1') {
+    header('Cache-Control: max-age=5');
+}
 page_header('Introduction to e-petitions', array(
     'rss' => array(
         'Latest Petitions' => '/rss/list'
