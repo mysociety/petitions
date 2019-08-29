@@ -29,7 +29,8 @@ use lib "$FindBin::Bin/../commonlib/perllib";
 chdir $FindBin::Bin;
 
 use strict;
-require 5.8.0;
+use v5.14;
+use Getopt::Long;
 use POSIX qw(strftime);
 use mySociety::Config;
 BEGIN {
@@ -40,11 +41,16 @@ use mySociety::Memcached;
 mySociety::Memcached::set_config(mySociety::Config::get('MEMCACHE_HOST'), mySociety::Config::get('PET_DB_NAME'));
 use Petitions;
 
+my $verbose = 0;
+if (!GetOptions('verbose' => \$verbose)) {
+    exit(1);
+}
+
 if (!$ARGV[0]) {
     die "Please specify a first parameter; 'all' to update all petitions, or a number of minutes to do only those changed that recently"
 }
 
-# print "Starting to fetch 'correct' totals at " . localtime(). "\n";
+say "Starting to fetch 'correct' totals at " . localtime() if $verbose;
 
 my $date_part;
 if ($ARGV[0] eq "all") {
@@ -59,7 +65,7 @@ if ($ARGV[0] eq "all") {
 } else {
     die "First parameter must be either 'all' to update all petitions, or a number of minutes to do only those changed that recently"
 }
-my $r = select_all("select id, ref,
+my $r = select_all("select id, ref, cached_signers,
     (select count(*)+1 from signer 
         where petition_id=petition.id and emailsent='confirmed' and showname='t') as count
     from petition
@@ -69,10 +75,10 @@ my $r = select_all("select id, ref,
         $date_part
     ");
 
-# print "Starting to update " . (@$r/2) . " cached totals at " . localtime() . "\n";
+say "Starting to update " . (@$r/2) . " cached totals at " . localtime() if $verbose;
 
 foreach (@$r) {
-    # print "Updating $_ to $hash{$_}...\n";
+    say "Updating $_->{ref} from $_->{cached_signers} to $_->{count}" if $verbose;
     dbh()->do("update petition set cached_signers=?, lastupdate=ms_current_timestamp()
         where id=? and cached_signers!=?",
         {}, $_->{count}, $_->{id}, $_->{count});
@@ -80,5 +86,5 @@ foreach (@$r) {
     mySociety::Memcached::set("lastupdate:$_->{id}", time());
 }
 
-# print "Finished at " . localtime() . "\n";
+say "Finished at " . localtime() if $verbose;
 
