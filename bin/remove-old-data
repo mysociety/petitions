@@ -72,7 +72,8 @@ foreach my $id (@$ids) {
         set lastupdate = ms_current_timestamp(),
             cached_signers = 1,
             offline_signers = coalesce(offline_signers, 0) +
-            (select count(*) from signer where petition_id = ? and showname = 't' and emailsent = 'confirmed')",
+            (select count(*) from signer where petition_id = petition.id and showname = 't' and emailsent = 'confirmed')
+        where id = ?",
         undef, $id);
     my $c = dbh()->do('delete from signer where petition_id = ?', undef, $id);
 
