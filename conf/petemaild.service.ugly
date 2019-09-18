@@ -6,10 +6,9 @@ Description=!!(*= $daemon_name *)!!
 After=syslog.target network.target
 
 [Service]
-Type=forking
+Type=simple
 LimitNOFILE=10240
-PIDFile=/data/vhost/!!(*= $vhost *)!!/petemaild.pid
-ExecStart=/data/vhost/!!(*= $vhost *)!!/petitions/bin/petemaild
+ExecStart=/data/vhost/!!(*= $vhost *)!!/petitions/bin/petemaild --foreground
 User=!!(*= $user *)!!
 
 [Install]
