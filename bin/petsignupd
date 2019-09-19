@@ -56,6 +56,17 @@ use mySociety::PIDFile;
 use Petitions;
 use Petitions::RPC;
 
+#
+# Managing Debug mode
+#
+package Debug;
+
+my $enabled = 0;
+sub enabled (;$) {
+    $enabled = $_[0] if defined $_[0];
+    return $enabled;
+}
+
 package Log;
 
 my $verboselevel = 0;
@@ -167,13 +178,15 @@ sub do_pending () {
 my $max_signup_time = mySociety::Config::get('MAX_SIGNUP_TIME', 0.1);
 my $pidfilepath = mySociety::Config::get('PETSIGNUPD_PIDFILE', '/var/run/petsignupd.pid');
 my $debug = 0;
+my $foreground = 0;
 my $verbose = 0;
 my $help = 0;
 if (!GetOptions(
-        'pidfile=s' =>  \$pidfilepath,
-        debug =>        \$debug,
-        'verbose=i' =>      \$verbose,
-        help =>         \$help
+        'pidfile=s' => \$pidfilepath,
+        debug       => \$debug,
+        foreground  => \$foreground,
+        'verbose=i' => \$verbose,
+        help        => \$help
     )) {
     Log::print('err', "bad options; try --help for help");
     exit(1);
@@ -184,14 +197,17 @@ if ($help) {
     exit(0);
 }
 
-mySociety::SystemMisc::log_to_stderr(0) if (!$debug);
-mySociety::SystemMisc::daemon() unless ($debug);
+# Set logging verbosity
+Log::verbose($verbose);
 
+# Only daemonize if `--debug` or `--foreground` aren't given
 if ($debug) {
-    Log::verbose($verbose);
+    Log::stderronly(1);
+    Debug::enabled(1);
+} elsif ($foreground) {
     Log::stderronly(1);
 } else {
-    Log::verbose($verbose);
+    mySociety::SystemMisc::log_to_stderr(0);
     mySociety::SystemMisc::daemon();
 }
 
@@ -337,8 +353,12 @@ Display information about using the program.
 
 =item --debug
 
-Don't detach from controlling terminal; log diagnostics to standard error as
-well as the system log.
+Don't detach from controlling terminal; log diagnostics solely to STDERR and 
+set a flag to indicate we're in Debug mode.
+
+=item --foreground
+
+Don't detach from controlling terminal; log diagnostics solely to STDERR.
 
 =item --verbose=n
 
@@ -358,4 +378,3 @@ Copyright (c) 2006 UK Citizens Online Democracy
 =head1
 
 $Id: petsignupd,v 1.36 2010-03-12 00:06:37 matthew Exp $
-
