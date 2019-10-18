@@ -92,6 +92,10 @@ form#signForm label {
 }
 */
 
+.address-type-choices label {
+    display: inline;
+}
+
 p.petition_view_tabs {
     border-bottom: solid 2px #facf24;
     background-image:url(/assets/westminster/westminster_blue.png);

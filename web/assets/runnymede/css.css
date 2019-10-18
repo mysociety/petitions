@@ -44,6 +44,7 @@ div#signFormRight span.address-type-choices {
     display: block;
     margin: 0.5em 0;
 }
-div#signFormRight span.address-type-choices label {
-    margin-right: 2em;
+
+fieldset {
+    border: 0;
 }

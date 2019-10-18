@@ -567,13 +567,15 @@ the Armed Forces without a postcode, please select from this list:</label>
             $checked_home = $data['address_type'] == 'home' ? ' checked' : '';
             $checked_work = $data['address_type'] == 'work' ? ' checked' : '';
             $checked_study = $data['address_type'] == 'study' ? ' checked' : '';
-            print '<p><span class="label">' . cobrand_creation_address_type_label() . ':</span> ' . $mandatory;
+            print '<fieldset>
+<legend class="label">' . cobrand_creation_address_type_label() . ':</legend> ' . $mandatory;
             print '<input type="radio" id="address_type_home" name="address_type" value="home"' . $checked_home . ' />
 <label class="radio" for="address_type_home">Home</label>
 <input type="radio" id="address_type_work" name="address_type" value="work"' . $checked_work . ' />
 <label class="radio" for="address_type_work">Work</label>
 <input type="radio" id="address_type_study" name="address_type" value="study"' . $checked_study . ' />
-<label class="radio" for="address_type_study">Study</label>';
+<label class="radio" for="address_type_study">Study</label>
+</fieldset>';
         } else {
             $size = 20;
             if ($name == 'postcode')

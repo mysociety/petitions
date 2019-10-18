@@ -221,7 +221,7 @@ ol#breadcrumbs li.hilight {
     line-height: 1.4;
 }
 
-#new_you label, #new_you span.label {
+#new_you label, #new_you .label {
     font-weight: bold;
     display: block;
     float: left;

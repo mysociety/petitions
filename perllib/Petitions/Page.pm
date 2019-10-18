@@ -324,8 +324,8 @@ the Armed Forces without a postcode, please select from this list:</label>',
         my $checked_home = $q_address_type eq 'home' ? ' checked' : '';
         my $checked_work = $q_address_type eq 'work' ? ' checked' : '';
         my $checked_study = $q_address_type eq 'study' ? ' checked' : '';
-        $address_type .= $q->p(
-            $q->span({-class => 'label'}, 'This is where you:'),
+        $address_type .= $q->fieldset(
+            $q->legend('This is where you:'),
             "<span class='address-type-choices'>
             <input type='radio' id='address_type_home' name='address_type' value='home'$checked_home>
             <label class='wide' for='address_type_home'>Live</label>
