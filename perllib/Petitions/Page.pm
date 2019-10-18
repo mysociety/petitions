@@ -377,6 +377,7 @@ the Armed Forces without a postcode, please select from this list:</label>',
           $q->p( $must . $name_only ),
           $q->p("I, ",
                 $q->textfield(
+                    -aria_label => 'Your name',
                     -name => 'name', -id => 'name', -size => 20, -aria_required => 'true'
                 ),
                 ", sign up to the petition. $post_signup"
