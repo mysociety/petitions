@@ -1237,7 +1237,7 @@ Log::print('debug', "  -> will attempt delivery of ", $msg->id());
         # of connections you can concurrently use" - so err on the side of 1.
         # And whilst they say "Yahoo! Mail accepts a maximum of 20 messages per
         # SMTP connection." it used to be 5 and they're very easily tripped, so...
-        if ( $domain =~ /yahoo|btinternet|hotmail|live|msn|talktalk|sky/i ) {
+        if ( $domain =~ /yahoo|btinternet|hotmail|live|msn|talktalk|sky|ntlworld|virginmedia/i ) {
             $max_per_session = 4;
             $max_host_sessions = 1;
         }
