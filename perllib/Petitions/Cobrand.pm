@@ -80,6 +80,7 @@ sub postcode_exemptions($) {
     my $pc = shift;
     my $site_name = Petitions::Page::site_name();
     return 1 if $site_name eq 'westminster' && uc($pc) eq 'W24LY';
+    return 1 if $site_name eq 'rbwm' && uc($pc) eq 'SL42DP';
     return 0;
 }
 
