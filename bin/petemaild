@@ -3,17 +3,6 @@
 # petemaild:
 # High-performance email sending tool, for sending confirmation and other mails
 # from the petitions site.
-#
-# TODO: test it against a greater variety of real mail servers; occasionally
-# checkpoint retry data so that we can recover after a crash; implement a
-# graceful shutdown procedure; use this program to send announcement messages,
-# as well as confirmations.
-#
-# Copyright (c) 2006 UK Citizens Online Democracy. All rights reserved.
-# Email: chris@mysociety.org; WWW: http://www.mysociety.org/
-#
-
-my $rcsid = ''; $rcsid .= '$Id: petemaild,v 1.156 2010-03-12 19:00:35 matthew Exp $';
 
 # Horrible boilerplate to set up appropriate library paths.
 use FindBin;
@@ -927,27 +916,11 @@ use Carp;
 use Heap::Priority;
 use IO::Select;
 
-use fields qw(messages finished badhosts baddomains r ss lastcheckedqueue
-                noexpire queue debug_messages_to_requeue_local);
+use fields qw(messages finished ss lastcheckedqueue
+                noexpire queue);
 
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
-
-# How many simultaneous SMTP connections we make to any given host.
-use constant MAX_HOST_SESSIONS => 5;
-
-# How many messages we attempt to deliver in a single session.
-use constant MAX_PER_SESSION => 20;
-
-# Minimum interval between discovering a host is "bad" and checking again.
-use constant MIN_HOST_BAD_INTERVAL => 15;
-# Maximum interval.
-use constant MAX_HOST_BAD_INTERVAL => 1800;
-
-# Minimum interval between failure to resolve a domain and trying it again.
-use constant MIN_DOMAIN_BAD_INTERVAL => 30;
-# Maximum.
-use constant MAX_DOMAIN_BAD_INTERVAL => 600;
 
 # new [NOEXPIRE]
 # Construct a new queue object. If NOEXPIRE is true, messages older than
@@ -972,15 +945,6 @@ sub new ($;$) {
     # list of completed messages
     $self->{finished} = [ ];
     
-    # records of times when we've seen problems with hosts
-    $self->{badhosts} = { };
-
-    # records of times when we've been unable to resolve domains
-    $self->{baddomains} = { };
-    
-    # DNS client.
-    $self->{r} = new DomainResolver(100);
-
     # SMTP clients.
     $self->{ss} = [ ];
 
@@ -1059,59 +1023,6 @@ sub requeue ($$) {
     }
 }
 
-# thing_bad WHAT THING DB MIN MAX
-#
-sub thing_bad ($$$$$$) {
-    my Queue $self = shift;
-    my ($what, $thing, $db, $minint, $maxint) = @_;
-    if (!exists($db->{$thing})) {
-        return 0;
-    } else {
-        my $l = $db->{$thing};
-Log::print('noise', "$what $thing marked as bad ", join(', ', map { int(time() - $_) } @$l), " s ago");
-        # Only one observation, so try again as soon as a short interval
-        # has passed.
-        if (1 == @$l) {
-            if (time() > $l->[0] + $minint) {
-                return 0;
-            } else {
-                return 1;
-            }
-        }
-
-        # Otherwise check after half as long as the thing has been bad already,
-        # or after $maxint, whichever is sooner.
-        my $lastcheck = $l->[@$l - 1];
-        my $interval = ($lastcheck - $l->[0]) / 2;
-        $interval = $maxint if ($interval > $maxint);
-        if ($lastcheck + $interval > time()) {
-            return 1;
-        } else {
-            return 0;
-        }
-    }
-}
-
-# host_bad ADDRESS
-# Should we assume that the host at ADDRESS is bad, or should it be tried
-# again?
-sub host_bad ($$) {
-    my Queue $self = shift;
-    my $addr = shift;
-    return $self->thing_bad('host', $addr, $self->{badhosts},
-                        MIN_HOST_BAD_INTERVAL, MAX_HOST_BAD_INTERVAL);
-}
-
-# domain_bad DOMAIN
-# Should we assume that resolution of the DOMAIN is failing, or should it be
-# tried again?
-sub domain_bad ($$) {
-    my Queue $self = shift;
-    my $domain = shift;
-    return $self->thing_bad('domain', $domain, $self->{baddomains},
-                        MIN_DOMAIN_BAD_INTERVAL, MAX_DOMAIN_BAD_INTERVAL);
-}
-
 # pre_select RDS WRS
 #
 sub pre_select ($$$) {
@@ -1119,21 +1030,14 @@ sub pre_select ($$$) {
     my IO::Select $rds = shift;
     my IO::Select $wrs = shift;
 
-    # Do pre-select handling for domain resolver and individual SMTP clients.
-    $self->r()->pre_select($rds, $wrs);
+    # Do pre-select handling for individual SMTP clients.
     foreach my $smtp (@{$self->{ss}}) {
         $smtp->pre_select($rds, $wrs);
     }
 
     # Hash of IP addresses to which to send messages to messages to send to
     # them.
-    my %newsessions;
-
-    # Number of sessions already open on each IP address.
-    my %numsessions;
-    foreach my $s (@{$self->ss()}) {
-        ++$numsessions{$s->target()};
-    }
+    my @newsessions;
 
     # Now see whether we should start any more connections.
     my $now = time();
@@ -1141,18 +1045,8 @@ sub pre_select ($$$) {
     $self->{lastcheckedqueue} = $now;
     Log::print('noise', "iterating over queue");
 
-    #
     # The queue allows us to find the nominal retry time for the
-    # next-most-urgent message, and its identity. Unfortunately that's not
-    # enough for us, because when DNS resolution is in progress for a domain,
-    # we need to continue looking for other messages from the queue for later
-    # delivery. For the moment handle this in an ugly way, popping such
-    # messages off the queue and reinserting them after we've gone through the
-    # loop.
-    # 
-
-    my @messages_to_requeue = ( );
-    $self->{debug_messages_to_requeue_local} = \@messages_to_requeue;
+    # next-most-urgent message, and its identity.
     my $level;
     while (defined($level = $self->{queue}->next_level()) && $level <= $now) {
         my $msg = $self->{queue}->pop();
@@ -1185,136 +1079,20 @@ Log::print('debug', "  -> already being delivered");
         }
 Log::print('noise', " ... not presently being delivered");
 
-        my $domain = $msg->domain();
-        if ($self->domain_bad($domain)) {
-Log::print('debug', "  -> but domain $domain is not resolving, holding off");
-            # have another go at the message later
-            push(@messages_to_requeue, [$msg, $now + MIN_DOMAIN_BAD_INTERVAL]);
-            next;
-        }
-
-        # See if we have resolved the domain.
-        my $r = $self->r()->get($domain);
-        if (!$r) {
-Log::print('debug', "  -> domain $domain not resolved, adding to resolver queue");
-            $self->r()->add($domain);
-            push(@messages_to_requeue, [$msg, $level]);   # or $now?
-            next;
-        }
-        # If domain resolution failed, mark the domain as failing and hold off.
-        if ($r->failed()) {
-Log::print('debug', "  -> resolution of $domain failed, holding off");
-            push(@{$self->{baddomains}->{$domain}}, $now);
-            delete($self->r()->results()->{$domain});
-            # have another go at the message later
-            push(@messages_to_requeue, [$msg, $now + MIN_DOMAIN_BAD_INTERVAL]);
-            next;
-        }
-
-Log::print('noise', " ... domain $domain has been resolved");
-        # If the domain is unroutable, then the message should be failed.
-        if ($r->unroutable()) {
-Log::print('debug', "  -> domain $domain is unroutable; failing message");
-            $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
-            next;
-        }
-Log::print('noise', " ... and is routable");
-        # OK, potentially we want to send this message. See if there's an
-        # appropriate host to which to send it. We must send messages to the
-        # lowest-numbered MX where possible.
-        my $host = undef;
-        # XXX this is suboptimal. Where there are several possible hosts with
-        # equal preference, we should select one for which a new connection is
-        # already being made. Not clear how important this is in practice.
+        # OK, we want to send this message.
 Log::print('debug', "  -> will attempt delivery of ", $msg->id());
-
-        my $max_per_session = MAX_PER_SESSION;
-        my $max_host_sessions = MAX_HOST_SESSIONS;
-        # Some hosts are more... paranoid than others. Yahoo! publish, for
-        # example, the very helpful: "You may open concurrent connections from
-        # the same server to facilitate efficient transmission of your messages.
-        # However, while we do not publish specific guidelines for the numbers
-        # of connections you can concurrently use" - so err on the side of 1.
-        # And whilst they say "Yahoo! Mail accepts a maximum of 20 messages per
-        # SMTP connection." it used to be 5 and they're very easily tripped, so...
-        if ( $domain =~ /yahoo|btinternet|hotmail|live|msn|talktalk|sky|ntlworld|virginmedia/i ) {
-            $max_per_session = 4;
-            $max_host_sessions = 1;
-        }
-
-        # Iterate over MXs in order.
-        foreach my $mx (@{$r->mx()}) {
-            my $name = $mx->exchange();
-            foreach my $a (@{$r->a($name)}) {
-                my $h = $a->address();
-                $numsessions{$h} ||= 0;
-Log::print('debug', "      host is bad") if $self->host_bad($a->address);
-Log::print('debug', "      already have @{[$numsessions{$h}]} sessions to host") if $numsessions{$h} >= $max_host_sessions;
-Log::print('debug', "      already queued up a full session for host") if exists($newsessions{$h}) && @{$newsessions{$h}} >= $max_per_session;
-
-                        # conditions:
-                        # host is not bad
-                if (!$self->host_bad($a->address())
-                        # and we don't have too many outstanding sessions to
-                        # that host
-                    && $numsessions{$h} < $max_host_sessions
-                        # and we haven't already queued up too many messages
-                        # for that host
-                    && (!exists($newsessions{$h})
-                        || @{$newsessions{$h}} < $max_per_session)) {
-                    ++$numsessions{$h} if (!exists($newsessions{$h}));
-                    $host = $h;
-                    last;
-                }
-            }
-            last if ($host);
-        }
-
-        # We've found a possible host.
-        if (defined($host)) {
-            $newsessions{$host} ||= [ ];
-            push(@{$newsessions{$host}}, $msg);
-
-            if (@{$newsessions{$host}} == $max_per_session) {
-                my $s = new Sender($host, $newsessions{$host});
-                Log::printf('info',
-                            'created sender S%s for %s to send %d messages',
-                            $s->id(),
-                            $host,
-                            scalar(@{$newsessions{$host}}));
-                push(@{$self->{ss}}, $s);
-                delete($newsessions{$host});
-                ++$numsessions{$host};
-                # at this point the message is off the queue completely; it
-                # may be requeued when its ->addevent method is called by
-                # the sender
-            }
-        } else {
-            # XXX FAI A resolver sometimes gets into this state, and there is
-            # then no way or it to get out again.
-            Log::print('debug', "     ... but cannot find any valid host");
-            $self->requeue($msg, 5); # XXX
-        }
+        push(@newsessions, $msg);
     }
     Log::print('noise', 'finished iterating over queue');
 
-    # now put any relevant messages back on the queue
-    foreach (@messages_to_requeue) {
-        my ($msg, $level) = @$_;
-        $self->{queue}->add($msg, $level);
-        $msg->{priority} = $level;
-    }
-    @messages_to_requeue = ( );
-
-    # Create new sessions for each host.
-    foreach my $host (keys %newsessions) {
-        my $s = new Sender($host, $newsessions{$host});
-        Log::printf('info', 'created sender S%s for %s to send %d messages',
-                        $s->id(),
-                        $host,
-                        scalar(@{$newsessions{$host}}));
-        push(@{$self->{ss}}, $s);
-    }
+    # Create new session
+    my $host = '127.0.0.1';
+    my $s = new Sender($host, \@newsessions);
+    Log::printf('info', 'created sender S%s for %s to send %d messages',
+                    $s->id(),
+                    $host,
+                    scalar(@newsessions));
+    push(@{$self->{ss}}, $s);
 }
 
 # post_select RDS WRS
@@ -1323,7 +1101,6 @@ sub post_select ($$$) {
     my Queue $self = shift;
     my ($rds, $wrs) = @_;
 
-    $self->r()->post_select($rds, $wrs);
     # Free sender objects which have finished.
     my @ss;
     foreach my $smtp (@{$self->{ss}}) {
@@ -1343,12 +1120,6 @@ sub post_select ($$$) {
         } else {
             push(@ss, $smtp);
         }
-
-        if ($bad) {
-            Log::print('info', "recording host ", $smtp->target(), " as bad: $bad");
-            $self->{badhosts}->{$smtp->target()} ||= [ ];
-            push(@{$self->{badhosts}->{$smtp->target()}}, time());
-        }
     }
     $self->{ss} = \@ss;
 
@@ -1367,14 +1138,10 @@ sub get_finished ($) {
     return shift(@{$self->{finished}});
 }
 
-# accessors
-foreach (qw(r ss)) {
-    eval <<EOF;
-sub $_ (\$) {
-    my Queue \$self = shift;
-    return \$self->{$_};
-}
-EOF
+# accessor
+sub ss ($) {
+    my Queue $self = shift;
+    return $self->{ss};
 }
 
 #
@@ -2006,517 +1773,6 @@ sub database_child_process ($) {
 }
 
 #
-# A single domain-resolution task.
-#
-package DomainResolver::Task;
-
-use Carp;
-use Net::DNS ();
-use Regexp::Common;
-use Sys::Syslog;
-
-use fields qw(id starttime r domain state sockets mx a);
-
-# State machine: we resolve the domain first as an MX record, and, once we have
-# the results of that resolution, continue to resolve the individual A records
-# (unless the MXs all point to IP addresses, in which case we regard it as
-# complete).
-#
-# We may see either temporary (SERVFAIL) or permanent (NXDOMAIN) errors from
-# DNS queries. If we see NXDOMAIN for the domain both as MX and A record then
-# the domain is unroutable and we can fail email addressed to it; other
-# resolution failures must be treated as temporary.
-
-            # resolving MX records
-use constant STATE_MX   => 0;
-            # resolving A records
-use constant STATE_A    => 1;
-            # finished all resolution
-use constant STATE_DONE => 2;
-            # something broke before the query was complete
-use constant STATE_BAD  => 3;
-
-our @statename = qw(STATE_MX STATE_A STATE_DONE STATE_BAD);
-
-use constant MX_PREF_FAKE => -1;
-
-# Longest time in seconds we cache a negative result for.
-use constant MAX_NEGATIVE_CACHE => 10;
-
-# new RESOLVER DOMAIN
-# Return a new task for resolving DOMAIN using RESOLVER.
-sub new ($$$) {
-    my DomainResolver::Task $self = shift;
-    my Net::DNS::Resolver $r = shift;
-    my $domain = shift;
-    $self = fields::new($self)
-        unless (ref($self));
-
-    $self->{id} = Counter::value();
-    $self->{starttime} = time();
-    $self->{r} = $r;
-    $self->{domain} = $domain;
-    $self->{state} = STATE_MX;
-    $self->{sockets} = { };
-    $self->{mx} = [ ];
-    $self->{a} = { };
-
-    $self->log('debug', "resolving $domain");
-
-    # Start the first query.
-    my $s = $r->bgsend($domain, 'MX');
-    $self->{sockets}->{$s} = $s;
-
-    return $self;
-}
-
-# log PRIORITY TEXT [...]
-# Log a message about this resolution task.
-sub log ($$@) {
-    my DomainResolver::Task $self = shift;
-    my $prio = shift;
-    unshift(@_, "R$self->{id}($self->{domain}): ");
-    Log::print($prio, @_);
-}
-
-# state [STATE]
-# Get/set state.
-sub state ($;$) {
-    my DomainResolver::Task $self = shift;
-    if (@_) {
-        $self->{state} = $_[0];
-        $self->log('debug', "-> $statename[$_[0]]");
-        $self->log('debug', "completed") if ($_[0] == STATE_DONE);
-    }
-    return $self->{state};
-}
-
-# pre_select RDS WRS
-#
-sub pre_select ($$$) {
-    my DomainResolver::Task $self = shift;
-    return if ($self->state() != STATE_MX && $self->state() != STATE_A);
-    my IO::Select $rds = shift;
-    my IO::Select $wrs = shift;
-    foreach my $s (values(%{$self->{sockets}})) {
-        $rds->add($s);
-    }
-}
-
-# is_valid_domain DOMAIN
-# Is DOMAIN a valid domain name?
-sub is_valid_domain ($) {
-    my $domain = lc(shift);
-    # AAAAARGH. Would just use $RE{net}{domain} from Regexp::Common, except for
-    # the fact that its idea of what constitutes a domain name comes from
-    # RFC1035, and therefore dates back to 1987 when it wasn't valid to have
-    # a number at the beginning of a domain name. "The 1980s called, they want
-    # their 3Com back!"
-    my $ld = '[0-9a-z]';
-    my $ldh = '[0-9a-z-]';
-    return ($domain =~ /^$ld(|$ldh{0,61}$ld)(\.$ld(|$ldh{0,61}$ld))*$/);
-}
-
-# post_select RDS WRS
-# Post-select processing. RDS and WRS are references to hashes whose keys are
-# handles which are, respectively, available for reading and for writing.
-sub post_select ($$) {
-    my DomainResolver::Task $self = shift;
-    my ($rds, $wrs) = @_;
-    foreach my $s (values(%{$self->{sockets}})) {
-        if ($rds->{$s}) {
-            my $result = $self->{r}->bgread($s);
-            if (!defined($result)) {
-                $self->log('warning', "failed; system error $!");
-                $self->state(STATE_BAD);
-                return;
-            }
-            delete($self->{sockets}->{$s});
-            undef $s;
-            if ($self->state() == STATE_MX) {
-                #
-                # Response to query for MX records for the domain.
-                # 
-
-                my $q = ($result->question())[0]->qname();
-                
-                if ($result->header()->rcode() eq 'SERVFAIL') {
-                    # Transient error attempting to resolve the domain.
-                    $self->{mx} = undef;
-                    $self->log('warning', "temporary failure resolving MX record for '$q'");
-                    $self->state(STATE_BAD);
-                    return;
-                } elsif ($result->header()->rcode() eq 'NXDOMAIN') {
-                    # There is no such domain, so the mail would be unroutable.
-                    $self->{mx} = undef;
-                    $self->log('debug', 'no such domain (unroutable)');
-                    $self->state(STATE_DONE);
-                    return;
-                }
-
-                # The answers we get here will be either MXs or perhaps a CNAME
-                # (we shouldn't see a CNAME and an MX -- Google for the
-                # notorious BIND error, "CNAME and other data"). Be a little
-                # more liberal: extract any MXs and sort them by preference.
-                $self->{mx} = [
-                        sort { $a->preference() <=> $b->preference() }
-                            grep { $_->type() eq 'MX' } $result->answer()
-                    ];
-                
-                if (@{$self->{mx}}) {
-                    # Have some MXs.
-                    $self->log('debug', "MXs are: ",
-                                join(', ', map { $_->preference() . " "
-                                                    . $_->exchange() }
-                                    @{$self->{mx}}));
-                } else {
-                    # No MXs. To keep the data structures simpler, fake up an
-                    # MX record to the domain itself, which we will then
-                    # resolve as an address.
-                    $self->log('debug', "no MXs; will route to A record");
-                    $self->{mx} = [
-                            new Net::DNS::RR(
-                                type => 'MX',
-                                name => $self->domain(),
-                                exchange => $self->domain,
-                                preference => MX_PREF_FAKE,
-                                ttl => 86400
-                            )
-                        ];
-                }
-
-                # Now do all the A queries.
-                my $nq = 0;
-                my $nip = 0;
-                my %have;
-                my %cull_mx = ( );
-                foreach my $mx (@{$self->{mx}}) {
-                    my $host = $mx->exchange();
-                    if (exists($have{$host})) {
-                        $self->log('warning', "duplicate MX $host")
-                            if ($have{$host} == 1);
-                        ++$have{$host};
-                        next;
-                    }
-                    $have{$host} = 1;
-                    # Some sites have MX records pointing to IP addresses.
-                    # This is wrong but not uncommon, so accept it.
-                    if ($host =~ /^$RE{net}{IPv4}$/) {
-                        $self->{a}->{$host} = [
-                                new Net::DNS::RR(
-                                        name => $host,
-                                        type => 'A',
-                                        address => $host
-                                    )
-                            ];
-                        ++$nip
-                    } elsif (!is_valid_domain($host)) {
-                        $self->log('warning', "exchange $host is not a valid domain name; ignoring it");
-                        $cull_mx{$host} = 1;
-                    } else {
-                        my $s = $self->{r}->bgsend($mx->exchange(), 'A');
-                        $self->{sockets}->{$s} = $s;
-                        ++$nq;
-                    }
-                }
-
-                # If any of the MXs were bogus, cull them here.
-                foreach my $q (keys(%cull_mx)) {
-                    @{$self->{mx}} = grep { $_->exchange() ne $q } @{$self->{mx}};
-                }
-
-                if ($nq) {
-                    $self->state(STATE_A);
-                } elsif ($nip) {
-                    $self->log('debug', 'all MXs point to IP addresses');
-                    $self->state(STATE_DONE);
-                } else {
-                    $self->log('warning', 'no valid MXs');
-                    $self->{mx} = undef;
-                    $self->state(STATE_DONE);
-                }
-            } elsif ($self->state() == STATE_A) {
-                # 
-                # Response to query for A records for mail exchanges.
-                #
-
-                my $q = ($result->question())[0]->qname();
-
-                if ($result->header()->rcode() eq 'SERVFAIL') {
-                    # Transient error attempting to resolve the domain - ignore this particular MX for now.
-                    $self->log('warning', "temporary failure resolving A record for '$q'");
-                    @{$self->{mx}} = grep { $_->exchange() ne $q } @{$self->{mx}};
-                    delete $self->{a}->{$q};
-                    $self->{mx} = undef if (!@{$self->{mx}});
-                    $self->state(STATE_BAD) if (!keys(%{$self->{sockets}}) && !$self->{mx});
-                    $self->state(STATE_DONE) if (!keys(%{$self->{sockets}}) && $self->{mx});
-                    return;
-                } elsif ($result->header()->rcode() eq 'NXDOMAIN') {
-                    # This A record does not exist.
-                    $self->log('warning', "exchange $q does not exist");
-                    @{$self->{mx}} = grep { $_->exchange() ne $q } @{$self->{mx}};
-                    delete $self->{a}->{$q};
-                    $self->{mx} = undef if (!@{$self->{mx}});
-                        # XXX Is this correct? If a domain has a number of MXs,
-                        # all of which have exchanges which are NXDOMAIN,
-                        # should the domain really be regarded as unroutable?
-                    $self->state(STATE_DONE) if (!keys(%{$self->{sockets}}));
-                    return;
-                }
-
-                # It's possible that one of these domains could be a CNAME
-                # which doesn't point to any A records, so check for this
-                # case.
-                my @a = grep { $_->type eq 'A' } $result->answer();
-
-                if (@a) {
-                    # Found some addresses.
-                    $self->{a}->{$q} = \@a;
-                    $self->log('debug', "MX $q has A records: ",
-                                join(', ', map { $_->address() } @a));
-                } else {
-                    # There are no A records for that domain.
-                    $self->log('warning', "MX $q has no address; dropping it");
-                    @{$self->{mx}} = grep { $_->exchange() ne $q } @{$self->{mx}};
-                    $self->log('warning', "now \$self->{mx} = [qw(" . join(' ', @{$self->{mx}}) . ")]");
-                    delete $self->{a}->{$q};
-#                    @{$self->{a}} = grep { $_ ne $q } @{$self->{a}};
-
-                    # If that dropped our last possible host, then the domain
-                    # is unroutable; mark it as such.
-                    $self->{mx} = undef if (!@{$self->{mx}});
-                }
-
-                # If that was the last query in progress, we're done.
-                $self->state(STATE_DONE) if (!keys(%{$self->{sockets}}));
-            } else {
-                croak "bad state " . $self->state() . " in post_select";
-            }
-        }
-    }
-}
-
-#
-# Accessors
-#
-
-sub domain ($) {
-    my DomainResolver::Task $self = shift;
-    return $self->{domain};
-}
-
-sub starttime ($) {
-    my DomainResolver::Task $self = shift;
-    return $self->{starttime};
-}
-
-# done
-# Return true if resolution was completed.
-sub done ($) {
-    my DomainResolver::Task $self = shift;
-    return $self->{state} == STATE_DONE;
-}
-
-# failed
-# Return true if resolution failed.
-sub failed ($) {
-    my DomainResolver::Task $self = shift;
-    return $self->{state} == STATE_BAD;
-}
-
-# unroutable
-# Return true if the domain is unroutable.
-sub unroutable ($) {
-    my DomainResolver::Task $self = shift;
-    return !defined($self->{mx});
-}
-
-# mx
-# Returns a reference to a list of the MXs for this domain, as Net::DNS::RR::MX
-# objects. Returns undef for unroutable domains. It is an error to call this
-# method unless the request is complete.
-sub mx ($) {
-    my DomainResolver::Task $self = shift;
-    croak "can't call ->mx() outside STATE_DONE" unless ($self->done());
-    return $self->{mx};
-}
-
-# a HOST
-# Returns a reference to a list of the addresses of HOST. HOST must be one of
-# the mail exchanges indicated in the domain's MX records. It is an error to
-# call this method unless the request is complete.
-sub a ($$) {
-    my DomainResolver::Task $self = shift;
-    croak "can't call ->a(HOST) outside STATE_DONE" unless ($self->done());
-    my $host = shift;
-    croak "can't use ->a(HOST) to resolve $host, which is not an MX for $self->{domain}"
-        unless (exists($self->{a}->{$host}));
-    return $self->{a}->{$host};
-}
-
-# valid
-# Return true if the cached result is still valid, or false otherwise. This
-# uses the minimum of the RTTs in any of the returned RRs.
-sub valid ($) {
-    my DomainResolver::Task $self = shift;
-    croak "can't call ->valid() outside STATE_DONE" unless ($self->done());
-    # Cache negative responses for a fixed time.
-    if (!defined($self->mx())) {
-        if ($self->starttime() + MAX_NEGATIVE_CACHE < time()) {
-            return 0;
-        }
-    } else {
-        foreach my $mx (@{$self->mx()}) {
-            my $ttl = $mx->ttl();
-            $ttl = 10 unless $ttl;
-            return 0 if ($self->starttime() + $ttl < time());
-            foreach my $a (@{$self->a($mx->exchange())}) {
-                $ttl = $a->ttl();
-                $ttl = 10 unless $ttl;
-                return 0 if ($self->starttime() + $ttl < time());
-            }
-        }
-    }
-    return 1;
-}
-
-#
-# The domain resolver is responsible for resolving right-hand-sides of email
-# addresses to identify the servers to which mail should be sent.
-#
-package DomainResolver;
-
-use Carp;
-use Net::DNS;
-
-use fields qw(r maxrequests queue state results);
-
-# new NUM
-# Create a new DomainResolver, with a limit of NUM simultaneous outstanding
-# requests. (Each consumes a small number of file descriptors.)
-sub new ($$) {
-    my DomainResolver $self = shift;
-    my $max = shift;
-    $self = fields::new($self)
-        unless (ref($self));
-
-    croak "NUM must be a positive integer" unless ($max =~ /^[1-9]\d*$/);
-
-    $self->{r} = new Net::DNS::Resolver()
-        or croak "cannot create Net::DNS::Resolver; system error: $!";
-    $self->{maxrequests} = $max;
-    
-    # Queue of domains to resolve.
-    $self->{queue} = [ ];
-    # Hash of domains to resolution tasks.
-    $self->{state} = { };
-    # Hash of domains to resolution results.
-    $self->{results} = { };
-        
-    return $self;
-}
-
-# Accessors
-foreach (qw(r maxrequests state results)) {
-    eval <<EOF;
-sub $_ (\$) {
-    my DomainResolver \$self = shift;
-    return \$self->{$_};
-}
-EOF
-}
-
-# add DOMAIN
-# Add DOMAIN to the queue of domains to resolve. This is a no-op if DOMAIN is
-# already in the queue, or if we have a cached valid record for DOMAIN.
-sub add ($$) {
-    my DomainResolver $self = shift;
-    my $domain = shift;
-    my $r = $self->results()->{$domain};
-    if ($r && $r->failed()) {
-        delete($self->results()->{$domain});
-        $r = undef;
-    }
-    push(@{$self->{queue}}, $domain)
-        unless (exists($self->state()->{$domain})
-                || $r);
-}
-
-# getqueue
-# Get a domain to resolve off the queue.
-sub getqueue ($) {
-    my DomainResolver $self = shift;
-    return shift(@{$self->{queue}});
-}
-
-# get DOMAIN
-# Return information about the mailservers for DOMAIN. If they have not yet
-# been resolved or if the cached result is not valid, return undef; otherwise
-# return the task object generated. It is possible for the returned object to
-# indicate that domain resolution failed, in which case it may be retried.
-sub get ($$) {
-    my DomainResolver $self = shift;
-    my $domain = shift;
-    if (!exists($self->results()->{$domain})) {
-        return undef;   # add to queue?
-    } elsif (!$self->results()->{$domain}->failed()
-                && !$self->results()->{$domain}->valid()) {
-        delete($self->results()->{$domain});
-        return undef;
-    } else {
-        return $self->results()->{$domain};
-    }
-}
-
-# queuelength
-# Return the current length of the queue.
-sub queuelength ($) {
-    my DomainResolver $self = shift;
-    return scalar(@{$self->{queue}});
-}
-
-# pre_select RDS WRS
-#
-sub pre_select ($$$) {
-    my DomainResolver $self = shift;
-    my IO::Select $rds = shift;
-    my IO::Select $wrs = shift;
-
-    # Add existing tasks to the masks.
-    foreach my $t (values(%{$self->state()})) {
-        $t->pre_select($rds, $wrs);
-    }
-
-    # Consider starting some new ones.
-    while (scalar(keys(%{$self->state()})) < $self->maxrequests()
-            && @{$self->{queue}}) {
-        my $domain = $self->getqueue();
-        next if (exists($self->state()->{$domain})
-                 || defined($self->get($domain)));
-        my $t = new DomainResolver::Task($self->r(), $domain);
-        $t->pre_select($rds, $wrs);
-        $self->state()->{$domain} = $t;
-    }
-}
-
-# post_select RDS WRS
-# Call after select. RDS and WRS are hashes containing a key for each handle
-# which was marked readable or writable respectively.
-sub post_select ($$) {
-    my DomainResolver $self = shift;
-    my ($rds, $wrs) = @_;
-    
-    foreach my $t (values(%{$self->state()})) {
-        $t->post_select($rds, $wrs);
-        if ($t->done() || $t->failed()) {
-            # save results, whether negative or positive
-            $self->results()->{$t->domain()} = $t;
-            delete($self->state()->{$t->domain()});
-        }
-    }
-}
-
-#
 # Main program.
 #
 package main;
@@ -2592,29 +1848,6 @@ $SIG{USR2} = sub {
         print FH "\nQueue info:\n";
         print FH "messages count: " . scalar(keys(%{$Q->{messages}})) . "\n";
         print FH "finished count: " . scalar(@{$Q->{finished}}) . "\n";
-        print FH "badhosts count: " . scalar(keys(%{$Q->{badhosts}})) . ", they are:\n";
-        foreach my $badhost_key (keys(%{$Q->{badhosts}})) {
-            my $l = $Q->{badhosts}->{$badhost_key};
-            print FH "\t$badhost_key times: ";
-            foreach my $attempt (@$l) {
-                print FH "$attempt ";
-            }
-            print FH "\n";
-        }
-        print FH "baddomains count: " . scalar(keys(%{$Q->{baddomains}})) . "\n";
-        foreach my $baddomain_key (keys(%{$Q->{baddomains}})) {
-            my $l = $Q->{baddomains}->{$baddomain_key};
-            print FH "\t$baddomain_key times: ";
-            foreach my $attempt (@$l) {
-                print FH "$attempt ";
-            }
-            print FH "\n";
-        }
-        print FH "domain resolver\n";
-        print FH "\tmaxrequests: " . $Q->{r}->{maxrequests} . "\n";
-        print FH "\tqueue count: " . scalar(@{$Q->{r}->{queue}}) . "\n";
-        print FH "\tstate count: " . scalar(keys(%{$Q->{r}->{state}})) . "\n";
-        print FH "\tresults count: " . scalar(keys(%{$Q->{r}->{results}})) . "\n";
         print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . ", they are:\n";
         my $total_messages_in_smtp = 0;
         foreach my $smtp_client (@{$Q->{ss}}) {
@@ -2647,7 +1880,6 @@ $SIG{USR2} = sub {
         print FH "lastcheckedqueue: " . $Q->{lastcheckedqueue} . "\n";
         print FH "noexpire: " . $Q->{noexpire} . "\n";
         print FH "queue count: " . $Q->{queue}->count . "\n";
-        print FH "messages to requeue: " . scalar(@{$Q->{debug_messages_to_requeue_local}}) . "\n";
         print FH "\n";
 
         # Hunt for missing messages, which have dropped off queue by surprise
@@ -2662,9 +1894,6 @@ $SIG{USR2} = sub {
             foreach my $message (@{$smtp_client->{messages}}) {
                 $all_messages{$message->id()} = $message; 
             }
-        }
-        foreach my $message (@{$Q->{debug_messages_to_requeue_local}}) {
-            $all_messages{$message->id()} = $message;
         }
         # XXX should add @finished here, but things don't last there long so doesn't matter much
         # (the finished count being nearly always zero shows that is the case)
