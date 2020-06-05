@@ -3,6 +3,7 @@ libfcgi-perl
 libcrypt-blowfish-perl
 libio-string-perl
 php-pear
+libemail-sender-perl
 libmailtools-perl
 libmime-perl | libmime-tools-perl
 libjson-perl

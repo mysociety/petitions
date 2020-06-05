@@ -34,20 +34,6 @@ sub enabled (;$) {
     return $enabled;
 }
 
-#
-# Counter to give unique IDs to objects (for logging purposes, mostly).
-#
-package Counter;
-
-my $starttime = time();
-my $id = 0;
-
-# value
-# Return the current value of the counter and increment it.
-sub value () {
-    return sprintf('%08x', $starttime ^ ($id++));
-}
-
 package Log;
 
 use mySociety::SystemMisc qw(open_log print_log);
@@ -122,11 +108,10 @@ sub printf ($$;@) {
 package Queue::Message;
 
 use Carp;
-use Scalar::Util qw(weaken);
 use Time::HiRes qw(time);
 
-use fields qw(id state sender recipient domain text events owner starttime
-                createdtime nattempts lastattempt queue priority);
+use fields qw(id state sender recipient domain text events starttime
+                createdtime queue priority);
 
             # message is yet to be sent successfully
 use constant STATE_PENDING =>       0;
@@ -163,7 +148,6 @@ sub new ($$$$$$) {
     $self->{recipient} = $recipient;
     $self->{text} = $_[3];  # XXX ref?
     $self->{events} = [ ];
-    $self->{owner} = undef;
     $self->{queue} = $queue;
 
     $self->{starttime} = time();
@@ -173,8 +157,6 @@ sub new ($$$$$$) {
     $domain =~ s/.*@//;
     $self->{domain} = lc($domain);
 
-    $self->{nattempts} = 0;
-    
     $self->log('info', "from <$sender> to <$recipient> length ", length($_[3]));
         # XXX would be nice to log the Message-ID: here
     $self->addevent(EVENT_CREATED);
@@ -195,14 +177,9 @@ sub log ($$@) {
 # Record the given EVENT on the message.
 sub addevent ($$;$) {
     my Queue::Message $self = shift;
-    my ($event, $ipaddr) = @_;
+    my ($event) = @_;
     my $t = time();
-    push(@{$self->{events}}, [$event, $t, $ipaddr]);
-
-    if ($event == EVENT_TEMP_FAILURE || $event == EVENT_PERM_FAILURE) {
-        ++$self->{nattempts};
-        $self->{lastattempt} = $t;
-    }
+    push(@{$self->{events}}, [$event, $t]);
 
     if ($event == EVENT_PERM_FAILURE) {
         $self->log('warning', 'delivery failed permanently');
@@ -226,683 +203,14 @@ sub state ($;$) {
     return $self->{state};
 }
 
-# owner [OWNER]
-# Get or set the current owner of this message.
-sub owner ($;$) {
-    my Queue::Message $self = shift;
-    if (@_) {
-        my $owner = shift;
-        croak "OWNER must be undef or a reference" unless (!defined($owner) || ref($owner));
-        # Make this a weak ref so that ideally a bug in relinquishing ownership
-        # won't result in messages being stuck on the queue.
-        weaken($owner) if (ref($owner));
-        $self->{owner} = $owner;
-    }
-    return $self->{owner};
-}
-
 # Accessors.
-foreach (qw(id sender recipient domain text events starttime createdtime
-            nattempts lastattempt)) {
+foreach (qw(id sender recipient domain text events starttime createdtime)) {
     eval <<EOF;
 sub $_ (\$) {
     my Queue::Message \$self = shift;
     return \$self->{$_};
 }
 EOF
-}
-
-#
-# Sender (SMTP session) objects connect to servers and send email.
-# 
-package Sender;
-
-use Carp;
-use IO::Socket;
-use Regexp::Common;
-use Time::HiRes qw(time);
-
-use fields qw(id target messages message state s sendbuf recvbuf
-                lastactivity error delivered tempfailed permfailed);
-
-#
-# State machine. Basically this is very simple; we change into a new state
-# whenever we transmit an SMTP command, and the current state influences the
-# effect of parsing the response to that command. The other states deal with
-# the opening and closing of connections, and transport-level errors.
-#
-
-            # socket created, not connected yet
-use constant STATE_CONNECT =>       0;
-            # waiting for banner
-use constant STATE_BANNER =>        1;
-            # sent HELO, awaiting response
-use constant STATE_HELO =>          2;
-            # sent MAIL FROM, awaiting response
-use constant STATE_MAIL_FROM =>     3;
-            # sent RCPT TO, awaiting response
-use constant STATE_RCPT_TO =>       4;
-            # sent DATA command, awaiting response
-use constant STATE_DATA =>          5;
-            # sending message
-use constant STATE_MESSAGE =>       6;
-            # sent QUIT, awaiting response
-use constant STATE_QUIT =>          7;
-            # received final response from server, awaiting disconnect
-use constant STATE_EOF =>           8;
-            # sent RSET, awaiting response
-use constant STATE_RSET =>          9;
-            # all done without error
-use constant STATE_DONE =>         10;
-            # transport-level error
-use constant STATE_BAD =>          11;
-
-our @statename = qw(STATE_CONNECT STATE_BANNER STATE_HELO STATE_MAIL_FROM
-                    STATE_RCPT_TO STATE_DATA STATE_MESSAGE STATE_QUIT
-                    STATE_EOF STATE_RSET STATE_DONE STATE_BAD);
-
-# We maintain an activity timer which is updated whenever we receive an SMTP
-# response. Timeouts are detected in pre_select and result in an abort.
-use constant TIMEOUT => 90;
-
-# new TARGET MESSAGES
-# TARGET is the host to which we connect; MESSAGES is a reference to a list of
-# message we attempt to send.
-sub new ($$$) {
-    my Sender $self = shift;
-    my $target = shift;
-    my $msgs = shift;
-    croak "TARGET must be an IP address" unless ($target =~ /^$RE{net}{IPv4}$/);
-
-    croak "MESSAGES must be a reference to a list of unowned Queue::Message"
-        unless (ref($msgs) eq 'ARRAY'
-                && !(grep { ref($_) ne 'Queue::Message' } @$msgs)
-                && !(grep { defined($_->owner()) } @$msgs));
-    $self = fields::new($self)
-        unless (ref($self));
-
-    # A value to uniquely identify this connection, for logging.
-    $self->{id} = Counter::value();
-    foreach (@$msgs) {
-        $_->owner($self);
-    }
-    $self->{messages} = $msgs;
-    $self->{message} = undef;
-    $self->{target} = $target;
-    $self->{error} = undef;
-    my $source_ip = mySociety::Config::get('EMAIL_SOURCE_IP', '0.0.0.0');
-    $self->{s} = new IO::Socket::INET(
-                            LocalAddr => $source_ip,
-                            PeerAddr => $target,
-                            PeerPort => 25,
-                            Type => SOCK_STREAM,
-                            Proto => 'tcp',
-                            Blocking => 0
-                        );
-    if (!$self->{s}) {
-        $self->{error} = "socket: $!";
-        $self->state(STATE_BAD); # call via function, so messages temp failed
-        return $self;
-    }
-
-#    binmode($self->{s}, ':bytes');  # why take chances?
-    $self->{state} = STATE_CONNECT;
-    my $s = "";
-    $self->{sendbuf} = \$s;
-    my $r = "";
-    $self->{recvbuf} = \$r;
-
-    $self->{lastactivity} = time();
-
-    $self->log('noise', "delivering ", scalar(@$msgs), " messages to $self->{target}");
-
-    return $self;
-}
-
-# log PRIORITY MESSAGE [...]
-# Write information relating to this sender to the logfile. Log lines will be
-# preceded with "S" and a unique ID for this connection.
-sub log ($$@) {
-    my Sender $self = shift;
-    my $prio = shift;
-    my $tag;
-    if ($self->{message}) {
-        $tag = sprintf('S%s(%s, M%s): ', $self->id(), $self->target(), $self->{message}->id());
-    } else {
-        $tag = sprintf('S%s(%s): ', $self->id(), $self->target());
-    }
-    
-    unshift(@_, $tag);
-    Log::print($prio, @_);
-}
-
-# state [STATE]
-# Get/set state.
-sub state ($;$) {
-    my Sender $self = shift;
-    if (@_) {
-        $self->{state} = $_[0];
-        $self->log('noise', "-> $statename[$_[0]]");
-
-        # Once we're finished, relinquish ownership of the messages, regarding
-        # each as having undergone a temporary failure.
-        if ($_[0] == STATE_DONE || $_[0] == STATE_BAD) {
-            $self->tempfail(); # fail message which was being sent, if any
-            foreach (@{$self->{messages}}) {
-                $_->owner(undef);
-                $_->addevent(Queue::Message::EVENT_TEMP_FAILURE,
-                                $self->{target});
-                ++$self->{tempfailed};
-            }
-            # XXX logically, should clear @{$self->{messages}} here. However
-            # there is something subtle with notattempted() and graylisting.
-            # See comment in Queue code below (search for 'notattempted').
-            # Not sure when that is called though.
-        }
-    }
-    return $self->{state};
-}
-
-#
-# Record events that happen to messages, and update internal counters
-#
-
-# tempfail
-# Record a temporary failure to deliver the current message.
-sub tempfail ($) {
-    my Sender $self = shift;
-    if ($self->{message}) {
-        $self->{message}->owner(undef);
-        $self->{message}->addevent(Queue::Message::EVENT_TEMP_FAILURE,
-                                    $self->{target});
-        $self->{message} = undef;
-        ++$self->{tempfailed};
-    }
-}
-
-# permfail
-# Record a permanent failure to deliver the current message.
-sub permfail ($) {
-    my Sender $self = shift;
-    if ($self->{message}) {
-        $self->{message}->owner(undef);
-        $self->{message}->addevent(Queue::Message::EVENT_PERM_FAILURE,
-                                    $self->{target});
-        $self->{message} = undef;
-        ++$self->{permfailed};
-    }
-}
-
-# delivered
-# Record successful delivery of the current message.
-sub deliver ($) {
-    my Sender $self = shift;
-    if ($self->{message}) {
-        $self->{message}->owner(undef);
-        $self->{message}->addevent(Queue::Message::EVENT_DELIVERED, $self->{target});
-        $self->{message} = undef;
-        ++$self->{delivered};
-    }
-}
-
-
-# activity
-# Update the last-activity timer.
-sub activity ($) {
-    my Sender $self = shift;
-    $self->{lastactivity} = time();
-}
-
-# oops MESSAGE
-# Record the error MESSAGE and put the object into STATE_BAD. This should be
-# used in the case of an error below the SMTP protocol layer, for instance a
-# timeout or an error sending/receiving data.
-sub oops ($$) {
-    my Sender $self = shift;
-    my $text = shift;
-    $self->log('err', $text);
-    $self->{error} = $text . " (while in $statename[$self->state()])";
-    $self->state(STATE_BAD);
-}
-
-# get_smtp_response
-# Parse an SMTP response from the peer, if any is available. On error or if no
-# complete response is available, return (); otherwise return the code and
-# message text (with \r\n replaced by \n).
-sub get_smtp_response ($) {
-    my Sender $self = shift;
-    my $response;
-    my $recvbuf = $self->{recvbuf};
-    # SMTP responses look like:
-    #   "CODE-TEXT\r\n"*
-    #   "CODE TEXT\r\n"
-    # -- but permit the TEXT to be empty. Also permit the last line to be
-    # "CODE\r\n" as recommended by RFC 2821.
-    if ($$recvbuf =~ /^(([2-5][0-5]\d)( .*?|)\r\n)/
-        || $$recvbuf =~ /^(([2-5][0-5]\d)-.*?\r\n(\2-.*?\r\n)*(\2( .*?|)\r\n))/) {
-        # valid single or multiline response
-        my $code = $2;
-        my $message = $1;
-        if ($message =~ /^...-/) {
-            my $rawmsg = "$message";
-            $rawmsg =~ s/\r\n$//s;
-            foreach (split(/\r\n/, $rawmsg)) {
-                $self->log('noise', "<< $_");
-            }
-        } else {
-            my $rawmsg = "$message";
-            $rawmsg =~ s/\r\n$//s;
-            $self->log('noise', "<< $rawmsg");
-        }
-        # Shift the contents of the receive buffer.
-        $$recvbuf = substr($$recvbuf, length($message));
-        # Remove the code from the message.
-        $message =~ s/^($code)[ -]//gm;
-        # Replace the SMTP line endings in the message with UNIX line endings.
-        $message =~ s/\r\n/\n/g;
-        # Record that we have seen a full response.
-        $self->activity();
-        return ($code, $message);
-    } elsif ($recvbuf =~ /^(.+?)\r\n/) {
-        $self->oops("bad SMTP response '$1'");
-        return ();
-    } else {
-        # assume nothing
-        return ();
-    }
-}
-
-# send COMMAND
-# Send COMMAND to the server.
-sub send ($$) {
-    my Sender $self = shift;
-    my $line = shift;
-    ${$self->{sendbuf}} .= "$line\r\n";
-    $self->log('noise', ">> $line");
-}
-
-#
-# SMTP commands
-#
-
-sub ehlo ($) {
-    my Sender $self = shift;
-    # Figure out our name.
-    my $name = mySociety::Config::get('EMAIL_HELO_DOMAIN', undef);
-    if (!defined($name)) {
-        # XXX this could block, but that's probably not a disaster
-        my ($port, $addr) = sockaddr_in(getsockname($self->s()));
-        $name = gethostbyaddr($addr, AF_INET);
-        if (!$name) {
-            $self->log('warning', "unable to get name for local address @{[ inet_ntoa($addr) ]}");
-            $name = sprintf('[%s]', inet_ntoa($addr));
-        }
-    }
-    $self->send("HELO $name");
-    $self->state(STATE_HELO);
-}
-
-sub mail_from ($$) {
-    my Sender $self = shift;
-    my $sender = shift;
-    $self->send("MAIL FROM:<$sender>");
-    $self->state(STATE_MAIL_FROM);
-}
-
-sub rcpt_to ($$) {
-    my Sender $self = shift;
-    my $recipient = shift;
-    $self->send("RCPT TO:<$recipient>");
-    $self->state(STATE_RCPT_TO);
-}
-
-sub data ($) {
-    my Sender $self = shift;
-    $self->send("DATA");
-    $self->state(STATE_DATA);
-}
-
-sub rset ($) {
-    my Sender $self = shift;
-    $self->send("RSET");
-    $self->state(STATE_RSET);
-}
-
-sub quit ($) {
-    my Sender $self = shift;
-    $self->send("QUIT");
-    $self->state(STATE_QUIT);
-}
-
-#
-# Accessors
-#
-
-sub delivered ($) {
-    my Sender $self = shift;
-    return $self->{delivered};
-}
-
-sub tempfailures ($) {
-    my Sender $self = shift;
-    return $self->{tempfailed};
-}
-
-sub permfailures ($) {
-    my Sender $self = shift;
-    return $self->{permfailed};
-}
-
-sub notattempted ($) {
-    my Sender $self = shift;
-    return scalar(@{$self->{messages}});
-}
-
-sub s ($) {
-    my Sender $self = shift;
-    return $self->{s};
-}
-
-sub target ($) {
-    my Sender $self = shift;
-    return $self->{target};
-}
-
-sub id ($) {
-    my Sender $self = shift;
-    return $self->{id};
-}
-
-sub error ($) {
-    my Sender $self = shift;
-    return $self->{error};
-}
-
-# get_message_to_send
-# Obtain the next message to send from the queue, if any. Returns true if a
-# message has been found, or false otherwise (for instance, if we've sent as
-# many messages as we should in this session).
-sub get_message_to_send ($) {
-    my Sender $self = shift;
-    $self->{message} = shift(@{$self->{messages}});
-    if (defined($self->{message})) {
-        $self->log('debug', "processing message ", $self->{message}->id());
-        return 1;
-    } else {
-        $self->log('debug', "no more messages to send");
-        return 0;
-    }
-}
-
-# have_message_to_send
-# Returns true if the next call to get_message_to_send would return true, but
-# does not remove the next message from the queue.
-sub have_message_to_send ($) {
-    my Sender $self = shift;
-    return (@{$self->{messages}} > 0);
-}
-
-# do_reset
-# If there are further messages to send, send RSET and go into STATE_RSET;
-# otherwise, send QUIT and go into STATE_QUIT.
-sub do_reset ($) {
-    my Sender $self = shift;
-    if ($self->have_message_to_send()) {
-        $self->rset();
-    } else {
-        $self->quit();
-    }
-}
-
-# parse_smtp_response CODE TEXT
-# Given an SMTP response with the given CODE and TEXT, push our state machine
-# around.
-sub parse_smtp_response ($$$) {
-    my Sender $self = shift;
-    my ($code, $text) = @_;
-
-    # Make a loggable copy of the response text.
-    my $ltext = "[$code] $text";
-    $ltext =~ s/\n$//s;
-    $ltext =~ s/\n/\\n/gs;
-    
-    # XXX we could probably be a little more lenient with parsing some of the
-    # codes.
-    my $state = $self->state();
-    if ($state == STATE_BANNER) {
-        if ($code =~ /^2/) {
-            # Fine.
-            # QUEUE: note success.
-            $self->ehlo();
-        } else {
-            # Refused. Need to send quit, if we can.
-            # QUEUE: note failure to begin transaction with server.
-            $self->quit();
-        }
-    } elsif ($state == STATE_HELO) {
-        if ($code =~ /^2/) {
-            # Fine.
-            $self->get_message_to_send();
-            $self->mail_from($self->{message}->sender());
-        } else {
-            # Something went wrong.
-            # QUEUE: note failure to begin transaction with server.
-            $self->log('warning', "bad HELO response \"$ltext\"");
-            $self->quit();
-        }
-    } elsif ($state == STATE_MAIL_FROM) {
-        if ($code =~ /^2/) {
-            # Success.
-            $self->rcpt_to($self->{message}->recipient());
-        } elsif ($code =~ /^4/) {
-            # Transient failure. 
-            $self->tempfail();
-            $self->log('warning', "transient failure response after MAIL FROM: \"$ltext\"");
-            $self->do_reset();
-        } elsif ($code =~ /^5/) {
-            # Permanent failure. That's pretty bad since it means that we'd
-            # never be able to deliver a mail to this host from this sender.
-            # So pretend that it's a transient failure instead.
-            $self->tempfail();
-            $self->log('err', "permanent failure response after MAIL FROM: \"$ltext\"");
-            $self->do_reset();
-        } else {
-            # Bad response code.
-            $self->tempfail(); # XXX ?
-            $self->log('err', "bad response after MAIL FROM: \"$ltext\"; abandoning connection");
-            $self->quit();
-        }
-    } elsif ($state == STATE_RCPT_TO) {
-        if ($code =~ /^2/) {
-            # Success.
-            $self->data();
-        } elsif ($code =~ /^4/) {
-            # Transient failure.
-            $self->tempfail();
-            $self->log('warning', "transient failure response after RCPT TO: \"$ltext\"");
-            $self->do_reset();
-        } elsif ($code =~ /^5/) {
-            # Permanent failure. Presumably a bad address.
-            $self->permfail();
-            $self->log('err', "permanent failure response after RCPT TO: \"$ltext\"");
-            $self->do_reset();
-        } else {
-            # Bad response code.
-            $self->tempfail();
-            $self->log('err', "bad response after RCPT TO: \"$ltext\"; abandoning connection");
-            $self->quit();
-        }
-    } elsif ($state == STATE_DATA) {
-        if ($code =~ /^3/) {
-            # Ready to continue. Send the message text.
-            my $msg = $self->{message}->text();
-            my $len = length($msg);
-            $msg =~ s/^\./../gs;
-            $msg =~ s/\n/\r\n/gs;
-            if ($msg =~ /\r\n$/s) {
-                $msg .= ".\r\n";
-            } else {
-                $msg .= "\r\n.\r\n";
-            }
-            $self->log('noise', ">> [ $len bytes of message data ]");
-            $self->{sendbuf} = \$msg;
-            $self->state(STATE_MESSAGE);
-        } else {
-            # Don't know. Give up on this connection.
-            $self->tempfail();
-            $self->log('err', "bad response after DATA: \"$ltext\"; abandoning connection");
-            $self->quit();
-        }
-    } elsif ($state == STATE_MESSAGE) {
-        if ($code =~ /^2/) {
-            # Message has been successfully submitted.
-            $self->log('info', "successful response after message data: \"$ltext\"");
-            $self->deliver();
-            if ($self->get_message_to_send()) {
-                $self->mail_from($self->{message}->sender());
-            } else {
-                $self->quit();
-            }
-        } elsif ($code =~ /^4/) {
-            # Temporary failure.
-            $self->tempfail();
-            $self->log('warning', "transient failure response after message data: \"$ltext\"");
-            $self->do_reset();
-        } elsif ($code =~ /^5/) {
-            # Permanent failure (presumably spam filter or similar).
-            $self->permfail();
-            $self->log('warning', "permanent failure response after message data: \"$ltext\"");
-            $self->do_reset();
-        }
-    } elsif ($state == STATE_QUIT) {
-        $self->state(STATE_EOF);
-    } elsif ($state == STATE_RSET) {
-        if ($self->get_message_to_send()) {
-            $self->mail_from($self->{message}->sender());
-        } else {
-            $self->log('err', "no message to send in STATE_RSET (shouldn't happen)");
-            $self->quit();
-        }
-    }
-}
-
-sub escape_char ($) {
-    if ($_[0] eq "\t") {
-        return '\t';
-    } elsif ($_[0] eq "\n") {
-        return '\n';
-    } elsif ($_[0] eq "\r") {
-        return '\r';
-    } else {
-        return sprintf('\x02x', ord($_[0]));
-    }
-}
-
-# escape_text TEXT
-# Return a copy of TEXT escaped as if for perl or C.
-sub escape_text ($) {
-    my $text = shift;
-    $text =~ s#([\x00-\x1f\x80-\xff])#escape_char($1)#gei;
-    return $text;
-}
-
-# pre_select RDS WRS
-# 
-sub pre_select ($$$) {
-    my Sender $self = shift;
-    my IO::Select $rds = shift;
-    my IO::Select $wrs = shift;
-
-    if ($self->{lastactivity} < time() - TIMEOUT) {
-        if (length(${$self->{recvbuf}})) {
-            $self->oops(sprintf(
-                            'timeout; %d bytes received since last activity',
-                            length(${$self->{recvbuf}})));
-            my $escaped_recvbuf = $self->{recvbuf};
-            $self->log('warning', 'contents of recvbuf at timeout: ' .
-                            escape_text(${$self->{recvbuf}}));
-        } else {
-            $self->oops('timeout');
-        }
-        return;
-    }
-    
-    $rds->add($self->s());
-    # Test for writability if we have data to write, or if we haven't yet
-    # connected (so that we can detect when the connection becomes ready).
-    $wrs->add($self->s()) if (length(${$self->{sendbuf}}) > 0 || $self->state() == STATE_CONNECT);
-}
-
-# post_select RDS WRS
-#
-sub post_select ($$$) {
-    my Sender $self = shift;
-    my ($rds, $wrs) = @_;
-    my $recvbuf = $self->{recvbuf};
-    my $sendbuf = $self->{sendbuf};
-    if (exists($rds->{$self->s()})) {
-        my $n = $self->s()->sysread($$recvbuf, 1024, length($$recvbuf));
-        if (!defined($n) && !$!{EAGAIN}) {
-            # An error occured. This is where we'd see ECONNREFUSED or similar,
-            # too.
-            $self->oops("error receiving data from peer: $!");
-            return;
-        }
-        
-        # Now connected, if we haven't noticed that yet.
-        if ($self->state() == STATE_CONNECT) {
-            $self->log('noise', "now connected (readable)");
-            $self->state(STATE_BANNER);
-        }
-
-        if ($n == 0) {
-            # EOF
-            if ($self->state() != STATE_EOF) {
-                $self->oops("unexpected EOF in connection to peer");
-            } else {
-                $self->state(STATE_DONE);
-            }
-            return;
-        } else {
-            # Read $n bytes of data. See whether we have an SMTP response.
-            if (my ($code, $text) = $self->get_smtp_response()) {
-                $self->parse_smtp_response($code, $text);
-            }
-        }
-    }
-    if (exists($wrs->{$self->s()})) {
-        if ($self->state() == STATE_CONNECT) {
-            # We are now connected.
-            $self->log('noise', "now connected (writable)");
-            $self->state(STATE_BANNER);
-        }
-        
-        if (length($$sendbuf)) {
-            # Data to send.
-            my $o = 0;
-            my $n;
-            while ($o < length($$sendbuf)
-                    && defined($n = $self->s()->syswrite($$sendbuf, length($$sendbuf) - $o, $o))) {
-                $o += $n;
-            }
-            # Typically we will finish writing because we run out of data to
-            # write or because the socket buffer fills, at which point we see
-            # EAGAIN.  However, we may encounter a real transport-layer error.
-            if (!defined($n) && !$!{EAGAIN}) {
-                $self->oops("error sending data to peer: $!");
-                return;
-            } else {
-                # If we didn't transmit the whole buffer, shrink it. Efficiency?
-                # We've heard of it.
-                if ($o == length($$sendbuf)) {
-                    my $s = "";
-                    $$sendbuf = $s;
-                } else {
-                    $$sendbuf = substr($$sendbuf, $o);
-                }
-            }
-        }
-    }
 }
 
 #
@@ -913,11 +221,13 @@ sub post_select ($$$) {
 package Queue;
 
 use Carp;
+use Email::Sender::Simple;
+use Email::Sender::Transport::SMTP;
 use Heap::Priority;
 use IO::Select;
+use Try::Tiny;
 
-use fields qw(messages finished ss lastcheckedqueue
-                noexpire queue);
+use fields qw(messages finished ss lastcheckedqueue noexpire queue);
 
 # How long a message may stay on the queue before we consider it undeliverable.
 use constant MAX_MESSAGE_AGE => 86400;
@@ -945,9 +255,6 @@ sub new ($;$) {
     # list of completed messages
     $self->{finished} = [ ];
     
-    # SMTP clients.
-    $self->{ss} = [ ];
-
     $self->{lastcheckedqueue} = time();
 
     $self->{noexpire} = $noexpire;
@@ -1030,20 +337,13 @@ sub pre_select ($$$) {
     my IO::Select $rds = shift;
     my IO::Select $wrs = shift;
 
-    # Do pre-select handling for individual SMTP clients.
-    foreach my $smtp (@{$self->{ss}}) {
-        $smtp->pre_select($rds, $wrs);
-    }
-
-    # Hash of IP addresses to which to send messages to messages to send to
-    # them.
-    my @newsessions;
-
     # Now see whether we should start any more connections.
     my $now = time();
     return if ($self->{lastcheckedqueue} > $now - 1);
     $self->{lastcheckedqueue} = $now;
     Log::print('noise', "iterating over queue");
+
+    my $transport = Email::Sender::Transport::SMTP->new;
 
     # The queue allows us to find the nominal retry time for the
     # next-most-urgent message, and its identity.
@@ -1072,27 +372,23 @@ Log::print('debug', "  -> too old; failing");
             next;
         }
         
-        # Skip if a sender is already handling this message.
-        if (defined($msg->owner())) {
-Log::print('debug', "  -> already being delivered");
-            next;
-        }
-Log::print('noise', " ... not presently being delivered");
-
-        # OK, we want to send this message.
 Log::print('debug', "  -> will attempt delivery of ", $msg->id());
-        push(@newsessions, $msg);
+
+        try {
+            Email::Sender::Simple->send($msg->{text}, { transport => $transport });
+            $msg->addevent(Queue::Message::EVENT_DELIVERED);
+        } catch {
+            my $error = $_ || 'unknown error';
+            if (try { $error->isa('Email::Sender::Failure::Permanent') }) {
+                $msg->addevent(Queue::Message::EVENT_PERM_FAILURE);
+            } elsif (try { $error->isa('Email::Sender::Failure::Temporary') }) {
+                $msg->addevent(Queue::Message::EVENT_TEMP_FAILURE);
+            } else {
+                die $error;
+            }
+        };
     }
     Log::print('noise', 'finished iterating over queue');
-
-    # Create new session
-    my $host = '127.0.0.1';
-    my $s = new Sender($host, \@newsessions);
-    Log::printf('info', 'created sender S%s for %s to send %d messages',
-                    $s->id(),
-                    $host,
-                    scalar(@newsessions));
-    push(@{$self->{ss}}, $s);
 }
 
 # post_select RDS WRS
@@ -1101,34 +397,12 @@ sub post_select ($$$) {
     my Queue $self = shift;
     my ($rds, $wrs) = @_;
 
-    # Free sender objects which have finished.
-    my @ss;
-    foreach my $smtp (@{$self->{ss}}) {
-        $smtp->post_select($rds, $wrs);
-        my $bad = 0;
-        if ($smtp->state() == Sender::STATE_DONE) {
-            # We don't regard temporary failures as a sign that a host is
-            # "bad", because of the prevalence of (e.g.) greylisting. But
-            # anything which causes us to abandon messages before attempting
-            # delivery does result in the host being marked bad. Maybe review
-            # this decision later.
-            $bad = "some messages went without a delivery attempt in S" . $smtp->id()
-                if ($smtp->notattempted() > 0);
-        } elsif ($smtp->state() == Sender::STATE_BAD) {
-            # Any transport error is regarded as making the host "bad".
-            $bad = "a transport error occured (@{[ $smtp->error() ]}) in S" . $smtp->id();
-        } else {
-            push(@ss, $smtp);
-        }
-    }
-    $self->{ss} = \@ss;
-
     # Record some current state info to the log, and also put it in the process
     # title so it is visible to administrators.
-    Log::printf('noise', 'currently have %d SMTP sessions, %d mails on queue',
-                    scalar(@ss), scalar(keys(%{$self->{messages}})));
-    $0 = sprintf('petemaild (main process; %d SMTP sessions, %d mails on queue)',
-                    scalar(@ss), scalar(keys(%{$self->{messages}})));
+    Log::printf('noise', 'currently have %d mails on queue',
+                    scalar(keys(%{$self->{messages}})));
+    $0 = sprintf('petemaild (main process; %d mails on queue)',
+                    scalar(keys(%{$self->{messages}})));
 }
 
 # get_finished
@@ -1136,12 +410,6 @@ sub post_select ($$$) {
 sub get_finished ($) {
     my Queue $self = shift;
     return shift(@{$self->{finished}});
-}
-
-# accessor
-sub ss ($) {
-    my Queue $self = shift;
-    return $self->{ss};
 }
 
 #
@@ -1747,7 +1015,7 @@ sub database_child_process ($) {
         # ... or any new petitions.
         $st_p->execute($fullscan ? 0 : $max_petition_id);
         while (my $p = $st_p->fetchrow_hashref()) {
-            $id = "p-$p->{id}";
+            my $id = "p-$p->{id}";
             push(@queue,
                     new Source::Packet(
                         Source::Packet::TYPE_NEWMESSAGE,
@@ -1848,35 +1116,6 @@ $SIG{USR2} = sub {
         print FH "\nQueue info:\n";
         print FH "messages count: " . scalar(keys(%{$Q->{messages}})) . "\n";
         print FH "finished count: " . scalar(@{$Q->{finished}}) . "\n";
-        print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . ", they are:\n";
-        my $total_messages_in_smtp = 0;
-        foreach my $smtp_client (@{$Q->{ss}}) {
-            $total_messages_in_smtp ++ if ($smtp_client->{message});
-            $total_messages_in_smtp += scalar(@{$smtp_client->{messages}});
-            print FH "\tS".$smtp_client->id()." target: ".$smtp_client->target();
-            if ($smtp_client->{message}) {
-                print FH " msg: M" . $smtp_client->{message}->id();
-            } else {
-                print FH " msg: none";
-            }
-            print FH " msgs: ";
-            foreach my $one_message (@{$smtp_client->{messages}}) {
-                print FH "M" . $one_message->id() . " ";
-            }
-            print FH "state: " . $smtp_client->{state};
-            print FH " delivered: " . $smtp_client->{delivered};
-            print FH " tempfailed: " . $smtp_client->{tempfailed};
-            print FH " permfailed: " . $smtp_client->{permfailed};
-            print FH " lastactivity: " . $smtp_client->{lastactivity};
-            if ($smtp_client->{error}) {
-                print FH " error: " . $smtp_client->{error};
-            } else {
-                print FH " error: none";
-            }
-            print FH "\n";
-        }
-        print FH "\ttotal messages in SMTP: " . $total_messages_in_smtp . "\n";
-        print FH "smtp clients count: " . scalar(@{$Q->{ss}}) . "\n";
         print FH "lastcheckedqueue: " . $Q->{lastcheckedqueue} . "\n";
         print FH "noexpire: " . $Q->{noexpire} . "\n";
         print FH "queue count: " . $Q->{queue}->count . "\n";
@@ -1887,22 +1126,13 @@ $SIG{USR2} = sub {
         foreach my $message ($Q->{queue}->get_list()) {
             $all_messages{$message->id()} = $message;
         }
-        foreach my $smtp_client (@{$Q->{ss}}) {
-            if ($smtp_client->{message}) {
-                $all_messages{$smtp_client->{message}->id()} = $smtp_client->{message};
-            }
-            foreach my $message (@{$smtp_client->{messages}}) {
-                $all_messages{$message->id()} = $message; 
-            }
-        }
         # XXX should add @finished here, but things don't last there long so doesn't matter much
         # (the finished count being nearly always zero shows that is the case)
         # ... check against main list of messages
         my $found = "";
         my $lost = "";
         foreach my $message (values(%{$Q->{messages}})) {
-            my $message_debug_str = "\tid: M" . $message->id() . " state: " . $message->state() . " owner: " . ($message->owner() ? "S".$message->owner()->id() : "none");
-            $message_debug_str .= " (state: ".$Sender::statename[$message->owner()->{state}]." error: ".$message->owner()->{error}.")" if ($message->owner());
+            my $message_debug_str = "\tid: M" . $message->id() . " state: " . $message->state();
             $message_debug_str .= " queue: " . $message->{queue}. " priority: " . $message->{priority} . " sender: " . $message->sender() . " recipient: " . $message->recipient() . "\n";
             if ($all_messages{$message->id()}) {
                 $found .= $message_debug_str;
@@ -1954,7 +1184,7 @@ petemaild --help | [OPTIONS]
 
 =head1 DESCRIPTION
 
-Fast mail-sending daemon for the petitions site.
+Mail-sending daemon for the petitions site.
 
 =head1 OPTIONS
 
