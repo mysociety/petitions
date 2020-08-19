@@ -483,6 +483,7 @@ function cobrand_admin_email_finished($body) {
     global $site_group;
     if ($site_group == 'hounslow' || $site_group == 'westminster') return true;
     if ($body == 'woking') return true;
+    if ($body == 'rbwm') return true;
     return false;
 }
 
