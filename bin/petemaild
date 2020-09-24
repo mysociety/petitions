@@ -375,7 +375,10 @@ Log::print('debug', "  -> too old; failing");
 Log::print('debug', "  -> will attempt delivery of ", $msg->id());
 
         try {
-            Email::Sender::Simple->send($msg->{text}, { transport => $transport });
+            Email::Sender::Simple->send($msg->text(), {
+                transport => $transport,
+                from => $msg->sender(),
+            });
             $msg->addevent(Queue::Message::EVENT_DELIVERED);
         } catch {
             my $error = $_ || 'unknown error';
