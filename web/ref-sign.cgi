@@ -197,6 +197,7 @@ sub signup_page ($$) {
                     your bulk/spam mail folders, in case the message
                     went there by mistake.)
                 );
+                $contents .= Petitions::Cobrand::extra_check_email($qp_body);
             } else {
                 $errors{busy} =
                         "Sorry, but we weren't able to add your signature to

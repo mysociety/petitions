@@ -230,4 +230,13 @@ sub signing_disabled($) {
     return mySociety::Config::get('SIGNING_DISABLED');
 }
 
+sub extra_check_email {
+    my $body = shift;
+    if ($body && $body eq 'surreycc') {
+        my $email = $body . '@' . mySociety::Config::get('EMAIL_DOMAIN');
+        return "<p class='noprint loudmessage'>Please contact <a href='mailto:$email'>$email</a> if you cannot find the confirmation email or have any questions.</p>";
+    }
+    return "";
+}
+
 1;
