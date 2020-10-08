@@ -451,6 +451,7 @@ function cobrand_display_category() {
 
 function cobrand_signature_threshold() {
     global $site_name;
+    if ($site_name == 'rbwm') return 25;
     if ($site_name == 'surreycc') return 100;
     if (in_array($site_name, array('woking'))) return 10;
     if (in_array($site_name, array('surreyheath', 'runnymede'))) return 50;
@@ -914,6 +915,16 @@ function cobrand_how_it_works_extra() {
         echo '</p> <p>To see RBWM’s data processing Privacy Notice in relation
         to e-petitions, please go to the link below:</p>
         <p><a href="https://www.rbwm.gov.uk/sites/default/files/2020-04/privacy_notice_petitions.pdf">https://www.rbwm.gov.uk/sites/default/files/2020-04/privacy_notice_petitions.pdf</a>';
+    }
+}
+
+function cobrand_terms_extra_end() {
+    global $site_name;
+    if ($site_name == 'rbwm') {
+        echo 'Please read the full guidance on our petition process –
+        <a href="https://rbwm.moderngov.co.uk/ecSDDisplay.aspx?NAME=SD561&ID=561&RPID=5164815">Part 7G of the council constitution</a>.
+        If you have any questions, please contact
+        <a href="democratic.services@rbwm.gov.uk">democratic.services@rbwm.gov.uk</a>.';
     }
 }
 
