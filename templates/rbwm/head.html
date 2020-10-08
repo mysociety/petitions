@@ -11,9 +11,7 @@
                 html.className = html.className.replace(/\bno-js\b/, '');
             })(document.getElementsByTagName('html')[0]);
         </script>
-        <link rel="alternate" type="application/rss+xml" title="RSS" href="https://www3.rbwm.gov.uk/rss/news">
-        <link rel="shortcut icon" type="image/x-icon" href="//www3.rbwm.gov.uk/site/favicon.ico">
-        <link rel="apple-touch-icon" href="//www3.rbwm.gov.uk/site/apple-touch-icon.png">
+        <link rel="shortcut icon" href="https://www.rbwm.gov.uk/favicon-32x32.png">
         <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,300,400,600,700">
         <link rel="stylesheet" href="/assets/rbwm/files/css/font-awesome.css">
         <link rel="stylesheet" href="/assets/rbwm/files/css/base.css">
@@ -81,20 +79,21 @@
             </ul>
 
             <div class="logo">
-                <a href="https://www3.rbwm.gov.uk/">
+                <a href="https://www.rbwm.gov.uk/">
                     <img src="/assets/rbwm/files/img/logo.png" alt="">
                     <span class="visually-hidden">The Royal Borough of Windsor and Maidenhead</span>
                 </a>
             </div>
 			<div class="search">
 				<div id="sb-search" class="sb-search sb-search-open">
-                    <form action="https://www3.rbwm.gov.uk/search/search.asp" method="get">
+                    <form action="https://www.rbwm.gov.uk/" method="post">
                         <label for="zoom_query" class="visually-hidden">Search this site</label>
-                        <input class="sb-search-input" placeholder="Search website (e.g. council tax)" size="18" maxlength="40" name="zoom_query" id="zoom_query" type="search">
+                        <input class="sb-search-input" placeholder="Search website (e.g. council tax)" size="18" maxlength="40" name="keys" id="zoom_query" type="search">
                         <button class="sb-search-submit">
                             <span class="sb-icon-search icon-search"></span>
                             <span class="visually-hidden">Search</span>
                         </button>
+                        <input type="hidden" name="form_id" value="search_api_page_block_form_search_results_">
                     </form>
                 </div>
             </div>
@@ -106,13 +105,13 @@
 				<div class="inner">
                     <ul>
                         <li>
-                            <a href="https://www3.rbwm.gov.uk/">Home</a>
+                            <a href="https://www.rbwm.gov.uk/">Home</a>
                         </li>
                         <li>
-                            <a href="https://www3.rbwm.gov.uk/info/200127/contact_the_council/60/contact_us">Contact Us</a>
+                            <a href="https://www.rbwm.gov.uk/home/council-and-democracy/contact-us">Contact Us</a>
                         </li>
                         <li>
-                            <a href="https://www3.rbwm.gov.uk/info/200409/data_protection/59/privacy_and_cookies">Privacy &amp; Cookies</a>
+                            <a href="https://www.rbwm.gov.uk/home/council-and-democracy/strategies-and-policies/data-protection/privacy-notices">Privacy</a>
                         </li>
 					</ul>
 				</div>
@@ -134,7 +133,7 @@
 <!-- BREADCRUMB -->
                     <ol>
                         <li>
-                            <a href="https://www3.rbwm.gov.uk" rel="home">Home</a>
+                            <a href="https://www.rbwm.gov.uk" rel="home">Home</a>
                         </li>
                         <li>
                             <a href="/">Petitions</a>
