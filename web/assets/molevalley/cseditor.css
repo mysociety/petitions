@@ -1,0 +1,73 @@
+/* *****************************************************************
+   Example Default CSS Style Sheet for Article Body text.
+   
+   Supports these options:
+		font-family
+		font-size (pt or %)
+		color (#XXXXXX or the 16 basic colour names)
+		font-weight: bold
+		text-align (left, right, center)
+		font-style: italic
+
+	Additional parameters that should be provided in 
+	slash/star comments, prefixed with $
+
+	pageColour	- sets the editor background colour.
+	name		- sets a 'friendly name' which the editor
+	              uses in it's dialogue boxes for the next
+				  class definition it comes to.
+
+	default     - used preceeding name to set that style
+	              to be the default for any new paras/tables
+				  /cells.
+
+	TABLE STYLES: There are two types of styles used to
+	specifically control the appearance of tables. 
+	
+	tableBorder - sets the table's border colour
+	tableCell   - sets a cell's colour
+
+	The Flash Editor identifies these by checking if the first 
+	part of a given style name starts with these words. So an
+	actual example of this type of definition might look like 
+	this:
+
+	NOTE that to ensure any text appears correctly inside
+	tables when you are using PERCENTAGE font sizes on your
+	site, you should specify   font-size: 100%;  for each
+	tableCell definition. Here is an example of this:
+	EXAMPLES of all the above appear in this sample stylesheet.
+	PT 18-6-2003
+ ***************************************************************** */
+/*Change this if your page backgound isn't white.. */
+/* $pageColour = #FFFFFF  */
+/** TEXT STYLES **/
+/* $name='Heading' */ 
+h1, H1, .Heading{font-family:Arial, Helvetica, sans-serif; font-size: 1.7em; color: black; font-weight: normal; text-align: left; line-height:1.2em;}
+h2, H2{margin:0 0 10px; 0; color : #000000; font-family:Arial, Helvetica, sans-serif; font-weight : bold; font-size : 1.0em;}
+h3, H3{margin:0; color : #000000; font-family : verdana, Helvetica, Verdana, Geneva, sans-serif; font-weight : bold; font-size : 0.9em;}
+/* $name='Sub Heading A' */ 
+.SubHeading{font-family: verdana, Helvetica, Verdana, Geneva, sans-serif; font-size: 170%; color: black; font-weight: normal; text-align: center;}
+/* $default $name='Body Text'*/
+/* Normal text - the class name will be used in the dialogues... */
+.Normal{font-family: verdana, Helvetica, Verdana, Geneva, sans-serif; font-size: 85%; color: black; text-align: left;}
+/* $name='Blue Text' */
+.BlueText{ font-family: verdana, Helvetica, Verdana, Geneva, sans-serif; font-size: 95%; color: #333399; text-align: left;}
+/* Bulleted List Style */
+/* $name='Bulleted List' */
+OL{font-family: verdana, Helvetica, Verdana, Geneva, sans-serif; font-size: 95%; color: Black; text-align: justify; }
+UL{font-family: verdana, Helvetica, Verdana, Geneva, sans-serif; font-size: 95%; color: Black; text-align: justify; }
+LI{font-family: verdana, Helvetica, Verdana, Geneva, sans-serif; font-size: 95%; color: Black; text-align: justify; }
+/** TABLES **/
+/* $default $name='Border A' */ .tableBorderA{ background-color: #999999; font-size: 100%;}
+/* $name='Border B' */ .tableBorderB{ background-color: #9696DC; font-size: 100%;}
+/* $name='Border C' */ .tableBorderC{ background-color: #FFFFFF; font-size: 100%;}
+/* $default $name='Cell Colour A' */ .tableCellA{ background-color: #EbEbEb; font-size: 100%; padding: 3px; border-bottom: 1px solid #cccccc;}
+/* $name='Cell Colour B' */ .tableCellB{ background-color: #CCCCFF; font-size: 100%;}
+/* $name='Cell Colour C' */ .tableCellC{ background-color: #CCFFFF; font-size: 100%;}
+/* Set the TH tags to work with the wysiwyg in the editor */
+
+
+
+
+
