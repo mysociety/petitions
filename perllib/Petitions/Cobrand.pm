@@ -110,7 +110,7 @@ sub ask_for_address_type() {
 
 sub signing_checkbox() {
     my $site_name = Petitions::Page::site_name();
-    return 'To see RBWM’s data processing Privacy Notice in relation to e-petitions, please go to the following link: <a href="https://www.rbwm.gov.uk/sites/default/files/2020-04/privacy_notice_petitions.pdf">https://www.rbwm.gov.uk/sites/default/files/2020-04/privacy_notice_petitions.pdf</a>' if $site_name eq 'rbwm';
+    return 'To see RBWM’s data processing Privacy Notice in relation to e-petitions, please go to the following link: <a href="https://www.rbwm.gov.uk/home/council-and-democracy/strategies-and-policies/data-protection/privacy-notice-petitions">https://www.rbwm.gov.uk/home/council-and-democracy/strategies-and-policies/data-protection/privacy-notice-petitions</a>' if $site_name eq 'rbwm';
 }
 
 sub overseas_dropdown {

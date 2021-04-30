@@ -914,7 +914,7 @@ function cobrand_how_it_works_extra() {
     if ($site_name == 'rbwm') {
         echo '</p> <p>To see RBWM’s data processing Privacy Notice in relation
         to e-petitions, please go to the link below:</p>
-        <p><a href="https://www.rbwm.gov.uk/sites/default/files/2020-04/privacy_notice_petitions.pdf">https://www.rbwm.gov.uk/sites/default/files/2020-04/privacy_notice_petitions.pdf</a>';
+        <p><a href="https://www.rbwm.gov.uk/home/council-and-democracy/strategies-and-policies/data-protection/privacy-notice-petitions">https://www.rbwm.gov.uk/home/council-and-democracy/strategies-and-policies/data-protection/privacy-notice-petitions</a>';
     }
 }
 
